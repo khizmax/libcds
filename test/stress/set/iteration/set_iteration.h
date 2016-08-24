@@ -409,7 +409,11 @@ namespace set {
                     typename Set::iterator itEnd;
                     itEnd = rSet.end();
                     for ( it = rSet.begin(); it != itEnd; ++it ) {
+#if CDS_BUILD_BITS == 64
                         it->val.hash = CityHash64( it->key.c_str(), it->key.length());
+#else
+                        it->val.hash = std::hash<std::string>()( it->key );
+#endif
                         ++m_nVisitCount;
                     }
                 }
@@ -453,7 +457,11 @@ namespace set {
                     ++m_nPassCount;
                     typename Set::rcu_lock l;
                     for ( auto it = rSet.begin(); it != rSet.end(); ++it ) {
+#if CDS_BUILD_BITS == 64
                         it->val.hash = CityHash64( it->key.c_str(), it->key.length() );
+#else
+                        it->val.hash = std::hash<std::string>()(it->key);
+#endif
                         ++m_nVisitCount;
                     }
                 }

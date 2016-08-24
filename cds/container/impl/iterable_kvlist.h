@@ -131,7 +131,7 @@ namespace cds { namespace container {
         typedef typename maker::mapped_type mapped_type;
         typedef typename maker::value_type  value_type;
 #endif
-
+        typedef Traits traits;  ///< List traits
         typedef typename base_class::gc           gc;             ///< Garbage collector used
         typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
         typedef typename maker::data_allocator_type allocator_type; ///< Allocator type used for allocate/deallocate data
@@ -144,6 +144,22 @@ namespace cds { namespace container {
 
         /// Guarded pointer
         typedef typename base_class::guarded_ptr guarded_ptr;
+
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef IterableKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
 
     protected:
         //@cond
@@ -326,7 +342,7 @@ namespace cds { namespace container {
             The functor may change non-key fields of \p val; however, \p func must guarantee
             that during changing no any other modifications could be made on this item by concurrent threads.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
+            @return <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with such \p key
             already exists.
 
@@ -650,21 +666,21 @@ namespace cds { namespace container {
         // Split-list support
 
         template <typename K>
-        bool insert_at( head_type& refHead, K const& key )
+        bool insert_at( head_type& refHead, K&& key )
         {
-            return base_class::insert_at( refHead, value_type( key_type( key ), mapped_type() ));
+            return base_class::insert_at( refHead, value_type( key_type( std::forward<K>( key )), mapped_type() ));
         }
 
         template <typename K, typename V>
-        bool insert_at( head_type& refHead, const K& key, V const& val )
+        bool insert_at( head_type& refHead, K&& key, V&& val )
         {
-            return base_class::insert_at( refHead, value_type( key_type( key ), val ));
+            return base_class::insert_at( refHead, value_type( key_type( std::forward<K>( key )), std::forward<V>( val )));
         }
 
         template <typename K, typename Func>
-        bool insert_with_at( head_type& refHead, K const& key, Func f )
+        bool insert_with_at( head_type& refHead, K&& key, Func f )
         {
-            return base_class::insert_at( refHead, value_type( key_type( key ), mapped_type()), f );
+            return base_class::insert_at( refHead, value_type( key_type( std::forward<K>( key )), mapped_type()), f );
         }
 
         template <typename K, typename... Args>
@@ -674,9 +690,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, const K& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type& refHead, K&& key, Func f, bool bAllowInsert )
         {
-            return base_class::update_at( refHead, value_type( key_type( key ), mapped_type()), f, bAllowInsert );
+            return base_class::update_at( refHead, value_type( key_type( std::forward<K>( key )), mapped_type()), f, bAllowInsert );
         }
 
         template <typename K, typename Compare>
@@ -691,9 +707,9 @@ namespace cds { namespace container {
             return base_class::erase_at( refHead, key, cmp, f );
         }
         template <typename K, typename Compare>
-        bool extract_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr extract_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::extract_at( refHead, guard, key, cmp );
+            return base_class::extract_at( refHead, key, cmp );
         }
 
         template <typename K, typename Compare>
@@ -709,9 +725,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool get_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr get_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::get_at( refHead, guard, key, cmp );
+            return base_class::get_at( refHead, key, cmp );
         }
 
         //@endcond

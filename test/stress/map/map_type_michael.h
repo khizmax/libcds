@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_MAP_TYPE_MICHAEL_H
@@ -33,6 +33,7 @@
 
 #include "map_type_michael_list.h"
 #include "map_type_lazy_list.h"
+#include "map_type_iterable_list.h"
 
 #include <cds/container/michael_map.h>
 #include <cds/container/michael_map_rcu.h>
@@ -67,16 +68,16 @@ namespace map {
         typedef typename base_class::equal_to    equal_to;
         typedef typename base_class::key_hash    hash;
 
-
-        // ***************************************************************************
-        // MichaelHashMap based on MichaelKVList
-        typedef michael_list_type< Key, Value > ml;
-
         struct traits_MichaelMap_hash :
             public cc::michael_map::make_traits<
                 co::hash< hash >
             >::type
         {};
+
+        // ***************************************************************************
+        // MichaelHashMap based on MichaelKVList
+        typedef michael_list_type< Key, Value > ml;
+
         typedef MichaelHashMap< cds::gc::HP,  typename ml::MichaelList_HP_cmp_stdAlloc,  traits_MichaelMap_hash > MichaelMap_HP_cmp_stdAlloc;
         typedef MichaelHashMap< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_DHP_cmp_stdAlloc;
         typedef MichaelHashMap< cds::gc::nogc, typename ml::MichaelList_NOGC_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_NOGC_cmp_stdAlloc;
@@ -88,6 +89,17 @@ namespace map {
         typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_stdAlloc;
 #endif
 
+        typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_HP_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_DHP_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::nogc, typename ml::MichaelList_NOGC_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_NOGC_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPI_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPB_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_stdAlloc_stat;
+#endif
+
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_HP_less_stdAlloc;
         typedef MichaelHashMap< cds::gc::DHP, typename ml::MichaelList_DHP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_DHP_less_stdAlloc;
         typedef MichaelHashMap< cds::gc::nogc, typename ml::MichaelList_NOGC_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_NOGC_less_stdAlloc;
@@ -97,6 +109,17 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_stdAlloc;
         typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_stdAlloc;
+#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_HP_less_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename ml::MichaelList_DHP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_DHP_less_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::nogc, typename ml::MichaelList_NOGC_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_NOGC_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPI_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPB_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_stdAlloc_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_HP_cmp_stdAlloc_seqcst;
@@ -163,6 +186,17 @@ namespace map {
         typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc;
 #endif
 
+        typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename ll::LazyList_DHP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::nogc, typename ll::LazyList_NOGC_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stdAlloc_stat;
+#endif
+
         typedef MichaelHashMap< cds::gc::nogc, typename ll::LazyList_NOGC_unord_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_unord_stdAlloc;
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stdAlloc;
@@ -174,6 +208,17 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_stdAlloc;
         typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_stdAlloc;
+#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename ll::LazyList_DHP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_DHP_less_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::nogc, typename ll::LazyList_NOGC_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpi, typename ll::LazyList_RCU_GPI_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPI_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpb, typename ll::LazyList_RCU_GPB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPB_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_stdAlloc_stat;
+        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_stdAlloc_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_stdAlloc_seqcst;
@@ -219,6 +264,60 @@ namespace map {
         typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelMap_Lazy_RCU_SHT_less_michaelAlloc;
 #endif
 
+        // ***************************************************************************
+        // MichaelHashMap based on IterableKVList
+        typedef iterable_list_type< Key, Value > il;
+
+        typedef MichaelHashMap< cds::gc::HP,  typename il::IterableList_HP_cmp_stdAlloc,  traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp_stdAlloc;
+        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpi, typename il::IterableList_RCU_GPI_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPI_cmp_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpb, typename il::IterableList_RCU_GPB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPB_cmp_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpt, typename il::IterableList_RCU_GPT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPT_cmp_stdAlloc;
+//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+//        typedef MichaelHashMap< rcu_shb, typename il::IterableList_RCU_SHB_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHB_cmp_stdAlloc;
+//        typedef MichaelHashMap< rcu_sht, typename il::IterableList_RCU_SHT_cmp_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHT_cmp_stdAlloc;
+//#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpi, typename il::IterableList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPI_cmp_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpb, typename il::IterableList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPB_cmp_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpt, typename il::IterableList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPT_cmp_stdAlloc_stat;
+//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+//        typedef MichaelHashMap< rcu_shb, typename il::IterableList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHB_cmp_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_sht, typename il::IterableList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHT_cmp_stdAlloc_stat;
+//#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_HP_less_stdAlloc;
+        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_less_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpi, typename il::IterableList_RCU_GPI_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPI_less_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpb, typename il::IterableList_RCU_GPB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPB_less_stdAlloc;
+//        typedef MichaelHashMap< rcu_gpt, typename il::IterableList_RCU_GPT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPT_less_stdAlloc;
+//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+//        typedef MichaelHashMap< rcu_shb, typename il::IterableList_RCU_SHB_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHB_less_stdAlloc;
+//        typedef MichaelHashMap< rcu_sht, typename il::IterableList_RCU_SHT_less_stdAlloc, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHT_less_stdAlloc;
+//#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_HP_less_stdAlloc_stat;
+        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_less_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpi, typename il::IterableList_RCU_GPI_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPI_less_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpb, typename il::IterableList_RCU_GPB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPB_less_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_gpt, typename il::IterableList_RCU_GPT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPT_less_stdAlloc_stat;
+//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+//        typedef MichaelHashMap< rcu_shb, typename il::IterableList_RCU_SHB_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHB_less_stdAlloc_stat;
+//        typedef MichaelHashMap< rcu_sht, typename il::IterableList_RCU_SHT_less_stdAlloc_stat, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHT_less_stdAlloc_stat;
+//#endif
+
+        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp_stdAlloc_seqcst;
+        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp_stdAlloc_seqcst;
+//        typedef MichaelHashMap< rcu_gpi, typename il::IterableList_RCU_GPI_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPI_cmp_stdAlloc_seqcst;
+//        typedef MichaelHashMap< rcu_gpb, typename il::IterableList_RCU_GPB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPB_cmp_stdAlloc_seqcst;
+//        typedef MichaelHashMap< rcu_gpt, typename il::IterableList_RCU_GPT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_GPT_cmp_stdAlloc_seqcst;
+//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+//        typedef MichaelHashMap< rcu_shb, typename il::IterableList_RCU_SHB_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHB_cmp_stdAlloc_seqcst;
+//        typedef MichaelHashMap< rcu_sht, typename il::IterableList_RCU_SHT_cmp_stdAlloc_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_RCU_SHT_cmp_stdAlloc_seqcst;
+//#endif
+
     };
 }   // namespace map
 
@@ -263,11 +362,15 @@ namespace map {
 #define CDSSTRESS_MichaelMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc,                      key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc,                     key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stdAlloc_stat,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp_stdAlloc_stat,                key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_stdAlloc,                 key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp_stdAlloc,                 key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_cmp_stdAlloc,                 key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc,                     key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc,                    key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less_stdAlloc_stat,                key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_less_stdAlloc_stat,               key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_stdAlloc,                key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_stdAlloc,                key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_stdAlloc,                key_type, value_type, 1 ) \
@@ -291,13 +394,18 @@ namespace map {
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_less_michaelAlloc,            key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_less_michaelAlloc,            key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPT_less_michaelAlloc,            key_type, value_type, 1 ) \
+    \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc,                 key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc,                key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stdAlloc_stat,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_stdAlloc_stat,           key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_cmp_stdAlloc,            key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp_stdAlloc,            key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_cmp_stdAlloc,            key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc,                key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc,               key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stdAlloc_stat,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stdAlloc_stat,          key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_stdAlloc,           key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_stdAlloc,           key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_stdAlloc,           key_type, value_type, 1 ) \
@@ -321,6 +429,17 @@ namespace map {
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less_michaelAlloc,       key_type, value_type, 1 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_less_michaelAlloc,       key_type, value_type, 0 ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less_michaelAlloc,       key_type, value_type, 1 ) \
+    \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stdAlloc,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stdAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stdAlloc_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less_stdAlloc,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less_stdAlloc,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less_stdAlloc_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less_stdAlloc_stat,      key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stdAlloc_seqcst,      key_type, value_type, 2 ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stdAlloc_seqcst,     key_type, value_type, 2 ) \
     CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_MichaelMap_nogc( fixture, test_case, key_type, value_type ) \

@@ -88,6 +88,22 @@ namespace cds { namespace container {
         typedef typename base_class::stat         stat;           ///< Internal statistics
         static CDS_CONSTEXPR bool const c_bSort = base_class::c_bSort; ///< List type: ordered (\p true) or unordered (\p false)
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef LazyKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::value_type     node_type;

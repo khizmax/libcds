@@ -166,7 +166,7 @@
 
    The test projects depends on the following static library from \p boost:
    - \p boost.thread
-   - \p boost.date_time
+   - \p boost.system
 
    \par Windows build
 

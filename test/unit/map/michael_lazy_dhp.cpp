@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_map_hp.h"
@@ -172,6 +172,48 @@ namespace {
 
         map_type m( kSize, 2 );
         test( m );
+    }
+
+    TEST_F( MichaelLazyMap_DHP, stat )
+    {
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef cmp compare;
+            typedef cds::backoff::yield back_off;
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+
+        struct map_traits: public cc::michael_map::traits
+        {
+            typedef hash1 hash;
+        };
+        typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
+
+        map_type m( kSize, 2 );
+        test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
+    }
+
+    TEST_F( MichaelLazyMap_DHP, wrapped_stat )
+    {
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef cmp compare;
+            typedef cds::backoff::yield back_off;
+            typedef cc::lazy_list::wrapped_stat<> stat;
+        };
+        typedef cc::LazyKVList< gc_type, key_type, value_type, list_traits > list_type;
+
+        struct map_traits: public cc::michael_map::traits
+        {
+            typedef hash1 hash;
+        };
+        typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
+
+        map_type m( kSize, 2 );
+        test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

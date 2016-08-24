@@ -118,6 +118,7 @@ namespace cds { namespace container {
 
     public:
         typedef cds::urcu::gc<RCU> gc; ///< Garbage collector
+        typedef Traits traits;         ///< List traits
 #ifdef CDS_DOXYGEN_INVOKED
         typedef Key                                 key_type        ;   ///< Key type
         typedef Value                               mapped_type     ;   ///< Type of value stored in the list
@@ -137,6 +138,22 @@ namespace cds { namespace container {
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions require external locking
+
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef LazyKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
 
     protected:
         //@cond

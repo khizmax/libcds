@@ -65,7 +65,9 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::value_type     value_type;     ///< type of value to be stored in the set
         typedef typename ordered_list::key_comparator key_comparator; ///< key comparing functor
         typedef typename ordered_list::disposer       disposer;       ///< Node disposer functor
+#ifdef CDS_DOXYGEN_INVOKED
         typedef typename ordered_list::stat           stat;           ///< Internal statistics
+#endif
 
         /// Hash functor for \p value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -89,12 +91,20 @@ namespace cds { namespace intrusive {
         >::type internal_bucket_type;
 
         typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        //@endcond
 
-        hash                        m_HashFunctor; ///< Hash functor
-        const size_t                m_nHashBitmask;
-        internal_bucket_type *      m_Buckets;     ///< bucket table
-        item_counter                m_ItemCounter; ///< Item counter
-        typename bucket_stat::stat  m_Stat;        ///< Internal statistics
+    public:
+        //@cond
+        typedef typename bucket_stat::stat stat;
+        //@endcond
+
+    protected:
+        //@cond
+        hash                    m_HashFunctor; ///< Hash functor
+        const size_t            m_nHashBitmask;
+        internal_bucket_type *  m_Buckets;     ///< bucket table
+        item_counter            m_ItemCounter; ///< Item counter
+        stat                    m_Stat;        ///< Internal statistics
         //@endcond
 
     protected:

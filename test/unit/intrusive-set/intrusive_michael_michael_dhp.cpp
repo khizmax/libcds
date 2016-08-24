@@ -152,6 +152,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( IntrusiveMichaelSet_DHP, base_wrapped_stat )
@@ -175,6 +176,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( IntrusiveMichaelSet_DHP, member_cmp )
@@ -268,6 +270,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( IntrusiveMichaelSet_DHP, member_wrapped_stat )
@@ -291,6 +294,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

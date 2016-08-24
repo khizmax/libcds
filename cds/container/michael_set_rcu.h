@@ -141,7 +141,11 @@ namespace cds { namespace container {
 
         typedef typename ordered_list::value_type     value_type;     ///< type of value to be stored in the list
         typedef typename ordered_list::key_comparator key_comparator; ///< key comparing functor
-        typedef typename ordered_list::stat           stat;           ///< Internal statistics
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef typename ordered_list::stat       stat;       ///< Internal statistics
+        typedef typename ordered_list::exempt_ptr exempt_ptr; ///< pointer to extracted node
+        typedef typename ordered_list::raw_ptr    raw_ptr;    ///< Return type of \p get() member function and its derivatives
+#endif
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -158,13 +162,7 @@ namespace cds { namespace container {
         static_assert(!std::is_same<item_counter, atomicity::empty_item_counter>::value,
             "atomicity::empty_item_counter is not allowed as a item counter");
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Wrapped internal statistics for \p ordered_list
-        typedef implementatin_specific bucket_stat;
-
-        /// Internal bucket type - rebind \p ordered_list with empty item counter and wrapped internal statistics
-        typedef modified_ordered_list internal_bucket_type;
-#else
+        //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
 
         typedef typename ordered_list::template rebind_traits<
@@ -182,10 +180,11 @@ namespace cds { namespace container {
             using base_class::insert_node;
             using base_class::node_to_value;
         };
-#endif
 
-        typedef typename internal_bucket_type::exempt_ptr exempt_ptr; ///< pointer to extracted node
-        typedef typename internal_bucket_type::raw_ptr    raw_ptr;    ///< Return type of \p get() member function and its derivatives
+        typedef typename internal_bucket_type::exempt_ptr exempt_ptr;
+        typedef typename internal_bucket_type::raw_ptr    raw_ptr;
+        typedef typename bucket_stat::stat stat;
+        //@endcond
 
     protected:
         //@cond
@@ -196,7 +195,7 @@ namespace cds { namespace container {
         item_counter            m_ItemCounter; ///< Item counter
         hash                    m_HashFunctor; ///< Hash functor
         internal_bucket_type*   m_Buckets;     ///< bucket table
-        typename bucket_stat::stat  m_Stat;   ///< Internal statistics
+        stat                    m_Stat;        ///< Internal statistics
         //@endcond
 
     public:

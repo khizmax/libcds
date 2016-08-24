@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_IMPL_SKIP_LIST_H
@@ -843,9 +843,12 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
+        guarded_ptr get_with_( Q const& val, Compare cmp )
         {
-            return find_with_( val, cmp, [&guard](value_type& found, Q const& ) { guard.set(&found); } );
+            guarded_ptr gp;
+            if ( find_with_( val, cmp, [&gp](value_type& found, Q const& ) { gp.reset(&found); } ))
+                return gp;
+            return guarded_ptr();
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -876,19 +879,19 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool extract_( typename guarded_ptr::native_guard& guard, Q const& val, Compare cmp )
+        guarded_ptr extract_( Q const& val, Compare cmp )
         {
             position pos;
 
+            guarded_ptr gp;
             for (;;) {
                 if ( !find_position( val, pos, cmp, false ) ) {
                     m_Stat.onExtractFailed();
-                    guard.clear();
-                    return false;
+                    return guarded_ptr();
                 }
 
                 node_type * pDel = pos.pCur;
-                guard.set( node_traits::to_value_ptr(pDel));
+                gp.reset( node_traits::to_value_ptr( pDel ));
                 assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
 
                 unsigned int nHeight = pDel->height();
@@ -896,62 +899,62 @@ namespace cds { namespace intrusive {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractSuccess();
-                    return true;
+                    return gp;
                 }
                 m_Stat.onExtractRetry();
             }
         }
 
-        bool extract_min_( typename guarded_ptr::native_guard& gDel )
+        guarded_ptr extract_min_()
         {
             position pos;
 
+            guarded_ptr gp;
             for (;;) {
                 if ( !find_min_position( pos ) ) {
                     // The list is empty
                     m_Stat.onExtractMinFailed();
-                    gDel.clear();
-                    return false;
+                    return guarded_ptr();
                 }
 
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gDel.set( node_traits::to_value_ptr(pDel) );
+                gp.reset( node_traits::to_value_ptr(pDel) );
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMinSuccess();
-                    return true;
+                    return gp;
                 }
 
                 m_Stat.onExtractMinRetry();
             }
         }
 
-        bool extract_max_( typename guarded_ptr::native_guard& gDel )
+        guarded_ptr extract_max_()
         {
             position pos;
 
+            guarded_ptr gp;
             for (;;) {
                 if ( !find_max_position( pos ) ) {
                     // The list is empty
                     m_Stat.onExtractMaxFailed();
-                    gDel.clear();
-                    return false;
+                    return guarded_ptr();
                 }
 
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gDel.set( node_traits::to_value_ptr(pDel) );
+                gp.reset( node_traits::to_value_ptr(pDel) );
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractMaxSuccess();
-                    return true;
+                    return gp;
                 }
 
                 m_Stat.onExtractMaxRetry();
@@ -1308,9 +1311,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_( gp.guard(), key, key_comparator() );
-            return gp;
+            return extract_( key, key_comparator() );
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -1326,9 +1327,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            extract_( gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
-            return gp;
+            return extract_( key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
         /// Extracts an item with minimal key from the list
@@ -1363,9 +1362,7 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract_min()
         {
-            guarded_ptr gp;
-            extract_min_( gp.guard() );
-            return gp;
+            return extract_min_();
         }
 
         /// Extracts an item with maximal key from the list
@@ -1401,9 +1398,7 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract_max()
         {
-            guarded_ptr gp;
-            extract_max_( gp.guard() );
-            return gp;
+            return extract_max_();
         }
 
         /// Deletes the item from the set
@@ -1606,9 +1601,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            guarded_ptr gp;
-            get_with_( gp.guard(), key, key_comparator() );
-            return gp;
+            return get_with_( key, key_comparator() );
         }
 
         /// Finds \p key and return the item found
@@ -1624,9 +1617,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            get_with_( gp.guard(), key, cds::opt::details::make_comparator_from_less<Less>() );
-            return gp;
+            return get_with_( key, cds::opt::details::make_comparator_from_less<Less>() );
         }
 
         /// Returns item count in the set
@@ -1662,8 +1653,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            guarded_ptr gp;
-            while ( extract_min_( gp.guard() ));
+            while ( extract_min_());
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSIMPL_HP_CONST_H
@@ -35,7 +35,6 @@
     File: hp_const.h
 
     Michael's Hazard Pointer reclamation schema global constants
-    Gidenstam's reclamation schema global constants
 
     Editions:
         2008.03.10    Maxim.Khiszinsky    Created
@@ -47,10 +46,10 @@ namespace cds { namespace gc {
     // Hazard Pointers reclamation schema constants
     namespace hp {
         // Max number of threads expected
-        static const size_t c_nMaxThreadCount     = 100;
+        static CDS_CONSTEXPR const size_t c_nMaxThreadCount     = 100;
 
         // Number of Hazard Pointers per thread
-        static const size_t c_nHazardPointerPerThread = 8;
+        static CDS_CONSTEXPR const size_t c_nHazardPointerPerThread = 8;
     } // namespace hp
 
 } /* namespace gc */ }    /* namespace cds */

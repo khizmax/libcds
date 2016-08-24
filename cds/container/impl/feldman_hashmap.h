@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_IMPL_FELDMAN_HASHMAP_H
@@ -592,14 +592,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            guarded_ptr gp;
-            typename gc::Guard guard;
-            node_type * p = base_class::do_erase( m_Hasher( key_type( key )), guard, []( node_type const&) -> bool {return true;} );
-
-            // p is guarded by HP
-            if ( p )
-                gp.reset( p );
-            return gp;
+            return base_class::extract( m_Hasher( key_type( key )));
         }
 
         /// Checks whether the map contains \p key
@@ -665,12 +658,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            guarded_ptr gp;
-            {
-                typename gc::Guard guard;
-                gp.reset( base_class::search( m_Hasher( key_type( key )), guard ));
-            }
-            return gp;
+            return base_class::get( m_Hasher( key_type( key )));
         }
 
         /// Clears the map (non-atomic)

@@ -183,6 +183,7 @@ namespace {
 
         set_type s( kSize, 4 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( MichaelSet_NoGC, wrapped_stat )
@@ -204,6 +205,7 @@ namespace {
 
         set_type s( kSize, 4 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_IMPL_HP_IMPL_H
@@ -38,36 +38,10 @@
 namespace cds { namespace gc {
 
     namespace hp {
-        inline guard::guard()
-            : m_hp( cds::threading::getGC<HP>().allocGuard() )
-        {}
-
-        template <typename T>
-        inline guard::guard( T * p )
-            : m_hp( cds::threading::getGC<HP>().allocGuard() )
+        static inline ThreadGC& get_thread_gc()
         {
-            m_hp = p;
+            return cds::threading::getGC<HP>();
         }
-
-        inline guard::~guard()
-        {
-            cds::threading::getGC<HP>().freeGuard( m_hp );
-        }
-
-        template <size_t Count>
-        inline array<Count>::array()
-        {
-            cds::threading::getGC<HP>().allocGuard( *this );
-        }
-
-        template <size_t Count>
-        inline array<Count>::~array()
-        {
-            cds::threading::getGC<HP>().freeGuard( *this );
-        }
-
-
-
     } // namespace hp
 
     inline HP::thread_gc::thread_gc(
@@ -85,30 +59,71 @@ namespace cds { namespace gc {
             cds::threading::Manager::detachThread();
     }
 
-    inline /*static*/ cds::gc::hp::details::hp_guard& HP::thread_gc::alloc_guard()
+    inline /*static*/ cds::gc::hp::details::hp_guard* HP::thread_gc::alloc_guard()
     {
-        return cds::threading::getGC<HP>().allocGuard();
+        return hp::get_thread_gc().allocGuard();
     }
 
-    inline /*static*/ void HP::thread_gc::free_guard( cds::gc::hp::details::hp_guard& g )
+    inline /*static*/ void HP::thread_gc::free_guard( cds::gc::hp::details::hp_guard* g )
     {
-        cds::threading::getGC<HP>().freeGuard( g );
+        hp::get_thread_gc().freeGuard( g );
+    }
+
+    inline HP::Guard::Guard()
+        : m_guard( hp::get_thread_gc().allocGuard())
+    {
+        if ( !m_guard )
+            throw too_many_hazard_ptr_exception();
     }
 
     template <typename T>
     inline T * HP::Guard::assign( T * p )
     {
-        T * pp = base_class::operator =(p);
-        cds::threading::getGC<HP>().sync();
+        assert( m_guard != nullptr );
+
+        T * pp = ( *m_guard = p );
+        hp::get_thread_gc().sync();
         return pp;
+    }
+
+    inline void HP::Guard::link()
+    {
+        if ( !m_guard ) {
+            m_guard = hp::get_thread_gc().allocGuard();
+            if ( !m_guard )
+                throw too_many_hazard_ptr_exception();
+        }
+    }
+
+    inline void HP::Guard::unlink()
+    {
+        if ( m_guard ) {
+            hp::get_thread_gc().freeGuard( m_guard );
+            m_guard = nullptr;
+        }
+    }
+
+    template <size_t Count>
+    inline HP::GuardArray<Count>::GuardArray()
+    {
+        if ( hp::get_thread_gc().allocGuard( m_arr ) != Count )
+            throw too_many_hazard_ptr_exception();
+    }
+
+    template <size_t Count>
+    inline HP::GuardArray<Count>::~GuardArray()
+    {
+        hp::get_thread_gc().freeGuard( m_arr );
     }
 
     template <size_t Count>
     template <typename T>
-    inline T * HP::GuardArray<Count>::assign( size_t nIndex, T * p )
+    inline T * HP::GuardArray<Count>::assign( size_t nIndex, T* p )
     {
-        base_class::set(nIndex, p);
-        cds::threading::getGC<HP>().sync();
+        assert( nIndex < capacity() );
+
+        m_arr.set(nIndex, p);
+        hp::get_thread_gc().sync();
         return p;
     }
 
@@ -121,12 +136,12 @@ namespace cds { namespace gc {
     template <class Disposer, typename T>
     inline void HP::retire( T * p )
     {
-        cds::threading::getGC<HP>().retirePtr( p, cds::details::static_functor<Disposer, T>::call );
+        hp::get_thread_gc().retirePtr( p, cds::details::static_functor<Disposer, T>::call );
     }
 
     inline void HP::scan()
     {
-        cds::threading::getGC<HP>().scan();
+        hp::get_thread_gc().scan();
     }
 
 }} // namespace cds::gc

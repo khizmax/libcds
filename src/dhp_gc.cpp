@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 // Dynamic Hazard Pointer memory manager implementation
@@ -79,42 +79,69 @@ namespace cds { namespace gc { namespace dhp {
                 item_type& refBucket = bucket( node );
                 if ( refBucket ) {
                     item_type p = refBucket;
+                    item_type prev = nullptr;
                     do {
-                        if ( p->m_ptr.m_p == node.m_ptr.m_p ) {
-                            assert( node.m_pNextFree.load( atomics::memory_order_relaxed ) == nullptr );
-
-                            node.m_pNextFree.store( p->m_pNextFree.load( atomics::memory_order_relaxed ), atomics::memory_order_relaxed );
-                            p->m_pNextFree.store( &node, atomics::memory_order_relaxed );
+                        if ( p->m_ptr.m_p >= node.m_ptr.m_p ) {
+                            node.m_pNext.store( p, atomics::memory_order_relaxed );
+                            if ( prev )
+                                prev->m_pNext.store( &node, atomics::memory_order_relaxed );
+                            else
+                                refBucket = &node;
                             return;
                         }
+                        prev = p;
                         p = p->m_pNext.load(atomics::memory_order_relaxed);
                     } while ( p );
 
-                    node.m_pNext.store( refBucket, atomics::memory_order_relaxed );
+                    assert( prev != nullptr );
+                    prev->m_pNext.store( &node, atomics::memory_order_relaxed );
                 }
-                refBucket = &node;
+                else
+                    refBucket = &node;
             }
 
-            item_type erase( guard_data::guarded_ptr ptr )
+            struct erase_result
+            {
+                item_type head;
+                item_type tail;
+                size_t    size;
+
+                erase_result()
+                    : head( nullptr )
+                    , tail( nullptr )
+                    , size(0)
+                {}
+            };
+
+            erase_result erase( guard_data::guarded_ptr ptr )
             {
                 item_type& refBucket = bucket( ptr );
                 item_type p = refBucket;
                 item_type pPrev = nullptr;
 
-                while ( p ) {
+                erase_result ret;
+                while ( p && p->m_ptr.m_p <= ptr ) {
                     if ( p->m_ptr.m_p == ptr ) {
                         if ( pPrev )
                             pPrev->m_pNext.store( p->m_pNext.load(atomics::memory_order_relaxed ), atomics::memory_order_relaxed );
                         else
                             refBucket = p->m_pNext.load(atomics::memory_order_relaxed);
-                        p->m_pNext.store( nullptr, atomics::memory_order_relaxed );
-                        return p;
+
+                        if ( ret.head )
+                            ret.tail->m_pNext.store( p, atomics::memory_order_relaxed );
+                        else
+                            ret.head = p;
+                        ret.tail = p;
+                        ++ret.size;
                     }
-                    pPrev = p;
+                    else
+                        pPrev = p;
                     p = p->m_pNext.load( atomics::memory_order_relaxed );
                 }
 
-                return nullptr;
+                if ( ret.tail )
+                    ret.tail->m_pNext.store( nullptr, atomics::memory_order_relaxed );
+                return ret;
             }
 
             typedef std::pair<item_type, item_type>     list_range;
@@ -128,10 +155,10 @@ namespace cds { namespace gc { namespace dhp {
                 for ( item_type * ppBucket = m_Buckets; ppBucket < pEndBucket; ++ppBucket ) {
                     item_type pBucket = *ppBucket;
                     if ( pBucket ) {
-                        if ( !ret.first )
-                            ret.first = pBucket;
-                        else
+                        if ( ret.first )
                             pTail->m_pNextFree.store( pBucket, atomics::memory_order_relaxed );
+                        else
+                            ret.first = pBucket;
 
                         pTail = pBucket;
                         for (;;) {
@@ -139,11 +166,13 @@ namespace cds { namespace gc { namespace dhp {
                             pTail->m_ptr.free();
                             pTail->m_pNext.store( nullptr, atomics::memory_order_relaxed );
 
+                            /*
                             while ( pTail->m_pNextFree.load( atomics::memory_order_relaxed )) {
                                 pTail = pTail->m_pNextFree.load( atomics::memory_order_relaxed );
                                 pTail->m_ptr.free();
                                 pTail->m_pNext.store( nullptr, atomics::memory_order_relaxed );
                             }
+                            */
 
                             if ( pNext ) {
                                 pTail->m_pNextFree.store( pNext, atomics::memory_order_relaxed );
@@ -215,8 +244,9 @@ namespace cds { namespace gc { namespace dhp {
 
             // Liberate cycle
 
-            details::retired_ptr_node * pBusyFirst = nullptr;
-            details::retired_ptr_node * pBusyLast = nullptr;
+            details::retired_ptr_node dummy;
+            dummy.m_pNext.store( nullptr, atomics::memory_order_relaxed );
+            details::retired_ptr_node * pBusyLast = &dummy;
             size_t nBusyCount = 0;
 
             for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
@@ -225,31 +255,21 @@ namespace cds { namespace gc { namespace dhp {
                 details::guard_data::guarded_ptr valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);
 
                 if ( valGuarded ) {
-                    details::retired_ptr_node * pRetired = set.erase( valGuarded );
-                    if ( pRetired ) {
+                    auto retired = set.erase( valGuarded );
+                    if ( retired.head ) {
                         // Retired pointer is being guarded
-                        // pRetired is the head of retired pointers list for which the m_ptr.m_p field is equal
-                        // List is linked on m_pNextFree field
+                        // [retired.head, retired.tail] is the list linked by m_pNext field
 
-                        if ( pBusyLast )
-                            pBusyLast->m_pNext.store( pRetired, atomics::memory_order_relaxed );
-                        else
-                            pBusyFirst = pRetired;
-                        pBusyLast = pRetired;
-                        ++nBusyCount;
-                        details::retired_ptr_node * p = pBusyLast->m_pNextFree.load(atomics::memory_order_relaxed);
-                        while ( p != nullptr ) {
-                            pBusyLast->m_pNext.store( p, atomics::memory_order_relaxed );
-                            pBusyLast = p;
-                            ++nBusyCount;
-                        }
+                        pBusyLast->m_pNext.store( retired.head, atomics::memory_order_relaxed );
+                        pBusyLast = retired.tail;
+                        nBusyCount += retired.size;
                     }
                 }
             }
 
-            // Place [pBusyList, pBusyLast] back to m_RetiredBuffer
-            if ( pBusyFirst )
-                m_RetiredBuffer.push_list( pBusyFirst, pBusyLast, nBusyCount );
+            // Place [dummy.m_pNext, pBusyLast] back to m_RetiredBuffer
+            if ( nBusyCount )
+                m_RetiredBuffer.push_list( dummy.m_pNext.load(atomics::memory_order_relaxed), pBusyLast, nBusyCount );
 
             // Free all retired pointers
             details::liberate_set::list_range range = set.free_all();

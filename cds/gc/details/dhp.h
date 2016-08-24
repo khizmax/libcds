@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_DETAILS_DHP_H
@@ -117,13 +117,23 @@ namespace cds { namespace gc {
                 {
                     return pPost.load( atomics::memory_order_acquire ) == nullptr;
                 }
+
+                guarded_ptr get( atomics::memory_order order = atomics::memory_order_acquire )
+                {
+                    return pPost.load( order );
+                }
+
+                void set( guarded_ptr p, atomics::memory_order order = atomics::memory_order_release )
+                {
+                    pPost.store( p, order );
+                }
             };
 
             /// Guard allocator
             template <class Alloc = CDS_DEFAULT_ALLOCATOR>
             class guard_allocator
             {
-                cds::details::Allocator<details::guard_data>  m_GuardAllocator    ;   ///< guard allocator
+                cds::details::Allocator<details::guard_data>  m_GuardAllocator;   ///< guard allocator
 
                 atomics::atomic<guard_data *>  m_GuardList;     ///< Head of allocated guard list (linked by guard_data::pGlobalNext field)
                 atomics::atomic<guard_data *>  m_FreeGuardList; ///< Head of free guard list (linked by guard_data::pNextFree field)
@@ -174,7 +184,7 @@ namespace cds { namespace gc {
                 }
 
                 /// Allocates a guard from free list or from heap if free list is empty
-                guard_data * alloc()
+                guard_data* alloc()
                 {
                     // Try to pop a guard from free-list
                     details::guard_data * pGuard;
@@ -196,7 +206,7 @@ namespace cds { namespace gc {
                 /**
                     The function places the guard \p pGuard into free-list
                 */
-                void free( guard_data * pGuard ) CDS_NOEXCEPT
+                void free( guard_data* pGuard ) CDS_NOEXCEPT
                 {
                     pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
 
@@ -329,9 +339,7 @@ namespace cds { namespace gc {
                     // Item counter is needed only as a threshold for \p scan() function
                     // So, we may clear the item counter without synchronization with m_pHead
                     res.second = m_nItemCount.exchange( 0, atomics::memory_order_relaxed );
-
                     res.first = m_pHead.exchange( nullptr, atomics::memory_order_acq_rel );
-
                     return res;
                 }
 
@@ -509,207 +517,7 @@ namespace cds { namespace gc {
                     } while ( !m_pEpochFree[nEpoch].compare_exchange_weak( pCurHead, pHead, atomics::memory_order_release, atomics::memory_order_relaxed ));
                 }
             };
-
-            /// Uninitialized guard
-            class guard
-            {
-                friend class dhp::ThreadGC;
-            protected:
-                details::guard_data * m_pGuard ;    ///< Pointer to guard data
-
-            public:
-                /// Initialize empty guard.
-                CDS_CONSTEXPR guard() CDS_NOEXCEPT
-                    : m_pGuard( nullptr )
-                {}
-
-                /// Copy-ctor is disabled
-                guard( guard const& ) = delete;
-
-                /// Move-ctor is disabled
-                guard( guard&& ) = delete;
-
-                /// Object destructor, does nothing
-                ~guard() CDS_NOEXCEPT
-                {}
-
-                /// Get current guarded pointer
-                void * get( atomics::memory_order order = atomics::memory_order_acquire ) const CDS_NOEXCEPT
-                {
-                    assert( m_pGuard != nullptr );
-                    return m_pGuard->pPost.load( order );
-                }
-
-                /// Guards pointer \p p
-                void set( void * p, atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
-                {
-                    assert( m_pGuard != nullptr );
-                    m_pGuard->pPost.store( p, order );
-                }
-
-                /// Clears the guard
-                void clear( atomics::memory_order order = atomics::memory_order_relaxed ) CDS_NOEXCEPT
-                {
-                    assert( m_pGuard != nullptr );
-                    m_pGuard->pPost.store( nullptr, order );
-                }
-
-                /// Guards pointer \p p
-                template <typename T>
-                T * operator =(T * p) CDS_NOEXCEPT
-                {
-                    set( reinterpret_cast<void *>( const_cast<T *>(p) ));
-                    return p;
-                }
-
-                std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
-                {
-                    clear();
-                    return nullptr;
-                }
-
-            public: // for ThreadGC.
-                /*
-                    GCC cannot compile code for template versions of ThreadGC::allocGuard/freeGuard,
-                    the compiler produces error: 'cds::gc::dhp::details::guard_data* cds::gc::dhp::details::guard::m_pGuard' is protected
-                    despite the fact that ThreadGC is declared as friend for guard class.
-                    Therefore, we have to add set_guard/get_guard public functions
-                */
-                /// Set guard data
-                void set_guard( details::guard_data * pGuard ) CDS_NOEXCEPT
-                {
-                    assert( m_pGuard == nullptr );
-                    m_pGuard = pGuard;
-                }
-
-                /// Get current guard data
-                details::guard_data * get_guard() CDS_NOEXCEPT
-                {
-                    return m_pGuard;
-                }
-                /// Get current guard data
-                details::guard_data * get_guard() const CDS_NOEXCEPT
-                {
-                    return m_pGuard;
-                }
-
-                details::guard_data * release_guard() CDS_NOEXCEPT
-                {
-                    details::guard_data * p = m_pGuard;
-                    m_pGuard = nullptr;
-                    return p;
-                }
-
-                bool is_initialized() const
-                {
-                    return m_pGuard != nullptr;
-                }
-            };
-
         } // namespace details
-
-        /// Guard
-        /**
-            This class represents auto guard: ctor allocates a guard from guard pool,
-            dtor returns the guard back to the pool of free guard.
-        */
-        class Guard: public details::guard
-        {
-            typedef details::guard    base_class;
-            friend class ThreadGC;
-        public:
-            /// Allocates a guard from \p gc GC. \p gc must be ThreadGC object of current thread
-            Guard(); // inline in dhp_impl.h
-
-            /// Returns guard allocated back to pool of free guards
-            ~Guard();    // inline in dhp_impl.h
-
-            /// Guards pointer \p p
-            template <typename T>
-            T * operator =(T * p) CDS_NOEXCEPT
-            {
-                return base_class::operator =<T>( p );
-            }
-
-            std::nullptr_t operator=(std::nullptr_t) CDS_NOEXCEPT
-            {
-                return base_class::operator =(nullptr);
-            }
-        };
-
-        /// Array of guards
-        /**
-            This class represents array of auto guards: ctor allocates \p Count guards from guard pool,
-            dtor returns the guards allocated back to the pool.
-        */
-        template <size_t Count>
-        class GuardArray
-        {
-            details::guard      m_arr[Count]    ;    ///< array of guard
-            const static size_t c_nCapacity = Count ;   ///< Array capacity (equal to \p Count template parameter)
-
-        public:
-            /// Rebind array for other size \p OtherCount
-            template <size_t OtherCount>
-            struct rebind {
-                typedef GuardArray<OtherCount>  other   ;   ///< rebinding result
-            };
-
-        public:
-            /// Allocates array of guards from \p gc which must be the ThreadGC object of current thread
-            GuardArray();    // inline in dhp_impl.h
-
-            /// The object is not copy-constructible
-            GuardArray( GuardArray const& ) = delete;
-
-            /// The object is not move-constructible
-            GuardArray( GuardArray&& ) = delete;
-
-            /// Returns guards allocated back to pool
-            ~GuardArray();    // inline in dh_impl.h
-
-            /// Returns the capacity of array
-            CDS_CONSTEXPR size_t capacity() const CDS_NOEXCEPT
-            {
-                return c_nCapacity;
-            }
-
-            /// Returns reference to the guard of index \p nIndex (0 <= \p nIndex < \p Count)
-            details::guard& operator []( size_t nIndex ) CDS_NOEXCEPT
-            {
-                assert( nIndex < capacity() );
-                return m_arr[nIndex];
-            }
-
-            /// Returns reference to the guard of index \p nIndex (0 <= \p nIndex < \p Count) [const version]
-            const details::guard& operator []( size_t nIndex ) const CDS_NOEXCEPT
-            {
-                assert( nIndex < capacity() );
-                return m_arr[nIndex];
-            }
-
-            /// Set the guard \p nIndex. 0 <= \p nIndex < \p Count
-            template <typename T>
-            void set( size_t nIndex, T * p ) CDS_NOEXCEPT
-            {
-                assert( nIndex < capacity() );
-                m_arr[nIndex].set( p );
-            }
-
-            /// Clears (sets to \p nullptr) the guard \p nIndex
-            void clear( size_t nIndex ) CDS_NOEXCEPT
-            {
-                assert( nIndex < capacity() );
-                m_arr[nIndex].clear();
-            }
-
-            /// Clears all guards in the array
-            void clearAll() CDS_NOEXCEPT
-            {
-                for ( size_t i = 0; i < capacity(); ++i )
-                    clear(i);
-            }
-        };
 
         /// Memory manager (Garbage collector)
         class CDS_EXPORT_API GarbageCollector
@@ -845,7 +653,7 @@ namespace cds { namespace gc {
             }
 
             /// Allocates guard list for a thread.
-            details::guard_data * allocGuardList( size_t nCount )
+            details::guard_data* allocGuardList( size_t nCount )
             {
                 return m_GuardPool.allocList( nCount );
             }
@@ -921,9 +729,9 @@ namespace cds { namespace gc {
         */
         class ThreadGC
         {
-            GarbageCollector&   m_gc    ;   ///< reference to GC singleton
-            details::guard_data *    m_pList ;   ///< Local list of guards owned by the thread
-            details::guard_data *    m_pFree ;   ///< The list of free guard from m_pList
+            GarbageCollector&        m_gc;      ///< reference to GC singleton
+            details::guard_data *    m_pList;   ///< Local list of guards owned by the thread
+            details::guard_data *    m_pFree;   ///< The list of free guard from m_pList
 
         public:
             /// Default constructor
@@ -962,72 +770,84 @@ namespace cds { namespace gc {
             }
 
         public:
-            /// Initializes guard \p g
-            void allocGuard( dhp::details::guard& g )
+            /// Allocates new guard
+            dhp::details::guard_data* allocGuard()
             {
                 assert( m_pList != nullptr );
-                if ( !g.m_pGuard ) {
-                    if ( m_pFree ) {
-                        g.m_pGuard = m_pFree;
-                        m_pFree = m_pFree->pNextFree.load( atomics::memory_order_relaxed );
-                    }
-                    else {
-                        g.m_pGuard = m_gc.allocGuard();
-                        g.m_pGuard->pThreadNext = m_pList;
-                        m_pList = g.m_pGuard;
-                    }
+
+                dhp::details::guard_data* ret;
+                if ( cds_likely( m_pFree )) {
+                    ret = m_pFree;
+                    m_pFree = m_pFree->pNextFree.load( atomics::memory_order_relaxed );
                 }
+                else {
+                    ret = m_gc.allocGuard();
+                    ret->pThreadNext = m_pList;
+                    m_pList = ret;
+                }
+                return ret;
             }
 
             /// Frees guard \p g
-            void freeGuard( dhp::details::guard& g )
+            void freeGuard( dhp::details::guard_data* g )
             {
                 assert( m_pList != nullptr );
-                if ( g.m_pGuard ) {
-                    g.m_pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
-                    g.m_pGuard->pNextFree.store( m_pFree, atomics::memory_order_relaxed );
-                    m_pFree = g.m_pGuard;
-                    g.m_pGuard = nullptr;
+                if ( cds_likely( g )) {
+                    g->pPost.store( nullptr, atomics::memory_order_relaxed );
+                    g->pNextFree.store( m_pFree, atomics::memory_order_relaxed );
+                    m_pFree = g;
                 }
             }
 
+            /// Guard array
+            template <size_t Count>
+            using guard_array = dhp::details::guard_data* [Count];
+
             /// Initializes guard array \p arr
             template <size_t Count>
-            void allocGuard( GuardArray<Count>& arr )
+            void allocGuard( guard_array<Count>& arr )
             {
                 assert( m_pList != nullptr );
                 size_t nCount = 0;
 
                 while ( m_pFree && nCount < Count ) {
-                    arr[nCount].set_guard( m_pFree );
+                    arr[nCount] = m_pFree;
                     m_pFree = m_pFree->pNextFree.load(atomics::memory_order_relaxed);
                     ++nCount;
                 }
 
                 while ( nCount < Count ) {
-                    details::guard& g = arr[nCount++];
-                    g.set_guard( m_gc.allocGuard() );
-                    g.get_guard()->pThreadNext = m_pList;
-                    m_pList = g.get_guard();
+                    dhp::details::guard_data*& g = arr[nCount];
+                    g = m_gc.allocGuard();
+                    g->pThreadNext = m_pList;
+                    m_pList = g;
+                    ++nCount;
                 }
             }
 
             /// Frees guard array \p arr
             template <size_t Count>
-            void freeGuard( GuardArray<Count>& arr )
+            void freeGuard( guard_array<Count>& arr )
             {
                 assert( m_pList != nullptr );
 
-                details::guard_data * pGuard;
-                for ( size_t i = 0; i < Count - 1; ++i ) {
-                    pGuard = arr[i].get_guard();
-                    pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
-                    pGuard->pNextFree.store( arr[i+1].get_guard(), atomics::memory_order_relaxed );
+                details::guard_data* first = nullptr;
+                details::guard_data* last;
+                for ( size_t i = 0; i < Count; ++i ) {
+                    details::guard_data* guard = arr[i];
+                    if ( cds_likely( guard )) {
+                        guard->pPost.store( nullptr, atomics::memory_order_relaxed );
+                        if ( first )
+                            last->pNextFree.store( guard, atomics::memory_order_relaxed );
+                        else
+                            first = guard;
+                        last = guard;
+                    }
                 }
-                pGuard = arr[Count-1].get_guard();
-                pGuard->pPost.store( nullptr, atomics::memory_order_relaxed );
-                pGuard->pNextFree.store( m_pFree, atomics::memory_order_relaxed );
-                m_pFree = arr[0].get_guard();
+                if ( first ) {
+                    last->pNextFree.store( m_pFree, atomics::memory_order_relaxed );
+                    m_pFree = first;
+                }
             }
 
             /// Places retired pointer \p and its deleter \p pFunc into list of retired pointer for deferred reclamation

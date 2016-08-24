@@ -214,6 +214,7 @@ TYPED_TEST_P( MichaelSet, stat )
 
     set_type s( TestFixture::kSize, 4 );
     this->test( s );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
 }
 
 TYPED_TEST_P( MichaelSet, wrapped_stat )
@@ -238,6 +239,7 @@ TYPED_TEST_P( MichaelSet, wrapped_stat )
 
     set_type s( TestFixture::kSize, 4 );
     this->test( s );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
 }
 
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as

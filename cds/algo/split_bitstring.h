@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_ALGO_SPLIT_BITSTRING_H
@@ -44,7 +44,7 @@ namespace cds { namespace algo {
         The splitter stores a const reference to bit-string, not a copy.
         The maximum count of bits that can be cut in a single call is <tt> sizeof(UInt) * 8 </tt>
     */
-    template <typename BitString, typename UInt = size_t >
+    template <typename BitString, typename UInt = typename std::conditional< sizeof(BitString) % sizeof(size_t) == 0, size_t, unsigned >::type >
     class split_bitstring
     {
     public:

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_SPLIT_LIST_SET_H
@@ -638,9 +638,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_( gp.guard(), key );
-            return gp;
+            return extract_( key );
         }
 
         /// Extracts the item using compare functor \p pred
@@ -655,9 +653,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         guarded_ptr extract_with( Q const& key, Less pred )
         {
-            guarded_ptr gp;
-            extract_with_( gp.guard(), key, pred );
-            return gp;
+            return extract_with_( key, pred );
         }
 
         /// Finds the key \p key
@@ -791,9 +787,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            guarded_ptr gp;
-            get_( gp.guard(), key );
-            return gp;
+            return get_( key );
         }
 
         /// Finds \p key and return the item found
@@ -808,9 +802,7 @@ namespace cds { namespace container {
         template <typename Q, typename Less>
         guarded_ptr get_with( Q const& key, Less pred )
         {
-            guarded_ptr gp;
-            get_with_( gp.guard(), key, pred );
-            return gp;
+            return get_with_( key, pred );
         }
 
         /// Clears the set (not atomic)
@@ -847,17 +839,17 @@ namespace cds { namespace container {
         using base_class::get_;
 
         template <typename Q, typename Less>
-        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
+        guarded_ptr extract_with_( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::extract_with_( guard, key, typename maker::template predicate_wrapper<Less>::type());
+            return base_class::extract_with_( key, typename maker::template predicate_wrapper<Less>::type());
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less pred )
+        guarded_ptr get_with_( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::get_with_( guard, key, typename maker::template predicate_wrapper<Less>::type());
+            return base_class::get_with_( key, typename maker::template predicate_wrapper<Less>::type());
         }
 
         //@endcond

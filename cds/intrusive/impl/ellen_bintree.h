@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_IMPL_ELLEN_BINTREE_H
@@ -601,9 +601,7 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract_min()
         {
-            guarded_ptr gp;
-            extract_min_( gp.guard() );
-            return gp;
+            return extract_min_();
         }
 
         /// Extracts an item with maximal key from the tree
@@ -622,9 +620,7 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract_max()
         {
-            guarded_ptr gp;
-            extract_max_( gp.guard());
-            return gp;
+            return extract_max_();
         }
 
         /// Extracts an item from the tree
@@ -640,9 +636,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            guarded_ptr gp;
-            extract_( gp.guard(), key );
-            return gp;
+            return extract_( key );
         }
 
         /// Extracts an item from the tree using \p pred for searching
@@ -656,9 +650,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr extract_with( Q const& key, Less pred )
         {
-            guarded_ptr gp;
-            extract_with_( gp.guard(), key, pred );
-            return gp;
+            return extract_with_( key, pred );
         }
 
         /// Checks whether the set contains \p key
@@ -785,9 +777,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key ) const
         {
-            guarded_ptr gp;
-            get_( gp.guard(), key );
-            return gp;
+            return get_( key );
         }
 
         /// Finds \p key with predicate \p pred and returns the item found
@@ -801,9 +791,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr get_with( Q const& key, Less pred ) const
         {
-            guarded_ptr gp;
-            get_with_( gp.guard(), key, pred );
-            return gp;
+            return get_with_( key, pred );
         }
 
         /// Checks if the tree is empty
@@ -1359,16 +1347,62 @@ namespace cds { namespace intrusive {
             return true;
         }
 
-        template <typename Q>
-        bool extract_( typename guarded_ptr::native_guard& guard, Q const& key )
+        template <typename Q, typename Compare>
+        guarded_ptr extract_item( Q const& key, Compare cmp )
         {
-            return erase_( key, node_compare(),
-                []( Q const&, leaf_node const& ) -> bool { return true; },
-                [&guard]( value_type& found ) { guard.set( &found ); } );
+            update_desc * pOp = nullptr;
+            search_result res;
+            back_off bkoff;
+
+            for ( ;; ) {
+                if ( !search( res, key, cmp )) {
+                    if ( pOp )
+                        retire_update_desc( pOp );
+                    m_Stat.onEraseFailed();
+                    return guarded_ptr();
+                }
+
+                if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
+                    if ( !pOp )
+                        pOp = alloc_update_desc();
+                    if ( check_delete_precondition( res ) ) {
+                        typename gc::Guard guard;
+                        guard.assign( pOp );
+
+                        pOp->dInfo.pGrandParent = res.pGrandParent;
+                        pOp->dInfo.pParent = res.pParent;
+                        pOp->dInfo.pLeaf = res.pLeaf;
+                        pOp->dInfo.pUpdateParent = res.updParent.ptr();
+                        pOp->dInfo.bRightParent = res.bRightParent;
+                        pOp->dInfo.bRightLeaf = res.bRightLeaf;
+
+                        update_ptr updGP( res.updGrandParent.ptr() );
+                        if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                            if ( help_delete( pOp ))
+                                break;
+                            pOp = nullptr;
+                        }
+                    }
+                }
+
+                bkoff();
+                m_Stat.onEraseRetry();
+            }
+
+            --m_ItemCounter;
+            m_Stat.onEraseSuccess();
+            return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
+        }
+
+        template <typename Q>
+        guarded_ptr extract_( Q const& key )
+        {
+            return extract_item( key, node_compare());
         }
 
         template <typename Q, typename Less>
-        bool extract_with_( typename guarded_ptr::native_guard& guard, Q const& key, Less /*pred*/ )
+        guarded_ptr extract_with_( Q const& key, Less /*pred*/ )
         {
             typedef ellen_bintree::details::compare<
                 key_type,
@@ -1377,12 +1411,10 @@ namespace cds { namespace intrusive {
                 node_traits
             > compare_functor;
 
-            return erase_( key, compare_functor(),
-                []( Q const&, leaf_node const& ) -> bool { return true; },
-                [&guard]( value_type& found ) { guard.set( &found ); } );
+            return extract_item( key, compare_functor());
         }
 
-        bool extract_max_( typename guarded_ptr::native_guard& gp )
+        guarded_ptr extract_max_()
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1394,7 +1426,7 @@ namespace cds { namespace intrusive {
                     if ( pOp )
                         retire_update_desc( pOp );
                     m_Stat.onExtractMaxFailed();
-                    return false;
+                    return guarded_ptr();
                 }
 
                 if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
@@ -1428,11 +1460,10 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMaxSuccess();
-            gp.set( node_traits::to_value_ptr( res.pLeaf ));
-            return true;
+            return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
         }
 
-        bool extract_min_( typename guarded_ptr::native_guard& gp )
+        guarded_ptr extract_min_()
         {
             update_desc * pOp = nullptr;
             search_result res;
@@ -1444,7 +1475,7 @@ namespace cds { namespace intrusive {
                     if ( pOp )
                         retire_update_desc( pOp );
                     m_Stat.onExtractMinFailed();
-                    return false;
+                    return guarded_ptr();
                 }
 
                 if ( res.updGrandParent.bits() == update_desc::Clean && res.updParent.bits() == update_desc::Clean ) {
@@ -1478,8 +1509,7 @@ namespace cds { namespace intrusive {
 
             --m_ItemCounter;
             m_Stat.onExtractMinSuccess();
-            gp.set( node_traits::to_value_ptr( res.pLeaf ));
-            return true;
+            return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
         }
 
         template <typename Q, typename Func>
@@ -1522,15 +1552,39 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool get_( typename guarded_ptr::native_guard& guard, Q const& val ) const
+        guarded_ptr get_( Q const& val ) const
         {
-            return find_( val, [&guard]( value_type& found, Q const& ) { guard.set( &found ); } );
+            search_result    res;
+            if ( search( res, val, node_compare() ) ) {
+                assert( res.pLeaf );
+                m_Stat.onFindSuccess();
+                return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
+            }
+
+            m_Stat.onFindFailed();
+            return guarded_ptr();
         }
 
         template <typename Q, typename Less>
-        bool get_with_( typename guarded_ptr::native_guard& guard, Q const& val, Less pred ) const
+        guarded_ptr get_with_( Q const& val, Less pred ) const
         {
-            return find_with_( val, pred, [&guard]( value_type& found, Q const& ) { guard.set( &found ); } );
+            typedef ellen_bintree::details::compare<
+                key_type,
+                value_type,
+                opt::details::make_comparator_from_less<Less>,
+                node_traits
+            > compare_functor;
+
+            search_result    res;
+            if ( search( res, val, compare_functor() ) ) {
+                assert( res.pLeaf );
+                m_Stat.onFindSuccess();
+                return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
+            }
+
+            m_Stat.onFindFailed();
+            return guarded_ptr();
+
         }
 
         //@endcond

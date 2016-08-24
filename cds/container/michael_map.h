@@ -32,6 +32,7 @@
 #define CDSLIB_CONTAINER_MICHAEL_MAP_H
 
 #include <cds/container/details/michael_map_base.h>
+#include <cds/container/details/iterable_list_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {
@@ -52,10 +53,10 @@ namespace cds { namespace container {
         - \p GC - Garbage collector used. You may use any \ref cds_garbage_collector "Garbage collector"
             from the \p libcds library.
             Note the \p GC must be the same as the GC used for \p OrderedList
-        - \p OrderedList - ordered key-value list implementation used as bucket for hash map, for example, \p MichaelKVList
-            or \p LazyKVList. The ordered list implementation specifies the \p Key and \p Value types stored in the hash-map,
-            the reclamation schema \p GC used by hash-map, the comparison functor for the type \p Key and other features
-            specific for the ordered list.
+        - \p OrderedList - ordered key-value list implementation used as bucket for hash map, for example, \p MichaelKVList,
+            \p LazyKVList, \p IterableKVList. The ordered list implementation specifies the \p Key and \p Value types
+            stored in the hash-map, the reclamation schema \p GC used by hash-map, the comparison functor for the type \p Key
+            and other features specific for the ordered list.
         - \p Traits - map traits, default is \p michael_map::traits.
             Instead of defining \p Traits struct you may use option-based syntax with \p michael_map::make_traits metafunction.
 
@@ -147,60 +148,64 @@ namespace cds { namespace container {
     class MichaelHashMap
     {
     public:
-        typedef GC          gc;          ///< Garbage collector
-        typedef OrderedList bucket_type; ///< type of ordered list to be used as a bucket
-        typedef Traits      traits;      ///< Map traits
+        typedef GC          gc;             ///< Garbage collector
+        typedef OrderedList ordered_list;   ///< type of ordered list to be used as a bucket
+        typedef Traits      traits;         ///< Map traits
 
-        typedef typename bucket_type::key_type    key_type;    ///< key type
-        typedef typename bucket_type::mapped_type mapped_type; ///< value type
-        typedef typename bucket_type::value_type  value_type;  ///< key/value pair stored in the map
+        typedef typename ordered_list::key_type    key_type;    ///< key type
+        typedef typename ordered_list::mapped_type mapped_type; ///< value type
+        typedef typename ordered_list::value_type  value_type;  ///< key/value pair stored in the map
+        typedef typename traits::allocator         allocator;   ///< Bucket table allocator
 
-        typedef typename bucket_type::key_comparator key_comparator;  ///< key compare functor
+        typedef typename ordered_list::key_comparator key_comparator;  ///< key compare functor
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef typename ordered_list::stat           stat;           ///< Internal statistics
+        /// Guarded pointer - a result of \p get() and \p extract() functions
+        typedef typename ordered_list::guarded_ptr    guarded_ptr;
+#endif
 
         /// Hash functor for \ref key_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
         typedef typename traits::item_counter  item_counter;   ///< Item counter type
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-        typedef typename bucket_type::guarded_ptr  guarded_ptr; ///< Guarded pointer
+        // GC and OrderedList::gc must be the same
+        static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = bucket_type::c_nHazardPtrCount; ///< Count of hazard pointer required
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
+                        "atomicity::empty_item_counter is not allowed as a item counter");
 
-    protected:
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount; ///< Count of hazard pointer required
 
-    private:
         //@cond
-        const size_t    m_nHashBitmask;
+        typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
+
+        typedef typename ordered_list::template rebind_traits<
+            cds::opt::item_counter< cds::atomicity::empty_item_counter >
+            , cds::opt::stat< typename bucket_stat::wrapped_stat >
+        >::type internal_bucket_type;
+
+        typedef typename internal_bucket_type::guarded_ptr guarded_ptr;
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        typedef typename bucket_stat::stat stat;
         //@endcond
 
     protected:
         //@cond
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( Q const& key ) const
-        {
-            return m_HashFunctor( key ) & m_nHashBitmask;
-        }
-
-        /// Returns the bucket (ordered list) for \p key
-        template <typename Q>
-        bucket_type&    bucket( Q const& key )
-        {
-            return m_Buckets[ hash_value( key ) ];
-        }
+        const size_t            m_nHashBitmask;
+        internal_bucket_type*   m_Buckets;     ///< bucket table
+        item_counter            m_ItemCounter; ///< Item counter
+        hash                    m_HashFunctor; ///< Hash functor
+        stat                    m_Stat;        ///< Internal statistics
         //@endcond
 
     protected:
         //@cond
         /// Forward iterator
         template <bool IsConst>
-        class iterator_type: private cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >
+        class iterator_type: private cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >
         {
-            typedef cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >  base_class;
+            typedef cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >  base_class;
             friend class MichaelHashMap;
 
         protected:
@@ -288,38 +293,44 @@ namespace cds { namespace container {
     //@{
         /// Forward iterator
         /**
-            The iteration is unordered.
-            The iterator object is thread-safe: the element pointed by the iterator object is guarded,
-            so, the element cannot be reclaimed while the iterator object is alive.
-            However, passing an iterator object between threads is dangerous.
+            The forward iterator for Michael's map has some features:
+            - it has no post-increment operator
+            - to protect the value, the iterator contains a GC-specific guard + another guard is required locally for increment operator.
+              For some GC (like as \p gc::HP), a guard is a limited resource per thread, so an exception (or assertion) "no free guard"
+              may be thrown if the limit of guard count per thread is exceeded.
+            - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
 
-            @warning Due to concurrent nature of Michael's map it is not guarantee that you can iterate
-            all elements in the map: any concurrent deletion can exclude the element
-            pointed by the iterator from the map, and your iteration can be terminated
-            before end of the map. Therefore, such iteration is more suitable for debugging purpose only.
+            Iterator thread safety depends on type of \p OrderedList:
+            - for \p MichaelKVList and \p LazyKVList: iterator guarantees safety even if you delete the item that iterator points to
+              because that item is guarded by hazard pointer.
+              However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the map.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+              Use this iterator on the concurrent container for debugging purpose only.
+            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
 
-            Remember, each iterator object requires an additional hazard pointer, that may be
-            a limited resource for \p GC like \p gc::HP (for \p gc::DHP the count of
-            guards is unlimited).
-
-            The iterator class supports the following minimalistic interface:
+            The iterator interface:
             \code
-            struct iterator {
-                // Default ctor
+            class iterator {
+            public:
+                // Default constructor
                 iterator();
 
-                // Copy ctor
-                iterator( iterator const& s);
+                // Copy construtor
+                iterator( iterator const& src );
 
+                // Dereference operator
                 value_type * operator ->() const;
+
+                // Dereference operator
                 value_type& operator *() const;
 
-                // Pre-increment
+                // Preincrement operator
                 iterator& operator ++();
 
-                // Copy assignment
+                // Assignment operator
                 iterator& operator = (iterator const& src);
 
+                // Equality operators
                 bool operator ==(iterator const& i ) const;
                 bool operator !=(iterator const& i ) const;
             };
@@ -338,7 +349,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( bucket_begin()->begin(), bucket_begin(), bucket_end() );
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a map
@@ -349,7 +360,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end() );
         }
 
         /// Returns a forward const iterator addressing the first element in a map
@@ -375,18 +386,6 @@ namespace cds { namespace container {
         }
     //@}
 
-    private:
-        //@cond
-        const_iterator get_const_begin() const
-        {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
-        }
-        const_iterator get_const_end() const
-        {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
-        }
-        //@endcond
-
     public:
         /// Initializes the map
         /** @anchor cds_nonintrusive_MichaelHashMap_hp_ctor
@@ -401,23 +400,22 @@ namespace cds { namespace container {
         MichaelHashMap(
             size_t nMaxItemCount,   ///< estimation of max item count in the hash map
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
-        ) : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+            )
+            : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+            , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
         {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
-                           "atomicity::empty_item_counter is not allowed as a item counter");
-
-            m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                construct_bucket<bucket_stat>( it );
         }
 
         /// Clears hash map and destroys it
         ~MichaelHashMap()
         {
             clear();
-            bucket_table_allocator().Delete( m_Buckets, bucket_count() );
+
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                it->~internal_bucket_type();
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
         }
 
         /// Inserts new node with key and default value
@@ -432,9 +430,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K>
-        bool insert( const K& key )
+        bool insert( K&& key )
         {
-            const bool bRet = bucket( key ).insert( key );
+            const bool bRet = bucket( key ).insert( std::forward<K>( key ));
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
@@ -452,9 +450,9 @@ namespace cds { namespace container {
             Returns \p true if \p val is inserted into the map, \p false otherwise.
         */
         template <typename K, typename V>
-        bool insert( K const& key, V const& val )
+        bool insert( K&& key, V&& val )
         {
-            const bool bRet = bucket( key ).insert( key, val );
+            const bool bRet = bucket( key ).insert( std::forward<K>( key ), std::forward<V>( val ));
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
@@ -492,9 +490,9 @@ namespace cds { namespace container {
             synchronization.
         */
         template <typename K, typename Func>
-        bool insert_with( const K& key, Func func )
+        bool insert_with( K&& key, Func func )
         {
-            const bool bRet = bucket( key ).insert_with( key, func );
+            const bool bRet = bucket( key ).insert_with( std::forward<K>( key ), func );
             if ( bRet )
                 ++m_ItemCounter;
             return bRet;
@@ -509,7 +507,9 @@ namespace cds { namespace container {
             (note that in this case the \ref key_type should be constructible from type \p K).
             Otherwise, if \p key is found, the functor \p func is called with item found.
 
-            The functor \p Func signature is:
+            The functor \p func signature depends of \p OrderedList:
+
+            <b>for \p MichaelKVList, \p LazyKVList</b>
             \code
                 struct my_functor {
                     void operator()( bool bNew, value_type& item );
@@ -521,18 +521,30 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \p mapped_type.
 
-            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
+            <b>for \p IterableKVList</b>
+            \code
+                void func( value_type& val, value_type * old );
+            \endcode
+            where
+            - \p val - a new data constructed from \p key
+            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
+
+            The functor may change non-key fields of \p val; however, \p func must guarantee
+            that during changing no any other modifications could be made on this item by concurrent threads.
+
+            @return <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already exists.
 
-            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" and \ref cds_nonintrusive_IterableKVList_gc "IterableKVList" 
+            as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
         */
         template <typename K, typename Func >
-        std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
+        std::pair<bool, bool> update( K&& key, Func func, bool bAllowInsert = true )
         {
-            std::pair<bool, bool> bRet = bucket( key ).update( key, func, bAllowInsert );
+            std::pair<bool, bool> bRet = bucket( key ).update( std::forward<K>( key ), func, bAllowInsert );
             if ( bRet.first && bRet.second )
                 ++m_ItemCounter;
             return bRet;
@@ -548,6 +560,34 @@ namespace cds { namespace container {
             return bRet;
         }
         //@endcond
+
+        /// Inserts or updates the node (only for \p IterableKVList)
+        /**
+            The operation performs inserting or changing data with lock-free manner.
+
+            If the item \p val is not found in the map, then \p val is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the current element is changed to \p val, the old element will be retired later.
+
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+            \p second is \p true if \p val has been added or \p false if the item with that key
+            already in the map.
+        */
+        template <typename Q, typename V>
+#ifdef CDS_DOXYGEN_INVOKED
+        std::pair<bool, bool>
+#else
+        typename std::enable_if< 
+            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
+            std::pair<bool, bool>
+        >::type
+#endif
+        upsert( Q&& key, V&& val, bool bAllowInsert = true )
+        {
+            std::pair<bool, bool> bRet = bucket( val ).upsert( std::forward<Q>( key ), std::forward<V>( val ), bAllowInsert );
+            if ( bRet.second )
+                ++m_ItemCounter;
+            return bRet;
+        }
 
         /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
@@ -845,6 +885,63 @@ namespace cds { namespace container {
         {
             return m_nHashBitmask + 1;
         }
+
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
+    protected:
+        //@cond
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( Q const& key ) const
+        {
+            return m_HashFunctor( key ) & m_nHashBitmask;
+        }
+
+        /// Returns the bucket (ordered list) for \p key
+        template <typename Q>
+        internal_bucket_type& bucket( Q const& key )
+        {
+            return m_Buckets[hash_value( key )];
+        }
+        //@endcond
+
+    private:
+        //@cond
+        internal_bucket_type* bucket_begin() const
+        {
+            return m_Buckets;
+        }
+
+        internal_bucket_type* bucket_end() const
+        {
+            return m_Buckets + bucket_count();
+        }
+
+        const_iterator get_const_begin() const
+        {
+            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end() );
+        }
+        const_iterator get_const_end() const
+        {
+            return const_iterator( (bucket_end() - 1)->cend(), bucket_end() - 1, bucket_end() );
+        }
+
+        template <typename Stat>
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type;
+        }
+
+        template <typename Stat>
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type( m_Stat );
+        }
+        //@endcond
     };
 }}  // namespace cds::container
 

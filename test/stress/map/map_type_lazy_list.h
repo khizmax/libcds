@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_MAP_TYPE_LAZY_LIST_H
@@ -61,6 +61,21 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHB_cmp_stdAlloc;
         typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHT_cmp_stdAlloc;
+#endif
+
+        struct traits_LazyList_cmp_stdAlloc_stat: public traits_LazyList_cmp_stdAlloc
+        {
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_HP_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_DHP_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_NOGC_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPI_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPB_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPT_cmp_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHB_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHT_cmp_stdAlloc_stat;
 #endif
 
         struct traits_LazyList_unord_stdAlloc :
@@ -104,6 +119,7 @@ namespace map {
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHB_cmp_michaelAlloc;
         typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHT_cmp_michaelAlloc;
 #endif
+
         struct traits_LazyList_less_stdAlloc :
             public cc::lazy_list::make_traits<
                 co::less< less >
@@ -118,6 +134,21 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHB_less_stdAlloc;
         typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHT_less_stdAlloc;
+#endif
+
+        struct traits_LazyList_less_stdAlloc_stat: public traits_LazyList_less_stdAlloc
+        {
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_HP_less_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_DHP_less_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_NOGC_less_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPI_less_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPB_less_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPT_less_stdAlloc_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHB_less_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHT_less_stdAlloc_stat;
 #endif
 
         struct traits_LazyList_less_stdAlloc_seqcst :

@@ -131,6 +131,7 @@ namespace cds { namespace container {
 #endif
 
         typedef typename base_class::gc           gc;             ///< Garbage collector used
+        typedef Traits                            traits;         ///< List traits
         typedef typename base_class::back_off     back_off;       ///< Back-off strategy used
         typedef typename maker::allocator_type    allocator_type; ///< Allocator type used for allocate/deallocate the nodes
         typedef typename base_class::item_counter item_counter;   ///< Item counting policy used
@@ -139,6 +140,22 @@ namespace cds { namespace container {
         typedef typename base_class::stat         stat;           ///< Internal statistics
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef MichaelKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
 
     protected:
         //@cond
@@ -386,9 +403,9 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K>
-        bool insert( const K& key )
+        bool insert( K&& key )
         {
-            return insert_at( head(), key );
+            return insert_at( head(), std::forward<K>( key ));
         }
 
         /// Inserts new node with a key and a value
@@ -402,12 +419,12 @@ namespace cds { namespace container {
             Returns \p true if inserting successful, \p false otherwise.
         */
         template <typename K, typename V>
-        bool insert( const K& key, const V& val )
+        bool insert( K&& key, V&& val )
         {
             // We cannot use insert with functor here
             // because we cannot lock inserted node for updating
             // Therefore, we use separate function
-            return insert_at( head(), key, val );
+            return insert_at( head(), std::forward<K>( key ), std::forward<V>( val ));
         }
 
         /// Inserts new node and initialize it by a functor
@@ -439,9 +456,9 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
-        bool insert_with( const K& key, Func func )
+        bool insert_with( K&& key, Func func )
         {
-            return insert_with_at( head(), key, func );
+            return insert_with_at( head(), std::forward<K>( key ), func );
         }
 
         /// Updates data by \p key
@@ -474,9 +491,9 @@ namespace cds { namespace container {
             @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
         */
         template <typename K, typename Func>
-        std::pair<bool, bool> update( K const& key, Func f, bool bAllowInsert = true )
+        std::pair<bool, bool> update( K&& key, Func f, bool bAllowInsert = true )
         {
-            return update_at( head(), key, f, bAllowInsert );
+            return update_at( head(), std::forward<K>( key ), f, bAllowInsert );
         }
         //@cond
         template <typename K, typename Func>
@@ -592,9 +609,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            guarded_ptr gp;
-            extract_at( head(), gp.guard(), key, intrusive_key_comparator() );
-            return gp;
+            return extract_at( head(), key, intrusive_key_comparator() );
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -610,9 +625,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            extract_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
-            return gp;
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks whether the list contains \p key
@@ -723,9 +736,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            guarded_ptr gp;
-            get_at( head(), gp.guard(), key, intrusive_key_comparator() );
-            return gp;
+            return get_at( head(), key, intrusive_key_comparator() );
         }
 
         /// Finds the \p key and return the item found
@@ -741,9 +752,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            guarded_ptr gp;
-            get_at( head(), gp.guard(), key, typename maker::template less_wrapper<Less>::type() );
-            return gp;
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
         }
 
         /// Checks if the list is empty
@@ -791,21 +800,21 @@ namespace cds { namespace container {
         }
 
         template <typename K>
-        bool insert_at( head_type& refHead, const K& key )
+        bool insert_at( head_type& refHead, K&& key )
         {
-            return insert_node_at( refHead, alloc_node( key ));
+            return insert_node_at( refHead, alloc_node( std::forward<K>( key )));
         }
 
         template <typename K, typename V>
-        bool insert_at( head_type& refHead, const K& key, const V& val )
+        bool insert_at( head_type& refHead, K&& key, V&& val )
         {
-            return insert_node_at( refHead, alloc_node( key, val ));
+            return insert_node_at( refHead, alloc_node( std::forward<K>( key ), std::forward<V>( val )));
         }
 
         template <typename K, typename Func>
-        bool insert_with_at( head_type& refHead, const K& key, Func f )
+        bool insert_with_at( head_type& refHead, K&& key, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<K>( key )));
 
             if ( base_class::insert_at( refHead, *pNode, [&f](node_type& node){ f( node.m_Data ); })) {
                 pNode.release();
@@ -821,9 +830,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, const K& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type& refHead, K&& key, Func f, bool bAllowInsert )
         {
-            scoped_node_ptr pNode( alloc_node( key ));
+            scoped_node_ptr pNode( alloc_node( std::forward<K>( key )));
 
             std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode,
                 [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); },
@@ -846,9 +855,9 @@ namespace cds { namespace container {
             return base_class::erase_at( refHead, key, cmp, [&f]( node_type const & node ){ f( const_cast<value_type&>(node.m_Data)); });
         }
         template <typename K, typename Compare>
-        bool extract_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr extract_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::extract_at( refHead, guard, key, cmp );
+            return base_class::extract_at( refHead, key, cmp );
         }
 
         template <typename K, typename Compare>
@@ -864,9 +873,9 @@ namespace cds { namespace container {
         }
 
         template <typename K, typename Compare>
-        bool get_at( head_type& refHead, typename guarded_ptr::native_guard& guard, K const& key, Compare cmp )
+        guarded_ptr get_at( head_type& refHead, K const& key, Compare cmp )
         {
-            return base_class::get_at( refHead, guard, key, cmp );
+            return base_class::get_at( refHead, key, cmp );
         }
 
         //@endcond

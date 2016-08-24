@@ -9,6 +9,8 @@ set(CDSGTEST_MAP_SOURCES
     feldman_hashset_rcu_gpt.cpp
     feldman_hashset_rcu_shb.cpp
     feldman_hashset_rcu_sht.cpp
+    michael_iterable_hp.cpp
+    michael_iterable_dhp.cpp
     michael_lazy_hp.cpp
     michael_lazy_dhp.cpp
     michael_lazy_nogc.cpp

@@ -174,8 +174,8 @@ namespace cds { namespace container {
         };
     };
 
-    template <typename GC, typename T, typename Traits>
-    struct is_iterable_list< IterableKVList<GC, T, Traits >>
+    template <typename GC, typename K, typename V, typename Traits>
+    struct is_iterable_list< IterableKVList<GC, K, V, Traits >>
     {
         enum {
             value = true

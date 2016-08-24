@@ -108,7 +108,9 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::value_type     value_type;       ///< type of value stored in the list
         typedef typename ordered_list::key_comparator key_comparator;   ///< key comparing functor
         typedef typename ordered_list::disposer       disposer;         ///< Node disposer functor
+#ifdef CDS_DOXYGEN_INVOKED
         typedef typename ordered_list::stat           stat;             ///< Internal statistics
+#endif
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -142,13 +144,17 @@ namespace cds { namespace intrusive {
         typedef typename internal_bucket_type::exempt_ptr  exempt_ptr; ///< pointer to extracted node
         typedef typename internal_bucket_type::raw_ptr     raw_ptr;    ///< Return type of \p get() member function and its derivatives
 
+        //@cond
+        typedef typename bucket_stat::stat stat;
+        //@endcond
+
     private:
         //@cond
-        hash                        m_HashFunctor;   ///< Hash functor
-        size_t const                m_nHashBitmask;
-        internal_bucket_type*       m_Buckets;       ///< bucket table
-        item_counter                m_ItemCounter;   ///< Item counter
-        typename bucket_stat::stat  m_Stat;          ///< Internal statistics
+        hash                    m_HashFunctor;   ///< Hash functor
+        size_t const            m_nHashBitmask;
+        internal_bucket_type*   m_Buckets;       ///< bucket table
+        item_counter            m_ItemCounter;   ///< Item counter
+        stat                    m_Stat;          ///< Internal statistics
         //@endcond
 
     public:

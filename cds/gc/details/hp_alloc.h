@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_GC_DETAILS_HP_ALLOC_H
@@ -34,6 +34,7 @@
 #include <cds/algo/atomic.h>
 #include <cds/details/allocator.h>
 #include <cds/gc/details/hp_type.h>
+#include <string.h> // memset
 
 //@cond
 namespace cds {
@@ -52,18 +53,23 @@ namespace cds {
         */
         class hp_guard : protected atomics::atomic < hazard_pointer >
         {
-        public:
-            typedef hazard_pointer   hazard_ptr;    ///< Hazard pointer type
-        private:
-            typedef atomics::atomic<hazard_ptr>  base_class;
-
-        protected:
             template <class Allocator> friend class hp_allocator;
 
         public:
+            typedef hazard_pointer hazard_ptr;///< Hazard pointer type
+
+        private:
+            typedef atomics::atomic<hazard_ptr> atomic_hazard_ptr;
+
+            atomic_hazard_ptr m_hp;
+            hp_guard*         m_next; // next free guard
+
+        public:
             hp_guard() CDS_NOEXCEPT
-                : base_class( nullptr )
+                : m_hp( nullptr )
+                , m_next( nullptr )
             {}
+
             ~hp_guard() CDS_NOEXCEPT
             {}
 
@@ -89,24 +95,15 @@ namespace cds {
             /**
                 Loading has acquire semantics
             */
-            operator hazard_ptr() const CDS_NOEXCEPT
-            {
-                return get();
-            }
-
-            /// Returns current value of hazard pointer
-            /**
-                Loading has acquire semantics
-            */
             hazard_ptr get( atomics::memory_order order = atomics::memory_order_acquire ) const CDS_NOEXCEPT
             {
-                return base_class::load( order );
+                return m_hp.load( order );
             }
 
             template <typename T>
             void set( T * p, atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
             {
-                base_class::store( reinterpret_cast<hazard_ptr>(p), order );
+                m_hp.store( reinterpret_cast<hazard_ptr>(p), order );
             }
 
             /// Clears HP
@@ -116,7 +113,7 @@ namespace cds {
             void clear( atomics::memory_order order = atomics::memory_order_release ) CDS_NOEXCEPT
             {
                 // memory order is not necessary here
-                base_class::store( nullptr, order );
+                m_hp.store( nullptr, order );
             }
         };
 
@@ -137,24 +134,22 @@ namespace cds {
 
             Template parameter:
                 \li Count - capacity of array
-
         */
         template <size_t Count>
         class hp_array
         {
-        public:
-            typedef hazard_pointer  hazard_ptr_type;   ///< Hazard pointer type
-            typedef hp_guard        atomic_hazard_ptr; ///< Element type of the array
-            static CDS_CONSTEXPR const size_t c_nCapacity = Count ;   ///< Capacity of the array
-
-        private:
-            atomic_hazard_ptr *     m_arr               ;   ///< Hazard pointer array of size = \p Count
             template <class Allocator> friend class hp_allocator;
+
+        public:
+            typedef hazard_pointer  hazard_ptr;   ///< Hazard pointer type
+            static CDS_CONSTEXPR const size_t c_nCapacity = Count ;   ///< Capacity of the array
 
         public:
             /// Constructs uninitialized array.
             hp_array() CDS_NOEXCEPT
-            {}
+            {
+                memset( m_arr, 0, sizeof( m_arr ));
+            }
 
             /// Destructs object
             ~hp_array() CDS_NOEXCEPT
@@ -167,32 +162,49 @@ namespace cds {
             }
 
             /// Set hazard pointer \p nIndex. 0 <= \p nIndex < \p Count
-            void set( size_t nIndex, hazard_ptr_type hzPtr ) CDS_NOEXCEPT
+            void set( size_t nIndex, hazard_ptr hptr ) CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
-                m_arr[nIndex] = hzPtr;
+                assert( nIndex < capacity());
+                assert( m_arr[nIndex] != nullptr );
+
+                *m_arr[nIndex] = hptr;
             }
 
-            /// Returns reference to hazard pointer of index \p nIndex (0 <= \p nIndex < \p Count)
-            atomic_hazard_ptr& operator []( size_t nIndex ) CDS_NOEXCEPT
+            /// Returns pointer to hazard pointer of index \p nIndex (0 <= \p nIndex < \p Count)
+            hp_guard* operator []( size_t nIndex ) CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return m_arr[nIndex];
             }
 
-            /// Returns reference to hazard pointer of index \p nIndex (0 <= \p nIndex < \p Count) [const version]
-            atomic_hazard_ptr& operator []( size_t nIndex ) const CDS_NOEXCEPT
+            /// Returns pointer to hazard pointer of index \p nIndex (0 <= \p nIndex < \p Count) [const version]
+            hp_guard* operator []( size_t nIndex ) const CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return m_arr[nIndex];
             }
 
             /// Clears (sets to \p nullptr) hazard pointer \p nIndex
             void clear( size_t nIndex ) CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
-                m_arr[ nIndex ].clear();
+                assert( nIndex < capacity());
+                assert( m_arr[nIndex] != nullptr );
+
+                m_arr[ nIndex ]->clear();
             }
+
+            hp_guard* release( size_t nIndex ) CDS_NOEXCEPT
+            {
+                assert( nIndex < capacity() );
+
+                hp_guard* p = m_arr[ nIndex ];
+                m_arr[ nIndex ] = nullptr;
+                return p;
+            }
+
+
+        private:
+            hp_guard* m_arr[c_nCapacity]; ///< Hazard pointer array of size = \p Count
         };
 
         /// Allocator of hazard pointers for the thread
@@ -212,26 +224,26 @@ namespace cds {
         class hp_allocator
         {
         public:
-            typedef hazard_pointer  hazard_ptr_type;    ///< type of hazard pointer
-            typedef hp_guard        atomic_hazard_ptr;  ///< Atomic hazard pointer type
-            typedef Allocator       allocator_type;     ///< allocator type
+            typedef hazard_pointer  hazard_ptr;     ///< type of hazard pointer
+            typedef Allocator       allocator_type; ///< allocator type
 
         private:
-            typedef cds::details::Allocator< atomic_hazard_ptr, allocator_type > allocator_impl;
+            typedef cds::details::Allocator< hp_guard, allocator_type > allocator_impl;
 
-            atomic_hazard_ptr * m_arrHazardPtr  ;   ///< Array of hazard pointers
-            size_t              m_nTop          ;   ///< The top of stack
-            const size_t        m_nCapacity     ;   ///< Array capacity
+            hp_guard*    m_arrHazardPtr; ///< Array of hazard pointers
+            hp_guard*    m_FreeListHead; ///< List of free hp guards
+            size_t const m_nCapacity;    ///< Array capacity
 
         public:
             /// Default ctor
             explicit hp_allocator(
-                size_t  nCapacity            ///< max count of hazard pointer per thread
-                )
-                : m_arrHazardPtr( alloc_array( nCapacity ) )
-                , m_nCapacity( nCapacity )
+                size_t  nCapacity ///< max count of hazard pointer per thread
+            )
+            : m_arrHazardPtr( alloc_array( nCapacity ))
+            , m_FreeListHead( m_arrHazardPtr )
+            , m_nCapacity( nCapacity )
             {
-                make_free();
+                build_free_list();
             }
 
             /// Dtor
@@ -253,38 +265,52 @@ namespace cds {
             }
 
             /// Checks if all items are allocated
-            bool isFull() const CDS_NOEXCEPT
+            bool full() const CDS_NOEXCEPT
             {
-                return m_nTop == 0;
+                return m_FreeListHead == nullptr;
             }
 
             /// Allocates hazard pointer
-            atomic_hazard_ptr& alloc()
+            hp_guard* alloc()
             {
-                assert( m_nTop > 0 );
-                --m_nTop;
-                return m_arrHazardPtr[m_nTop];
+                assert( !full());
+
+                hp_guard* p = m_FreeListHead;
+                m_FreeListHead = m_FreeListHead->m_next;
+                return p;
             }
 
             /// Frees previously allocated hazard pointer
-            void free( atomic_hazard_ptr& hp ) CDS_NOEXCEPT
+            void free( hp_guard* hp ) CDS_NOEXCEPT
             {
-                assert( m_nTop < capacity() );
-                hp.clear();
-                ++m_nTop;
+                if ( hp ) {
+                    hp->clear();
+                    hp->m_next = m_FreeListHead;
+                    m_FreeListHead = hp;
+                }
             }
 
             /// Allocates hazard pointers array
             /**
                 Allocates \p Count hazard pointers from array \p m_arrHazardPtr
-                Returns initialized object \p arr
+                Initializes \p arr with hazard pointers.
+
+                @return actual size of allocated array.
             */
             template <size_t Count>
-            void alloc( hp_array<Count>& arr )
+            size_t alloc( hp_array<Count>& arr )
             {
-                assert( m_nTop >= Count );
-                m_nTop -= Count;
-                arr.m_arr = m_arrHazardPtr + m_nTop;
+                size_t i;
+                hp_guard* p = m_FreeListHead;
+                for ( i = 0; i < Count && p; ++i ) {
+                    arr.m_arr[i] = p;
+                    p = p->m_next;
+                }
+                size_t ret = i;
+                for ( ; i < Count; ++i )
+                    arr.m_arr[i] = nullptr;
+                m_FreeListHead = p;
+                return ret;
             }
 
             /// Frees hazard pointer array
@@ -294,38 +320,49 @@ namespace cds {
             template <size_t Count>
             void free( hp_array<Count> const& arr ) CDS_NOEXCEPT
             {
-                CDS_UNUSED( arr );
-
-                assert( m_nTop + Count <= capacity());
-                for ( size_t i = m_nTop; i < m_nTop + Count; ++i )
-                    m_arrHazardPtr[i].clear();
-                m_nTop += Count;
+                hp_guard* pList = m_FreeListHead;
+                for ( size_t i = 0; i < Count; ++i ) {
+                    hp_guard* p = arr[i];
+                    if ( p ) {
+                        p->clear();
+                        p->m_next = pList;
+                        pList = p;
+                    }
+                }
+                m_FreeListHead = pList;
             }
 
             /// Makes all HP free
             void clear() CDS_NOEXCEPT
             {
-                make_free();
+                for ( size_t i = 0; i < capacity(); ++i )
+                    m_arrHazardPtr[i].clear();
             }
 
-            /// Returns to i-th hazard pointer
-            atomic_hazard_ptr& operator []( size_t i ) CDS_NOEXCEPT
+            /// Returns i-th hazard pointer
+            hp_guard& operator []( size_t i ) CDS_NOEXCEPT
             {
                 assert( i < capacity() );
                 return m_arrHazardPtr[i];
             }
 
         private:
-            void make_free() CDS_NOEXCEPT
-            {
-                for ( size_t i = 0; i < capacity(); ++i )
-                    m_arrHazardPtr[i].clear();
-                m_nTop = capacity();
-            }
-
-            atomic_hazard_ptr * alloc_array( size_t nCapacity )
+            hp_guard* alloc_array( size_t nCapacity )
             {
                 return allocator_impl().NewArray( nCapacity );
+            }
+
+            void build_free_list()
+            {
+                hp_guard* first = m_arrHazardPtr;
+                hp_guard* last = m_arrHazardPtr + capacity();
+                hp_guard* prev = first;
+                for ( ++first; first < last; ++first ) {
+                    prev->m_next = first;
+                    prev = first;
+                }
+                prev->m_next = nullptr;
+                m_FreeListHead = m_arrHazardPtr;
             }
         };
 

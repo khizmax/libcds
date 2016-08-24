@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_IMPL_FELDMAN_HASHSET_H
@@ -782,16 +782,10 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr extract( hash_type const& hash )
         {
-            guarded_ptr gp;
-            {
-                typename gc::Guard guard;
-                value_type * p = do_erase( hash, guard, []( value_type const&) -> bool {return true;} );
-
-                // p is guarded by HP
-                if ( p )
-                    gp.reset( p );
-            }
-            return gp;
+            typename gc::Guard guard;
+            if ( do_erase( hash, guard, []( value_type const&) -> bool {return true;} ))
+                return guarded_ptr( std::move( guard ));
+            return guarded_ptr();
         }
 
         /// Finds an item by it's \p hash
@@ -861,12 +855,10 @@ namespace cds { namespace intrusive {
         */
         guarded_ptr get( hash_type const& hash )
         {
-            guarded_ptr gp;
-            {
-                typename gc::Guard guard;
-                gp.reset( search( hash, guard ));
-            }
-            return gp;
+            typename gc::Guard guard;
+            if ( search( hash, guard ))
+                return guarded_ptr( std::move( guard ));
+            return guarded_ptr();
         }
 
         /// Clears the set (non-atomic)
