@@ -174,7 +174,9 @@ namespace cds { namespace container {
 
         typedef typename ordered_list::value_type     value_type;     ///< type of value to be stored in the list
         typedef typename ordered_list::key_comparator key_comparator; ///< key comparison functor
+#ifdef CDS_DOXYGEN_INVOKED
         typedef typename ordered_list::stat           stat;           ///< Internal statistics
+#endif
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -190,30 +192,22 @@ namespace cds { namespace container {
         static_assert( !std::is_same<item_counter, atomicity::empty_item_counter>::value,
                         "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Wrapped internal statistics for \p ordered_list
-        typedef implementatin_specific bucket_stat;
-#else
+        //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
-#endif
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Internal bucket type - rebind \p ordered_list with empty item counter and wrapped internal statistics
-        typedef modified_ordered_list internal_bucket_type;
-#else
         typedef typename ordered_list::template rebind_traits<
             cds::opt::item_counter< cds::atomicity::empty_item_counter >
             , cds::opt::stat< typename bucket_stat::wrapped_stat >
         >::type internal_bucket_type;
-#endif
+
+        /// Bucket table allocator
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+
+        typedef typename bucket_stat::stat stat;
+        //@endcond
 
         /// Guarded pointer - a result of \p get() and \p extract() functions
         typedef typename internal_bucket_type::guarded_ptr guarded_ptr;
-
-        //@cond
-        /// Bucket table allocator
-        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
-        //@endcond
 
     protected:
         //@cond
@@ -221,7 +215,7 @@ namespace cds { namespace container {
         internal_bucket_type * m_Buckets;     ///< bucket table
         item_counter           m_ItemCounter; ///< Item counter
         hash                   m_HashFunctor; ///< Hash functor
-        typename bucket_stat::stat  m_Stat;   ///< Internal statistics
+        stat                   m_Stat;        ///< Internal statistics
         //@endcond
 
     public:

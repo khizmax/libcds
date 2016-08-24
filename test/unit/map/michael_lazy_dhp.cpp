@@ -192,6 +192,7 @@ namespace {
 
         map_type m( kSize, 2 );
         test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( MichaelLazyMap_DHP, wrapped_stat )
@@ -212,6 +213,7 @@ namespace {
 
         map_type m( kSize, 2 );
         test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

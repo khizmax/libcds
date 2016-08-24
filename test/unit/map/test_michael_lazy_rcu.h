@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CDSUNIT_MAP_TEST_MICHAEL_LAZY_RCU_H
 #define CDSUNIT_MAP_TEST_MICHAEL_LAZY_RCU_H
@@ -201,11 +201,63 @@ namespace {
         this->test( m );
     }
 
+    TYPED_TEST_P( MichaelLazyMap, stat )
+    {
+        typedef typename TestFixture::rcu_type rcu_type;
+        typedef typename TestFixture::key_type key_type;
+        typedef typename TestFixture::value_type value_type;
+
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef typename TestFixture::less less;
+            typedef cds::backoff::pause back_off;
+            typedef cc::lazy_list::stat<> stat;
+        };
+        typedef cc::LazyKVList< rcu_type, key_type, value_type, list_traits > list_type;
+
+        struct set_traits: public cc::michael_map::traits
+        {
+            typedef typename TestFixture::hash1 hash;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cc::MichaelHashMap< rcu_type, list_type, set_traits >map_type;
+
+        map_type m( TestFixture::kSize, 4 );
+        this->test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
+    }
+
+    TYPED_TEST_P( MichaelLazyMap, wrapped_stat )
+    {
+        typedef typename TestFixture::rcu_type rcu_type;
+        typedef typename TestFixture::key_type key_type;
+        typedef typename TestFixture::value_type value_type;
+
+        struct list_traits: public cc::lazy_list::traits
+        {
+            typedef typename TestFixture::less less;
+            typedef cds::backoff::pause back_off;
+            typedef cc::lazy_list::wrapped_stat<> stat;
+        };
+        typedef cc::LazyKVList< rcu_type, key_type, value_type, list_traits > list_type;
+
+        struct set_traits: public cc::michael_map::traits
+        {
+            typedef typename TestFixture::hash1 hash;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cc::MichaelHashMap< rcu_type, list_type, set_traits >map_type;
+
+        map_type m( TestFixture::kSize, 4 );
+        this->test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
+    }
+
 
     // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
     // "No test named <test_name> can be found in this test case"
     REGISTER_TYPED_TEST_CASE_P( MichaelLazyMap,
-        compare, less, cmpmix, backoff, seq_cst, mutex
+        compare, less, cmpmix, backoff, seq_cst, mutex, stat, wrapped_stat
     );
 } // namespace
 

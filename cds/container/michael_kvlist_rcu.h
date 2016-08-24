@@ -144,6 +144,22 @@ namespace cds { namespace container {
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
         static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef MichaelKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::value_type     node_type;
@@ -152,6 +168,14 @@ namespace cds { namespace container {
         typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr head_type;
+
+        struct node_disposer {
+            void operator()( node_type * pNode )
+            {
+                free_node( pNode );
+            }
+        };
+        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
         //@endcond
 
     public:
@@ -185,49 +209,6 @@ namespace cds { namespace container {
         /// Result of \p get(), \p get_with() functions - pointer to the node found
         typedef cds::urcu::raw_ptr_adaptor< value_type, typename base_class::raw_ptr, raw_ptr_converter > raw_ptr;
 
-    protected:
-        //@cond
-        template <typename K>
-        static node_type * alloc_node(const K& key)
-        {
-            return cxx_allocator().New( key );
-        }
-
-        template <typename K, typename V>
-        static node_type * alloc_node( const K& key, const V& val )
-        {
-            return cxx_allocator().New( key, val );
-        }
-
-        template <typename K, typename... Args>
-        static node_type * alloc_node( K&& key, Args&&... args )
-        {
-            return cxx_allocator().MoveNew( std::forward<K>(key), std::forward<Args>(args)...);
-        }
-
-        static void free_node( node_type * pNode )
-        {
-            cxx_allocator().Delete( pNode );
-        }
-
-        struct node_disposer {
-            void operator()( node_type * pNode )
-            {
-                free_node( pNode );
-            }
-        };
-        typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
-
-        head_type& head()
-        {
-            return base_class::m_pHead;
-        }
-
-        head_type& head() const
-        {
-            return const_cast<head_type&>( base_class::m_pHead );
-        }
-        //@endcond
 
     protected:
         //@cond
@@ -933,6 +914,38 @@ namespace cds { namespace container {
             return raw_ptr( base_class::get_at( refHead, val, cmp ));
         }
 
+        template <typename K>
+        static node_type * alloc_node( const K& key )
+        {
+            return cxx_allocator().New( key );
+        }
+
+        template <typename K, typename V>
+        static node_type * alloc_node( const K& key, const V& val )
+        {
+            return cxx_allocator().New( key, val );
+        }
+
+        template <typename K, typename... Args>
+        static node_type * alloc_node( K&& key, Args&&... args )
+        {
+            return cxx_allocator().MoveNew( std::forward<K>( key ), std::forward<Args>( args )... );
+        }
+
+        static void free_node( node_type * pNode )
+        {
+            cxx_allocator().Delete( pNode );
+        }
+
+        head_type& head()
+        {
+            return base_class::m_pHead;
+        }
+
+        head_type& head() const
+        {
+            return const_cast<head_type&>(base_class::m_pHead);
+        }
         //@endcond
     };
 

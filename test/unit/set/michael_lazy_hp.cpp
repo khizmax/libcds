@@ -214,6 +214,7 @@ namespace {
 
         set_type s( kSize, 4 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( MichaelLazySet_HP, wrapped_stat )
@@ -235,6 +236,7 @@ namespace {
 
         set_type s( kSize, 4 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

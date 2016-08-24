@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_MICHAEL_SET_NOGC_H
@@ -64,7 +64,9 @@ namespace cds { namespace container {
 
         typedef typename ordered_list::value_type     value_type;     ///< type of value stored in the list
         typedef typename ordered_list::key_comparator key_comparator; ///< key comparison functor
+#ifdef CDS_DOXYGEN_INVOKED
         typedef typename ordered_list::stat           stat;           ///< Internal statistics
+#endif
 
         /// Hash functor for \ref value_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -105,13 +107,18 @@ namespace cds { namespace container {
         typedef typename internal_bucket_type::const_iterator  bucket_const_iterator;
         //@endcond
 
+    public:
+        //@cond
+        typedef typename bucket_stat::stat stat;
+        //@endcond
+
     protected:
         //@cond
         const size_t    m_nHashBitmask;
         item_counter    m_ItemCounter;      ///< Item counter
         hash            m_HashFunctor;      ///< Hash functor
         internal_bucket_type*   m_Buckets;  ///< bucket table
-        typename bucket_stat::stat  m_Stat; ///< Internal statistics
+        stat            m_Stat; ///< Internal statistics
         //@endcond
 
     public:

@@ -171,8 +171,9 @@ namespace {
         };
         typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
 
-        map_type s( kSize, 8 );
-        test( s );
+        map_type m( kSize, 8 );
+        test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( MichaelIterableMap_HP, wrapped_stat )
@@ -190,8 +191,9 @@ namespace {
         };
         typedef cc::MichaelHashMap< gc_type, list_type, map_traits > map_type;
 
-        map_type s( kSize, 8 );
-        test( s );
+        map_type m( kSize, 8 );
+        test( m );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_MICHAEL_MAP_RCU_H
@@ -83,66 +83,72 @@ namespace cds { namespace container {
     {
     public:
         typedef cds::urcu::gc< RCU > gc;   ///< RCU used as garbage collector
-        typedef OrderedList bucket_type;   ///< type of ordered list used as a bucket implementation
+        typedef OrderedList ordered_list;   ///< type of ordered list used as a bucket implementation
         typedef Traits      traits;        ///< Map traits
 
-        typedef typename bucket_type::key_type          key_type        ;   ///< key type
-        typedef typename bucket_type::mapped_type       mapped_type     ;   ///< value type
-        typedef typename bucket_type::value_type        value_type      ;   ///< key/value pair stored in the list
-        typedef typename bucket_type::key_comparator    key_comparator  ;   ///< key comparison functor
+        typedef typename ordered_list::key_type          key_type;      ///< key type
+        typedef typename ordered_list::mapped_type       mapped_type;   ///< value type
+        typedef typename ordered_list::value_type        value_type;    ///< key/value pair stored in the list
+        typedef typename ordered_list::key_comparator    key_comparator;///< key comparison functor
+#ifdef CDS_DOXYGEN_INVOKED
+        typedef typename ordered_list::stat         stat;       ///< Internal statistics
+        typedef typename ordered_list::exempt_ptr   exempt_ptr; ///< pointer to extracted node
+        /// Type of \p get() member function return value
+        typedef typename ordered_list::raw_ptr      raw_ptr;
+        typedef typename ordered_list::rcu_lock     rcu_lock;   ///< RCU scoped lock
+#endif
 
         /// Hash functor for \ref key_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type   hash;
         typedef typename traits::item_counter  item_counter;   ///< Item counter type
+        typedef typename traits::allocator     allocator;    ///< Bucket table allocator
 
-        /// Bucket table allocator
-        typedef cds::details::Allocator< bucket_type, typename traits::allocator >  bucket_table_allocator;
-
-        typedef typename bucket_type::rcu_lock      rcu_lock;   ///< RCU scoped lock
-        typedef typename bucket_type::exempt_ptr    exempt_ptr; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = bucket_type::c_bExtractLockExternal;
-        /// Type of \p get() member function return value
-        typedef typename bucket_type::raw_ptr raw_ptr;
+        static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
+
+        // GC and OrderedList::gc must be the same
+        static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
+
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert(!std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
+            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
     protected:
-        item_counter    m_ItemCounter; ///< Item counter
-        hash            m_HashFunctor; ///< Hash functor
-        bucket_type *   m_Buckets;     ///< bucket table
-
-    private:
         //@cond
-        const size_t    m_nHashBitmask;
+        typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
+
+        typedef typename ordered_list::template rebind_traits<
+            cds::opt::item_counter< cds::atomicity::empty_item_counter >
+            , cds::opt::stat< typename bucket_stat::wrapped_stat >
+        >::type internal_bucket_type;
+
+        /// Bucket table allocator
+        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        //@endcond
+
+    public:
+        //@cond
+        typedef typename bucket_stat::stat stat;
+        typedef typename internal_bucket_type::exempt_ptr   exempt_ptr;
+        typedef typename internal_bucket_type::raw_ptr      raw_ptr;
+        typedef typename internal_bucket_type::rcu_lock     rcu_lock;
         //@endcond
 
     protected:
         //@cond
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( Q const& key ) const
-        {
-            return m_HashFunctor( key ) & m_nHashBitmask;
-        }
-
-        /// Returns the bucket (ordered list) for \p key
-        template <typename Q>
-        bucket_type&    bucket( Q const& key )
-        {
-            return m_Buckets[ hash_value( key ) ];
-        }
-        template <typename Q>
-        bucket_type const&    bucket( Q const& key ) const
-        {
-            return m_Buckets[ hash_value( key ) ];
-        }
+        const size_t    m_nHashBitmask;
+        item_counter    m_ItemCounter; ///< Item counter
+        hash            m_HashFunctor; ///< Hash functor
+        internal_bucket_type *  m_Buckets;  ///< bucket table
+        stat            m_Stat; ///< Internal statistics
         //@endcond
 
     protected:
         //@cond
         template <bool IsConst>
-        class iterator_type: private cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >
+        class iterator_type: private cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >
         {
-            typedef cds::intrusive::michael_set::details::iterator< bucket_type, IsConst >  base_class;
+            typedef cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >  base_class;
             friend class MichaelHashMap;
 
         protected:
@@ -316,18 +322,6 @@ namespace cds { namespace container {
         }
     //@}
 
-    private:
-        //@cond
-        const_iterator get_const_begin() const
-        {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
-        }
-        const_iterator get_const_end() const
-        {
-            return const_iterator( const_cast<bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
-        }
-        //@endcond
-
     public:
         /// Initializes the map
         /**
@@ -343,22 +337,19 @@ namespace cds { namespace container {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash map
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()))
         {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename bucket_type::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
-                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
-            m_Buckets = bucket_table_allocator().NewArray( bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                construct_bucket<bucket_stat>( it );
         }
 
         /// Clears hash map and destroys it
         ~MichaelHashMap()
         {
             clear();
-            bucket_table_allocator().Delete( m_Buckets, bucket_count() );
+            for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
+                it->~internal_bucket_type();
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
         }
 
         /// Inserts new node with key and default value
@@ -591,7 +582,7 @@ namespace cds { namespace container {
             If the item is not found the function return an empty \p exempt_ptr.
 
             The function just excludes the key from the map and returns a pointer to item found.
-            Depends on \p bucket_type you should or should not lock RCU before calling of this function:
+            Depends on \p ordered_list you should or should not lock RCU before calling of this function:
             - for the set based on \ref cds_nonintrusive_MichaelList_rcu "MichaelList" RCU should not be locked
             - for the set based on \ref cds_nonintrusive_LazyList_rcu "LazyList" RCU should be locked
             See ordered list implementation for details.
@@ -733,7 +724,7 @@ namespace cds { namespace container {
         /** \anchor cds_nonintrusive_MichaelHashMap_rcu_get
             The function searches the item with key equal to \p key and returns the pointer to item found.
             If \p key is not found it returns \p nullptr.
-            Note the type of returned value depends on underlying \p bucket_type.
+            Note the type of returned value depends on underlying \p ordered_list.
             For details, see documentation of ordered list you use.
 
             Note the compare functor should accept a parameter of type \p K that can be not the same as \p key_type.
@@ -814,6 +805,12 @@ namespace cds { namespace container {
             return m_ItemCounter;
         }
 
+        /// Returns const reference to internal statistics
+        stat const& statistics() const
+        {
+            return m_Stat;
+        }
+
         /// Returns the size of hash table
         /**
             Since \p %MichaelHashMap cannot dynamically extend the hash table size,
@@ -824,6 +821,51 @@ namespace cds { namespace container {
         {
             return m_nHashBitmask + 1;
         }
+
+    protected:
+        //@cond
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( Q const& key ) const
+        {
+            return m_HashFunctor( key ) & m_nHashBitmask;
+        }
+
+        /// Returns the bucket (ordered list) for \p key
+        template <typename Q>
+        internal_bucket_type&    bucket( Q const& key )
+        {
+            return m_Buckets[hash_value( key )];
+        }
+        template <typename Q>
+        internal_bucket_type const&    bucket( Q const& key ) const
+        {
+            return m_Buckets[hash_value( key )];
+        }
+        //@endcond
+    private:
+        //@cond
+        const_iterator get_const_begin() const
+        {
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+        }
+        const_iterator get_const_end() const
+        {
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+        }
+
+        template <typename Stat>
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type;
+        }
+
+        template <typename Stat>
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        {
+            new (bucket) internal_bucket_type( m_Stat );
+        }
+        //@endcond
     };
 }}  // namespace cds::container
 

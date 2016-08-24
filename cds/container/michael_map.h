@@ -158,7 +158,11 @@ namespace cds { namespace container {
         typedef typename traits::allocator         allocator;   ///< Bucket table allocator
 
         typedef typename ordered_list::key_comparator key_comparator;  ///< key compare functor
+#ifdef CDS_DOXYGEN_INVOKED
         typedef typename ordered_list::stat           stat;           ///< Internal statistics
+        /// Guarded pointer - a result of \p get() and \p extract() functions
+        typedef typename ordered_list::guarded_ptr    guarded_ptr;
+#endif
 
         /// Hash functor for \ref key_type and all its derivatives that you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
@@ -173,38 +177,26 @@ namespace cds { namespace container {
 
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount; ///< Count of hazard pointer required
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Wrapped internal statistics for \p ordered_list
-        typedef implementatin_specific bucket_stat;
-#else
+        //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
-#endif
 
-#ifdef CDS_DOXYGEN_INVOKED
-        /// Internal bucket type - rebind \p ordered_list with empty item counter and wrapped internal statistics
-        typedef modified_ordered_list internal_bucket_type;
-#else
         typedef typename ordered_list::template rebind_traits<
             cds::opt::item_counter< cds::atomicity::empty_item_counter >
             , cds::opt::stat< typename bucket_stat::wrapped_stat >
         >::type internal_bucket_type;
-#endif
 
-        /// Guarded pointer - a result of \p get() and \p extract() functions
         typedef typename internal_bucket_type::guarded_ptr guarded_ptr;
-
-        //@cond
-        /// Bucket table allocator
         typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        typedef typename bucket_stat::stat stat;
         //@endcond
 
     protected:
         //@cond
         const size_t            m_nHashBitmask;
-        internal_bucket_type *  m_Buckets;     ///< bucket table
+        internal_bucket_type*   m_Buckets;     ///< bucket table
         item_counter            m_ItemCounter; ///< Item counter
         hash                    m_HashFunctor; ///< Hash functor
-        typename bucket_stat::stat  m_Stat;   ///< Internal statistics
+        stat                    m_Stat;        ///< Internal statistics
         //@endcond
 
     protected:

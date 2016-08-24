@@ -114,6 +114,22 @@ namespace cds { namespace container {
         typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::stat         stat;           ///< Internal statistics
 
+        //@cond
+        // Rebind traits (split-list support)
+        template <typename... Options>
+        struct rebind_traits {
+            typedef MichaelKVList<
+                gc
+                , key_type, mapped_type
+                , typename cds::opt::make_options< traits, Options...>::type
+            > type;
+        };
+
+        // Stat selector
+        template <typename Stat>
+        using select_stat_wrapper = typename base_class::template select_stat_wrapper< Stat >;
+        //@endcond
+
     protected:
         //@cond
         typedef typename base_class::value_type   node_type;
@@ -122,32 +138,6 @@ namespace cds { namespace container {
         typedef typename maker::intrusive_traits::compare  intrusive_key_comparator;
 
         typedef typename base_class::atomic_node_ptr head_type;
-        //@endcond
-
-    protected:
-        //@cond
-        template <typename K>
-        static node_type * alloc_node(const K& key)
-        {
-            return cxx_allocator().New( key );
-        }
-
-        template <typename K, typename V>
-        static node_type * alloc_node( const K& key, const V& val )
-        {
-            return cxx_allocator().New( key, val );
-        }
-
-        template <typename K, typename... Args>
-        static node_type * alloc_node( K&& key, Args&&... args )
-        {
-            return cxx_allocator().MoveNew( std::forward<K>(key), std::forward<Args>(args)... );
-        }
-
-        static void free_node( node_type * pNode )
-        {
-            cxx_allocator().Delete( pNode );
-        }
 
         struct node_disposer {
             void operator()( node_type * pNode )
@@ -156,16 +146,6 @@ namespace cds { namespace container {
             }
         };
         typedef std::unique_ptr< node_type, node_disposer >     scoped_node_ptr;
-
-        head_type& head()
-        {
-            return base_class::m_pHead;
-        }
-
-        head_type const& head() const
-        {
-            return base_class::m_pHead;
-        }
         //@endcond
 
     protected:
@@ -328,16 +308,6 @@ namespace cds { namespace container {
             return const_iterator();
         }
     //@}
-
-    protected:
-        //@cond
-        iterator node_to_iterator( node_type * pNode )
-        {
-            if ( pNode )
-                return iterator( *pNode );
-            return end();
-        }
-        //@endcond
 
     public:
         /// Default constructor
@@ -600,6 +570,46 @@ namespace cds { namespace container {
         node_type * find_at( head_type& refHead, K const& key, Compare cmp )
         {
             return base_class::find_at( refHead, key, cmp );
+        }
+
+        template <typename K>
+        static node_type * alloc_node( const K& key )
+        {
+            return cxx_allocator().New( key );
+        }
+
+        template <typename K, typename V>
+        static node_type * alloc_node( const K& key, const V& val )
+        {
+            return cxx_allocator().New( key, val );
+        }
+
+        template <typename K, typename... Args>
+        static node_type * alloc_node( K&& key, Args&&... args )
+        {
+            return cxx_allocator().MoveNew( std::forward<K>( key ), std::forward<Args>( args )... );
+        }
+
+        static void free_node( node_type * pNode )
+        {
+            cxx_allocator().Delete( pNode );
+        }
+
+        head_type& head()
+        {
+            return base_class::m_pHead;
+        }
+
+        head_type const& head() const
+        {
+            return base_class::m_pHead;
+        }
+
+        iterator node_to_iterator( node_type * pNode )
+        {
+            if ( pNode )
+                return iterator( *pNode );
+            return end();
         }
         //@endcond
     };

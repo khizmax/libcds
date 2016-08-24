@@ -179,6 +179,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( IntrusiveMichaelLazySet_HP, base_wrapped_stat )
@@ -201,6 +202,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
 
@@ -316,6 +318,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
     TEST_F( IntrusiveMichaelLazySet_HP, member_wrapped_stat )
@@ -338,6 +341,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
     }
 
 } // namespace
