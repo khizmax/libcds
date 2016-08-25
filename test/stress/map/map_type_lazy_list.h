@@ -38,6 +38,8 @@
 #include <cds/container/lazy_kvlist_rcu.h>
 #include <cds/container/lazy_kvlist_nogc.h>
 
+#include <cds_test/stat_lazy_list_out.h>
+
 namespace map {
 
     template <typename Key, typename Value>

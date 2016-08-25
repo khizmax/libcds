@@ -36,6 +36,8 @@
 #include <cds/container/iterable_kvlist_hp.h>
 #include <cds/container/iterable_kvlist_dhp.h>
 
+#include <cds_test/stat_iterable_list_out.h>
+
 namespace map {
 
     template <typename Key, typename Value>

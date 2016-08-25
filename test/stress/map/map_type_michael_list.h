@@ -38,6 +38,8 @@
 #include <cds/container/michael_kvlist_rcu.h>
 #include <cds/container/michael_kvlist_nogc.h>
 
+#include <cds_test/stat_michael_list_out.h>
+
 namespace map {
 
     template <typename Key, typename Value>
