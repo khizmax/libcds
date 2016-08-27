@@ -25,3 +25,5 @@
 /build/Makefile
 /build/build.sh
 /build/sample
+/.cproject
+/.settings/
