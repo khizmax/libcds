@@ -30,50 +30,11 @@
 
 #include <gtest/gtest.h>
 #include <cds/container/fcqueue.h>
+#include <test/include/cds_test/fc_hevy_value.h>
 
 #include <list>
-#include <math.h>
-#include <vector>
 
 namespace {
-
-	template<int DefaultSize = 10000>
-	struct HeavyValue {
-		static std::vector<int> pop_buff;
-		int value;
-		size_t buffer_size;
-
-		explicit HeavyValue(int new_value = 0, size_t new_bufer_size = DefaultSize)
-		: value(new_value),
-		  buffer_size(new_bufer_size)
-
-		{
-			if( buffer_size != pop_buff.size() ){
-				pop_buff.resize(buffer_size);
-			}
-		};
-		HeavyValue(const HeavyValue &other)
-			: value(other.value),
-			  buffer_size(other.buffer_size)
-		{
-			working(other);
-		}
-		void operator=(const int& new_value)
-		{
-			value = new_value;
-		}
-		bool operator==(const int new_value) const
-		{
-			return value == new_value;
-		}
-		void working(const HeavyValue &other) {
-			for (size_t i = 0; i < buffer_size; ++i)
-				pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]));
-		}
-	};
-
-	template<int DefaultSize>
-	std::vector<int> HeavyValue< DefaultSize >::pop_buff = {};
 
     class FCQueue: public ::testing::Test
     {

@@ -42,16 +42,19 @@ namespace {
 
     static std::atomic<size_t> s_nProducerDone( 0 );
 
+    struct old_value
+	{
+    	size_t nNo;
+		size_t nWriterNo;
+	};
+
+    template<class Value = old_value>
     class queue_push_pop: public cds_test::stress_fixture
     {
     protected:
-        struct value_type
-        {
-            size_t      nNo;
-            size_t      nWriterNo;
-        };
+		using value_type = Value;
 
-        enum {
+	    enum {
             producer_thread,
             consumer_thread
         };
@@ -318,14 +321,18 @@ namespace {
         //static void TearDownTestCase();
     };
 
-    CDSSTRESS_MSQueue( queue_push_pop )
-    CDSSTRESS_MoirQueue( queue_push_pop )
-    CDSSTRESS_BasketQueue( queue_push_pop )
-    CDSSTRESS_OptimsticQueue( queue_push_pop )
-    CDSSTRESS_FCQueue( queue_push_pop )
-    CDSSTRESS_FCDeque( queue_push_pop )
-    CDSSTRESS_RWQueue( queue_push_pop )
-    CDSSTRESS_StdQueue( queue_push_pop )
+    using value_for_fc_with_heavy_value = queue_push_pop< HeavyValue<10> >;
+    using old_queue_push_pop = queue_push_pop<>;
+
+//    CDSSTRESS_MSQueue( old_queue_push_pop )
+//    CDSSTRESS_MoirQueue( old_queue_push_pop )
+//    CDSSTRESS_BasketQueue( old_queue_push_pop )
+//    CDSSTRESS_OptimsticQueue( old_queue_push_pop )
+//    CDSSTRESS_FCQueue( old_queue_push_pop )
+	CDSSTRESS_FCDeque_HeavyValue( value_for_fc_with_heavy_value )
+//    CDSSTRESS_FCDeque( old_queue_push_pop )
+//    CDSSTRESS_RWQueue( old_queue_push_pop )
+//    CDSSTRESS_StdQueue( old_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
@@ -337,7 +344,7 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_VyukovQueue( queue_push_pop )
+    CDSSTRESS_VyukovQueue( old_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 
@@ -346,10 +353,10 @@ namespace {
     // SegmentedQueue test
 
     class segmented_queue_push_pop
-        : public queue_push_pop
+        : public queue_push_pop<>
         , public ::testing::WithParamInterface< size_t >
     {
-        typedef queue_push_pop base_class;
+        typedef queue_push_pop<> base_class;
 
     protected:
 
