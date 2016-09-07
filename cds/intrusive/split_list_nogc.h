@@ -90,7 +90,7 @@ namespace cds { namespace intrusive {
     protected:
         typedef typename ordered_list::node_type  list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>  node_type;       ///< split-list node type
-        typedef node_type                         dummy_node_type; ///< dummy node type
+        typedef node_type                         aux_node_type; ///< dummy node type
 
         /// Split-list node traits
         /**
@@ -104,7 +104,7 @@ namespace cds { namespace intrusive {
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
             , gc
-            , dummy_node_type
+            , aux_node_type
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
         >::type bucket_table;
@@ -122,7 +122,7 @@ namespace cds { namespace intrusive {
             typedef typename base_class::auxiliary_head bucket_head_type;
 
         public:
-            list_iterator insert_at_( dummy_node_type * pHead, value_type& val )
+            list_iterator insert_at_( aux_node_type * pHead, value_type& val )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
@@ -130,7 +130,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Func>
-            std::pair<list_iterator, bool> update_at_( dummy_node_type * pHead, value_type& val, Func func, bool bAllowInsert )
+            std::pair<list_iterator, bool> update_at_( aux_node_type * pHead, value_type& val, Func func, bool bAllowInsert )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
@@ -138,7 +138,7 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare, typename Func>
-            bool find_at( dummy_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp, Func f )
+            bool find_at( aux_node_type * pHead, split_list::details::search_value_type<Q>& val, Compare cmp, Func f )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
@@ -146,18 +146,18 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
-            list_iterator find_at_( dummy_node_type * pHead, split_list::details::search_value_type<Q> const & val, Compare cmp )
+            list_iterator find_at_( aux_node_type * pHead, split_list::details::search_value_type<Q> const & val, Compare cmp )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::find_at_( h, val, cmp );
             }
 
-            bool insert_aux_node( dummy_node_type * pNode )
+            bool insert_aux_node( aux_node_type * pNode )
             {
                 return base_class::insert_aux_node( pNode );
             }
-            bool insert_aux_node( dummy_node_type * pHead, dummy_node_type * pNode )
+            bool insert_aux_node( aux_node_type * pHead, aux_node_type * pNode )
             {
                 bucket_head_type h(static_cast<list_node_type *>(pHead));
                 return base_class::insert_aux_node( h, pNode );
@@ -183,16 +183,16 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef cds::details::Allocator< dummy_node_type, typename traits::allocator >   dummy_node_allocator;
+        typedef cds::details::Allocator< aux_node_type, typename traits::allocator >   aux_node_allocator;
 
-        dummy_node_type * alloc_dummy_node( size_t nHash )
+        aux_node_type * alloc_aux_node( size_t nHash )
         {
             m_Stat.onHeadNodeAllocated();
-            return dummy_node_allocator().New( nHash );
+            return aux_node_allocator().New( nHash );
         }
-        void free_dummy_node( dummy_node_type * p )
+        void free_aux_node( aux_node_type * p )
         {
-            dummy_node_allocator().Delete( p );
+            aux_node_allocator().Delete( p );
             m_Stat.onHeadNodeFreed();
         }
 
@@ -214,12 +214,12 @@ namespace cds { namespace intrusive {
             return nBucket & ~( 1 << bitop::MSBnz( nBucket ) );
         }
 
-        dummy_node_type * init_bucket( size_t nBucket )
+        aux_node_type * init_bucket( size_t nBucket )
         {
             assert( nBucket > 0 );
             size_t nParent = parent_bucket( nBucket );
 
-            dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
+            aux_node_type * pParentBucket = m_Buckets.bucket( nParent );
             if ( pParentBucket == nullptr ) {
                 pParentBucket = init_bucket( nParent );
                 m_Stat.onRecursiveInitBucket();
@@ -229,13 +229,13 @@ namespace cds { namespace intrusive {
 
             // Allocate a dummy node for new bucket
             {
-                dummy_node_type * pBucket = alloc_dummy_node( split_list::dummy_hash( nBucket ) );
+                aux_node_type * pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
                 if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
                     m_Buckets.bucket( nBucket, pBucket );
                     m_Stat.onNewBucket();
                     return pBucket;
                 }
-                free_dummy_node( pBucket );
+                free_aux_node( pBucket );
             }
 
             // Another thread set the bucket. Wait while it done
@@ -247,19 +247,19 @@ namespace cds { namespace intrusive {
             m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
-                dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
+                aux_node_type volatile * p = m_Buckets.bucket( nBucket );
                 if ( p && p != nullptr )
-                    return const_cast<dummy_node_type *>( p );
+                    return const_cast<aux_node_type *>( p );
                 bkoff();
                 m_Stat.onBusyWaitBucketInit();
             }
         }
 
-        dummy_node_type * get_bucket( size_t nHash )
+        aux_node_type * get_bucket( size_t nHash )
         {
             size_t nBucket = bucket_no( nHash );
 
-            dummy_node_type * pHead = m_Buckets.bucket( nBucket );
+            aux_node_type * pHead = m_Buckets.bucket( nBucket );
             if ( pHead == nullptr )
                 pHead = init_bucket( nBucket );
 
@@ -278,7 +278,7 @@ namespace cds { namespace intrusive {
                            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
-            dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );
+            aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
 
             // insert_aux_node cannot return false for empty list
             CDS_VERIFY( m_List.insert_aux_node( pNode ));
@@ -632,7 +632,7 @@ namespace cds { namespace intrusive {
         iterator insert_( value_type& val )
         {
             size_t nHash = hash_value( val );
-            dummy_node_type * pHead = get_bucket( nHash );
+            aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
@@ -651,7 +651,7 @@ namespace cds { namespace intrusive {
         std::pair<iterator, bool> update_( value_type& val, Func func, bool bAllowInsert )
         {
             size_t nHash = hash_value( val );
-            dummy_node_type * pHead = get_bucket( nHash );
+            aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
@@ -675,7 +675,7 @@ namespace cds { namespace intrusive {
             CDS_UNUSED( pred );
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
+            aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
             auto it = m_List.find_at_( pHead, sv, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
@@ -688,7 +688,7 @@ namespace cds { namespace intrusive {
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
+            aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
             auto it = m_List.find_at_( pHead, sv, key_comparator() );
@@ -701,7 +701,7 @@ namespace cds { namespace intrusive {
         {
             size_t nHash = hash_value( val );
             split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
+            aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
             return m_Stat.onFind( m_List.find_at( pHead, sv, cmp,
                 [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); }));
