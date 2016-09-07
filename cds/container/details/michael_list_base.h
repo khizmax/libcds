@@ -145,10 +145,10 @@ namespace cds { namespace container {
 
     // Tag for selecting Michael's list implementation
     /**
-        This struct is empty and it is used only as a tag for selecting MichaelList
+        This struct is empty and it is used only as a tag for selecting \p MichaelList
         as ordered list implementation in declaration of some classes.
 
-        See split_list::traits::ordered_list as an example.
+        See \p split_list::traits::ordered_list as an example.
     */
     struct michael_list_tag
     {};

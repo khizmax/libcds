@@ -273,13 +273,6 @@ namespace cds { namespace intrusive {
     //@endcond
 
     //@cond
-    template <typename List>
-    struct is_iterable_list {
-        enum {
-            value = false
-        };
-    };
-
     template <typename GC, typename T, typename Traits>
     struct is_iterable_list< IterableList< GC, T, Traits >> {
         enum {

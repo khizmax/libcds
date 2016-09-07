@@ -91,11 +91,13 @@ namespace cds { namespace intrusive {
         Template parameters are:
         - \p GC - Garbage collector. Note the \p GC must be the same as the \p GC used for \p OrderedList
         - \p OrderedList - ordered list implementation used as a bucket for hash set, for example, \p MichaelList, \p LazyList.
-            The intrusive ordered list implementation specifies the type \p T stored in the hash-set, the reclamation
-            schema \p GC used by hash-set, the comparison functor for the type \p T and other features specific for
-            the ordered list.
+            The intrusive ordered list implementation specifies the type \p T stored in the split-list set, the reclamation
+            schema \p GC used by split-list set, the comparison functor for the type \p T and other features specific for
+            the ordered list. 
         - \p Traits - split-list traits, default is \p split_list::traits.
             Instead of defining \p Traits struct you may use option-based syntax with \p split_list::make_traits metafunction.
+
+        @warning \p IterableList is not supported as \p OrderedList template parameter.
 
         There are several specialization of the split-list class for different \p GC:
         - for \ref cds_urcu_gc "RCU type" include <tt><cds/intrusive/split_list_rcu.h></tt> - see
@@ -252,6 +254,7 @@ namespace cds { namespace intrusive {
         static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount + 4; // +4 - for iterators
 
     protected:
+        //@cond
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
         typedef node_type                           dummy_node_type; ///< dummy node type
@@ -263,7 +266,6 @@ namespace cds { namespace intrusive {
         */
         typedef split_list::node_traits<typename ordered_list::node_traits>  node_traits;
 
-        //@cond
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
@@ -272,6 +274,8 @@ namespace cds { namespace intrusive {
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
         >::type bucket_table;
+
+        typedef cds::details::Allocator< dummy_node_type, typename traits::allocator >   dummy_node_allocator;
         //@endcond
 
     protected:
@@ -371,261 +375,6 @@ namespace cds { namespace intrusive {
                 return base_class::insert_aux_node( h, pNode );
             }
         };
-        //@endcond
-
-    protected:
-        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
-        bucket_table            m_Buckets;          ///< bucket table
-        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
-        atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
-        item_counter            m_ItemCounter;      ///< Item counter
-        hash                    m_HashFunctor;      ///< Hash functor
-        stat                    m_Stat;             ///< Internal statistics
-
-    protected:
-        //@cond
-        typedef cds::details::Allocator< dummy_node_type, typename traits::allocator >   dummy_node_allocator;
-
-        dummy_node_type * alloc_dummy_node( size_t nHash )
-        {
-            m_Stat.onHeadNodeAllocated();
-            return dummy_node_allocator().New( nHash );
-        }
-        void free_dummy_node( dummy_node_type * p )
-        {
-            dummy_node_allocator().Delete( p );
-            m_Stat.onHeadNodeFreed();
-        }
-
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( Q const& key ) const
-        {
-            return m_HashFunctor( key );
-        }
-
-        size_t bucket_no( size_t nHash ) const
-        {
-            return nHash & ( (1 << m_nBucketCountLog2.load(memory_model::memory_order_relaxed)) - 1 );
-        }
-
-        static size_t parent_bucket( size_t nBucket )
-        {
-            assert( nBucket > 0 );
-            return nBucket & ~( 1 << bitop::MSBnz( nBucket ));
-        }
-
-        dummy_node_type * init_bucket( size_t nBucket )
-        {
-            assert( nBucket > 0 );
-            size_t nParent = parent_bucket( nBucket );
-
-            dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
-            if ( pParentBucket == nullptr ) {
-                pParentBucket = init_bucket( nParent );
-                m_Stat.onRecursiveInitBucket();
-            }
-
-            assert( pParentBucket != nullptr );
-
-            // Allocate a dummy node for new bucket
-            {
-                dummy_node_type * pBucket = alloc_dummy_node( split_list::dummy_hash( nBucket ));
-                if ( m_List.insert_aux_node( pParentBucket, pBucket )) {
-                    m_Buckets.bucket( nBucket, pBucket );
-                    m_Stat.onNewBucket();
-                    return pBucket;
-                }
-                free_dummy_node( pBucket );
-            }
-
-            // Another thread set the bucket. Wait while it done
-
-            // In this point, we must wait while nBucket is empty.
-            // The compiler can decide that waiting loop can be "optimized" (stripped)
-            // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
-            m_Stat.onBucketInitContenton();
-            back_off bkoff;
-            while ( true ) {
-                dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
-                if ( p != nullptr )
-                    return const_cast<dummy_node_type *>( p );
-                bkoff();
-                m_Stat.onBusyWaitBucketInit();
-            }
-        }
-
-        dummy_node_type * get_bucket( size_t nHash )
-        {
-            size_t nBucket = bucket_no( nHash );
-
-            dummy_node_type * pHead = m_Buckets.bucket( nBucket );
-            if ( pHead == nullptr )
-                pHead = init_bucket( nBucket );
-
-            assert( pHead->is_dummy());
-
-            return pHead;
-        }
-
-        void init()
-        {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
-                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
-            // Initialize bucket 0
-            dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );
-
-            // insert_aux_node cannot return false for empty list
-            CDS_VERIFY( m_List.insert_aux_node( pNode ));
-
-            m_Buckets.bucket( 0, pNode );
-        }
-
-        static size_t max_item_count( size_t nBucketCount, size_t nLoadFactor )
-        {
-            return nBucketCount * nLoadFactor;
-        }
-
-        void inc_item_count()
-        {
-            size_t nMaxCount = m_nMaxItemCount.load(memory_model::memory_order_relaxed);
-            if ( ++m_ItemCounter <= nMaxCount )
-                return;
-
-            size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
-            const size_t nBucketCount = static_cast<size_t>(1) << sz;
-            if ( nBucketCount < m_Buckets.capacity()) {
-                // we may grow the bucket table
-                const size_t nLoadFactor = m_Buckets.load_factor();
-                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
-                    return; // someone already have updated m_nBucketCountLog2, so stop here
-
-                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
-                                                         memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
-                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
-            }
-            else
-                m_nMaxItemCount.store( std::numeric_limits<size_t>::max(), memory_model::memory_order_relaxed );
-        }
-
-        template <typename Q, typename Compare, typename Func>
-        bool find_( Q& val, Compare cmp, Func f )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            return m_Stat.onFind(
-                m_List.find_at( pHead, sv, cmp,
-                    [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); })
-            );
-        }
-
-        template <typename Q, typename Compare>
-        bool find_( Q const& val, Compare cmp )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp ));
-        }
-
-        template <typename Q, typename Compare>
-        guarded_ptr get_( Q const& val, Compare cmp )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            guarded_ptr gp = m_List.get_at( pHead, sv, cmp );
-            m_Stat.onFind( !gp.empty() );
-            return gp;
-        }
-
-        template <typename Q>
-        guarded_ptr get_( Q const& key )
-        {
-            return get_( key, key_comparator());
-        }
-
-        template <typename Q, typename Less>
-        guarded_ptr get_with_( Q const& key, Less )
-        {
-            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
-        }
-
-        template <typename Q, typename Compare, typename Func>
-        bool erase_( Q const& val, Compare cmp, Func f )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            if ( m_List.erase_at( pHead, sv, cmp, f )) {
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-            m_Stat.onEraseFailed();
-            return false;
-        }
-
-        template <typename Q, typename Compare>
-        bool erase_( Q const& val, Compare cmp )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            if ( m_List.erase_at( pHead, sv, cmp )) {
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-            m_Stat.onEraseFailed();
-            return false;
-        }
-
-        template <typename Q, typename Compare>
-        guarded_ptr extract_( Q const& val, Compare cmp )
-        {
-            size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ));
-            dummy_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            guarded_ptr gp = m_List.extract_at( pHead, sv, cmp );
-            if ( gp ) {
-                --m_ItemCounter;
-                m_Stat.onExtractSuccess();
-            }
-            else
-                m_Stat.onExtractFailed();
-            return gp;
-        }
-
-        template <typename Q>
-        guarded_ptr extract_( Q const& key )
-        {
-            return extract_( key, key_comparator());
-        }
-
-        template <typename Q, typename Less>
-        guarded_ptr extract_with_( Q const& key, Less )
-        {
-            return extract_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
-        }
         //@endcond
 
     public:
@@ -1198,6 +947,261 @@ namespace cds { namespace intrusive {
             return const_iterator( m_List.cend(), m_List.cend());
         }
     //@}
+
+    protected:
+        //@cond
+        dummy_node_type * alloc_dummy_node( size_t nHash )
+        {
+            m_Stat.onHeadNodeAllocated();
+            return dummy_node_allocator().New( nHash );
+        }
+        void free_dummy_node( dummy_node_type * p )
+        {
+            dummy_node_allocator().Delete( p );
+            m_Stat.onHeadNodeFreed();
+        }
+
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( Q const& key ) const
+        {
+            return m_HashFunctor( key );
+        }
+
+        size_t bucket_no( size_t nHash ) const
+        {
+            return nHash & ((1 << m_nBucketCountLog2.load( memory_model::memory_order_relaxed )) - 1);
+        }
+
+        static size_t parent_bucket( size_t nBucket )
+        {
+            assert( nBucket > 0 );
+            return nBucket & ~(1 << bitop::MSBnz( nBucket ));
+        }
+
+        dummy_node_type * init_bucket( size_t nBucket )
+        {
+            assert( nBucket > 0 );
+            size_t nParent = parent_bucket( nBucket );
+
+            dummy_node_type * pParentBucket = m_Buckets.bucket( nParent );
+            if ( pParentBucket == nullptr ) {
+                pParentBucket = init_bucket( nParent );
+                m_Stat.onRecursiveInitBucket();
+            }
+
+            assert( pParentBucket != nullptr );
+
+            // Allocate a dummy node for new bucket
+            {
+                dummy_node_type * pBucket = alloc_dummy_node( split_list::dummy_hash( nBucket ) );
+                if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
+                    m_Buckets.bucket( nBucket, pBucket );
+                    m_Stat.onNewBucket();
+                    return pBucket;
+                }
+                free_dummy_node( pBucket );
+            }
+
+            // Another thread set the bucket. Wait while it done
+
+            // In this point, we must wait while nBucket is empty.
+            // The compiler can decide that waiting loop can be "optimized" (stripped)
+            // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
+            m_Stat.onBucketInitContenton();
+            back_off bkoff;
+            while ( true ) {
+                dummy_node_type volatile * p = m_Buckets.bucket( nBucket );
+                if ( p != nullptr )
+                    return const_cast<dummy_node_type *>(p);
+                bkoff();
+                m_Stat.onBusyWaitBucketInit();
+            }
+        }
+
+        dummy_node_type * get_bucket( size_t nHash )
+        {
+            size_t nBucket = bucket_no( nHash );
+
+            dummy_node_type * pHead = m_Buckets.bucket( nBucket );
+            if ( pHead == nullptr )
+                pHead = init_bucket( nBucket );
+
+            assert( pHead->is_dummy() );
+
+            return pHead;
+        }
+
+        void init()
+        {
+            // GC and OrderedList::gc must be the same
+            static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
+
+            // atomicity::empty_item_counter is not allowed as a item counter
+            static_assert(!std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
+                "cds::atomicity::empty_item_counter is not allowed as a item counter");
+
+            // Initialize bucket 0
+            dummy_node_type * pNode = alloc_dummy_node( 0 /*split_list::dummy_hash(0)*/ );
+
+            // insert_aux_node cannot return false for empty list
+            CDS_VERIFY( m_List.insert_aux_node( pNode ) );
+
+            m_Buckets.bucket( 0, pNode );
+        }
+
+        static size_t max_item_count( size_t nBucketCount, size_t nLoadFactor )
+        {
+            return nBucketCount * nLoadFactor;
+        }
+
+        void inc_item_count()
+        {
+            size_t nMaxCount = m_nMaxItemCount.load( memory_model::memory_order_relaxed );
+            if ( ++m_ItemCounter <= nMaxCount )
+                return;
+
+            size_t sz = m_nBucketCountLog2.load( memory_model::memory_order_relaxed );
+            const size_t nBucketCount = static_cast<size_t>(1) << sz;
+            if ( nBucketCount < m_Buckets.capacity() ) {
+                // we may grow the bucket table
+                const size_t nLoadFactor = m_Buckets.load_factor();
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ) )
+                    return; // someone already have updated m_nBucketCountLog2, so stop here
+
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
+                    memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+            }
+            else
+                m_nMaxItemCount.store( std::numeric_limits<size_t>::max(), memory_model::memory_order_relaxed );
+        }
+
+        template <typename Q, typename Compare, typename Func>
+        bool find_( Q& val, Compare cmp, Func f )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            return m_Stat.onFind(
+                m_List.find_at( pHead, sv, cmp,
+                    [&f]( value_type& item, split_list::details::search_value_type<Q>& val ) { f( item, val.val ); } )
+            );
+        }
+
+        template <typename Q, typename Compare>
+        bool find_( Q const& val, Compare cmp )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp ) );
+        }
+
+        template <typename Q, typename Compare>
+        guarded_ptr get_( Q const& val, Compare cmp )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            guarded_ptr gp = m_List.get_at( pHead, sv, cmp );
+            m_Stat.onFind( !gp.empty() );
+            return gp;
+        }
+
+        template <typename Q>
+        guarded_ptr get_( Q const& key )
+        {
+            return get_( key, key_comparator() );
+        }
+
+        template <typename Q, typename Less>
+        guarded_ptr get_with_( Q const& key, Less )
+        {
+            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+        }
+
+        template <typename Q, typename Compare, typename Func>
+        bool erase_( Q const& val, Compare cmp, Func f )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            if ( m_List.erase_at( pHead, sv, cmp, f ) ) {
+                --m_ItemCounter;
+                m_Stat.onEraseSuccess();
+                return true;
+            }
+            m_Stat.onEraseFailed();
+            return false;
+        }
+
+        template <typename Q, typename Compare>
+        bool erase_( Q const& val, Compare cmp )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            if ( m_List.erase_at( pHead, sv, cmp ) ) {
+                --m_ItemCounter;
+                m_Stat.onEraseSuccess();
+                return true;
+            }
+            m_Stat.onEraseFailed();
+            return false;
+        }
+
+        template <typename Q, typename Compare>
+        guarded_ptr extract_( Q const& val, Compare cmp )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ) );
+            dummy_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            guarded_ptr gp = m_List.extract_at( pHead, sv, cmp );
+            if ( gp ) {
+                --m_ItemCounter;
+                m_Stat.onExtractSuccess();
+            }
+            else
+                m_Stat.onExtractFailed();
+            return gp;
+        }
+
+        template <typename Q>
+        guarded_ptr extract_( Q const& key )
+        {
+            return extract_( key, key_comparator() );
+        }
+
+        template <typename Q, typename Less>
+        guarded_ptr extract_with_( Q const& key, Less )
+        {
+            return extract_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+        }
+        //@endcond
+
+    protected:
+        //@cond
+        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
+        bucket_table            m_Buckets;          ///< bucket table
+        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
+        atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
+        item_counter            m_ItemCounter;      ///< Item counter
+        hash                    m_HashFunctor;      ///< Hash functor
+        stat                    m_Stat;             ///< Internal statistics
+        //@endcond
     };
 
 }}  // namespace cds::intrusive

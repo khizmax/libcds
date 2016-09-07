@@ -153,19 +153,12 @@ namespace cds { namespace container {
         This struct is empty and it is used only as a tag for selecting \p IterableList
         as ordered list implementation in declaration of some classes.
 
-        See split_list::traits::ordered_list as an example.
+        See \p split_list::traits::ordered_list as an example.
     */
     struct iterable_list_tag
     {};
 
     //@cond
-    template <typename List>
-    struct is_iterable_list {
-        enum {
-            value = false
-        };
-    };
-
     template <typename GC, typename T, typename Traits>
     struct is_iterable_list< IterableList<GC, T, Traits >>
     {

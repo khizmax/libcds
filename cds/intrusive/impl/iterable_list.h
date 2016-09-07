@@ -160,6 +160,7 @@ namespace cds { namespace intrusive {
         //@endcond
 
     protected:
+        //@cond
         typedef atomics::atomic< node_type* > atomic_node_ptr;  ///< Atomic node pointer
         typedef atomic_node_ptr               auxiliary_head;   ///< Auxiliary head type (for split-list support)
 
@@ -167,7 +168,6 @@ namespace cds { namespace intrusive {
         item_counter    m_ItemCounter;  ///< Item counter
         mutable stat    m_Stat;         ///< Internal statistics
 
-        //@cond
         typedef cds::details::Allocator< node_type, node_allocator > cxx_node_allocator;
 
         /// Position pointer for item search

@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_CONTAINER_DETAILS_SPLIT_LIST_BASE_H
@@ -129,7 +129,7 @@ namespace cds { namespace container {
                 - for \p lazy_list_tag: \p container::lazy_list::traits.
 
                 If this type is \p opt::none, the ordered list traits is combined with default
-                ordered list traits above and split-list traits.
+                ordered list traits and split-list traits.
             */
             typedef opt::none           ordered_list_traits;
 
