@@ -101,8 +101,8 @@ namespace cds_test {
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
             if ( it == m_Cfg.end() )
                 return defVal; // param not found -> returns default value
-            return !( it->second.empty() 
-                   || it->second == "0" 
+            return !( it->second.empty()
+                   || it->second == "0"
                    || it->second == "false"
                    || it->second == "no"
                    );

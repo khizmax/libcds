@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -297,7 +297,7 @@ namespace {
                 std::sort( arrData.begin(), arrData.end() );
                 for ( size_t i=1; i < arrData.size(); ++i ) {
                     if ( arrData[i-1] + 1 != arrData[i] ) {
-                        EXPECT_EQ( arrData[i-1] + 1,  arrData[i] ) << "Writer " << nWriter << ": [" << (i-1) << "]=" << arrData[i-1] 
+                        EXPECT_EQ( arrData[i-1] + 1,  arrData[i] ) << "Writer " << nWriter << ": [" << (i-1) << "]=" << arrData[i-1]
                             << ", [" << i << "]=" << arrData[i];
                     }
                 }

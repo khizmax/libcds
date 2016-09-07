@@ -234,4 +234,4 @@ namespace {
 }
 
 #endif // CDSUNIT_MAP_TEST_MICHAEL_MICHAEL_RCU_H
- 
+
