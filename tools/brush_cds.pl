@@ -16,9 +16,7 @@ sub brush()
 {
 	processDir( "../cds" ) ;
 	processDir( "../src" ) ;
-	processDir( "../tests/test-hdr" ) ;
-	processDir( "../tests/unit" ) ;
-	processDir( "../tests/cppunit" ) ;
+	processDir( "../test" ) ;
 }
 
 sub processDir( $ )
@@ -45,7 +43,7 @@ sub processFile( $ )
 	my $file = shift;
 
 	if ( open( my $fh, $file )) {
-		binmode $fh	;
+		#binmode $fh	;
 		my $str = '';
 		while (<$fh>) {
             if ( /^\/\/\$\$CDS-header\$\$/ ) {
@@ -82,7 +80,7 @@ sub processFile( $ )
             }
             else {
                 $nTabsFound += $_ =~ s/\t/    /g;
-                $_ =~ s/\s+$//  ;
+                $_ =~ s/\s+$//;
                 $_ =~ s/\s+;$/;/;
                 $str .= $_      ;
                 $str .= "\n"    ;
@@ -91,7 +89,7 @@ sub processFile( $ )
 		close $fh;
 		
 		if ( open( my $fh, ">$file" )) {
-			binmode $fh;
+			#binmode $fh;
 			print $fh $str;
 			close $fh;
 		}
