@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,13 +25,14 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_set_hp.h"
 
 #include <cds/container/michael_list_hp.h>
 #include <cds/container/split_list_set.h>
+#include <cds/intrusive/free_list.h>
 
 namespace {
     namespace cc = cds::container;
@@ -185,6 +186,27 @@ namespace {
         test( s );
     }
 
+    TEST_F( SplitListMichaelSet_HP, free_list )
+    {
+        struct set_traits: public cc::split_list::traits
+        {
+            typedef cc::michael_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
+
+            struct ordered_list_traits: public cc::michael_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 3 );
+        test( s );
+    }
+
     struct set_static_traits: public cc::split_list::traits
     {
         static bool const dynamic_bucket_table = false;
@@ -197,6 +219,27 @@ namespace {
             typedef cc::michael_list_tag ordered_list;
             typedef hash_int hash;
             typedef cds::atomicity::item_counter item_counter;
+
+            struct ordered_list_traits: public cc::michael_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( SplitListMichaelSet_HP, static_bucket_table_free_list )
+    {
+        struct set_traits: public set_static_traits
+        {
+            typedef cc::michael_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
 
             struct ordered_list_traits: public cc::michael_list::traits
             {

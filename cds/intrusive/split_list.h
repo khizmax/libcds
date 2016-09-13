@@ -33,6 +33,7 @@
 
 #include <limits>
 #include <cds/intrusive/details/split_list_base.h>
+#include <cds/details/type_padding.h>
 
 namespace cds { namespace intrusive {
 
@@ -273,9 +274,8 @@ namespace cds { namespace intrusive {
             , aux_node_type
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
+            , opt::free_list< typename traits::free_list >
         >::type bucket_table;
-
-        typedef cds::details::Allocator< aux_node_type, typename traits::allocator > aux_node_allocator;
         //@endcond
 
     protected:
@@ -953,11 +953,15 @@ namespace cds { namespace intrusive {
         aux_node_type * alloc_aux_node( size_t nHash )
         {
             m_Stat.onHeadNodeAllocated();
-            return aux_node_allocator().New( nHash );
+            aux_node_type* p = m_Buckets.alloc_aux_node();
+            if ( p )
+                p->m_nHash = nHash;
+            return p;
         }
+
         void free_aux_node( aux_node_type * p )
         {
-            aux_node_allocator().Delete( p );
+            m_Buckets.free_aux_node( p );
             m_Stat.onHeadNodeFreed();
         }
 
@@ -993,21 +997,35 @@ namespace cds { namespace intrusive {
             assert( pParentBucket != nullptr );
 
             // Allocate a dummy node for new bucket
-            {
-                aux_node_type * pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
-                if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
-                    m_Buckets.bucket( nBucket, pBucket );
-                    m_Stat.onNewBucket();
-                    return pBucket;
+            aux_node_type * pBucket;
+            if ( ( pBucket = m_Buckets.bucket( nBucket )) == nullptr ) {
+                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
+                if ( pBucket ) {
+                    if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
+                        m_Buckets.bucket( nBucket, pBucket );
+                        m_Stat.onNewBucket();
+                        return pBucket;
+                    }
+                    else {
+                        // Another thread set the bucket. Wait while it done
+                        free_aux_node( pBucket );
+                    }
                 }
-                free_aux_node( pBucket );
+                else {
+                    // There are no free buckets. It means that the bucket table is full
+                    // Wait while another thread set th bucket
+                    m_Stat.onBucketsExhausted();
+                }
             }
+            else
+                return pBucket;
 
             // Another thread set the bucket. Wait while it done
 
             // In this point, we must wait while nBucket is empty.
             // The compiler can decide that waiting loop can be "optimized" (stripped)
             // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
+
             m_Stat.onBucketInitContenton();
             back_off bkoff;
             while ( true ) {
@@ -1043,6 +1061,7 @@ namespace cds { namespace intrusive {
 
             // Initialize bucket 0
             aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
+            assert( pNode != nullptr );
 
             // insert_aux_node cannot return false for empty list
             CDS_VERIFY( m_List.insert_aux_node( pNode ) );
@@ -1194,8 +1213,12 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
-        bucket_table            m_Buckets;          ///< bucket table
+        typedef typename cds::details::type_padding< bucket_table, traits::padding >::type padded_bucket_table;
+        padded_bucket_table     m_Buckets;          ///< bucket table
+
+        typedef typename cds::details::type_padding< ordered_list_wrapper, traits::padding>::type padded_ordered_list;
+        padded_ordered_list     m_List;             ///< Ordered list containing split-list items
+
         atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
         atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
         item_counter            m_ItemCounter;      ///< Item counter

@@ -42,8 +42,7 @@ namespace cds { namespace details {
         };
         char _[Align - Modulo]   ;   // padding
 
-        type_padding_helper() CDS_NOEXCEPT_( noexcept( T() ))
-        {}
+        using T::T;
     };
     template <typename T, int Align>
     struct type_padding_helper<T, Align, 0>: public T
@@ -52,8 +51,7 @@ namespace cds { namespace details {
             value = 0
         };
 
-        type_padding_helper() CDS_NOEXCEPT_( noexcept( T()) )
-        {}
+        using T::T;
     };
     //@endcond
 
@@ -71,8 +69,13 @@ namespace cds { namespace details {
     template <typename T, int AlignFactor>
     class type_padding {
     public:
+        /// Align factor
+        enum {
+            align_factor = AlignFactor <= 0 ? 1 : AlignFactor
+        };
+
         /// Result type
-        typedef type_padding_helper<T, AlignFactor, sizeof(T) % AlignFactor>    type;
+        typedef type_padding_helper<T, align_factor, sizeof(T) % align_factor> type;
 
         /// Padding constant
         enum {

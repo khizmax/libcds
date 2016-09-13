@@ -32,6 +32,7 @@
 
 #include <cds/container/lazy_list_hp.h>
 #include <cds/container/split_list_set.h>
+#include <cds/intrusive/free_list.h>
 
 namespace {
     namespace cc = cds::container;
@@ -220,6 +221,27 @@ namespace {
             typedef cc::lazy_list_tag ordered_list;
             typedef hash_int hash;
             typedef cds::atomicity::item_counter item_counter;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( SplitListLazySet_HP, free_list )
+    {
+        struct set_traits: public set_static_traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
 
             struct ordered_list_traits: public cc::lazy_list::traits
             {

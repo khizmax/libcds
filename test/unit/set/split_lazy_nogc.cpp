@@ -25,13 +25,14 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_set_nogc.h"
 
 #include <cds/container/lazy_list_nogc.h>
 #include <cds/container/split_list_set_nogc.h>
+#include <cds/intrusive/free_list.h>
 
 namespace {
     namespace cc = cds::container;
@@ -213,6 +214,48 @@ namespace {
         typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
 
         set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( SplitListLazySet_NoGC, static_bucket_table_free_list )
+    {
+        struct set_traits: public set_static_traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 4 );
+        test( s );
+    }
+
+    TEST_F( SplitListLazySet_NoGC, free_list )
+    {
+        struct set_traits: public cc::split_list::traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::empty back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 2 );
         test( s );
     }
 

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_SPLIT_LIST_NOGC_H
@@ -35,6 +35,7 @@
 
 #include <cds/intrusive/details/split_list_base.h>
 #include <cds/gc/nogc.h>
+#include <cds/details/type_padding.h>
 
 namespace cds { namespace intrusive {
 
@@ -86,6 +87,13 @@ namespace cds { namespace intrusive {
         typedef typename traits::back_off     back_off;     ///< back-off strategy
         typedef typename traits::memory_model memory_model; ///< Memory ordering. See cds::opt::memory_model option
         typedef typename traits::stat         stat;         ///< Internal statistics, see \p spit_list::stat
+
+        // GC and OrderedList::gc must be the same
+        static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
+
+        // atomicity::empty_item_counter is not allowed as a item counter
+        static_assert(!std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
+            "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
     protected:
         typedef typename ordered_list::node_type  list_node_type;  ///< Node type as declared in ordered list
@@ -169,150 +177,6 @@ namespace cds { namespace intrusive {
                 return base_class::erase_for( pred );
             }
         };
-
-        //@endcond
-
-    protected:
-        ordered_list_wrapper    m_List;             ///< Ordered list containing split-list items
-        bucket_table            m_Buckets;          ///< bucket table
-        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
-        atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
-        item_counter            m_ItemCounter;      ///< Item counter
-        hash                    m_HashFunctor;      ///< Hash functor
-        stat                    m_Stat;             ///< Internal statistics
-
-    protected:
-        //@cond
-        typedef cds::details::Allocator< aux_node_type, typename traits::allocator >   aux_node_allocator;
-
-        aux_node_type * alloc_aux_node( size_t nHash )
-        {
-            m_Stat.onHeadNodeAllocated();
-            return aux_node_allocator().New( nHash );
-        }
-        void free_aux_node( aux_node_type * p )
-        {
-            aux_node_allocator().Delete( p );
-            m_Stat.onHeadNodeFreed();
-        }
-
-        /// Calculates hash value of \p key
-        template <typename Q>
-        size_t hash_value( Q const& key ) const
-        {
-            return m_HashFunctor( key );
-        }
-
-        size_t bucket_no( size_t nHash ) const
-        {
-            return nHash & ( (1 << m_nBucketCountLog2.load(memory_model::memory_order_relaxed)) - 1 );
-        }
-
-        static size_t parent_bucket( size_t nBucket )
-        {
-            assert( nBucket > 0 );
-            return nBucket & ~( 1 << bitop::MSBnz( nBucket ) );
-        }
-
-        aux_node_type * init_bucket( size_t nBucket )
-        {
-            assert( nBucket > 0 );
-            size_t nParent = parent_bucket( nBucket );
-
-            aux_node_type * pParentBucket = m_Buckets.bucket( nParent );
-            if ( pParentBucket == nullptr ) {
-                pParentBucket = init_bucket( nParent );
-                m_Stat.onRecursiveInitBucket();
-            }
-
-            assert( pParentBucket != nullptr );
-
-            // Allocate a dummy node for new bucket
-            {
-                aux_node_type * pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
-                if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
-                    m_Buckets.bucket( nBucket, pBucket );
-                    m_Stat.onNewBucket();
-                    return pBucket;
-                }
-                free_aux_node( pBucket );
-            }
-
-            // Another thread set the bucket. Wait while it done
-
-            // In this point, we must wait while nBucket is empty.
-            // The compiler can decide that waiting loop can be "optimized" (stripped)
-            // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
-            //
-            m_Stat.onBucketInitContenton();
-            back_off bkoff;
-            while ( true ) {
-                aux_node_type volatile * p = m_Buckets.bucket( nBucket );
-                if ( p && p != nullptr )
-                    return const_cast<aux_node_type *>( p );
-                bkoff();
-                m_Stat.onBusyWaitBucketInit();
-            }
-        }
-
-        aux_node_type * get_bucket( size_t nHash )
-        {
-            size_t nBucket = bucket_no( nHash );
-
-            aux_node_type * pHead = m_Buckets.bucket( nBucket );
-            if ( pHead == nullptr )
-                pHead = init_bucket( nBucket );
-
-            assert( pHead->is_dummy() );
-
-            return pHead;
-        }
-
-        void init()
-        {
-            // GC and OrderedList::gc must be the same
-            static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
-
-            // atomicity::empty_item_counter is not allowed as a item counter
-            static_assert( !std::is_same<item_counter, cds::atomicity::empty_item_counter>::value,
-                           "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
-            // Initialize bucket 0
-            aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
-
-            // insert_aux_node cannot return false for empty list
-            CDS_VERIFY( m_List.insert_aux_node( pNode ));
-
-            m_Buckets.bucket( 0, pNode );
-        }
-
-        static size_t max_item_count( size_t nBucketCount, size_t nLoadFactor )
-        {
-            return nBucketCount * nLoadFactor;
-        }
-
-        void inc_item_count()
-        {
-            size_t nMaxCount = m_nMaxItemCount.load(memory_model::memory_order_relaxed);
-            if ( ++m_ItemCounter <= nMaxCount )
-                return;
-
-            size_t sz = m_nBucketCountLog2.load(memory_model::memory_order_relaxed);
-            const size_t nBucketCount = static_cast<size_t>(1) << sz;
-            if ( nBucketCount < m_Buckets.capacity() ) {
-                // we may grow the bucket table
-                const size_t nLoadFactor = m_Buckets.load_factor();
-                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
-                    return; // someone already have updated m_nBucketCountLog2, so stop here
-
-                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
-                                                         memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
-                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
-            }
-            else
-                m_nMaxItemCount.store( std::numeric_limits<size_t>::max(), memory_model::memory_order_relaxed );
-        }
-
         //@endcond
 
     public:
@@ -707,6 +571,145 @@ namespace cds { namespace intrusive {
                 [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); }));
         }
 
+        aux_node_type * alloc_aux_node( size_t nHash )
+        {
+            m_Stat.onHeadNodeAllocated();
+            aux_node_type* p = m_Buckets.alloc_aux_node();
+            if ( p )
+                p->m_nHash = nHash;
+            return p;
+        }
+
+        void free_aux_node( aux_node_type * p )
+        {
+            m_Buckets.free_aux_node( p );
+            m_Stat.onHeadNodeFreed();
+        }
+
+        /// Calculates hash value of \p key
+        template <typename Q>
+        size_t hash_value( Q const& key ) const
+        {
+            return m_HashFunctor( key );
+        }
+
+        size_t bucket_no( size_t nHash ) const
+        {
+            return nHash & ((1 << m_nBucketCountLog2.load( memory_model::memory_order_relaxed )) - 1);
+        }
+
+        static size_t parent_bucket( size_t nBucket )
+        {
+            assert( nBucket > 0 );
+            return nBucket & ~(1 << bitop::MSBnz( nBucket ));
+        }
+
+        aux_node_type * init_bucket( size_t nBucket )
+        {
+            assert( nBucket > 0 );
+            size_t nParent = parent_bucket( nBucket );
+
+            aux_node_type * pParentBucket = m_Buckets.bucket( nParent );
+            if ( pParentBucket == nullptr ) {
+                pParentBucket = init_bucket( nParent );
+                m_Stat.onRecursiveInitBucket();
+            }
+
+            assert( pParentBucket != nullptr );
+
+            // Allocate a dummy node for new bucket
+            {
+                aux_node_type * pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
+                if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
+                    m_Buckets.bucket( nBucket, pBucket );
+                    m_Stat.onNewBucket();
+                    return pBucket;
+                }
+                free_aux_node( pBucket );
+            }
+
+            // Another thread set the bucket. Wait while it done
+
+            // In this point, we must wait while nBucket is empty.
+            // The compiler can decide that waiting loop can be "optimized" (stripped)
+            // To prevent this situation, we use waiting on volatile bucket_head_ptr pointer.
+            //
+            m_Stat.onBucketInitContenton();
+            back_off bkoff;
+            while ( true ) {
+                aux_node_type volatile * p = m_Buckets.bucket( nBucket );
+                if ( p && p != nullptr )
+                    return const_cast<aux_node_type *>(p);
+                bkoff();
+                m_Stat.onBusyWaitBucketInit();
+            }
+        }
+
+        aux_node_type * get_bucket( size_t nHash )
+        {
+            size_t nBucket = bucket_no( nHash );
+
+            aux_node_type * pHead = m_Buckets.bucket( nBucket );
+            if ( pHead == nullptr )
+                pHead = init_bucket( nBucket );
+
+            assert( pHead->is_dummy() );
+
+            return pHead;
+        }
+
+        void init()
+        {
+            // Initialize bucket 0
+            aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
+
+            // insert_aux_node cannot return false for empty list
+            CDS_VERIFY( m_List.insert_aux_node( pNode ) );
+
+            m_Buckets.bucket( 0, pNode );
+        }
+
+        static size_t max_item_count( size_t nBucketCount, size_t nLoadFactor )
+        {
+            return nBucketCount * nLoadFactor;
+        }
+
+        void inc_item_count()
+        {
+            size_t nMaxCount = m_nMaxItemCount.load( memory_model::memory_order_relaxed );
+            if ( ++m_ItemCounter <= nMaxCount )
+                return;
+
+            size_t sz = m_nBucketCountLog2.load( memory_model::memory_order_relaxed );
+            const size_t nBucketCount = static_cast<size_t>(1) << sz;
+            if ( nBucketCount < m_Buckets.capacity() ) {
+                // we may grow the bucket table
+                const size_t nLoadFactor = m_Buckets.load_factor();
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ) )
+                    return; // someone already have updated m_nBucketCountLog2, so stop here
+
+                m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
+                    memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+                m_nBucketCountLog2.compare_exchange_strong( sz, sz + 1, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+            }
+            else
+                m_nMaxItemCount.store( std::numeric_limits<size_t>::max(), memory_model::memory_order_relaxed );
+        }
+        //@endcond
+
+    protected:
+        //@cond
+        typedef typename cds::details::type_padding< bucket_table, traits::padding >::type padded_bucket_table;
+        padded_bucket_table     m_Buckets;          ///< bucket table
+
+        typedef typename cds::details::type_padding< ordered_list_wrapper, traits::padding>::type padded_ordered_list;
+        padded_ordered_list     m_List;             ///< Ordered list containing split-list items
+
+        atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
+        atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
+        item_counter            m_ItemCounter;      ///< Item counter
+        hash                    m_HashFunctor;      ///< Hash functor
+        stat                    m_Stat;             ///< Internal statistics
         //@endcond
     };
 

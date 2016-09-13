@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,13 +25,14 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_intrusive_set_hp.h"
 
 #include <cds/intrusive/michael_list_dhp.h>
 #include <cds/intrusive/split_list.h>
+#include <cds/intrusive/free_list.h>
 
 namespace {
     namespace ci = cds::intrusive;
@@ -133,6 +134,80 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveSplitListSet_DHP, base_static_bucket_table )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<base_item_type> less;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            enum {
+                dynamic_bucket_table = false
+            };
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_DHP, base_static_bucket_table_free_list )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            enum {
+                dynamic_bucket_table = false
+            };
+            typedef ci::FreeList free_list;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_DHP, base_free_list )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<base_item_type> less;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            typedef ci::FreeList free_list;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
 
     TEST_F( IntrusiveSplitListSet_DHP, member_cmp )
     {
@@ -198,6 +273,78 @@ namespace {
         {
             typedef hash_int hash;
             typedef simple_item_counter item_counter;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_DHP, member_static_bucket_table )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<member_item_type> less;
+            typedef cmp<member_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            enum {
+                dynami_bucket_table = false
+            };
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_DHP, member_static_bucket_table_free_list )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<member_item_type> less;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            enum {
+                dynami_bucket_table = false
+            };
+            typedef ci::FreeList free_list;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_DHP, member_free_list )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc<gc_type>> hook;
+            typedef base_class::less<member_item_type> less;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, member_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::FreeList free_list;
         };
         typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
 

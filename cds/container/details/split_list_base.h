@@ -49,7 +49,7 @@ namespace cds { namespace container {
         /// Disabled internal statistics, see \p cds::intrusive::split_list::empty_stat
         typedef cds::intrusive::split_list::empty_stat empty_stat;
 
-        /// Selector of bucket table implementation =- typedef for \p intrusive::split_list::dynamic_bucket_table
+        /// Selector of bucket table implementation = typedef for \p intrusive::split_list::dynamic_bucket_table
         template <bool Value>
         using dynamic_bucket_table = cds::intrusive::split_list::dynamic_bucket_table<Value>;
 

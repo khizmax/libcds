@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_FREE_LIST_TAGGED_H
@@ -92,9 +92,31 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+    private:
+        //@cond
+        struct tagged_ptr
+        {
+            node *    ptr;
+            uintptr_t tag;
+
+            tagged_ptr()
+                : ptr( nullptr )
+                , tag( 0 )
+            {}
+
+            tagged_ptr( node* p )
+                : ptr( p )
+                , tag( 0 )
+            {}
+        };
+
+        static_assert(sizeof( tagged_ptr ) == sizeof( void * ) * 2, "sizeof( tagged_ptr ) violation");
+        //@endcond
+
     public:
         /// Creates empty free-list
         TaggedFreeList()
+            : m_Head( tagged_ptr())
         {
             // Your platform must support double-width CAS
             assert( m_Head.is_lock_free());
@@ -110,10 +132,11 @@ namespace cds { namespace intrusive {
             assert( empty() );
         }
 
-
         /// Puts \p pNode to the free list
         void put( node * pNode )
         {
+            assert( m_Head.is_lock_free());
+
             tagged_ptr currentHead = m_Head.load( atomics::memory_order_relaxed );
             tagged_ptr newHead = { pNode };
             do {
@@ -169,19 +192,6 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        struct tagged_ptr
-        {
-            node *    ptr;
-            uintptr_t tag;
-
-            tagged_ptr()
-                : ptr( nullptr )
-                , tag( 0 )
-            {}
-        };
-
-        static_assert(sizeof( tagged_ptr ) == sizeof(void *) * 2, "sizeof( tagged_ptr ) violation" );
-
         atomics::atomic<tagged_ptr> m_Head;
         //@endcond    
     };

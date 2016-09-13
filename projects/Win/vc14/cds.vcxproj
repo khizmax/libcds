@@ -532,6 +532,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\free_list.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\free_list_selector.h" />
     <ClInclude Include="..\..\..\cds\intrusive\free_list_tagged.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\iterable_list.h" />

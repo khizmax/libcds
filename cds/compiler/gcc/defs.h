@@ -102,6 +102,17 @@
 #define cds_likely( expr )   __builtin_expect( !!( expr ), 1 )
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
 
+// double-width CAS support
+#if CDS_BUILD_BITS == 64
+#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
+#       define CDS_DCAS_SUPPORT
+#   endif
+#else
+#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
+#       define CDS_DCAS_SUPPORT
+#   endif
+#endif
+
 #include <cds/compiler/gcc/compiler_barriers.h>
 
 #endif // #ifndef CDSLIB_COMPILER_GCC_DEFS_H

@@ -37,6 +37,7 @@
 #include <cds/algo/int_algo.h>
 #include <cds/algo/bitop.h>
 #include <cds/opt/hash.h>
+#include <cds/intrusive/free_list_selector.h>
 
 namespace cds { namespace intrusive {
 
@@ -104,6 +105,7 @@ namespace cds { namespace intrusive {
             counter_type    m_nInitBucketRecursive;  ///< Count of recursive bucket initialization
             counter_type    m_nInitBucketContention; ///< Count of bucket init contention encountered
             counter_type    m_nBusyWaitBucketInit;   ///< Count of busy wait cycle while a bucket is initialized
+            counter_type    m_nBucketsExhausted;     ///< Count of failed bucket allocation
 
             //@cond
             void onInsertSuccess()       { ++m_nInsertSuccess; }
@@ -130,6 +132,7 @@ namespace cds { namespace intrusive {
             void onRecursiveInitBucket() { ++m_nInitBucketRecursive; }
             void onBucketInitContenton() { ++m_nInitBucketContention; }
             void onBusyWaitBucketInit()  { ++m_nBusyWaitBucketInit; }
+            void onBucketsExhausted()    { ++m_nBucketsExhausted; }
             //@endcond
         };
 
@@ -153,6 +156,7 @@ namespace cds { namespace intrusive {
             void onRecursiveInitBucket() const {}
             void onBucketInitContenton() const {}
             void onBusyWaitBucketInit()  const {}
+            void onBucketsExhausted()    const {}
             //@endcond
         };
 
@@ -212,6 +216,23 @@ namespace cds { namespace intrusive {
 
             /// Back-off strategy
             typedef cds::backoff::Default back_off;
+
+            /// Padding; default is cache-line padding
+            enum { 
+                padding = cds::opt::cache_line_padding
+            };
+
+            /// Free-list of auxiliary nodes
+            /**
+                The split-list contains auxiliary nodes marked the start of buckets.
+                To increase performance, there is a pool of preallocated aux nodes. The part of the pool is a free-list
+                of aux nodes.
+
+                Default is:
+                - \p cds::intrusive::FreeList - if architecture and/or compiler does not support double-width CAS primitive
+                - \p cds::intrusive::TaggedFreeList - if architecture and/or compiler supports double-width CAS primitive
+            */
+            typedef FreeListImpl free_list;
         };
 
         /// [value-option] Split-list dynamic bucket table option
@@ -247,6 +268,8 @@ namespace cds { namespace intrusive {
             - \p opt::back_off - back-off strategy used for spinning, default is \p cds::backoff::Default.
             - \p opt::stat - internal statistics, default is \p split_list::empty_stat (disabled).
                 To enable internal statistics use \p split_list::stat.
+            - \p opt::padding - a padding to solve false-sharing issues; default is cache-line padding
+            - \p opt::free_list - a free-list implementation, see \p traits::free_list
         */
         template <typename... Options>
         struct make_traits {
@@ -266,6 +289,8 @@ namespace cds { namespace intrusive {
             \p Options are:
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::memory_model - memory model used. Possible types are \p opt::v::sequential_consistent, \p opt::v::relaxed_ordering
+            - \p opt::free_list - free-list implementation; default is \p TaggedFreeList if the processor supports double-with CAS
+                 otherwise \p FreeList.
         */
         template <typename GC, typename Node, typename... Options>
         class static_bucket_table
@@ -275,6 +300,7 @@ namespace cds { namespace intrusive {
             {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
+                typedef FreeListImpl                free_list;
             };
             typedef typename opt::make_options< default_options, Options... >::type options;
             //@endcond
@@ -283,27 +309,50 @@ namespace cds { namespace intrusive {
             typedef GC      gc;         ///< Garbage collector
             typedef Node    node_type;  ///< Bucket node type
             typedef atomics::atomic<node_type *> table_entry;  ///< Table entry type
+            typedef typename options::allocator allocator; ///< allocator
 
             /// Bucket table allocator
-            typedef cds::details::Allocator< table_entry, typename options::allocator >  bucket_table_allocator;
+            typedef cds::details::Allocator< table_entry, allocator > bucket_table_allocator;
 
             /// Memory model for atomic operations
             typedef typename options::memory_model  memory_model;
 
+            /// Free-list
+            typedef typename options::free_list free_list;
+
         protected:
+            //@cond
             const size_t   m_nLoadFactor; ///< load factor (average count of items per bucket)
             const size_t   m_nCapacity;   ///< Bucket table capacity
             table_entry *  m_Table;       ///< Bucket table
+
+            typedef typename free_list::node free_list_node;
+            union internal_node_type {
+                node_type       node;
+                free_list_node  free_node;
+
+                ~internal_node_type() {} // to block compiler warnings
+            };
+
+            typedef typename allocator::template rebind< internal_node_type >::other aux_node_allocator;
+
+            internal_node_type*     m_auxNode;           ///< Array of pre-allocated auxiliary nodes
+            atomics::atomic<size_t> m_nAuxNodeAllocated; ///< how many auxiliary node allocated
+            free_list               m_freeList;          ///< Free list
+            //@endcond
 
         protected:
             //@cond
             void allocate_table()
             {
                 m_Table = bucket_table_allocator().NewArray( m_nCapacity, nullptr );
+                m_auxNode = aux_node_allocator().allocate( m_nCapacity );
             }
 
             void destroy_table()
             {
+                m_freeList.clear( []( typename free_list::node* ) {} );
+                aux_node_allocator().deallocate( m_auxNode, m_nCapacity );
                 bucket_table_allocator().Delete( m_Table, m_nCapacity );
             }
             //@endcond
@@ -313,6 +362,7 @@ namespace cds { namespace intrusive {
             static_bucket_table()
                 : m_nLoadFactor(1)
                 , m_nCapacity( 512 * 1024 )
+                , m_nAuxNodeAllocated( 0 )
             {
                 allocate_table();
             }
@@ -322,8 +372,9 @@ namespace cds { namespace intrusive {
                 size_t nItemCount,        ///< Max expected item count in split-ordered list
                 size_t nLoadFactor        ///< Load factor
                 )
-                : m_nLoadFactor( nLoadFactor > 0 ? nLoadFactor : (size_t) 1 ),
-                m_nCapacity( cds::beans::ceil2( nItemCount / m_nLoadFactor ) )
+                : m_nLoadFactor( nLoadFactor > 0 ? nLoadFactor : (size_t) 1 )
+                , m_nCapacity( cds::beans::ceil2( nItemCount / m_nLoadFactor ) )
+                , m_nAuxNodeAllocated( 0 )
             {
                 // m_nCapacity must be power of 2
                 assert( cds::beans::is_power2( m_nCapacity ) );
@@ -352,6 +403,32 @@ namespace cds { namespace intrusive {
                 m_Table[ nBucket ].store( pNode, memory_model::memory_order_release );
             }
 
+            /// Allocates auxiliary node; can return \p nullptr if the table exhausted
+            node_type* alloc_aux_node()
+            {
+                if ( m_nAuxNodeAllocated.load( memory_model::memory_order_relaxed ) < capacity() ) {
+                    // alloc next free node from m_auxNode
+                    size_t const idx = m_nAuxNodeAllocated.fetch_add( 1, memory_model::memory_order_relaxed );
+                    if ( idx < capacity() )
+                        return new( &m_auxNode[idx].node ) node_type;
+                }
+
+                // get from free-list
+                auto pFree = m_freeList.get();
+                if ( pFree )
+                    return new( pFree ) node_type;
+
+                // table exhausted
+                return nullptr;
+            }
+
+            /// Places node type to free-list
+            void free_aux_node( node_type* p )
+            {
+                p->~node_type();
+                m_freeList.put( new(p) free_list_node());
+            }
+
             /// Returns the capacity of the bucket table
             size_t capacity() const
             {
@@ -378,7 +455,9 @@ namespace cds { namespace intrusive {
             \p Options are:
             - \p opt::allocator - allocator used to allocate bucket table. Default is \ref CDS_DEFAULT_ALLOCATOR
             - \p opt::memory_model - memory model used. Possible types are \p opt::v::sequential_consistent, \p opt::v::relaxed_ordering
-        */
+            - \p opt::free_list - free-list implementation; default is \p TaggedFreeList if the processor supports double-with CAS
+                otherwise \p FreeList.
+            */
         template <typename GC, typename Node, typename... Options>
         class expandable_bucket_table
         {
@@ -387,28 +466,52 @@ namespace cds { namespace intrusive {
             {
                 typedef CDS_DEFAULT_ALLOCATOR       allocator;
                 typedef opt::v::relaxed_ordering    memory_model;
+                typedef FreeListImpl                free_list;
             };
             typedef typename opt::make_options< default_options, Options... >::type options;
             //@endcond
+
         public:
-            typedef GC      gc;        ///< Garbage collector
-            typedef Node    node_type; ///< Bucket node type
-            typedef atomics::atomic<node_type *> table_entry; ///< Table entry type
+            typedef GC       gc;                            ///< Garbage collector
+            typedef Node     node_type;                     ///< Bucket node type
+            typedef typename options::allocator allocator;  ///< allocator
 
             /// Memory model for atomic operations
             typedef typename options::memory_model memory_model;
 
-        protected:
-            typedef atomics::atomic<table_entry *>   segment_type; ///< Bucket table segment type
-
-        public:
-            /// Bucket table allocator
-            typedef cds::details::Allocator< segment_type, typename options::allocator >  bucket_table_allocator;
-
-            /// Bucket table segment allocator
-            typedef cds::details::Allocator< table_entry, typename options::allocator >  segment_allocator;
+            /// Free-list
+            typedef typename options::free_list free_list;
 
         protected:
+            //@cond
+            typedef atomics::atomic<node_type *>    table_entry;    ///< Table entry type
+            typedef atomics::atomic<table_entry *>  segment_type;   ///< Bucket table segment type
+
+            typedef typename free_list::node free_list_node;
+
+            union internal_node_type {
+                node_type       aux_node;
+                free_list_node  free_node;
+
+                ~internal_node_type() {}  // to block compiler grumble
+            };
+
+            struct aux_node_segment {
+                atomics::atomic< size_t > aux_node_count; // how many aux nodes allocated from the segment
+                aux_node_segment*         next_segment;
+                // internal_node_type     nodes[];
+
+                aux_node_segment()
+                    : aux_node_count(0)
+                    , next_segment( nullptr )
+                {}
+
+                internal_node_type* segment()
+                {
+                    return reinterpret_cast<internal_node_type*>( this + 1 );
+                }
+            };
+
             /// Bucket table metrics
             struct metrics {
                 size_t    nSegmentCount;    ///< max count of segments in bucket table
@@ -417,85 +520,23 @@ namespace cds { namespace intrusive {
                 size_t    nLoadFactor;      ///< load factor
                 size_t    nCapacity;        ///< max capacity of bucket table
 
-                //@cond
                 metrics()
-                    : nSegmentCount(1024)
-                    , nSegmentSize(512)
+                    : nSegmentCount( 1024 )
+                    , nSegmentSize( 512 )
                     , nSegmentSizeLog2( cds::beans::log2( nSegmentSize ) )
-                    , nLoadFactor(1)
+                    , nLoadFactor( 1 )
                     , nCapacity( nSegmentCount * nSegmentSize )
                 {}
-                //@endcond
             };
-            const metrics   m_metrics; ///< Dynamic bucket table metrics
 
-        protected:
-            segment_type * m_Segments; ///< bucket table - array of segments
+            /// Bucket table allocator
+            typedef cds::details::Allocator< segment_type, allocator > bucket_table_allocator;
 
-        protected:
-            //@cond
-            metrics calc_metrics( size_t nItemCount, size_t nLoadFactor )
-            {
-                metrics m;
+            /// Bucket table segment allocator
+            typedef cds::details::Allocator< table_entry, allocator > segment_allocator;
 
-                // Calculate m_nSegmentSize and m_nSegmentCount by nItemCount
-                m.nLoadFactor = nLoadFactor > 0 ? nLoadFactor : 1;
-
-                size_t nBucketCount = (size_t)( ((float) nItemCount) / m.nLoadFactor );
-                if ( nBucketCount <= 2 ) {
-                    m.nSegmentCount = 1;
-                    m.nSegmentSize = 2;
-                }
-                else if ( nBucketCount <= 1024 ) {
-                    m.nSegmentCount = 1;
-                    m.nSegmentSize = ((size_t) 1) << beans::log2ceil( nBucketCount );
-                }
-                else {
-                    nBucketCount = beans::log2ceil( nBucketCount );
-                    m.nSegmentCount =
-                        m.nSegmentSize = ((size_t) 1) << ( nBucketCount / 2 );
-                    if ( nBucketCount & 1 )
-                        m.nSegmentSize *= 2;
-                    if ( m.nSegmentCount * m.nSegmentSize * m.nLoadFactor < nItemCount )
-                        m.nSegmentSize *= 2;
-                }
-                m.nCapacity = m.nSegmentCount * m.nSegmentSize;
-                m.nSegmentSizeLog2 = cds::beans::log2( m.nSegmentSize );
-                assert( m.nSegmentSizeLog2 != 0 )   ;   //
-                return m;
-            }
-
-            segment_type * allocate_table()
-            {
-                return bucket_table_allocator().NewArray( m_metrics.nSegmentCount, nullptr );
-            }
-
-            void destroy_table( segment_type * pTable )
-            {
-                bucket_table_allocator().Delete( pTable, m_metrics.nSegmentCount );
-            }
-
-            table_entry * allocate_segment()
-            {
-                return segment_allocator().NewArray( m_metrics.nSegmentSize, nullptr );
-            }
-
-            void destroy_segment( table_entry * pSegment )
-            {
-                segment_allocator().Delete( pSegment, m_metrics.nSegmentSize );
-            }
-
-            void init_segments()
-            {
-                // m_nSegmentSize must be 2**N
-                assert( cds::beans::is_power2( m_metrics.nSegmentSize ));
-                assert( ( ((size_t) 1) << m_metrics.nSegmentSizeLog2) == m_metrics.nSegmentSize );
-
-                // m_nSegmentCount must be 2**K
-                assert( cds::beans::is_power2( m_metrics.nSegmentCount ));
-
-                m_Segments = allocate_table();
-            }
+            // Aux node segment allocator
+            typedef typename allocator::template rebind<char>::other raw_allocator;
 
             //@endcond
 
@@ -504,7 +545,7 @@ namespace cds { namespace intrusive {
             expandable_bucket_table()
                 : m_metrics( calc_metrics( 512 * 1024, 1 ))
             {
-                init_segments();
+                init();
             }
 
             /// Creates the table with specified capacity rounded up to nearest power-of-two
@@ -514,18 +555,27 @@ namespace cds { namespace intrusive {
                 )
                 : m_metrics( calc_metrics( nItemCount, nLoadFactor ))
             {
-                init_segments();
+                init();
             }
 
             /// Destroys bucket table
             ~expandable_bucket_table()
             {
+                m_freeList.clear( []( typename free_list::node* ) {} );
+
+                for ( auto aux_segment  = m_auxNodeList.load( atomics::memory_order_relaxed ); aux_segment; ) {
+                    auto next_segment = aux_segment->next_segment;
+                    free_aux_segment( aux_segment );
+                    aux_segment = next_segment;
+                }
+
                 segment_type * pSegments = m_Segments;
                 for ( size_t i = 0; i < m_metrics.nSegmentCount; ++i ) {
-                    table_entry * pEntry = pSegments[i].load(memory_model::memory_order_relaxed);
+                    table_entry* pEntry = pSegments[i].load(memory_model::memory_order_relaxed);
                     if ( pEntry != nullptr )
                         destroy_segment( pEntry );
                 }
+
                 destroy_table( pSegments );
             }
 
@@ -535,7 +585,7 @@ namespace cds { namespace intrusive {
                 size_t nSegment = nBucket >> m_metrics.nSegmentSizeLog2;
                 assert( nSegment < m_metrics.nSegmentCount );
 
-                table_entry * pSegment = m_Segments[ nSegment ].load(memory_model::memory_order_acquire);
+                table_entry* pSegment = m_Segments[ nSegment ].load(memory_model::memory_order_acquire);
                 if ( pSegment == nullptr )
                     return nullptr;    // uninitialized bucket
                 return pSegment[ nBucket & (m_metrics.nSegmentSize - 1) ].load(memory_model::memory_order_acquire);
@@ -549,13 +599,51 @@ namespace cds { namespace intrusive {
 
                 segment_type& segment = m_Segments[nSegment];
                 if ( segment.load( memory_model::memory_order_relaxed ) == nullptr ) {
-                    table_entry * pNewSegment = allocate_segment();
+                    table_entry* pNewSegment = allocate_segment();
                     table_entry * pNull = nullptr;
                     if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                         destroy_segment( pNewSegment );
                     }
                 }
                 segment.load(memory_model::memory_order_acquire)[ nBucket & (m_metrics.nSegmentSize - 1) ].store( pNode, memory_model::memory_order_release );
+            }
+
+            /// Allocates auxiliary node; can return \p nullptr if the table exhausted
+            node_type* alloc_aux_node()
+            {
+                for ( ;; ) {
+                    aux_node_segment* aux_segment = m_auxNodeList.load( memory_model::memory_order_relaxed );
+                    assert( aux_segment != nullptr );
+
+                    // try to allocate from current aux segment
+                    if ( aux_segment->aux_node_count.load( memory_model::memory_order_relaxed ) < m_metrics.nSegmentSize ) {
+                        size_t idx = aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
+                        if ( idx < m_metrics.nSegmentSize )
+                            return new( aux_segment->segment() + idx ) node_type();
+                    }
+
+                    // try allocate from free-list
+                    auto pFree = m_freeList.get();
+                    if ( pFree )
+                        return new( pFree ) node_type;
+
+                    // free-list is empty, current segment is full
+                    // try to allocate new aux segment
+                    // We can allocate more aux segments than we need but it is not a problem in this context
+                    aux_node_segment* new_aux_segment = allocate_aux_segment();
+                    new_aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
+                    if ( m_auxNodeList.compare_exchange_strong( aux_segment, new_aux_segment, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ))
+                        return new( new_aux_segment->segment() ) node_type();
+
+                    free_aux_segment( new_aux_segment );
+                }
+            }
+
+            /// Places auxiliary node type to free-list
+            void free_aux_node( node_type* p )
+            {
+                p->~node_type();
+                m_freeList.put( new(p) free_list_node() );
             }
 
             /// Returns the capacity of the bucket table
@@ -569,6 +657,92 @@ namespace cds { namespace intrusive {
             {
                 return m_metrics.nLoadFactor;
             }
+
+        protected:
+            //@cond
+            metrics calc_metrics( size_t nItemCount, size_t nLoadFactor )
+            {
+                metrics m;
+
+                // Calculate m_nSegmentSize and m_nSegmentCount by nItemCount
+                m.nLoadFactor = nLoadFactor > 0 ? nLoadFactor : 1;
+
+                size_t nBucketCount = (size_t)(((float)nItemCount) / m.nLoadFactor);
+                if ( nBucketCount <= 2 ) {
+                    m.nSegmentCount = 1;
+                    m.nSegmentSize = 2;
+                }
+                else if ( nBucketCount <= 1024 ) {
+                    m.nSegmentCount = 1;
+                    m.nSegmentSize = ((size_t)1) << beans::log2ceil( nBucketCount );
+                }
+                else {
+                    nBucketCount = beans::log2ceil( nBucketCount );
+                    m.nSegmentCount =
+                        m.nSegmentSize = ((size_t)1) << (nBucketCount / 2);
+                    if ( nBucketCount & 1 )
+                        m.nSegmentSize *= 2;
+                    if ( m.nSegmentCount * m.nSegmentSize * m.nLoadFactor < nItemCount )
+                        m.nSegmentSize *= 2;
+                }
+                m.nCapacity = m.nSegmentCount * m.nSegmentSize;
+                m.nSegmentSizeLog2 = cds::beans::log2( m.nSegmentSize );
+                assert( m.nSegmentSizeLog2 != 0 );   //
+                return m;
+            }
+
+            segment_type * allocate_table()
+            {
+                return bucket_table_allocator().NewArray( m_metrics.nSegmentCount, nullptr );
+            }
+
+            void destroy_table( segment_type * pTable )
+            {
+                bucket_table_allocator().Delete( pTable, m_metrics.nSegmentCount );
+            }
+
+            table_entry* allocate_segment()
+            {
+                return segment_allocator().NewArray( m_metrics.nSegmentSize, nullptr );
+            }
+
+            void destroy_segment( table_entry* pSegment )
+            {
+                segment_allocator().Delete( pSegment, m_metrics.nSegmentSize );
+            }
+
+            aux_node_segment* allocate_aux_segment()
+            {
+                char* p = raw_allocator().allocate( sizeof( aux_node_segment ) + sizeof( internal_node_type ) * m_metrics.nSegmentSize );
+                return new(p) aux_node_segment();
+            }
+
+            void free_aux_segment( aux_node_segment* p )
+            {
+                raw_allocator().deallocate( reinterpret_cast<char*>( p ), sizeof( aux_node_segment ) + sizeof( internal_node_type ) * m_metrics.nSegmentSize );
+            }
+
+            void init()
+            {
+                // m_nSegmentSize must be 2**N
+                assert( cds::beans::is_power2( m_metrics.nSegmentSize ) );
+                assert( (((size_t)1) << m_metrics.nSegmentSizeLog2) == m_metrics.nSegmentSize );
+
+                // m_nSegmentCount must be 2**K
+                assert( cds::beans::is_power2( m_metrics.nSegmentCount ) );
+
+                m_Segments = allocate_table();
+                m_auxNodeList = allocate_aux_segment();
+            }
+            //@endcond
+
+        protected:
+            //@cond
+            metrics const       m_metrics;  ///< Dynamic bucket table metrics
+            segment_type*       m_Segments; ///< bucket table - array of segments
+            atomics::atomic<aux_node_segment*> m_auxNodeList;  ///< segment list of aux nodes
+            free_list           m_freeList; ///< List of free aux nodes
+            //@endcond
         };
 
         /// Split-list node traits
@@ -653,16 +827,6 @@ namespace cds { namespace intrusive {
                 typedef static_bucket_table<GC, Node, Options...>    type;
             };
 
-            template <typename GC, class Alloc >
-            struct dummy_node_disposer {
-                template <typename Node>
-                void operator()( Node * p )
-                {
-                    typedef cds::details::Allocator< Node, Alloc >  node_deallocator;
-                    node_deallocator().Delete( p );
-                }
-            };
-
             template <typename Q>
             struct search_value_type
             {
@@ -731,9 +895,7 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * v )
                     {
                         splitlist_node_type * p = static_cast<splitlist_node_type *>( node_traits::to_node_ptr( v ));
-                        if ( p->is_dummy() )
-                            dummy_node_disposer<gc, typename traits::allocator>()( p );
-                        else
+                        if ( !p->is_dummy() )
                             native_disposer()( v );
                     }
                 };

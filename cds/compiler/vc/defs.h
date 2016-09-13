@@ -159,6 +159,9 @@
 #   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
 #endif
 
+// double-width CAS support
+//#define CDS_DCAS_SUPPORT
+
 #include <cds/compiler/vc/compiler_barriers.h>
 
 //@endcond

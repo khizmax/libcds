@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,13 +25,14 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_map_hp.h"
 
 #include <cds/container/lazy_list_hp.h>
 #include <cds/container/split_list_map.h>
+#include <cds/intrusive/free_list.h>
 
 namespace {
     namespace cc = cds::container;
@@ -185,6 +186,26 @@ namespace {
         test( m );
     }
 
+    TEST_F( SplitListLazyMap_HP, free_list )
+    {
+        struct map_traits: public cc::split_list::traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash1 hash;
+            typedef cds::intrusive::FreeList free_list;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::empty back_off;
+            };
+        };
+        typedef cc::SplitListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m( kSize, 4 );
+        test( m );
+    }
+
     TEST_F( SplitListLazyMap_HP, mutex )
     {
         struct map_traits: public cc::split_list::traits
@@ -220,6 +241,27 @@ namespace {
             typedef cc::lazy_list_tag ordered_list;
             typedef hash1 hash;
             typedef cds::atomicity::item_counter item_counter;
+
+            struct ordered_list_traits: public cc::lazy_list::traits
+            {
+                typedef cmp compare;
+                typedef cds::backoff::pause back_off;
+            };
+        };
+        typedef cc::SplitListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m( kSize, 4 );
+        test( m );
+    }
+
+    TEST_F( SplitListLazyMap_HP, static_bucket_table_free_list )
+    {
+        struct map_traits: public set_static_traits
+        {
+            typedef cc::lazy_list_tag ordered_list;
+            typedef hash1 hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::intrusive::FreeList free_list;
 
             struct ordered_list_traits: public cc::lazy_list::traits
             {

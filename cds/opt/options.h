@@ -688,6 +688,20 @@ namespace opt {
         //@endcond
     };
 
+    /// [type-option] Free-list implementation
+    /**
+        See \p cds::intrusive::FreeList for free-list interface
+    */
+    template <typename FreeList>
+    struct free_list {
+        //@cond
+        template <typename Base> struct pack: public Base
+        {
+            typedef FreeList free_list;
+        };
+        //@endcond
+    };
+
     //@cond
     // For internal use
     template <typename Accessor>
@@ -881,7 +895,6 @@ namespace cds { namespace opt {
                 return (result_type) std::rand();
             }
         };
-
     } // namespace v
 
 }} // namespace cds::opt
