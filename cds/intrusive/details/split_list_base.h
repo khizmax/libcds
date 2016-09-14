@@ -322,21 +322,16 @@ namespace cds { namespace intrusive {
 
         protected:
             //@cond
+            struct aux_node_type: public node_type, public free_list::node
+            {};
+
             const size_t   m_nLoadFactor; ///< load factor (average count of items per bucket)
             const size_t   m_nCapacity;   ///< Bucket table capacity
             table_entry *  m_Table;       ///< Bucket table
 
-            typedef typename free_list::node free_list_node;
-            union internal_node_type {
-                node_type       node;
-                free_list_node  free_node;
+            typedef typename allocator::template rebind< aux_node_type >::other aux_node_allocator;
 
-                ~internal_node_type() {} // to block compiler warnings
-            };
-
-            typedef typename allocator::template rebind< internal_node_type >::other aux_node_allocator;
-
-            internal_node_type*     m_auxNode;           ///< Array of pre-allocated auxiliary nodes
+            aux_node_type*          m_auxNode;           ///< Array of pre-allocated auxiliary nodes
             atomics::atomic<size_t> m_nAuxNodeAllocated; ///< how many auxiliary node allocated
             free_list               m_freeList;          ///< Free list
             //@endcond
@@ -410,13 +405,13 @@ namespace cds { namespace intrusive {
                     // alloc next free node from m_auxNode
                     size_t const idx = m_nAuxNodeAllocated.fetch_add( 1, memory_model::memory_order_relaxed );
                     if ( idx < capacity() )
-                        return new( &m_auxNode[idx].node ) node_type;
+                        return new( &m_auxNode[idx] ) aux_node_type();
                 }
 
                 // get from free-list
                 auto pFree = m_freeList.get();
                 if ( pFree )
-                    return new( pFree ) node_type;
+                    return static_cast<aux_node_type*>( pFree );
 
                 // table exhausted
                 return nullptr;
@@ -425,8 +420,7 @@ namespace cds { namespace intrusive {
             /// Places node type to free-list
             void free_aux_node( node_type* p )
             {
-                p->~node_type();
-                m_freeList.put( new(p) free_list_node());
+                m_freeList.put( static_cast<aux_node_type*>( p ));
             }
 
             /// Returns the capacity of the bucket table
@@ -487,28 +481,22 @@ namespace cds { namespace intrusive {
             typedef atomics::atomic<node_type *>    table_entry;    ///< Table entry type
             typedef atomics::atomic<table_entry *>  segment_type;   ///< Bucket table segment type
 
-            typedef typename free_list::node free_list_node;
-
-            union internal_node_type {
-                node_type       aux_node;
-                free_list_node  free_node;
-
-                ~internal_node_type() {}  // to block compiler grumble
-            };
+            class aux_node_type: public node_type, public free_list::node
+            {};
 
             struct aux_node_segment {
                 atomics::atomic< size_t > aux_node_count; // how many aux nodes allocated from the segment
                 aux_node_segment*         next_segment;
-                // internal_node_type     nodes[];
+                // aux_node_type     nodes[];
 
                 aux_node_segment()
                     : aux_node_count(0)
                     , next_segment( nullptr )
                 {}
 
-                internal_node_type* segment()
+                aux_node_type* segment()
                 {
-                    return reinterpret_cast<internal_node_type*>( this + 1 );
+                    return reinterpret_cast<aux_node_type*>( this + 1 );
                 }
             };
 
@@ -619,13 +607,13 @@ namespace cds { namespace intrusive {
                     if ( aux_segment->aux_node_count.load( memory_model::memory_order_relaxed ) < m_metrics.nSegmentSize ) {
                         size_t idx = aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
                         if ( idx < m_metrics.nSegmentSize )
-                            return new( aux_segment->segment() + idx ) node_type();
+                            return new( aux_segment->segment() + idx ) aux_node_type();
                     }
 
                     // try allocate from free-list
                     auto pFree = m_freeList.get();
                     if ( pFree )
-                        return new( pFree ) node_type;
+                        return static_cast<aux_node_type*>( pFree );
 
                     // free-list is empty, current segment is full
                     // try to allocate new aux segment
@@ -633,7 +621,7 @@ namespace cds { namespace intrusive {
                     aux_node_segment* new_aux_segment = allocate_aux_segment();
                     new_aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
                     if ( m_auxNodeList.compare_exchange_strong( aux_segment, new_aux_segment, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ))
-                        return new( new_aux_segment->segment() ) node_type();
+                        return new( new_aux_segment->segment() ) aux_node_type();
 
                     free_aux_segment( new_aux_segment );
                 }
@@ -642,8 +630,7 @@ namespace cds { namespace intrusive {
             /// Places auxiliary node type to free-list
             void free_aux_node( node_type* p )
             {
-                p->~node_type();
-                m_freeList.put( new(p) free_list_node() );
+                m_freeList.put( static_cast<aux_node_type*>( p ));
             }
 
             /// Returns the capacity of the bucket table
@@ -713,13 +700,13 @@ namespace cds { namespace intrusive {
 
             aux_node_segment* allocate_aux_segment()
             {
-                char* p = raw_allocator().allocate( sizeof( aux_node_segment ) + sizeof( internal_node_type ) * m_metrics.nSegmentSize );
+                char* p = raw_allocator().allocate( sizeof( aux_node_segment ) + sizeof( aux_node_type ) * m_metrics.nSegmentSize );
                 return new(p) aux_node_segment();
             }
 
             void free_aux_segment( aux_node_segment* p )
             {
-                raw_allocator().deallocate( reinterpret_cast<char*>( p ), sizeof( aux_node_segment ) + sizeof( internal_node_type ) * m_metrics.nSegmentSize );
+                raw_allocator().deallocate( reinterpret_cast<char*>( p ), sizeof( aux_node_segment ) + sizeof( aux_node_type ) * m_metrics.nSegmentSize );
             }
 
             void init()

@@ -258,7 +258,7 @@ namespace cds { namespace intrusive {
         //@cond
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
-        typedef node_type                           aux_node_type; ///< dummy node type
+        typedef node_type                           aux_node_type;   ///< dummy node type
 
         /// Split-list node traits
         /**
