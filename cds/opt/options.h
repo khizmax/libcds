@@ -405,6 +405,26 @@ namespace opt {
     };
 
     //@cond
+    template <unsigned Padding>
+    struct actual_padding
+    {
+        enum { value = Padding & ~padding_flags };
+    };
+
+    template <>
+    struct actual_padding<cache_line_padding>
+    {
+        enum { value = cds::c_nCacheLineSize };
+    };
+
+    template <>
+    struct actual_padding<cache_line_padding| padding_tiny_data_only>
+    {
+        enum { value = cds::c_nCacheLineSize };
+    };
+    //@endcond
+
+    //@cond
     namespace details {
         enum padding_vs_datasize {
             padding_datasize_less,
