@@ -403,6 +403,15 @@ namespace cds { namespace intrusive {
             init();
         }
 
+        /// Destroys split-list set
+        ~SplitListSet()
+        {
+            // list contains aux node that cannot be retired
+            // all aux nodes will be destroyed by bucket table dtor
+            m_List.clear();
+            gc::force_dispose();
+        }
+
     public:
         /// Inserts new node
         /**
@@ -837,7 +846,7 @@ namespace cds { namespace intrusive {
         /// Clears the set (non-atomic)
         /**
             The function unlink all items from the set.
-            The function is not atomic. Therefore, \p clear may be used only for debugging purposes.
+            The function is not atomic. After call the split-list can be non-empty.
 
             For each item the \p disposer is called after unlinking.
         */
@@ -1213,10 +1222,12 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename cds::details::type_padding< bucket_table, traits::padding >::type padded_bucket_table;
+        static unsigned const c_padding = cds::opt::actual_padding< traits::padding >::value;
+
+        typedef typename cds::details::type_padding< bucket_table, c_padding >::type padded_bucket_table;
         padded_bucket_table     m_Buckets;          ///< bucket table
 
-        typedef typename cds::details::type_padding< ordered_list_wrapper, traits::padding>::type padded_ordered_list;
+        typedef typename cds::details::type_padding< ordered_list_wrapper, c_padding >::type padded_ordered_list;
         padded_ordered_list     m_List;             ///< Ordered list containing split-list items
 
         atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )

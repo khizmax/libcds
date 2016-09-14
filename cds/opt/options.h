@@ -372,7 +372,7 @@ namespace opt {
 
         /// Apply padding only for tiny data when data size is less than required padding
         /**
-            The flag means that if your data size is less than the casheline size, the padding is applyed.
+            The flag means that if your data size is less than the cacheline size, the padding is applyed.
             Otherwise no padding will be applyed.
 
             This flag is applyed for padding value:

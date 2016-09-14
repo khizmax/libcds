@@ -205,6 +205,11 @@ namespace cds { namespace intrusive {
             init();
         }
 
+        /// Destroys split-list
+        ~SplitListSet()
+        {
+            m_List.clear();
+        }
     public:
         /// Inserts new node
         /**

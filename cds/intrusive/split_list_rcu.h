@@ -298,6 +298,13 @@ namespace cds { namespace intrusive {
             init();
         }
 
+        /// Destroys split-list
+        ~SplitListSet()
+        {
+            m_List.clear();
+            gc::force_dispose();
+        }
+
     public:
         /// Inserts new node
         /**
