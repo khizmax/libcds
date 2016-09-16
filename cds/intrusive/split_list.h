@@ -92,11 +92,10 @@ namespace cds { namespace intrusive {
         Template parameters are:
         - \p GC - Garbage collector. Note the \p GC must be the same as the \p GC used for \p OrderedList
         - \p OrderedList - ordered list implementation used as a bucket for hash set, for example, \p MichaelList, \p LazyList.
-            The intrusive ordered list implementation specifies the type \p T stored in the split-list set, the reclamation
-            schema \p GC used by split-list set, the comparison functor for the type \p T and other features specific for
-            the ordered list. 
+            The intrusive ordered list implementation specifies the type \p T stored in the split-list set, the comparison
+            functor for the type \p T and other features specific for the ordered list.
         - \p Traits - split-list traits, default is \p split_list::traits.
-            Instead of defining \p Traits struct you may use option-based syntax with \p split_list::make_traits metafunction.
+            Instead of defining \p Traits struct you can use option-based syntax provided by \p split_list::make_traits metafunction.
 
         @warning \p IterableList is not supported as \p OrderedList template parameter.
 

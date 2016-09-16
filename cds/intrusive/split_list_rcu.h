@@ -59,7 +59,7 @@ namespace cds { namespace intrusive {
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set,
             the comparing functor for the type \p T and other features specific for the ordered list.
         - \p Traits - set traits, default isd \p split_list::traits.
-            Instead of defining \p Traits struct you may use option-based syntax with \p split_list::make_traits metafunction.
+            Instead of defining \p Traits struct you can use option-based syntax provided by \p split_list::make_traits metafunction.
 
         @note About required features of hash functor see \ref cds_SplitList_hash_functor "SplitList general description".
 
