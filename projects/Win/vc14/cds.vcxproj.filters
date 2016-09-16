@@ -102,10 +102,6 @@
     <Filter Include="Header Files\cds\intrusive">
       <UniqueIdentifier>{7226715d-6777-4c01-8e66-83b3885c00c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
-    </Filter>
     <Filter Include="Header Files\cds\compiler\clang">
       <UniqueIdentifier>{ae97048d-bd62-4ff2-be28-3c84338e7186}</UniqueIdentifier>
     </Filter>
@@ -1284,6 +1280,9 @@
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\free_list_selector.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\free_list_cached.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
   </ItemGroup>

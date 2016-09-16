@@ -36,7 +36,8 @@
 namespace cds { namespace intrusive {
 
     /// Lock-free free list based on tagged pointers (required double-width CAS)
-    /** @ingroup cds_intrusive_helper
+    /** @ingroup cds_intrusive_freelist
+
         This variant of \p FreeList is intended for processor architectures that support double-width CAS.
         It uses <a href="https://en.wikipedia.org/wiki/Tagged_pointer">tagged pointer</a> technique to solve ABA problem.
 

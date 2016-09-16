@@ -36,7 +36,7 @@
 namespace cds { namespace intrusive {
 
     /// Lock-free free list
-    /** @ingroup cds_intrusive_helper
+    /** @ingroup cds_intrusive_freelist
 
         Free list is a helper class intended for reusing objects instead of freeing them completely; 
         this avoids the overhead of \p malloc(), and also avoids its worst-case behavior of taking an operating system lock.

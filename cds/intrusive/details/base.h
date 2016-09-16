@@ -320,6 +320,9 @@ namespace intrusive {
     /** @defgroup cds_intrusive_list List
         @ingroup cds_intrusive_containers
     */
+    /** @defgroup cds_intrusive_freelist Free-list
+        @ingroup cds_intrusive_containers
+    */
 
     //@cond
     template <typename List>

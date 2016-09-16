@@ -132,9 +132,9 @@ namespace cds { namespace intrusive {
                         "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
     protected:
+        //@cond
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
-        typedef node_type                           aux_node_type; ///< dummy node type
 
         /// Split-list node traits
         /**
@@ -143,15 +143,16 @@ namespace cds { namespace intrusive {
         */
         typedef split_list::node_traits<typename ordered_list::node_traits>  node_traits;
 
-        //@cond
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
             , gc
-            , aux_node_type
+            , node_type
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
         >::type bucket_table;
+
+        typedef typename bucket_table::aux_node_type aux_node_type; ///< auxiliary node type
 
         //@endcond
 
@@ -1090,10 +1091,12 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename cds::details::type_padding< bucket_table, traits::padding >::type padded_bucket_table;
+        static unsigned const c_padding = cds::opt::actual_padding< traits::padding >::value;
+
+        typedef typename cds::details::type_padding< bucket_table, c_padding >::type padded_bucket_table;
         padded_bucket_table     m_Buckets;          ///< bucket table
 
-        typedef typename cds::details::type_padding< ordered_list_wrapper, traits::padding>::type padded_ordered_list;
+        typedef typename cds::details::type_padding< ordered_list_wrapper, c_padding >::type padded_ordered_list;
         padded_ordered_list     m_List;             ///< Ordered list containing split-list items
 
         atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )

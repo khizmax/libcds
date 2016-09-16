@@ -258,7 +258,6 @@ namespace cds { namespace intrusive {
         //@cond
         typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
         typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
-        typedef node_type                           aux_node_type;   ///< dummy node type
 
         /// Split-list node traits
         /**
@@ -271,11 +270,13 @@ namespace cds { namespace intrusive {
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
             , gc
-            , aux_node_type
+            , node_type
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
             , opt::free_list< typename traits::free_list >
         >::type bucket_table;
+
+        typedef typename bucket_table::aux_node_type aux_node_type;   ///< auxiliary node type
         //@endcond
 
     protected:
@@ -287,7 +288,7 @@ namespace cds { namespace intrusive {
             typedef typename base_class::auxiliary_head       bucket_head_type;
 
         public:
-            bool insert_at( aux_node_type * pHead, value_type& val )
+            bool insert_at( aux_node_type* pHead, value_type& val )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);

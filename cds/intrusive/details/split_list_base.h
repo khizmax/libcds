@@ -306,25 +306,21 @@ namespace cds { namespace intrusive {
             //@endcond
 
         public:
-            typedef GC      gc;         ///< Garbage collector
-            typedef Node    node_type;  ///< Bucket node type
-            typedef atomics::atomic<node_type *> table_entry;  ///< Table entry type
+            typedef GC       gc;         ///< Garbage collector
+            typedef Node     node_type;  ///< Bucket node type
             typedef typename options::allocator allocator; ///< allocator
+            typedef typename options::memory_model  memory_model; ///< Memory model for atomic operations
+            typedef typename options::free_list free_list; ///< Free-list
 
-            /// Bucket table allocator
-            typedef cds::details::Allocator< table_entry, allocator > bucket_table_allocator;
-
-            /// Memory model for atomic operations
-            typedef typename options::memory_model  memory_model;
-
-            /// Free-list
-            typedef typename options::free_list free_list;
-
-        protected:
-            //@cond
+            /// Auxiliary node type
             struct aux_node_type: public node_type, public free_list::node
             {};
 
+            typedef atomics::atomic<aux_node_type *> table_entry;  ///< Table entry type
+            typedef cds::details::Allocator< table_entry, allocator > bucket_table_allocator; ///< Bucket table allocator
+
+        protected:
+            //@cond
             const size_t   m_nLoadFactor; ///< load factor (average count of items per bucket)
             const size_t   m_nCapacity;   ///< Bucket table capacity
             table_entry *  m_Table;       ///< Bucket table
@@ -383,14 +379,14 @@ namespace cds { namespace intrusive {
             }
 
             /// Returns head node of bucket \p nBucket
-            node_type * bucket( size_t nBucket ) const
+            aux_node_type * bucket( size_t nBucket ) const
             {
                 assert( nBucket < capacity() );
                 return m_Table[ nBucket ].load(memory_model::memory_order_acquire);
             }
 
             /// Set \p pNode as a head of bucket \p nBucket
-            void bucket( size_t nBucket, node_type * pNode )
+            void bucket( size_t nBucket, aux_node_type * pNode )
             {
                 assert( nBucket < capacity() );
                 assert( bucket( nBucket ) == nullptr );
@@ -399,7 +395,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Allocates auxiliary node; can return \p nullptr if the table exhausted
-            node_type* alloc_aux_node()
+            aux_node_type* alloc_aux_node()
             {
                 if ( m_nAuxNodeAllocated.load( memory_model::memory_order_relaxed ) < capacity() ) {
                     // alloc next free node from m_auxNode
@@ -418,7 +414,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Places node type to free-list
-            void free_aux_node( node_type* p )
+            void free_aux_node( aux_node_type* p )
             {
                 m_freeList.put( static_cast<aux_node_type*>( p ));
             }
@@ -476,13 +472,14 @@ namespace cds { namespace intrusive {
             /// Free-list
             typedef typename options::free_list free_list;
 
-        protected:
-            //@cond
-            typedef atomics::atomic<node_type *>    table_entry;    ///< Table entry type
-            typedef atomics::atomic<table_entry *>  segment_type;   ///< Bucket table segment type
-
+            /// Auxiliary node type
             class aux_node_type: public node_type, public free_list::node
             {};
+
+        protected:
+            //@cond
+            typedef atomics::atomic<aux_node_type *> table_entry;    ///< Table entry type
+            typedef atomics::atomic<table_entry *>   segment_type;   ///< Bucket table segment type
 
             struct aux_node_segment {
                 atomics::atomic< size_t > aux_node_count; // how many aux nodes allocated from the segment
@@ -568,7 +565,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Returns head node of the bucket \p nBucket
-            node_type * bucket( size_t nBucket ) const
+            aux_node_type * bucket( size_t nBucket ) const
             {
                 size_t nSegment = nBucket >> m_metrics.nSegmentSizeLog2;
                 assert( nSegment < m_metrics.nSegmentCount );
@@ -580,7 +577,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Set \p pNode as a head of bucket \p nBucket
-            void bucket( size_t nBucket, node_type * pNode )
+            void bucket( size_t nBucket, aux_node_type * pNode )
             {
                 size_t nSegment = nBucket >> m_metrics.nSegmentSizeLog2;
                 assert( nSegment < m_metrics.nSegmentCount );
@@ -597,7 +594,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Allocates auxiliary node; can return \p nullptr if the table exhausted
-            node_type* alloc_aux_node()
+            aux_node_type* alloc_aux_node()
             {
                 for ( ;; ) {
                     aux_node_segment* aux_segment = m_auxNodeList.load( memory_model::memory_order_relaxed );
@@ -628,7 +625,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Places auxiliary node type to free-list
-            void free_aux_node( node_type* p )
+            void free_aux_node( aux_node_type* p )
             {
                 m_freeList.put( static_cast<aux_node_type*>( p ));
             }
