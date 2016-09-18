@@ -16,60 +16,35 @@ namespace{
     struct HeavyValue {
 
         int value;
-        size_t buffer_size;
 
         size_t nNo;
         size_t nWriterNo;
-        static std::vector<int> pop_buff;
 
-        explicit HeavyValue(int new_value = 0, size_t new_bufer_size = DefaultSize)
+        static std::vector<int> pop_buff;
+        static std::vector<int>::size_type buffer_size;
+
+        explicit HeavyValue(int new_value = 0)
         : value(new_value),
-          buffer_size(new_bufer_size),
           nNo(0),
           nWriterNo(0)
         {
-            if( buffer_size != pop_buff.size() ){
-                pop_buff.resize(buffer_size);
-                for(size_t i = 0; i < buffer_size; ++i)
-                   pop_buff[i] = i;
-            }
         };
         HeavyValue(const HeavyValue &other)
             : value(other.value),
-              buffer_size(other.buffer_size),
               nNo(other.nNo),
               nWriterNo(other.nWriterNo)
         {
-            for(size_t i = 0; i < buffer_size; ++i)
-                pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]));
+            for(decltype(buffer_size) i = 0; i < buffer_size; ++i)
+                pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]*rand()));
         }
-        void operator=(const int& new_value)
-        {
-            value = new_value;
-        }
-        bool operator==(const int new_value) const
-        {
-            return value == new_value;
-        }
-        bool operator<=(const int new_value) const
-        {
-            return value <= new_value;
-        }
-        bool operator<(const int new_value) const
-        {
-            return value < new_value;
-        }
-        bool operator>(const int new_value) const
-        {
-            return value > new_value;
-        }
-        bool operator>=(const int new_value) const
-        {
-            return value >= new_value;
+        static void setArraySize(decltype(buffer_size) new_size){
+            buffer_size = new_size;
+            pop_buff.resize(buffer_size, rand());
         }
     };
-
     template<int DefaultSize>
-    std::vector<int> HeavyValue< DefaultSize >::pop_buff = {};
+    std::vector<int> HeavyValue< DefaultSize >::pop_buff(DefaultSize, rand());
+    template<int DefaultSize>
+    std::vector<int>::size_type HeavyValue< DefaultSize >::buffer_size = DefaultSize;
 }
 #endif /* SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEVY_VALUE_H_ */
