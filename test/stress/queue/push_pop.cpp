@@ -321,7 +321,7 @@ namespace {
         //static void TearDownTestCase();
     };
 
-    using value_for_fc_with_heavy_value = queue_push_pop< HeavyValue<10> >;
+    using value_for_fc_with_heavy_value = queue_push_pop< HeavyValue<36000> >;
     using old_queue_push_pop = queue_push_pop<>;
 
 //    CDSSTRESS_MSQueue( old_queue_push_pop )
@@ -329,8 +329,8 @@ namespace {
 //    CDSSTRESS_BasketQueue( old_queue_push_pop )
 //    CDSSTRESS_OptimsticQueue( old_queue_push_pop )
 //    CDSSTRESS_FCQueue( old_queue_push_pop )
-	CDSSTRESS_FCDeque_HeavyValue( value_for_fc_with_heavy_value )
 //    CDSSTRESS_FCDeque( old_queue_push_pop )
+	CDSSTRESS_FCDeque_HeavyValue( value_for_fc_with_heavy_value )
 //    CDSSTRESS_RWQueue( old_queue_push_pop )
 //    CDSSTRESS_StdQueue( old_queue_push_pop )
 
@@ -403,7 +403,7 @@ namespace {
         test< queue_type >(); \
     }
 
-    CDSSTRESS_SegmentedQueue( segmented_queue_push_pop )
+//    CDSSTRESS_SegmentedQueue( segmented_queue_push_pop )
 
     INSTANTIATE_TEST_CASE_P( SQ,
         segmented_queue_push_pop,
