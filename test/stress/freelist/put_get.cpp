@@ -32,7 +32,9 @@
 
 #include <cds/intrusive/free_list.h>
 #include <cds/intrusive/free_list_cached.h>
-#include <cds/intrusive/free_list_tagged.h>
+#ifdef CDS_DCAS_SUPPORT
+#   include <cds/intrusive/free_list_tagged.h>
+#endif
 
 namespace {
     class put_get: public cds_test::stress_fixture

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 cmake_policy(SET CMP0016 NEW)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
+include(TargetArch)
 
 project(cds)
 
@@ -16,6 +18,8 @@ find_package(Threads REQUIRED)
 find_package(Boost 1.50 COMPONENTS system thread REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
+
+target_architecture(CMAKE_TARGET_ARCHITECTURE)
 
 if(WITH_BOOST_ATOMIC)
   if(${Boost_MINOR_VERSION} GREATER 53)
@@ -75,16 +79,23 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mcx16")  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -fno-strict-aliasing")
-# gcc 4.8: disable noise -Wunused-local-typedefs
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs -Wno-unused-parameter")  
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -fno-strict-aliasing")  
+  if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16 -m64")
+  elseif(CMAKE_TARGET_ARCHITECTURE STREQUAL "i386")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+  endif()    
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9.0")
+#   gcc 4.8: disable noise -Wunused-local-typedefs
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs -Wno-unused-parameter")  
+  endif()
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 message("Build type -- ${CMAKE_BUILD_TYPE}")
 message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+MESSAGE("Target architecture: ${CMAKE_TARGET_ARCHITECTURE}")
 if (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 else()
