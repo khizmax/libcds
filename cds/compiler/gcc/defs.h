@@ -104,7 +104,8 @@
 
 // double-width CAS support
 #if CDS_BUILD_BITS == 64
-#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
+    // gcc-4.8 does not support 16-word (128bit) atomics
+#   if defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 ) && CDS_COMPILER_VERSION >= 40900
 #       define CDS_DCAS_SUPPORT
 #   endif
 #else

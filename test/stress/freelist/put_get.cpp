@@ -164,6 +164,7 @@ namespace {
     typedef cds::intrusive::CachedFreeList<cds::intrusive::FreeList> cached_free_list;
     CDSSTRESS_FREELIST_F( CachedFreeList, cached_free_list )
 
+#ifdef CDS_DCAS_SUPPORT
     TEST_F( put_get, TaggetFreeList )
     {
         struct tagged_ptr {
@@ -179,5 +180,6 @@ namespace {
         else
             std::cout << "Double-width CAS is not supported\n";
     }
+#endif
 
 } // namespace
