@@ -1,5 +1,6 @@
 
 find_package(GTest REQUIRED) 
+message("GTest: ${GTEST_INCLUDE_DIRS}")
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include

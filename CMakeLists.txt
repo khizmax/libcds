@@ -75,7 +75,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")  
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mcx16")  
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -fno-strict-aliasing")
 # gcc 4.8: disable noise -Wunused-local-typedefs
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs -Wno-unused-parameter")  
@@ -90,6 +90,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 else()
   message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
+message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
+
 
 include_directories(${PROJECT_SOURCE_DIR})
 
