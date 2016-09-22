@@ -103,14 +103,16 @@
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
 
 // double-width CAS support
-#if CDS_BUILD_BITS == 64
-    // gcc-4.8 does not support 16-word (128bit) atomics
-#   if defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 ) && CDS_COMPILER_VERSION >= 40900
-#       define CDS_DCAS_SUPPORT
-#   endif
-#else
-#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
-#       define CDS_DCAS_SUPPORT
+// note: gcc-4.8 does not support double-word atomics
+#if CDS_COMPILER_VERSION >= 40900
+#   if CDS_BUILD_BITS == 64
+#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
+#           define CDS_DCAS_SUPPORT
+#       endif
+#   else
+#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
+#           define CDS_DCAS_SUPPORT
+#       endif
 #   endif
 #endif
 
