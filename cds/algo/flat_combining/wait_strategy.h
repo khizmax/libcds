@@ -248,7 +248,7 @@ namespace cds { namespace algo { namespace flat_combining {
 
             /// Calls condition variable function \p notify_all()
             template <typename FCKernel, typename PublicationRecord>
-            void notify( FCKernel& fc, PublicationRecord& rec )
+            void notify( FCKernel& /*fc*/, PublicationRecord& /*rec*/ )
             {
                 m_condvar.notify_all();
             }
@@ -313,7 +313,7 @@ namespace cds { namespace algo { namespace flat_combining {
 
             /// Calls condition variable function \p notify_one()
             template <typename FCKernel, typename PublicationRecord>
-            void notify( FCKernel& fc, PublicationRecord& rec )
+            void notify( FCKernel& /*fc*/, PublicationRecord& rec )
             {
                 rec.m_condvar.notify_one();
             }

@@ -130,7 +130,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( i, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( i, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -139,7 +139,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( i.nKey, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( i.nKey, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -148,7 +148,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( val.strVal, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( val.strVal, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;

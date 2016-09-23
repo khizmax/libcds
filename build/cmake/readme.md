@@ -11,20 +11,25 @@ Compiling and testing
 ----------
 **Building out-of-source in "RELEASE" mode ("DEBUG" is default)**
 
-- Wherever create empty directory for building, for instance *libcds-debug*  
-- Prepare: *cmake -DCMAKE_BUILD_TYPE=RELEASE <path to the project's root directory with CMakeLists.txt>*
-- Compile: *make -j4*
+- Wherever create empty directory for building, for instance `libcds-debug`
+- Prepare: `cmake -DCMAKE_BUILD_TYPE=RELEASE <path to the project's root directory with CMakeLists.txt>`
+- Compile: `make -j4`
 - As a result you'll see shared and static cds libraries in the build directory
 
 **Warning**: We strongly recommend not to use static cds library. Static library is not tested and not maintained. You can use it on own risk.
 
-After using command *cmake -L <path to the project's root directory with CMakeLists.txt>* one can see some additional variables, that can activate additional features:
+After using command cmake -L <path to the project's root directory with CMakeLists.txt> one can see some additional variables, that can activate additional features:
 
-- *WITH_TESTS:BOOL=OFF*: if you want to build library with unit testing support use *-DWITH_TESTS=ON* on prepare step. Be careful with this flag, because compile time will dramatically increase
-- *WITH_TESTS_COVERAGE:BOOL=OFF*: Analyze test coverage using gcov (only for gcc)
-- *WITH_BOOST_ATOMIC:BOOL=OFF*: Use boost atomics (only for boost >= 1.54)
-- *WITH_ASAN:BOOL=OFF*: compile libcds with AddressSanitizer instrumentation
-- *WITH_TSAN:BOOL=OFF*: compile libcds with ThreadSanitizer instrumentation
+- `WITH_TESTS:BOOL=OFF`: if you want to build library with unit testing support use *-DWITH_TESTS=ON* on prepare step. Be careful with this flag, because compile time will dramatically increase
+- `WITH_TESTS_COVERAGE:BOOL=OFF`: Analyze test coverage using gcov (only for gcc)
+- `WITH_BOOST_ATOMIC:BOOL=OFF`: Use boost atomics (only for boost >= 1.54)
+- `WITH_ASAN:BOOL=OFF`: compile libcds with AddressSanitizer instrumentation
+- `WITH_TSAN:BOOL=OFF`: compile libcds with ThreadSanitizer instrumentation
+
+Additional gtest hints (for unit and stress tests only):
+- `GTEST_INCLUDE_DIRS=path`: gives full `path` to gtest include dir. 
+- `GTEST_LIBRARY=path`: gives full `path` to `libgtest.a`.
+
 
 Packaging
 ----------
@@ -38,10 +43,10 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
   
 "Live" building and packaging example
 ----------
-- git clone https://github.com/khizmax/libcds.git
-- mkdir libcds-release
-- cd libcds-release
-- cmake -DWITH\_TESTS=ON -DCMAKE\_BUILD_TYPE=RELEASE ../libcds
+- `git clone https://github.com/khizmax/libcds.git`
+- `mkdir libcds-release`
+- `cd libcds-release`
+- `cmake -DWITH\_TESTS=ON -DCMAKE\_BUILD_TYPE=RELEASE ../libcds`
 ```
     -- The C compiler identification is GNU 4.8.3
     -- The CXX compiler identification is GNU 4.8.3
@@ -56,7 +61,7 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     -- Generating done
     -- Build files have been written to: <...>/libcds-release
 ``` 
-- make -j4
+- `make -j4`
 ```
     Scanning dependencies of target cds
     Scanning dependencies of target test-common
@@ -65,10 +70,9 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     [  1%] Building CXX object CMakeFiles/cds-s.dir/src/hp_gc.cpp.o
     ...
     [100%] Built target test-hdr
-    gmake: выход из каталога «/home/kel/projects_cds/libcds-debug»
 ```
 
-- ctest
+- `ctest`
 ```
     Test project /home/kel/projects_cds/libcds-debug
         Start 1: test-hdr
@@ -79,7 +83,7 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
     ...
 ```
 
-- cpack -G RPM
+- `cpack -G RPM`
 ```
     CPack: Create package using RPM
     CPack: Install projects

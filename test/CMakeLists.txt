@@ -1,6 +1,8 @@
 
-find_package(GTest REQUIRED) 
-message("GTest: ${GTEST_INCLUDE_DIRS}")
+if (NOT GTEST_INCLUDE_DIRS)
+   find_package(GTest REQUIRED)
+endif()
+message("GTest: ${GTEST_INCLUDE_DIRS}, lib: ${GTEST_LIBRARY}")
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include

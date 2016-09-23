@@ -83,9 +83,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16")
   endif()    
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9.0")
-#   gcc 4.8: disable noise -Wunused-local-typedefs
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs -Wno-unused-parameter")  
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
+#   gcc 4.8: disable noise -Wunused-local-typedefs -Wno-unused-parameter
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")  
   endif()
 endif()
 
