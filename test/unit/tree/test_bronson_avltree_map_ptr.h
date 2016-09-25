@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_TREE_TEST_BRONSON_AVLTREE_MAP_PTR_H
@@ -269,7 +269,7 @@ namespace {
                         EXPECT_EQ( key.nKey, v.nVal );
                         EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                     }));
-                    ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_less(), []( key_type const& key, mapped_type& v ) {
+                    ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_less(), []( key_type const& /*key*/, mapped_type& /*v*/ ) {
                         EXPECT_TRUE( false );
                     }));
                     break;
@@ -294,7 +294,7 @@ namespace {
 
             Map::gc::force_dispose();
             for ( auto const& item: arrVals ) {
-                EXPECT_EQ( item.nDisposeCount, 1 );
+                EXPECT_EQ( item.nDisposeCount, 1u );
             }
 
             // clear
@@ -313,7 +313,7 @@ namespace {
 
             Map::gc::force_dispose();
             for ( auto const& item : arrVals ) {
-                EXPECT_EQ( item.nDisposeCount, 2 );
+                EXPECT_EQ( item.nDisposeCount, 2u );
             }
 
             ASSERT_TRUE( m.check_consistency() );
@@ -361,7 +361,7 @@ namespace {
 
             Map::gc::force_dispose();
             for ( auto const& item : arrVals ) {
-                EXPECT_EQ( item.nDisposeCount, 3 );
+                EXPECT_EQ( item.nDisposeCount, 3u );
             }
 
             // extract_min
@@ -407,7 +407,7 @@ namespace {
 
             Map::gc::force_dispose();
             for ( auto const& item : arrVals ) {
-                EXPECT_EQ( item.nDisposeCount, 4 );
+                EXPECT_EQ( item.nDisposeCount, 4u );
             }
 
             // extract_max
@@ -453,7 +453,7 @@ namespace {
 
             Map::gc::force_dispose();
             for ( auto const& item : arrVals ) {
-                EXPECT_EQ( item.nDisposeCount, 5 );
+                EXPECT_EQ( item.nDisposeCount, 5u );
             }
 
             // extract min/max on empty map

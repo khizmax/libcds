@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -44,7 +44,7 @@ namespace {
         EXPECT_EQ( cds::bitop::MSB(n), 0 ) << "n=" << n;
         EXPECT_EQ( cds::bitop::LSB( n ), 0 ) << "n=" << n;
         EXPECT_EQ( cds::bitop::SBC( n ), 0 ) << "n=" << n;
-        EXPECT_EQ( cds::bitop::ZBC( n ), sizeof( n ) * 8 ) << "n=" << n;
+        EXPECT_EQ( cds::bitop::ZBC( n ), static_cast<int>( sizeof( n ) * 8 )) << "n=" << n;
 
         int nBit = 1;
         for ( n = 1; n != 0; n *= 2 ) {
@@ -83,15 +83,15 @@ namespace {
 
     TEST_F( bitop, floor_pow2 )
     {
-        EXPECT_EQ( cds::beans::floor2( 0 ), 1 );
-        EXPECT_EQ( cds::beans::floor2( 1 ), 1 );
-        EXPECT_EQ( cds::beans::floor2( 2 ), 2 );
-        EXPECT_EQ( cds::beans::floor2( 3 ), 2 );
-        EXPECT_EQ( cds::beans::floor2( 4 ), 4 );
-        EXPECT_EQ( cds::beans::floor2( 5 ), 4 );
-        EXPECT_EQ( cds::beans::floor2( 7 ), 4 );
-        EXPECT_EQ( cds::beans::floor2( 8 ), 8 );
-        EXPECT_EQ( cds::beans::floor2( 9 ), 8 );
+        EXPECT_EQ( cds::beans::floor2( 0 ), 1u );
+        EXPECT_EQ( cds::beans::floor2( 1 ), 1u );
+        EXPECT_EQ( cds::beans::floor2( 2 ), 2u );
+        EXPECT_EQ( cds::beans::floor2( 3 ), 2u );
+        EXPECT_EQ( cds::beans::floor2( 4 ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 5 ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 7 ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 8 ), 8u );
+        EXPECT_EQ( cds::beans::floor2( 9 ), 8u );
 
         for ( uint32_t n = 2; n; n <<= 1 )
         {

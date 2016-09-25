@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <gtest/gtest.h>
@@ -88,10 +88,10 @@ namespace misc {
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
                 integral_type n = integral_type(42) << (nByte * 8);
-                EXPECT_EQ( atomics::atomic_exchange( &a, n ), 0 );
+                EXPECT_EQ( atomics::atomic_exchange( &a, n ), (integral_type) 0 );
                 EXPECT_EQ( atomics::atomic_load( &a ), n );
                 EXPECT_EQ( atomics::atomic_exchange( &a, (integral_type) 0 ), n );
-                EXPECT_EQ( atomics::atomic_load( &a ), 0 );
+                EXPECT_EQ( atomics::atomic_load( &a ), (integral_type) 0 );
             }
 
             integral_type prev = atomics::atomic_load( &a );
@@ -155,7 +155,7 @@ namespace misc {
 
                 EXPECT_EQ( atomics::atomic_fetch_sub( &a, n ), prev );
             }
-            EXPECT_EQ( atomics::atomic_load( &a ), 0 );
+            EXPECT_EQ( atomics::atomic_load( &a ), (integral_type) 0 );
 
             // fetch_or / fetc_xor / fetch_and
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
@@ -189,14 +189,14 @@ namespace misc {
             EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
             atomics::atomic_store_explicit( &a, (integral_type) 0, oStore );
             EXPECT_EQ( a, 0 );
-            EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), 0 );
+            EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
                 integral_type n = integral_type(42) << (nByte * 8);
-                EXPECT_EQ( atomics::atomic_exchange_explicit( &a, n, order ), 0 );
+                EXPECT_EQ( atomics::atomic_exchange_explicit( &a, n, order ), (integral_type) 0 );
                 EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), n );
                 EXPECT_EQ( atomics::atomic_exchange_explicit( &a, (integral_type) 0, order ), n );
-                EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), 0 );
+                EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
             }
 
             integral_type prev = atomics::atomic_load_explicit( &a, oLoad );

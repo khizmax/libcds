@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_TREE_TEST_INTRUSIVE_TREE_H
@@ -309,7 +309,7 @@ namespace cds_test {
 
                 std::pair<bool, bool> updResult;
 
-                updResult = t.update( i, []( bool bNew, value_type&, value_type& )
+                updResult = t.update( i, []( bool, value_type&, value_type& )
                 {
                     ASSERT_TRUE( false );
                 }, false );
@@ -337,7 +337,7 @@ namespace cds_test {
                     i.nUpdateNewCount = 0;
                     break;
                 case 2:
-                    updResult = t.update( i, []( bool bNew, value_type& val, value_type& arg )
+                    updResult = t.update( i, []( bool, value_type&, value_type& )
                     {
                         EXPECT_TRUE( false );
                     }, false );

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -130,7 +130,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( i, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( i, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -139,7 +139,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( i.nKey, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( i.nKey, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -148,7 +148,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    EXPECT_FALSE( m.insert_with( val.strVal, []( map_pair& v ) {
+                    EXPECT_FALSE( m.insert_with( val.strVal, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;

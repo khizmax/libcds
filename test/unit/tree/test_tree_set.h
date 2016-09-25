@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TEST_TREE_SET_H
@@ -274,7 +274,7 @@ namespace cds_test {
                 std::pair<bool, bool> updResult;
 
                 std::string str;
-                updResult = s.update( i.key(), []( bool bNew, value_type&, int )
+                updResult = s.update( i.key(), []( bool, value_type&, int )
                 {
                     ASSERT_TRUE( false );
                 }, false );
@@ -310,7 +310,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 3:
@@ -319,7 +319,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 4:
@@ -344,7 +344,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nUpdateNewCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2u );
                         }));
                     break;
                 case 5:
@@ -369,7 +369,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
                             EXPECT_EQ( v.key(), arg.key() );
-                            EXPECT_EQ( v.nUpdateNewCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2u );
                         }));
                     break;
                 case 6:
@@ -423,11 +423,11 @@ namespace cds_test {
                     }));
                 ASSERT_TRUE( s.find( i, []( value_type& v, value_type const& ) 
                     { 
-                        EXPECT_EQ( ++v.nFindCount, 2 );
+                        EXPECT_EQ( ++v.nFindCount, 2u );
                     }));
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) 
                     { 
-                        EXPECT_EQ( ++v.nFindCount, 3 );
+                        EXPECT_EQ( ++v.nFindCount, 3u );
                     }));
 
                 int nKey = i.key() - 1;

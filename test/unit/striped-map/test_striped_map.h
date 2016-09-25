@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_STRIPED_MAP_TEST_STRIPED_MAP_H
@@ -212,7 +212,7 @@ namespace {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    ASSERT_FALSE( m.insert_with( i, []( map_pair& v ) {
+                    ASSERT_FALSE( m.insert_with( i, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -221,7 +221,7 @@ namespace {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    ASSERT_FALSE( m.insert_with( i.nKey, []( map_pair& v ) {
+                    ASSERT_FALSE( m.insert_with( i.nKey, []( map_pair&  ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
@@ -230,7 +230,7 @@ namespace {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } ));
-                    ASSERT_FALSE( m.insert_with( val.strVal, []( map_pair& v ) {
+                    ASSERT_FALSE( m.insert_with( val.strVal, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;

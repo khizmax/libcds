@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_STRIPED_SET_TEST_INTRUSIVE_SET_H
@@ -362,7 +362,7 @@ namespace cds_test {
 
                 std::pair<bool, bool> updResult;
 
-                updResult = s.update( i, []( bool bNew, value_type&, value_type& )
+                updResult = s.update( i, []( bool /*bNew*/, value_type&, value_type& )
                 {
                     ASSERT_TRUE( false );
                 }, false );
@@ -382,11 +382,11 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
                 case 2:
@@ -403,11 +403,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate()));
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
             }
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
@@ -422,11 +422,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate() ) );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
 
                 value_type v( i );
                 switch ( i.key() % 6 ) {
@@ -448,18 +448,18 @@ namespace cds_test {
                     ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_predicate() ) );
                     break;
                 case 4:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 case 5:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( s.erase_with( other_item( i.key() ), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
 

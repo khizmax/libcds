@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TEST_INTRUSIVE_SET_H
@@ -293,7 +293,7 @@ namespace cds_test {
 
                 std::pair<bool, bool> updResult;
 
-                updResult = s.update( i, []( bool bNew, value_type&, value_type& )
+                updResult = s.update( i, []( bool, value_type&, value_type& )
                 {
                     ASSERT_TRUE( false );
                 }, false );
@@ -353,11 +353,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
 
                 value_type v( i );
                 switch ( i.key() % 6 ) {

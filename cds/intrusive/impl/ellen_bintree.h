@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -1568,6 +1568,8 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr get_with_( Q const& val, Less pred ) const
         {
+            CDS_UNUSED( pred );
+
             typedef ellen_bintree::details::compare<
                 key_type,
                 value_type,

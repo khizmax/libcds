@@ -230,7 +230,7 @@ namespace {
         }
 
         template< class Stack>
-        void analyze( Stack& stack )
+        void analyze( Stack& /*stack*/ )
         {
             cds_test::thread_pool& pool = get_pool();
 

@@ -101,23 +101,23 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 gp = s.get( i );
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
 
                 gp = s.get( i.key() );
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
 
                 gp = s.get_with( other_item( i.key()), other_less());
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 3 );
+                EXPECT_EQ( i.nFindCount, 3u );
 
-                EXPECT_EQ( i.nEraseCount, 0 );
+                EXPECT_EQ( i.nEraseCount, 0u );
                 switch ( i.key() % 3 ) {
                 case 0:
                     gp = s.extract( i.key());
@@ -131,7 +131,7 @@ namespace cds_test {
                 }
                 ASSERT_FALSE( !gp );
                 ++gp->nEraseCount;
-                EXPECT_EQ( i.nEraseCount, 1 );
+                EXPECT_EQ( i.nEraseCount, 1u );
 
                 gp = s.extract( i );
                 ASSERT_TRUE( !gp );
@@ -149,7 +149,7 @@ namespace cds_test {
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
         }

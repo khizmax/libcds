@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_feldman_hashmap_hp.h"
@@ -74,8 +74,8 @@ namespace {
         > map_type;
 
         map_type m( 4, 5 );
-        EXPECT_GE( m.head_size(), 1 << 4 );
-        EXPECT_EQ( m.array_node_size(), 1 << 5 );
+        EXPECT_GE( m.head_size(), static_cast<size_t>( 1 << 4 ));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 5 ));
         test( m );
     }
 
@@ -88,8 +88,8 @@ namespace {
         > map_type;
 
         map_type m( 3, 2 );
-        EXPECT_GE( m.head_size(), 1 << 4 ); // min = 2 ** 4
-        EXPECT_EQ( m.array_node_size(), 1 << 2 );
+        EXPECT_GE( m.head_size(), static_cast<size_t>( 1 << 4 )); // min = 2 ** 4
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 2 ));
         test( m );
     }
 
@@ -103,8 +103,8 @@ namespace {
         > map_type;
 
         map_type m( 4, 4 );
-        EXPECT_EQ( m.head_size(), 1 << 4 );
-        EXPECT_EQ( m.array_node_size(), 1 << 4 );
+        EXPECT_EQ( m.head_size(), static_cast<size_t>( 1 << 4 ));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 4 ));
         test( m );
     }
 
@@ -119,8 +119,8 @@ namespace {
         typedef cc::FeldmanHashMap< gc_type, key_type, value_type, map_traits > map_type;
 
         map_type m( 8, 2 );
-        EXPECT_EQ( m.head_size(), 1 << 8 );
-        EXPECT_EQ( m.array_node_size(), 1 << 2 );
+        EXPECT_EQ( m.head_size(), static_cast<size_t>( 1 << 8 ));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 2 ));
         test( m );
     }
 
@@ -134,8 +134,8 @@ namespace {
         typedef cc::FeldmanHashMap< gc_type, key_type, value_type, map_traits > map_type;
 
         map_type m( 1, 1 );
-        EXPECT_EQ( m.head_size(), 1 << 4 ); // min = 2**4
-        EXPECT_EQ( m.array_node_size(), 1 << 2 ); // min = 2**2
+        EXPECT_EQ( m.head_size(), static_cast<size_t>( 1 << 4 )); // min = 2**4
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 2 )); // min = 2**2
         test( m );
     }
 

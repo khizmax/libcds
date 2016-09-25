@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <gtest/gtest.h>
@@ -73,15 +73,15 @@ namespace {
 
             EXPECT_TRUE( a.is_lock_free() );
             a.store( (integral_type) 0 );
-            EXPECT_EQ( a, 0 );
-            EXPECT_EQ( a.load(), 0 );
+            EXPECT_EQ( a, static_cast<integral_type>( 0 ));
+            EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
                 integral_type n = integral_type(42) << (nByte * 8);
-                EXPECT_EQ( a.exchange( n ), 0 );
+                EXPECT_EQ( a.exchange( n ), static_cast<integral_type>( 0 ));
                 EXPECT_EQ( a, n );
                 EXPECT_EQ( a.exchange( (integral_type) 0 ), n );
-                EXPECT_EQ( a.load(), 0 );
+                EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
             }
 
             integral_type prev = a.load();
@@ -144,7 +144,7 @@ namespace {
 
                 EXPECT_EQ( a.fetch_sub(n), prev);
             }
-            EXPECT_EQ( a.load(), 0 );
+            EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
 
             // fetch_or / fetc_xor / fetch_and
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
@@ -187,7 +187,7 @@ namespace {
 
                 EXPECT_EQ( (a -= n),  prev - n );
             }
-            EXPECT_EQ( a.load(), 0 );
+            EXPECT_EQ( a.load(), (integral_type) 0 );
 
             // |= / ^= / &=
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )

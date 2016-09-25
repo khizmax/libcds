@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <gtest/gtest.h>
@@ -47,7 +47,7 @@ namespace {
             const size_t nSize = 100;
 
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // enqueue/dequeue
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -64,7 +64,7 @@ namespace {
                 ASSERT_EQ( q.size(), nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // push/pop
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -81,7 +81,7 @@ namespace {
                 ASSERT_EQ( q.size(), nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // clear
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -92,19 +92,19 @@ namespace {
 
             q.clear();
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // pop from empty queue
             it = nSize * 2;
             ASSERT_FALSE( q.pop( it ));
             ASSERT_EQ( it, nSize * 2 );
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             ASSERT_FALSE( q.dequeue( it ) );
             ASSERT_EQ( it, nSize * 2 );
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
         }
 
         template <class Queue>
@@ -134,7 +134,7 @@ namespace {
                 ASSERT_EQ( s, str[i] );
             }
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
         }
     };
 

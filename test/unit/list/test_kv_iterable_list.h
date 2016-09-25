@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -237,7 +237,7 @@ namespace cds_test {
 
                     case 4:
                         {
-                            auto pair = l.update( i.key, []( list_value_type& n, list_value_type* old ) {
+                            auto pair = l.update( i.key, []( list_value_type&, list_value_type* ) {
                                 ASSERT_TRUE( false );
                             }, false );
                             EXPECT_FALSE( pair.first );

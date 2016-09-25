@@ -57,7 +57,7 @@ namespace cds_test {
                 ASSERT_EQ( pq.size(), ++nSize );
             }
 
-            ASSERT_EQ( pq.size(), PQueueTest::c_nCapacity );
+            ASSERT_EQ( pq.size(), static_cast<size_t>(PQueueTest::c_nCapacity ));
 
             // Pop test
             key_type nPrev = PQueueTest::c_nMinValue + key_type( PQueueTest::c_nCapacity ) - 1;
@@ -66,7 +66,7 @@ namespace cds_test {
             ASSERT_TRUE( pq.pop( kv ) );
             EXPECT_EQ( kv.k, nPrev );
 
-            ASSERT_EQ( pq.size(), PQueueTest::c_nCapacity - 1 );
+            ASSERT_EQ( pq.size(), static_cast<size_t>( PQueueTest::c_nCapacity - 1 ));
             ASSERT_TRUE( !pq.empty() );
 
             nSize = pq.size();
@@ -98,7 +98,7 @@ namespace cds_test {
                 ASSERT_TRUE( pq.push( *p ) );
 
             ASSERT_TRUE( !pq.empty() );
-            ASSERT_EQ( pq.size(), PQueueTest::c_nCapacity );
+            ASSERT_EQ( pq.size(), static_cast<size_t>( PQueueTest::c_nCapacity ));
 
             pq.clear();
             ASSERT_TRUE( pq.empty() );
