@@ -315,7 +315,7 @@ namespace cds_test {
                     EXPECT_EQ( i.nUpdateCount, 1u );
                     break;
                 case 1:
-                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    EXPECT_EQ( i.nUpdateNewCount, 0u );
                     updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg )
                     {
                         EXPECT_TRUE( bNew );

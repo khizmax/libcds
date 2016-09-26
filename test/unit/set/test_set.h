@@ -112,7 +112,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 3:
@@ -121,7 +121,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 4:
@@ -223,11 +223,11 @@ namespace cds_test {
                     }));
                 ASSERT_TRUE( s.find( i, []( value_type& v, value_type const& ) 
                     { 
-                        EXPECT_EQ( ++v.nFindCount, 2 );
+                        EXPECT_EQ( ++v.nFindCount, 2u );
                     }));
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) 
                     { 
-                        EXPECT_EQ( ++v.nFindCount, 3 );
+                        EXPECT_EQ( ++v.nFindCount, 3u );
                     }));
 
                 int nKey = i.key() - 1;
@@ -296,7 +296,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
@@ -310,7 +310,7 @@ namespace cds_test {
             s.clear();
 
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             ASSERT_TRUE( s.begin() == s.end() );
             ASSERT_TRUE( s.cbegin() == s.cend() );

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -200,9 +200,9 @@ namespace map {
                 nMissingFailed += w.m_KeyNotExists.nFailed;
 
                 EXPECT_EQ( w.m_KeyExists.nSuccess, s_nMapSize * s_nPassCount ) << "thread " << i;
-                EXPECT_EQ( w.m_KeyExists.nFailed, 0 ) << "thread " << i;
+                EXPECT_EQ( w.m_KeyExists.nFailed, 0u ) << "thread " << i;
                 EXPECT_EQ( w.m_KeyNotExists.nSuccess, (s_Data.size() - s_nMapSize) * s_nPassCount ) << "thread " << i;
-                EXPECT_EQ( w.m_KeyNotExists.nFailed, 0 ) << "thread " << i;
+                EXPECT_EQ( w.m_KeyNotExists.nFailed, 0u ) << "thread " << i;
             }
 
             propout()
@@ -222,7 +222,7 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            ASSERT_GT( s_Data.size(), 0 );
+            ASSERT_GT( s_Data.size(), 0u );
 
             Map testMap( *this );
             test( testMap );

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -196,7 +196,7 @@ TYPED_TEST_P( IntrusiveMichaelLazySet, base_stat )
 
     set_type s( TestFixture::kSize, 2 );
     this->test( s );
-    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
 }
 
 TYPED_TEST_P( IntrusiveMichaelLazySet, base_wrapped_stat )
@@ -224,7 +224,7 @@ TYPED_TEST_P( IntrusiveMichaelLazySet, base_wrapped_stat )
 
     set_type s( TestFixture::kSize, 2 );
     this->test( s );
-    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
 }
 
 TYPED_TEST_P( IntrusiveMichaelLazySet, member_cmp )
@@ -366,7 +366,7 @@ TYPED_TEST_P( IntrusiveMichaelLazySet, member_stat )
 
     set_type s( TestFixture::kSize, 2 );
     this->test( s );
-    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
 }
 
 TYPED_TEST_P( IntrusiveMichaelLazySet, member_wrapped_stat )
@@ -394,7 +394,7 @@ TYPED_TEST_P( IntrusiveMichaelLazySet, member_wrapped_stat )
 
     set_type s( TestFixture::kSize, 2 );
     this->test( s );
-    EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+    EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
 }
 
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as

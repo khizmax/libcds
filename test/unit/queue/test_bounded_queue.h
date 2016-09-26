@@ -136,12 +136,12 @@ namespace cds_test {
             // pop from empty queue
             it = static_cast<int>(nSize * 2);
             ASSERT_FALSE( q.pop( it ) );
-            ASSERT_EQ( it, nSize * 2 );
+            ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0u );
 
             ASSERT_FALSE( q.dequeue( it ) );
-            ASSERT_EQ( it, nSize * 2 );
+            ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
             ASSERT_TRUE( q.empty() );
             ASSERT_CONTAINER_SIZE( q, 0u );
         }
