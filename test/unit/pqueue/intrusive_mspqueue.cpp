@@ -61,7 +61,7 @@ namespace {
             ASSERT_TRUE( pq.empty() );
             ASSERT_FALSE( pq.full() );
             ASSERT_EQ( pq.size(), 0u );
-            ASSERT_EQ( pq.capacity(), base_class::c_nCapacity - 1 );
+            ASSERT_EQ( pq.capacity(), static_cast<size_t>( base_class::c_nCapacity - 1 ));
 
             size_t nSize = 0;
 

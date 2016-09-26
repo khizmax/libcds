@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TEST_SET_HP_H
@@ -76,7 +76,7 @@ namespace cds_test {
             }
 
             for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, it->key() * 3 );
+                EXPECT_EQ( it->nFindCount, static_cast<size_t>( it->key() * 3 ));
             }
 
             typedef typename Set::guarded_ptr guarded_ptr;

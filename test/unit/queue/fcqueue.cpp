@@ -97,12 +97,12 @@ namespace {
             // pop from empty queue
             it = nSize * 2;
             ASSERT_FALSE( q.pop( it ));
-            ASSERT_EQ( it, nSize * 2 );
+            ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
             ASSERT_TRUE( q.empty() );
             ASSERT_EQ( q.size(), 0u );
 
             ASSERT_FALSE( q.dequeue( it ) );
-            ASSERT_EQ( it, nSize * 2 );
+            ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
             ASSERT_TRUE( q.empty() );
             ASSERT_EQ( q.size(), 0u );
         }

@@ -94,7 +94,7 @@ namespace cds_test {
                 val[i].nValue = static_cast<int>( i );
 
             ASSERT_TRUE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_CONTAINER_SIZE( q, 0u );
 
             // push/enqueue
             for ( size_t i = 0; i < val.size(); ++i ) {
@@ -130,18 +130,18 @@ namespace cds_test {
             }
             EXPECT_EQ( nCount, val.size());
             EXPECT_TRUE( q.empty() );
-            EXPECT_CONTAINER_SIZE( q, 0 );
+            EXPECT_CONTAINER_SIZE( q, 0u );
 
             // pop from empty queue
             ASSERT_TRUE( q.pop() == nullptr );
             EXPECT_TRUE( q.empty() );
-            EXPECT_CONTAINER_SIZE( q, 0 );
+            EXPECT_CONTAINER_SIZE( q, 0u );
 
             // check that Disposer has not been called
             Queue::gc::force_dispose();
             for ( size_t i = 0; i < val.size(); ++i ) {
-                EXPECT_EQ( val[i].nDisposeCount, 0 );
-                EXPECT_EQ( val[i].nDispose2Count, 0 );
+                EXPECT_EQ( val[i].nDisposeCount, 0u );
+                EXPECT_EQ( val[i].nDispose2Count, 0u );
             }
 
             // clear
@@ -151,14 +151,14 @@ namespace cds_test {
             EXPECT_TRUE( !q.empty() );
 
             q.clear();
-            EXPECT_CONTAINER_SIZE( q, 0 );
+            EXPECT_CONTAINER_SIZE( q, 0u );
             EXPECT_TRUE( q.empty() );
 
             // check if Disposer has been called
             Queue::gc::force_dispose();
             for ( size_t i = 0; i < val.size(); ++i ) {
-                EXPECT_EQ( val[i].nDisposeCount, 1 );
-                EXPECT_EQ( val[i].nDispose2Count, 0 );
+                EXPECT_EQ( val[i].nDisposeCount, 1u );
+                EXPECT_EQ( val[i].nDispose2Count, 0u );
             }
 
             // clear_with
@@ -168,14 +168,14 @@ namespace cds_test {
             EXPECT_TRUE( !q.empty() );
 
             q.clear_with( Disposer2() );
-            EXPECT_CONTAINER_SIZE( q, 0 );
+            EXPECT_CONTAINER_SIZE( q, 0u );
             EXPECT_TRUE( q.empty() );
 
             // check if Disposer has been called
             Queue::gc::force_dispose();
             for ( size_t i = 0; i < val.size(); ++i ) {
-                EXPECT_EQ( val[i].nDisposeCount, 1 );
-                EXPECT_EQ( val[i].nDispose2Count, 1 );
+                EXPECT_EQ( val[i].nDisposeCount, 1u );
+                EXPECT_EQ( val[i].nDispose2Count, 1u );
             }
 
             // check clear on destruct

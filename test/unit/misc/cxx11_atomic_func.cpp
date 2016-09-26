@@ -188,7 +188,7 @@ namespace misc {
 
             EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
             atomics::atomic_store_explicit( &a, (integral_type) 0, oStore );
-            EXPECT_EQ( a, 0 );
+            EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
@@ -275,7 +275,7 @@ namespace misc {
 
                 EXPECT_EQ( atomics::atomic_fetch_and_explicit( &a, (integral_type) ~mask, order ), prev );
                 prev = atomics::atomic_load_explicit( &a, oLoad );
-                EXPECT_EQ( ( prev & mask), 0);
+                EXPECT_EQ( ( prev & mask), integral_type( 0 ));
 
                 EXPECT_EQ( atomics::atomic_fetch_xor_explicit( &a, mask, order ), prev );
                 prev = atomics::atomic_load_explicit( &a, oLoad );

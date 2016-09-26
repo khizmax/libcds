@@ -86,18 +86,18 @@ namespace {
                 arr[i].nVal = static_cast<int>(i);
 
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // pop from empty queue
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             pv = q.dequeue();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // push/pop test
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -120,11 +120,11 @@ namespace {
                 ASSERT_EQ( pv->nVal, static_cast<int>(i) );
             }
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             // pop() doesn't call disposer
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 0 );
+                ASSERT_EQ( arr[i].nDisposeCount, 0u );
             }
 
             // clear with disposer
@@ -136,10 +136,10 @@ namespace {
 
             q.clear( true );
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 1 );
+                ASSERT_EQ( arr[i].nDisposeCount, 1u );
             }
 
             // clear without disposer
@@ -148,10 +148,10 @@ namespace {
 
             q.clear();
             ASSERT_TRUE( q.empty() );
-            ASSERT_EQ( q.size(), 0 );
+            ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 1 );
+                ASSERT_EQ( arr[i].nDisposeCount, 1u );
             }
         }
     };

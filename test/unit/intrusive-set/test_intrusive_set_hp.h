@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TEST_INTRUSIVE_SET_HP_H
@@ -101,23 +101,23 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 gp = s.get( i );
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
 
                 gp = s.get( i.key() );
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
 
                 gp = s.get_with( other_item( i.key()), other_less());
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
-                EXPECT_EQ( i.nFindCount, 3 );
+                EXPECT_EQ( i.nFindCount, 3u );
 
-                EXPECT_EQ( i.nEraseCount, 0 );
+                EXPECT_EQ( i.nEraseCount, 0u );
                 switch ( i.key() % 3 ) {
                 case 0:
                     gp = s.extract( i.key());
@@ -131,7 +131,7 @@ namespace cds_test {
                 }
                 ASSERT_FALSE( !gp );
                 ++gp->nEraseCount;
-                EXPECT_EQ( i.nEraseCount, 1 );
+                EXPECT_EQ( i.nEraseCount, 1u );
 
                 gp = s.extract( i );
                 ASSERT_TRUE( !gp );
@@ -144,12 +144,12 @@ namespace cds_test {
             gp.release();
 
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
         }

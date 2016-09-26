@@ -59,20 +59,20 @@ namespace {
             ASSERT_EQ( stack.size(), 3u );
 
             ASSERT_TRUE( stack.pop( v ) );
-            EXPECT_EQ( v, 3 );
+            EXPECT_EQ( v, value_type( 3 ));
             ASSERT_TRUE( !stack.empty() );
             ASSERT_EQ( stack.size(), 2u );
             ASSERT_TRUE( stack.pop( v ) );
-            EXPECT_EQ( v, 2 );
+            EXPECT_EQ( v, value_type( 2 ));
             ASSERT_TRUE( !stack.empty() );
             ASSERT_EQ( stack.size(), 1u );
             ASSERT_TRUE( stack.pop( v ) );
-            EXPECT_EQ( v, 1 );
+            EXPECT_EQ( v, value_type( 1 ));
             ASSERT_TRUE( stack.empty() );
             ASSERT_EQ( stack.size(), 0u );
             v = 1000;
             ASSERT_TRUE( !stack.pop( v ) );
-            EXPECT_EQ( v, 1000 );
+            EXPECT_EQ( v, value_type( 1000 ));
             ASSERT_TRUE( stack.empty() );
             ASSERT_EQ( stack.size(), 0u );
 

@@ -308,7 +308,7 @@ namespace {
 
                 EXPECT_EQ( a.fetch_and( (integral_type) ~mask, order ), prev );
                 prev = a.load( oLoad );
-                EXPECT_EQ( ( prev & mask), 0);
+                EXPECT_EQ( ( prev & mask), integral_type( 0 ));
 
                 EXPECT_EQ( a.fetch_xor( mask, order ), prev );
                 prev = a.load( oLoad );

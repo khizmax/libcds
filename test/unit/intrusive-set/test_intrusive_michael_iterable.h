@@ -290,11 +290,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()));
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
                 ASSERT_TRUE( s.find( i.nKey ) != s.end() );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less() ) != s.end() );
                 EXPECT_EQ( s.find( i.nKey )->nKey, i.key() );
@@ -313,11 +313,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
                 ASSERT_TRUE( s.find( i.nKey ) != s.end() );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less()) != s.end() );
                 EXPECT_EQ( s.find( i.nKey )->nKey, i.key() );
@@ -368,7 +368,7 @@ namespace cds_test {
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less() ) == s.end() );
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             // Force retiring cycle
             Set::gc::force_dispose();

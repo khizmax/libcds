@@ -79,7 +79,7 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 ASSERT_TRUE( q.pop( it ) );
-                ASSERT_EQ( it, i );
+                ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );
