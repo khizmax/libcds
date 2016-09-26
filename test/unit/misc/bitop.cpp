@@ -66,7 +66,7 @@ namespace {
         EXPECT_EQ( cds::bitop::MSB( n ), 0 ) << "n=" << n;
         EXPECT_EQ( cds::bitop::LSB( n ), 0 ) << "n=" << n;
         EXPECT_EQ( cds::bitop::SBC( n ), 0 ) << "n=" << n;
-        EXPECT_EQ( cds::bitop::ZBC( n ), sizeof( n ) * 8 ) << "n=" << n;
+        EXPECT_EQ( cds::bitop::ZBC( n ), static_cast<int>( sizeof( n ) * 8 )) << "n=" << n;
 
         int nBit = 1;
         for ( n = 1; n != 0; n *= 2 ) {
@@ -75,7 +75,7 @@ namespace {
             EXPECT_EQ( cds::bitop::MSBnz( n ), nBit - 1 ) << "n=" << n;
             EXPECT_EQ( cds::bitop::LSBnz( n ), nBit - 1 ) << "n=" << n;
             EXPECT_EQ( cds::bitop::SBC( n ), 1 ) << "n=" << n;
-            EXPECT_EQ( cds::bitop::ZBC( n ), sizeof( n ) * 8 - 1 ) << "n=" << n;
+            EXPECT_EQ( cds::bitop::ZBC( n ), static_cast<int>( sizeof( n ) * 8 - 1 )) << "n=" << n;
 
             ++nBit;
         }

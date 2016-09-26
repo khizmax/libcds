@@ -115,7 +115,7 @@ namespace cds_test {
                 gp = s.extract( i.key() );
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->key(), i.key() );
-                EXPECT_EQ( gp->nFindCount, static_cast<>size_t( i.key() * 4 ));
+                EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 4 ));
 
                 gp = s.extract( i.key() );
                 ASSERT_TRUE( !gp );
