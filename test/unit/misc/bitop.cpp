@@ -53,7 +53,7 @@ namespace {
             EXPECT_EQ( cds::bitop::MSBnz( n ), nBit - 1 ) << "n=" << n;
             EXPECT_EQ( cds::bitop::LSBnz( n ), nBit - 1 ) << "n=" << n;
             EXPECT_EQ( cds::bitop::SBC( n ), 1 ) << "n=" << n;
-            EXPECT_EQ( cds::bitop::ZBC( n ), sizeof( n ) * 8  - 1 ) << "n=" << n;
+            EXPECT_EQ( cds::bitop::ZBC( n ), static_cast<int>( sizeof( n ) * 8 - 1 )) << "n=" << n;
 
             ++nBit;
         }
@@ -109,15 +109,15 @@ namespace {
 
     TEST_F( bitop, ceil_pow2 )
     {
-        EXPECT_EQ( cds::beans::ceil2( 0 ), 1 );
-        EXPECT_EQ( cds::beans::ceil2( 1 ), 1 );
-        EXPECT_EQ( cds::beans::ceil2( 2 ), 2 );
-        EXPECT_EQ( cds::beans::ceil2( 3 ), 4 );
-        EXPECT_EQ( cds::beans::ceil2( 4 ), 4 );
-        EXPECT_EQ( cds::beans::ceil2( 5 ), 8 );
-        EXPECT_EQ( cds::beans::ceil2( 7 ), 8 );
-        EXPECT_EQ( cds::beans::ceil2( 8 ), 8 );
-        EXPECT_EQ( cds::beans::ceil2( 9 ), 16 );
+        EXPECT_EQ( cds::beans::ceil2( 0 ), 1u );
+        EXPECT_EQ( cds::beans::ceil2( 1 ), 1u );
+        EXPECT_EQ( cds::beans::ceil2( 2 ), 2u );
+        EXPECT_EQ( cds::beans::ceil2( 3 ), 4u );
+        EXPECT_EQ( cds::beans::ceil2( 4 ), 4u );
+        EXPECT_EQ( cds::beans::ceil2( 5 ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 7 ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 8 ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 9 ), 16u );
 
         for ( uint32_t n = 4; n < (uint32_t(1) << 31); n <<= 1 )
         {

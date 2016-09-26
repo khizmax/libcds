@@ -191,11 +191,11 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    EXPECT_EQ( i.nInsertCount, 0 );
+                    EXPECT_EQ( i.nInsertCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nInsertCount;} ));
-                    EXPECT_EQ( i.nInsertCount, 1 );
+                    EXPECT_EQ( i.nInsertCount, 1u );
                     ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nInsertCount;} ) );
-                    EXPECT_EQ( i.nInsertCount, 1 );
+                    EXPECT_EQ( i.nInsertCount, 1u );
                     i.nInsertCount = 0;
                     break;
                 case 2:
@@ -208,7 +208,7 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 EXPECT_EQ( i.nFindCount, 0 );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
             }
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
@@ -230,7 +230,7 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 EXPECT_EQ( i.nFindCount, 0 );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
 
                 value_type v( i );
                 switch ( i.key() % 3 ) {
@@ -244,11 +244,11 @@ namespace cds_test {
                     ASSERT_FALSE( s.erase( i.key() ) );
                     break;
                 case 2:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( s.erase( v.key(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( s.erase( v.key(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
 
@@ -261,7 +261,7 @@ namespace cds_test {
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
             // clear
@@ -277,7 +277,7 @@ namespace cds_test {
                 ++it->nFindCount;
             }
             for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, 1 );
+                EXPECT_EQ( it->nFindCount, 1u );
             }
 
             // Reverse iterator test
@@ -285,25 +285,25 @@ namespace cds_test {
                 ++it->nFindCount;
             }
             for ( auto it = s.crbegin(); it != s.crend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, 2 );
+                EXPECT_EQ( it->nFindCount, 2u );
             }
 
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
             }
 
             // clear test
             s.clear();
 
             ASSERT_TRUE( s.empty());
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
             ASSERT_TRUE( s.begin() == s.end() );
             ASSERT_TRUE( s.cbegin() == s.cend() );
 
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
         }
     };

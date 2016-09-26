@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -227,7 +227,7 @@ namespace map {
                     operator()( bNew, val.first, val.second );
                 }
 
-                // For FeldmanHashMap
+                // For FeldmanHashMap, IterableList
                 template <typename Val>
                 void operator()( Val& cur, Val * old )
                 {
@@ -517,6 +517,7 @@ namespace map {
                 testMap.erase( nItem );
 
             EXPECT_TRUE( testMap.empty());
+            EXPECT_TRUE( testMap.size(), 0u );
 
             additional_check( testMap );
             print_stat( propout(), testMap );

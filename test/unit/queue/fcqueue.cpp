@@ -60,7 +60,7 @@ namespace {
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 ASSERT_TRUE( q.dequeue( it ));
-                ASSERT_EQ( it, i );
+                ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_EQ( q.size(), nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );

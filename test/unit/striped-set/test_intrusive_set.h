@@ -470,7 +470,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             // clear
             for ( auto& i : data ) {
@@ -483,7 +483,7 @@ namespace cds_test {
             s.clear();
 
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             // clear_and_dispose
             for ( auto& i : data ) {
@@ -498,7 +498,7 @@ namespace cds_test {
             ASSERT_TRUE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, 0 );
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
         }

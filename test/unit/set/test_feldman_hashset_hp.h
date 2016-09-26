@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -77,7 +77,7 @@ namespace cds_test {
             }
 
             for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, it->key() * 3 );
+                EXPECT_EQ( it->nFindCount, static_cast<size_t>( it->key() * 3 ));
             }
 
             // reverse iterator set
@@ -86,7 +86,7 @@ namespace cds_test {
             }
 
             for ( auto it = s.crbegin(); it != s.crend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, it->key() * 2 );
+                EXPECT_EQ( it->nFindCount, static_cast<size_t>( it->key() * 2 ));
             }
 
             typedef typename Set::guarded_ptr guarded_ptr;
@@ -101,7 +101,7 @@ namespace cds_test {
                 gp = s.get( i.key());
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->key(), i.key() );
-                EXPECT_EQ( gp->nFindCount, i.key() * 2 );
+                EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 2 ));
                 gp->nFindCount *= 2;
 
                 gp.release();
@@ -115,7 +115,7 @@ namespace cds_test {
                 gp = s.extract( i.key() );
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->key(), i.key() );
-                EXPECT_EQ( gp->nFindCount, i.key() * 4 );
+                EXPECT_EQ( gp->nFindCount, static_cast<>size_t( i.key() * 4 ));
 
                 gp = s.extract( i.key() );
                 ASSERT_TRUE( !gp );

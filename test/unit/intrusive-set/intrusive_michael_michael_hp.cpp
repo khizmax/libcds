@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -153,7 +153,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
-        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
     }
 
     TEST_F( IntrusiveMichaelSet_HP, base_wrapped_stat )
@@ -176,7 +176,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
-        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
     }
 
     TEST_F( IntrusiveMichaelSet_HP, member_cmp )
@@ -270,7 +270,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
-        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
     }
 
     TEST_F( IntrusiveMichaelSet_HP, member_wrapped_stat )
@@ -294,7 +294,7 @@ namespace {
 
         set_type s( kSize, 2 );
         test( s );
-        EXPECT_GE( s.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
     }
 
 } // namespace

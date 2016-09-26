@@ -80,13 +80,13 @@ namespace cds_test {
             }
 
             ASSERT_TRUE( !pq.empty() );
-            ASSERT_EQ( pq.size(), 1 );
+            ASSERT_EQ( pq.size(), 1u );
 
             ASSERT_TRUE( pq.pop( kv ) );
             EXPECT_EQ( kv.k, PQueueTest::c_nMinValue );
 
             ASSERT_TRUE( pq.empty() );
-            ASSERT_EQ( pq.size(), 0 );
+            ASSERT_EQ( pq.size(), 0u );
 
             // pop from empty pqueue
             kv.k = PQueueTest::c_nCapacity * 2;
@@ -102,7 +102,7 @@ namespace cds_test {
 
             pq.clear();
             ASSERT_TRUE( pq.empty() );
-            ASSERT_EQ( pq.size(), 0 );
+            ASSERT_EQ( pq.size(), 0u );
         }
     };
 } // namespace cds_test

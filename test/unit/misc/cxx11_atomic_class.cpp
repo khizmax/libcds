@@ -201,7 +201,7 @@ namespace {
 
                 EXPECT_EQ( (a &= (integral_type) ~mask ), ( prev & (integral_type) ~mask ));
                 prev = a;
-                EXPECT_EQ( ( prev & mask), 0);
+                EXPECT_EQ( ( prev & mask), 0u);
 
                 EXPECT_EQ( (a ^= mask ), (prev ^ mask ));
                 prev = a;
@@ -220,8 +220,8 @@ namespace {
 
             EXPECT_TRUE( a.is_lock_free() );
             a.store((integral_type) 0, oStore );
-            EXPECT_EQ( a, 0 );
-            EXPECT_EQ( a.load( oLoad ), 0 );
+            EXPECT_EQ( a, integral_type( 0 ));
+            EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
                 integral_type n = integral_type(42) << (nByte * 8);

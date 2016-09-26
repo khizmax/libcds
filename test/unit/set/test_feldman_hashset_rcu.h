@@ -111,7 +111,7 @@ namespace {
                     value_type * p = s.get( i.key());
                     ASSERT_TRUE( p != nullptr );
                     EXPECT_EQ( p->key(), i.key() );
-                    EXPECT_EQ( p->nFindCount, i.key() * 2 );
+                    EXPECT_EQ( p->nFindCount, static_cast<size_t>( i.key() * 2 ));
                     p->nFindCount *= 2;
                 }
             }
@@ -125,7 +125,7 @@ namespace {
                 xp = s.extract( i.key() );
                 ASSERT_FALSE( !xp );
                 EXPECT_EQ( xp->key(), i.key() );
-                EXPECT_EQ( xp->nFindCount, i.key() * 4 );
+                EXPECT_EQ( xp->nFindCount, static_cast<size_t>( i.key() * 4 ));
 
                 xp = s.extract( i.key() );
                 ASSERT_TRUE( !xp );

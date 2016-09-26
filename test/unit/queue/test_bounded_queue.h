@@ -61,7 +61,7 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
                 ASSERT_TRUE( q.dequeue( it ) );
-                ASSERT_EQ( it, i );
+                ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );
@@ -111,7 +111,7 @@ namespace cds_test {
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_CONTAINER_SIZE( q, 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.push( static_cast<value_type>(i) ) );
@@ -131,19 +131,19 @@ namespace cds_test {
             // clear
             q.clear();
             ASSERT_TRUE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_CONTAINER_SIZE( q, 0u );
 
             // pop from empty queue
             it = static_cast<int>(nSize * 2);
             ASSERT_FALSE( q.pop( it ) );
             ASSERT_EQ( it, nSize * 2 );
             ASSERT_TRUE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_CONTAINER_SIZE( q, 0u );
 
             ASSERT_FALSE( q.dequeue( it ) );
             ASSERT_EQ( it, nSize * 2 );
             ASSERT_TRUE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_CONTAINER_SIZE( q, 0u );
         }
 
         template <class Queue>

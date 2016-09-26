@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -190,7 +190,7 @@ namespace cds { namespace intrusive {
             typedef empty_stat                      stat;
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
-            typedef atomicity::empty_item_counter     item_counter;
+            typedef atomicity::empty_item_counter   item_counter;
 
             /// C++ memory ordering model
             /**
