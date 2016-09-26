@@ -517,7 +517,7 @@ namespace map {
                 testMap.erase( nItem );
 
             EXPECT_TRUE( testMap.empty());
-            EXPECT_TRUE( testMap.size(), 0u );
+            EXPECT_EQ( testMap.size(), 0u );
 
             additional_check( testMap );
             print_stat( propout(), testMap );
