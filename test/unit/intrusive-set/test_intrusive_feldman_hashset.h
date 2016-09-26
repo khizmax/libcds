@@ -206,7 +206,7 @@ namespace cds_test {
                 }
 
                 ASSERT_TRUE( s.contains( i.nKey ) );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
             }

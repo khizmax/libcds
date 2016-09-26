@@ -260,7 +260,7 @@ namespace cds_test {
                     ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v ) 
                         {
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 3:
@@ -268,7 +268,7 @@ namespace cds_test {
                     ASSERT_FALSE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v ) 
                         {
-                            EXPECT_EQ( v.nFindCount, 1 );
+                            EXPECT_EQ( v.nFindCount, 1u );
                         }));
                     break;
                 case 4:
@@ -283,7 +283,7 @@ namespace cds_test {
                     updResult = s.update( i, []( value_type& v, value_type * prev )
                         {
                             ASSERT_TRUE( prev != nullptr );
-                            EXPECT_EQ( prev->nUpdateNewCount, 1 );
+                            EXPECT_EQ( prev->nUpdateNewCount, 1u );
                             EXPECT_EQ( v.key(), prev->key() );
                             ++v.nUpdateCount;
                         }, false );
@@ -292,8 +292,8 @@ namespace cds_test {
 
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v )
                         {
-                            EXPECT_EQ( v.nUpdateCount, 1 );
-                            EXPECT_EQ( v.nUpdateNewCount, 0 );
+                            EXPECT_EQ( v.nUpdateCount, 1u );
+                            EXPECT_EQ( v.nUpdateNewCount, 0u );
                         }));
                     break;
                 case 5:
@@ -309,8 +309,8 @@ namespace cds_test {
                         {
                             ASSERT_TRUE( prev != nullptr );
                             EXPECT_EQ( v.key(), prev->key() );
-                            EXPECT_EQ( prev->nUpdateNewCount, 1 );
-                            EXPECT_EQ( v.nUpdateNewCount, 0 );
+                            EXPECT_EQ( prev->nUpdateNewCount, 1u );
+                            EXPECT_EQ( v.nUpdateNewCount, 0u );
                             ++v.nUpdateNewCount;
                         }, false );
                         EXPECT_TRUE( updResult.first );
@@ -318,7 +318,7 @@ namespace cds_test {
 
                         ASSERT_TRUE( s.find( i.key(), []( value_type const& v )
                         {
-                            EXPECT_EQ( v.nUpdateNewCount, 1 );
+                            EXPECT_EQ( v.nUpdateNewCount, 1u );
                         } ) );
                         break;
                 case 6:
@@ -366,7 +366,7 @@ namespace cds_test {
                 case 1:
                     ASSERT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )
                     {
-                        EXPECT_EQ( v.nFindCount, 1 );
+                        EXPECT_EQ( v.nFindCount, 1u );
                         nKey = v.key();
                     } ) );
                     EXPECT_EQ( i.key(), nKey );
@@ -384,7 +384,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.find( i.nKey, []( value_type const& ) {} ) );
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
@@ -410,7 +410,7 @@ namespace cds_test {
             s.clear();
 
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             ASSERT_TRUE( s.begin() == s.end() );
             ASSERT_TRUE( s.cbegin() == s.cend() );

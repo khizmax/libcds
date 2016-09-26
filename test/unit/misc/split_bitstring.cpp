@@ -61,7 +61,7 @@ namespace {
             EXPECT_EQ( res, src );
             ASSERT_TRUE( splitter.eos() );
             ASSERT_TRUE( !splitter );
-            EXPECT_EQ(splitter.safe_cut(sizeof(src) * 8), 0 );
+            EXPECT_EQ(splitter.safe_cut(sizeof(src) * 8), 0u );
             ASSERT_TRUE( splitter.eos() );
             ASSERT_TRUE( !splitter );
             splitter.reset();
@@ -71,7 +71,7 @@ namespace {
             EXPECT_EQ( res, src );
             ASSERT_TRUE( splitter.eos() );
             ASSERT_TRUE( !splitter );
-            EXPECT_EQ( splitter.safe_cut(sizeof(src) * 8), 0 );
+            EXPECT_EQ( splitter.safe_cut(sizeof(src) * 8), 0u );
             ASSERT_TRUE( splitter.eos() );
             ASSERT_TRUE( !splitter );
 

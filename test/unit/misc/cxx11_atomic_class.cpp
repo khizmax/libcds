@@ -201,7 +201,7 @@ namespace {
 
                 EXPECT_EQ( (a &= (integral_type) ~mask ), ( prev & (integral_type) ~mask ));
                 prev = a;
-                EXPECT_EQ( ( prev & mask), 0u);
+                EXPECT_EQ( ( prev & mask), integral_type( 0 ));
 
                 EXPECT_EQ( (a ^= mask ), (prev ^ mask ));
                 prev = a;
@@ -294,7 +294,7 @@ namespace {
 
                 EXPECT_EQ( a.fetch_sub( n, order ), prev);
             }
-            EXPECT_EQ( a.load( oLoad ), 0 );
+            EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
 
             // fetch_or / fetc_xor / fetch_and
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )

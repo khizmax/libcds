@@ -60,7 +60,7 @@ namespace {
 
             ASSERT_TRUE( pq.empty() );
             ASSERT_FALSE( pq.full() );
-            ASSERT_EQ( pq.size(), 0 );
+            ASSERT_EQ( pq.size(), 0u );
             ASSERT_EQ( pq.capacity(), base_class::c_nCapacity - 1 );
 
             size_t nSize = 0;
@@ -94,7 +94,7 @@ namespace {
             ASSERT_FALSE( pq.empty() );
 
             nSize = pq.size();
-            while ( pq.size() > 1 ) {
+            while ( pq.size() > 1u ) {
                 p = pq.pop();
                 ASSERT_TRUE( p != nullptr );
                 EXPECT_EQ( p->k, nPrev - 1 );
@@ -105,7 +105,7 @@ namespace {
 
             ASSERT_FALSE( pq.full() );
             ASSERT_FALSE( pq.empty() );
-            ASSERT_EQ( pq.size(), 1 );
+            ASSERT_EQ( pq.size(), 1u );
 
             p = pq.pop();
             ASSERT_TRUE( p != nullptr );
@@ -113,7 +113,7 @@ namespace {
 
             ASSERT_FALSE( pq.full() );
             ASSERT_TRUE( pq.empty() );
-            ASSERT_EQ( pq.size(), 0 );
+            ASSERT_EQ( pq.size(), 0u );
 
             // Clear test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
@@ -125,7 +125,7 @@ namespace {
             pq.clear();
             EXPECT_TRUE( pq.empty() );
             EXPECT_FALSE( pq.full() );
-            EXPECT_EQ( pq.size(), 0 );
+            EXPECT_EQ( pq.size(), 0u );
 
             // clear_with test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
@@ -140,7 +140,7 @@ namespace {
                 pq.clear_with( std::ref( disp ) );
                 ASSERT_TRUE( pq.empty() );
                 ASSERT_FALSE( pq.full() );
-                ASSERT_EQ( pq.size(), 0 );
+                ASSERT_EQ( pq.size(), 0u );
                 ASSERT_EQ( disp.m_nCallCount, pq.capacity() );
             }
         }
