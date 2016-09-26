@@ -225,10 +225,10 @@ namespace {
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
                 integral_type n = integral_type(42) << (nByte * 8);
-                EXPECT_EQ( a.exchange( n, order ), 0 );
+                EXPECT_EQ( a.exchange( n, order ), integral_type( 0 ));
                 EXPECT_EQ( a.load( oLoad ), n );
                 EXPECT_EQ( a.exchange( (integral_type) 0, order ), n );
-                EXPECT_EQ( a.load( oLoad ), 0 );
+                EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
             }
 
             integral_type prev = a.load( oLoad );

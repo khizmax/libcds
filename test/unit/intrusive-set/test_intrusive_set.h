@@ -313,11 +313,11 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
                 case 2:
@@ -334,11 +334,11 @@ namespace cds_test {
                 ASSERT_TRUE( s.contains( i.nKey ) );
                 ASSERT_TRUE( s.contains( i ) );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()));
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
             }
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
@@ -379,18 +379,18 @@ namespace cds_test {
                     ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less() ) );
                     break;
                 case 4:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( s.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 case 5:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
 
@@ -401,12 +401,12 @@ namespace cds_test {
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
             // clear
@@ -422,24 +422,24 @@ namespace cds_test {
                 ++it->nFindCount;
             }
             for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, 1 );
+                EXPECT_EQ( it->nFindCount, 1u );
             }
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
             }
 
             // clear test
             s.clear();
 
             ASSERT_TRUE( s.empty());
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
             ASSERT_TRUE( s.begin() == s.end() );
             ASSERT_TRUE( s.cbegin() == s.cend() );
 
             // Force retiring cycle
             Set::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
         }

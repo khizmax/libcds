@@ -101,7 +101,7 @@ namespace cds_test {
                     ASSERT_FALSE( !gp );
                 }
                 EXPECT_EQ( gp->key(), i.key() );
-                EXPECT_EQ( gp->nFindCount, i.key() * 3 );
+                EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 3 ));
                 gp->nFindCount *= 2;
 
                 gp.release();
@@ -127,7 +127,7 @@ namespace cds_test {
                     break;
                 }
                 EXPECT_EQ( gp->key(), i.key() );
-                EXPECT_EQ( gp->nFindCount, i.key() * 6 );
+                EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 6 ));
 
                 switch ( idx % 3 ) {
                 case 0:

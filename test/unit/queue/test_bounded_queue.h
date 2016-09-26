@@ -107,7 +107,7 @@ namespace cds_test {
                     ASSERT_TRUE( q.pop_with( f ));
                 else
                     ASSERT_TRUE( q.dequeue_with( f ));
-                ASSERT_EQ( it, i );
+                ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty() );

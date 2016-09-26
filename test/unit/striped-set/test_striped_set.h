@@ -199,7 +199,7 @@ namespace {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                     {
                         EXPECT_EQ( v.key(), key );
-                        EXPECT_EQ( v.nFindCount, 1 );
+                        EXPECT_EQ( v.nFindCount, 1u );
                     } ) );
                     break;
                 case 3:
@@ -208,7 +208,7 @@ namespace {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                     {
                         EXPECT_EQ( v.key(), key );
-                        EXPECT_EQ( v.nFindCount, 1 );
+                        EXPECT_EQ( v.nFindCount, 1u );
                     } ) );
                     break;
                 case 4:
@@ -310,10 +310,10 @@ namespace {
                 } ));
                 ASSERT_TRUE( s.find( i, []( value_type& v, value_type const& )
                 {
-                    EXPECT_EQ( ++v.nFindCount, 2 );
+                    EXPECT_EQ( ++v.nFindCount, 2u );
                 } ));
                 ASSERT_TRUE( (call_find_with< c_hasFindWith, Set >()(s, i.key(), []( value_type& v, other_item const& ) {
-                    EXPECT_EQ( ++v.nFindCount, 3 );
+                    EXPECT_EQ( ++v.nFindCount, 3u );
                 })));
 
                 int nKey = i.key() - 1;
@@ -382,7 +382,7 @@ namespace {
                 ASSERT_FALSE( (call_find_with<c_hasFindWith, Set>()( s, i.key(), []( value_type&, other_item const& ) {})));
             }
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
@@ -396,7 +396,7 @@ namespace {
             s.clear();
 
             ASSERT_TRUE( s.empty() );
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
         }
 
     };

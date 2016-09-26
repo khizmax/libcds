@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -164,7 +164,7 @@ namespace {
 
         map_type m( kSize, 4 );
         test( m );
-        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0u );
     }
 
     TEST_F( MichaelMap_NoGC, wrapped_stat )
@@ -186,7 +186,7 @@ namespace {
 
         map_type m( kSize, 4 );
         test( m );
-        EXPECT_GE( m.statistics().m_nInsertSuccess, 0 );
+        EXPECT_GE( m.statistics().m_nInsertSuccess, 0u );
     }
 
 } // namespace

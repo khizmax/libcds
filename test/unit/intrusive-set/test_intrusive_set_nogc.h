@@ -303,7 +303,7 @@ namespace cds_test {
                 case 0:
                     ASSERT_TRUE( s.insert( i ));
                     ASSERT_FALSE( s.insert( i ));
-                    EXPECT_EQ( i.nUpdateCount, 0 );
+                    EXPECT_EQ( i.nUpdateCount, 0u );
                     updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg) 
                         {
                             EXPECT_FALSE( bNew );
@@ -312,7 +312,7 @@ namespace cds_test {
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
-                    EXPECT_EQ( i.nUpdateCount, 1 );
+                    EXPECT_EQ( i.nUpdateCount, 1u );
                     break;
                 case 1:
                     EXPECT_EQ( i.nUpdateNewCount, 0 );
@@ -324,18 +324,18 @@ namespace cds_test {
                     });
                     EXPECT_TRUE( updResult.first );
                     EXPECT_TRUE( updResult.second );
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     break;
                 }
 
                 ASSERT_TRUE( s.contains( i.nKey ) == &i );
                 ASSERT_TRUE( s.contains( i ) == &i );
                 ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()) == &i );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
             }
             ASSERT_FALSE( s.empty() );
             ASSERT_CONTAINER_SIZE( s, nSetSize );
@@ -347,23 +347,23 @@ namespace cds_test {
                 ++it->nFindCount;
             }
             for ( auto it = s.cbegin(); it != s.cend(); ++it ) {
-                EXPECT_EQ( it->nFindCount, 1 );
+                EXPECT_EQ( it->nFindCount, 1u );
             }
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
             }
 
             // clear test
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 0 );
+                EXPECT_EQ( i.nDisposeCount, 0u );
             }
             s.clear();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
             ASSERT_TRUE( s.empty());
-            ASSERT_CONTAINER_SIZE( s, 0 );
+            ASSERT_CONTAINER_SIZE( s, 0u );
             ASSERT_TRUE( s.begin() == s.end() );
             ASSERT_TRUE( s.cbegin() == s.cend() );
         }

@@ -124,7 +124,7 @@ namespace {
 
             // pop() doesn't call disposer
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 0u );
+                ASSERT_EQ( arr[i].nDisposeCount, 0 );
             }
 
             // clear with disposer
@@ -139,7 +139,7 @@ namespace {
             ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 1u );
+                ASSERT_EQ( arr[i].nDisposeCount, 1 );
             }
 
             // clear without disposer
@@ -151,7 +151,7 @@ namespace {
             ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 1u );
+                ASSERT_EQ( arr[i].nDisposeCount, 1 );
             }
         }
     };
