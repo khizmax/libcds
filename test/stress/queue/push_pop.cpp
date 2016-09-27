@@ -264,7 +264,7 @@ namespace {
                     EXPECT_EQ( arrData[i - 1] + 1, arrData[i] ) << "producer=" << nWriter;
                 }
 
-                EXPECT_EQ( arrData[0], 0 ) << "producer=" << nWriter;
+                EXPECT_EQ( arrData[0], 0u ) << "producer=" << nWriter;
                 EXPECT_EQ( arrData[arrData.size() - 1], m_nThreadPushCount - 1 ) << "producer=" << nWriter;
             }
         }

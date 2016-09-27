@@ -302,7 +302,7 @@ namespace {
                     }
                 }
 
-                EXPECT_EQ( arrData[0], 0 ) << "Writer " << nWriter;
+                EXPECT_EQ( arrData[0], 0u ) << "Writer " << nWriter;
                 EXPECT_EQ( arrData[arrData.size() - 1], s_nThreadPushCount - 1 ) << "Writer " << nWriter;
             }
         }
