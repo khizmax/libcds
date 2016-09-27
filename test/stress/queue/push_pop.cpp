@@ -232,7 +232,7 @@ namespace {
 
                     Producer& producer = static_cast<Producer&>( thr );
                     nPushFailed += producer.m_nPushFailed;
-                    EXPECT_EQ( producer.m_nPushFailed, 0 ) << "producer_thread_no " << i;
+                    EXPECT_EQ( producer.m_nPushFailed, 0u ) << "producer_thread_no " << i;
                 }
             }
             EXPECT_EQ( nTotalPops, nPoppedItems );

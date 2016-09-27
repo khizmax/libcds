@@ -234,7 +234,7 @@ namespace cds_test {
             EXPECT_EQ( nPushError, 0u );
 
             for ( size_t i = 0; i < sizeof( arrVal ) / sizeof( arrVal[0] ); ++i ) {
-                EXPECT_EQ( arrVal[i], 0 ) << "i=" << i;
+                EXPECT_EQ( arrVal[i], 0u ) << "i=" << i;
             }
 
             propout() << std::make_pair( "push_count", s_nStackSize )

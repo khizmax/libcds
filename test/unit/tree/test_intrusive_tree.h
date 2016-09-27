@@ -329,11 +329,11 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( t.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     ASSERT_FALSE( t.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
                 case 2:
@@ -344,7 +344,7 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.first );
                     EXPECT_FALSE( updResult.second );
 
-                    EXPECT_EQ( i.nUpdateNewCount, 0 );
+                    EXPECT_EQ( i.nUpdateNewCount, 0u );
                     updResult = t.update( i, []( bool bNew, value_type& val, value_type& arg )
                     {
                         EXPECT_TRUE( bNew );
@@ -353,10 +353,10 @@ namespace cds_test {
                     });
                     EXPECT_TRUE( updResult.first );
                     EXPECT_TRUE( updResult.second );
-                    EXPECT_EQ( i.nUpdateNewCount, 1 );
+                    EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
 
-                    EXPECT_EQ( i.nUpdateCount, 0 );
+                    EXPECT_EQ( i.nUpdateCount, 0u );
                     updResult = t.update( i, []( bool bNew, value_type& val, value_type& arg )
                     {
                         EXPECT_FALSE( bNew );
@@ -365,7 +365,7 @@ namespace cds_test {
                     }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
-                    EXPECT_EQ( i.nUpdateCount, 1 );
+                    EXPECT_EQ( i.nUpdateCount, 1u );
                     i.nUpdateCount = 0;
 
                     break;
@@ -374,13 +374,13 @@ namespace cds_test {
                 ASSERT_TRUE( t.contains( i.nKey ) );
                 ASSERT_TRUE( t.contains( i ) );
                 ASSERT_TRUE( t.contains( other_item( i.key() ), other_less()));
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( t.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( t.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
                 ASSERT_TRUE( t.find( i, []( value_type& v, value_type& ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 3 );
+                EXPECT_EQ( i.nFindCount, 3u );
             }
             ASSERT_FALSE( t.empty() );
             ASSERT_CONTAINER_SIZE( t, nTreeSize );
@@ -395,11 +395,11 @@ namespace cds_test {
                 ASSERT_TRUE( t.contains( i.nKey ) );
                 ASSERT_TRUE( t.contains( i ) );
                 ASSERT_TRUE( t.contains( other_item( i.key() ), other_less() ) );
-                EXPECT_EQ( i.nFindCount, 0 );
+                EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( t.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 1 );
+                EXPECT_EQ( i.nFindCount, 1u );
                 ASSERT_TRUE( t.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
-                EXPECT_EQ( i.nFindCount, 2 );
+                EXPECT_EQ( i.nFindCount, 2u );
 
                 value_type v( i );
                 switch ( i.key() % 6 ) {
@@ -421,18 +421,18 @@ namespace cds_test {
                     ASSERT_FALSE( t.erase_with( other_item( i.key() ), other_less() ) );
                     break;
                 case 4:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( t.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( t.erase( v, []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 case 5:
-                    EXPECT_EQ( i.nEraseCount, 0 );
+                    EXPECT_EQ( i.nEraseCount, 0u );
                     ASSERT_TRUE( t.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     ASSERT_FALSE( t.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
-                    EXPECT_EQ( i.nEraseCount, 1 );
+                    EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
 
@@ -449,7 +449,7 @@ namespace cds_test {
             // Force retiring cycle
             Tree::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
 
             // clear
@@ -465,12 +465,12 @@ namespace cds_test {
             t.clear();
 
             ASSERT_TRUE( t.empty());
-            ASSERT_CONTAINER_SIZE( t, 0 );
+            ASSERT_CONTAINER_SIZE( t, 0u );
 
             // Force retiring cycle
             Tree::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1 );
+                EXPECT_EQ( i.nDisposeCount, 1u );
             }
         }
     };

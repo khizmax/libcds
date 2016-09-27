@@ -243,7 +243,7 @@ namespace {
                     nTotalPops += consumer.m_nPopped;
                     nPopFalse += consumer.m_nPopEmpty;
                     arrReaders.push_back( &consumer );
-                    EXPECT_EQ( consumer.m_nBadWriter, 0 ) << "consumer " << (i - s_nWriterThreadCount);
+                    EXPECT_EQ( consumer.m_nBadWriter, 0u ) << "consumer " << (i - s_nWriterThreadCount);
 
                     size_t nPopped = 0;
                     for ( size_t n = 0; n < s_nWriterThreadCount; ++n )
@@ -260,7 +260,7 @@ namespace {
                     Producer<Queue>& producer = static_cast<Producer<Queue>&>( thr );
                     nPushFailed += producer.m_nPushFailed;
                     if ( !std::is_base_of<cds::bounded_container, Queue>::value ) {
-                        EXPECT_EQ( producer.m_nPushFailed, 0 ) << "producer " << i;
+                        EXPECT_EQ( producer.m_nPushFailed, 0u ) << "producer " << i;
                     }
                 }
             }

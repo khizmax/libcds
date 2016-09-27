@@ -266,7 +266,7 @@ namespace {
             EXPECT_EQ( nDirtyPop, 0u );
 
             for ( size_t i = 0; i < sizeof( arrVal ) / sizeof( arrVal[0] ); ++i ) {
-                EXPECT_EQ( arrVal[i], 0 );
+                EXPECT_EQ( arrVal[i], 0u );
             }
 
             propout() << std::make_pair( "push_count", s_nStackSize )
