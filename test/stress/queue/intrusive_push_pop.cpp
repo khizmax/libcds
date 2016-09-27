@@ -206,11 +206,11 @@ namespace {
             s_nFCPassCount = cfg.get_uint( "FCPassCount", s_nFCPassCount );
             s_nFCCompactFactor = cfg.get_uint( "FCCompactFactor", s_nFCCompactFactor );
 
-            if ( s_nReaderThreadCount == 0 )
+            if ( s_nReaderThreadCount == 0u )
                 s_nReaderThreadCount = 1;
-            if ( s_nWriterThreadCount == 0 )
+            if ( s_nWriterThreadCount == 0u )
                 s_nWriterThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 
@@ -352,7 +352,7 @@ namespace {
                     if ( it->nConsumer == c_nBadConsumer )
                         ++nBadConsumerCount;
                 }
-                EXPECT_EQ( nBadConsumerCount, 0 );
+                EXPECT_EQ( nBadConsumerCount, 0u );
             }
 
             analyze( q, nLeftOffset, nRightOffset );

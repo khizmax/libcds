@@ -219,7 +219,7 @@ namespace {
                     nTotalPops += consumer.m_nPopped;
                     nPopFalse += consumer.m_nPopEmpty;
                     arrConsumer.push_back( &consumer );
-                    EXPECT_EQ( consumer.m_nBadWriter, 0 ) << "consumer_thread_no " << i;
+                    EXPECT_EQ( consumer.m_nBadWriter, 0u ) << "consumer_thread_no " << i;
 
                     size_t nPopped = 0;
                     for ( size_t n = 0; n < s_nProducerThreadCount; ++n )
@@ -307,11 +307,11 @@ namespace {
             s_nProducerThreadCount = cfg.get_size_t( "ProducerCount", s_nProducerThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
 
-            if ( s_nConsumerThreadCount == 0 )
+            if ( s_nConsumerThreadCount == 0u )
                 s_nConsumerThreadCount = 1;
-            if ( s_nProducerThreadCount == 0 )
+            if ( s_nProducerThreadCount == 0u )
                 s_nProducerThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 

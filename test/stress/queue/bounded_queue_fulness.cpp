@@ -94,11 +94,11 @@ namespace {
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
             s_nPassCount = cfg.get_size_t( "PassCount", s_nPassCount );
 
-            if ( s_nThreadCount == 0 )
+            if ( s_nThreadCount == 0u )
                 s_nThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1024;
-            if ( s_nPassCount == 0 )
+            if ( s_nPassCount == 0u )
                 s_nPassCount = 1;
         }
 
@@ -118,8 +118,8 @@ namespace {
                 nPopError  += strain.m_nPopError;
             }
             EXPECT_TRUE( !q.empty());
-            EXPECT_EQ( nPushError, 0 );
-            EXPECT_EQ( nPopError, 0 );
+            EXPECT_EQ( nPushError, 0u );
+            EXPECT_EQ( nPopError, 0u );
         }
 
         template <class Queue>

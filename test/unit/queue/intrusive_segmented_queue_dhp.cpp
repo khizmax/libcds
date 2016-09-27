@@ -63,8 +63,8 @@ namespace {
         void check_array( V& arr )
         {
             for ( size_t i = 0; i < arr.size(); ++i ) {
-                EXPECT_EQ( arr[i].nDisposeCount, 2 );
-                EXPECT_EQ( arr[i].nDispose2Count, 1 );
+                EXPECT_EQ( arr[i].nDisposeCount, 2u );
+                EXPECT_EQ( arr[i].nDispose2Count, 1u );
             }
         }
     };

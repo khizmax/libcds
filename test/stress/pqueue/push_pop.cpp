@@ -181,7 +181,7 @@ namespace {
                     assert( t.type() == producer_thread );
                     Producer<PQueue>& prod = static_cast<Producer<PQueue>&>(t);
                     nPushFailed += prod.m_nPushError;
-                    EXPECT_EQ( prod.m_nPushError , 0 ) << "producer " << i;
+                    EXPECT_EQ( prod.m_nPushError , 0u ) << "producer " << i;
                 }
             }
 
@@ -190,7 +190,7 @@ namespace {
                 << std::make_pair( "push_error", nPushFailed );
 
             EXPECT_EQ( nTotalPopped, s_nQueueSize );
-            EXPECT_EQ( nPushFailed, 0 );
+            EXPECT_EQ( nPushFailed, 0u );
 
             //check_statistics( testQueue.statistics() );
             propout() << q.statistics();
@@ -205,11 +205,11 @@ namespace {
             s_nPopThreadCount = cfg.get_size_t( "PopThreadCount", s_nPopThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
 
-            if ( s_nPushThreadCount == 0 )
+            if ( s_nPushThreadCount == 0u )
                 s_nPushThreadCount = 1;
-            if ( s_nPopThreadCount == 0 )
+            if ( s_nPopThreadCount == 0u )
                 s_nPopThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 

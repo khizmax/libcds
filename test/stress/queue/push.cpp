@@ -102,9 +102,9 @@ namespace {
             s_nThreadCount = cfg.get_size_t( "ThreadCount", s_nThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
 
-            if ( s_nThreadCount == 0 )
+            if ( s_nThreadCount == 0u )
                 s_nThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 
@@ -148,7 +148,7 @@ namespace {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 Producer<Queue>& thread = static_cast<Producer<Queue>&>(pool.get( i ));
-                EXPECT_EQ( thread.m_nPushError, 0 ) << " producer thread " << i;
+                EXPECT_EQ( thread.m_nPushError, 0u ) << " producer thread " << i;
             }
             EXPECT_TRUE( !q.empty() );
 

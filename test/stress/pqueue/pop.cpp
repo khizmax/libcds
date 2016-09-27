@@ -177,8 +177,8 @@ namespace {
                     << std::make_pair( "error_priority_violation", nTotalError );
 
                 EXPECT_EQ( nTotalPopped, s_nQueueSize );
-                EXPECT_EQ( nTotalError, 0 ) << "priority violations";
-                EXPECT_EQ( nTotalErrorEq, 0 ) << "double key";
+                EXPECT_EQ( nTotalError, 0u ) << "priority violations";
+                EXPECT_EQ( nTotalErrorEq, 0u ) << "double key";
             }
 
             propout() << q.statistics();
@@ -192,9 +192,9 @@ namespace {
             s_nThreadCount = cfg.get_size_t( "ThreadCount", s_nThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
 
-            if ( s_nThreadCount == 0 )
+            if ( s_nThreadCount == 0u )
                 s_nThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 

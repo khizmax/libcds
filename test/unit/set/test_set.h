@@ -146,7 +146,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                         {
                             EXPECT_EQ( v.key(), key );
-                            EXPECT_EQ( v.nUpdateNewCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2u );
                         }));
                     break;
                 case 5:
@@ -171,7 +171,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
                             EXPECT_EQ( v.key(), arg.key() );
-                            EXPECT_EQ( v.nUpdateNewCount, 2 );
+                            EXPECT_EQ( v.nUpdateNewCount, 2u );
                         }));
                     break;
                 case 6:

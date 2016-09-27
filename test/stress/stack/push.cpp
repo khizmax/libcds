@@ -167,7 +167,7 @@ namespace {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 Producer<Stack>& producer = static_cast<Producer<Stack>&>( pool.get( i ));
-                EXPECT_EQ( producer.m_nPushError, 0 ) << "Producer=" << i;
+                EXPECT_EQ( producer.m_nPushError, 0u ) << "Producer=" << i;
                 aThread[producer.id()] = producer.m_nEndItem - 1;
             }
             EXPECT_FALSE( testStack.empty());

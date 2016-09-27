@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_TREE_TEST_TREE_SET_RCU_H
@@ -125,7 +125,7 @@ namespace cds_test {
                             break;
                         }
                         EXPECT_EQ( xp->key(), i.key() );
-                        EXPECT_EQ( xp->nFindCount, i.key() * 3 );
+                        EXPECT_EQ( xp->nFindCount, static_cast<unsigned>( i.key() * 3 ));
                     }
                     xp.release();
 
@@ -162,7 +162,7 @@ namespace cds_test {
                         break;
                     }
                     EXPECT_EQ( xp->key(), i.key() );
-                    EXPECT_EQ( xp->nFindCount, i.key() * 3 );
+                    EXPECT_EQ( xp->nFindCount, static_cast<unsigned>( i.key() * 3 ));
 
                     switch ( idx % 3 ) {
                     case 0:

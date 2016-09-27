@@ -599,7 +599,7 @@ namespace set {
             }
 
             EXPECT_EQ( nInsertSuccess, s_nSetSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0 );
+            EXPECT_EQ( nInsertFailed, 0u );
 
             propout()
                 << std::make_pair( "insert_success", nInsertSuccess )
@@ -669,7 +669,7 @@ namespace set {
             }
 
             EXPECT_EQ( nInsertSuccess, s_nSetSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0 );
+            EXPECT_EQ( nInsertFailed, 0u );
 
             propout()
                 << std::make_pair( "insert_success", nInsertSuccess )

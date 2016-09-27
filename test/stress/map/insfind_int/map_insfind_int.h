@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_type.h"
@@ -157,8 +157,8 @@ namespace map {
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 inserter& thr = static_cast<inserter&>(pool.get( i ));
 
-                EXPECT_EQ( thr.m_nInsertFailed, 0 ) << "thread " << thr.id();
-                EXPECT_EQ( thr.m_nFindFail, 0 ) << "thread " << thr.id();
+                EXPECT_EQ( thr.m_nInsertFailed, 0u ) << "thread " << thr.id();
+                EXPECT_EQ( thr.m_nFindFail, 0u ) << "thread " << thr.id();
 
                 nInsertSuccess += thr.m_nInsertSuccess;
                 nInsertFailed += thr.m_nInsertFailed;
@@ -173,8 +173,8 @@ namespace map {
                 << std::make_pair( "find_failed", nFindFailed )
                 << std::make_pair( "finish_map_size", testMap.size() );
 
-            EXPECT_EQ( nInsertFailed, 0 );
-            EXPECT_EQ( nFindFailed, 0 );
+            EXPECT_EQ( nInsertFailed, 0u );
+            EXPECT_EQ( nFindFailed, 0u );
 
             check_before_cleanup( testMap );
 

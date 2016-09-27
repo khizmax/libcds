@@ -503,9 +503,9 @@ namespace map {
                 << std::make_pair( "update_functor_modify", nEnsFuncModified )
                 << std::make_pair( "finish_map_size", testMap.size() );
 
-            EXPECT_EQ( nDelValueFailed, 0 );
+            EXPECT_EQ( nDelValueFailed, 0u );
             EXPECT_EQ( nDelValueSuccess, nDeleteSuccess );
-            EXPECT_EQ( nUpdateFailed, 0 );
+            EXPECT_EQ( nUpdateFailed, 0u );
             EXPECT_EQ( nUpdateCreated + nUpdateModified, nEnsFuncCreated + nEnsFuncModified );
 
             // nInsFuncCalled is call count of insert functor

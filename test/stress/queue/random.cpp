@@ -168,9 +168,9 @@ namespace {
             s_nThreadCount = cfg.get_size_t( "ThreadCount", s_nThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
 
-            if ( s_nThreadCount == 0 )
+            if ( s_nThreadCount == 0u )
                 s_nThreadCount = 1;
-            if ( s_nQueueSize == 0 )
+            if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
         }
 
@@ -192,9 +192,9 @@ namespace {
             cds_test::thread_pool& pool = get_pool();
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 Strain<Queue>& thr = static_cast<Strain<Queue> &>( pool.get(i));
-                EXPECT_EQ( thr.m_nUndefWriter, 0 );
-                EXPECT_EQ( thr.m_nRepeatValue, 0 );
-                EXPECT_EQ( thr.m_nPushError, 0 );
+                EXPECT_EQ( thr.m_nUndefWriter, 0u );
+                EXPECT_EQ( thr.m_nRepeatValue, 0u );
+                EXPECT_EQ( thr.m_nPushError, 0u );
                 nPushError += thr.m_nPushError;
 
                 arrPushCount[ thr.id() ] += thr.m_nPushCount;

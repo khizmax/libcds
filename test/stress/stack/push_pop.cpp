@@ -263,7 +263,7 @@ namespace {
             }
 
             EXPECT_EQ( nPopCount, s_nStackSize );
-            EXPECT_EQ( nDirtyPop, 0 );
+            EXPECT_EQ( nDirtyPop, 0u );
 
             for ( size_t i = 0; i < sizeof( arrVal ) / sizeof( arrVal[0] ); ++i ) {
                 EXPECT_EQ( arrVal[i], 0 );
