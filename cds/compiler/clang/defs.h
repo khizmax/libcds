@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_COMPILER_CLANG_DEFS_H
@@ -127,14 +127,16 @@
 #define cds_likely( expr )   __builtin_expect( !!( expr ), 1 )
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
 
-// double-width CAS support
-#if CDS_BUILD_BITS == 64
-#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
-#       define CDS_DCAS_SUPPORT
-#   endif
-#else
-#   ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
-#       define CDS_DCAS_SUPPORT
+// double-width CAS support - only for libc++
+#ifdef _LIBCPP_VERSION
+#   if CDS_BUILD_BITS == 64
+#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
+#           define CDS_DCAS_SUPPORT
+#       endif
+#   else
+#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
+#           define CDS_DCAS_SUPPORT
+#       endif
 #   endif
 #endif
 

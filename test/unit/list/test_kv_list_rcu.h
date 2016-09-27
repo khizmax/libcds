@@ -45,9 +45,6 @@ namespace cds_test {
             // Postcondition: list is empty
 
             static const size_t nSize = 20;
-            typedef typename List::key_type    list_key_type;
-            typedef typename List::mapped_type list_mapped_type;
-            typedef typename List::value_type  list_value_type;
             struct key_val {
                 int key;
                 int val;

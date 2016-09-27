@@ -51,7 +51,6 @@ namespace {
 
             base_class::test_< Set::c_isSorted>( s, data );
 
-            typedef typename Set::value_type value_type;
             size_t const nSetSize = base_class::kSize;
 
             // clear

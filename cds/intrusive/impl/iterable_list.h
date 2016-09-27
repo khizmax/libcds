@@ -239,13 +239,13 @@ namespace cds { namespace intrusive {
 
             value_ptr operator ->() const
             {
-                return m_Guard.get<value_type>();
+                return m_Guard.template get<value_type>();
             }
 
             value_ref operator *() const
             {
                 assert( m_Guard.get_native() != nullptr );
-                return *m_Guard.get<value_type>();
+                return *m_Guard.template get<value_type>();
             }
 
             /// Pre-increment

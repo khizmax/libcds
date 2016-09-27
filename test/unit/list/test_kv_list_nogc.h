@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_LIST_TEST_KV_LIST_NOGC_H
@@ -147,8 +147,6 @@ namespace cds_test {
             // Postcondition: list is empty
 
             static const size_t nSize = 20;
-            typedef typename List::key_type    list_key_type;
-            typedef typename List::mapped_type list_mapped_type;
             typedef typename List::value_type  list_value_type;
 
             struct key_val {
@@ -300,9 +298,6 @@ namespace cds_test {
             // Postcondition: list is empty
 
             static const size_t nSize = 20;
-            typedef typename List::key_type    list_key_type;
-            typedef typename List::mapped_type list_mapped_type;
-            typedef typename List::value_type  list_value_type;
 
             struct key_val {
                 int key;

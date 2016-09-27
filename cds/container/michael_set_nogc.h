@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -94,7 +94,7 @@ namespace cds { namespace container {
             typedef internal_bucket_type_ base_class;
         public:
             using base_class::base_class;
-            using base_class::node_type;
+            using typename base_class::node_type;
             using base_class::alloc_node;
             using base_class::insert_node;
             using base_class::node_to_value;

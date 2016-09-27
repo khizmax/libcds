@@ -55,7 +55,6 @@ namespace cds_test {
 
             typedef typename Map::value_type map_pair;
             typedef typename Map::iterator   iterator;
-            typedef typename Map::const_iterator const_iterator;
             size_t const kkSize = kSize;
 
             std::vector<key_type> arrKeys;

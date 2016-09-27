@@ -788,6 +788,7 @@ namespace {
         test_atomic_integral_volatile<unsigned long long>();
     }
 
+#if CDS_COMPILER != CDS_COMPILER_CLANG || defined(_LIBCPP_VERSION)
     TEST_F( cxx11_atomic_class, atomic_pointer_void )
     {
         do_test_atomic_pointer_void<false>();
@@ -797,6 +798,7 @@ namespace {
     {
         do_test_atomic_pointer_void<true>();
     }
+#endif
 
     TEST_F( cxx11_atomic_class, atomic_pointer_char )
     {

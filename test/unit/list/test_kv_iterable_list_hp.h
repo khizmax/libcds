@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -45,9 +45,6 @@ namespace cds_test {
             // Postcondition: list is empty
 
             static const size_t nSize = 20;
-            typedef typename List::key_type    list_key_type;
-            typedef typename List::mapped_type list_mapped_type;
-            typedef typename List::value_type  list_value_type;
             typedef typename List::guarded_ptr guarded_ptr;
 
             struct key_val {

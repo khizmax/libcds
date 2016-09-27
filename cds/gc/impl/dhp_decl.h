@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -324,6 +324,11 @@ namespace cds { namespace gc {
                 m_guard = nullptr;
                 return g;
             }
+
+            dhp::details::guard_data*& guard_ref()
+            {
+                return m_guard;
+            }
             //@endcond
 
         private:
@@ -629,7 +634,7 @@ namespace cds { namespace gc {
             /// Move-assignment from \p Guard
             guarded_ptr& operator=( Guard&& g ) CDS_NOEXCEPT
             {
-                std::swap( m_guard, g.m_guard );
+                std::swap( m_guard, g.guard_ref() );
                 return *this;
             }
 

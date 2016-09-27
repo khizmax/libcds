@@ -134,7 +134,6 @@ namespace cds_test {
             for ( auto it = s.begin(); it != s.end(); ++it ) {
                 int key = it->key();
                 ASSERT_TRUE( s.erase_at( it ));
-                ASSERT_TRUE( &*it != nullptr );
                 EXPECT_EQ( it->key(), key );
                 ASSERT_FALSE( s.erase_at( it ) );
             }

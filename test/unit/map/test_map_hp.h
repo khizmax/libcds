@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -51,7 +51,6 @@ namespace cds_test {
             EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
 
-            typedef typename Map::value_type map_pair;
             size_t const kkSize = base_class::kSize;
 
             std::vector<key_type> arrKeys;

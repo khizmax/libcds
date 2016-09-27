@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CDSUNIT_SET_TEST_INTRUSIVE_SKIPLIST_RCU_H
 #define CDSUNIT_SET_TEST_INTRUSIVE_SKIPLIST_RCU_H
@@ -172,7 +172,7 @@ TYPED_TEST_P( IntrusiveSkipListSet, member_less )
     typedef typename TestFixture::member_item_type member_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
     typedef typename TestFixture::template less<member_item_type> less_predicate;
-    typedef typename TestFixture::hash_int hash_int;
+    //typedef typename TestFixture::hash_int hash_int;
 
     struct traits : public ci::skip_list::traits
     {
