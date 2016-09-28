@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TYPE_ELLEN_BINTREE_H
@@ -296,7 +296,7 @@ namespace set {
     template <typename GC, typename Key, typename T, typename Traits>
     static inline void additional_check( EllenBinTreeSet<GC, Key, T, Traits>& s )
     {
-        typedef EllenBinTreeSet<GC, Key, T, Traits> set_type;
+        //typedef EllenBinTreeSet<GC, Key, T, Traits> set_type;
         GC::force_dispose();
         ellen_bintree_check::check_stat( s.statistics());
 /*

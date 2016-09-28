@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_intrusive_tree_hp.h"
@@ -50,10 +50,6 @@ namespace {
 
         void SetUp()
         {
-            struct list_traits : public ci::ellen_bintree::traits
-            {
-                typedef ci::ellen_bintree::base_hook< ci::opt::gc<gc_type>> hook;
-            };
             typedef ci::EllenBinTree< gc_type, key_type, base_item_type > tree_type;
 
             cds::gc::dhp::GarbageCollector::Construct( 16, tree_type::c_nHazardPtrCount );
