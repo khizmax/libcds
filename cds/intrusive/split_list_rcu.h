@@ -150,6 +150,7 @@ namespace cds { namespace intrusive {
             , node_type
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
+            , opt::free_list< typename traits::free_list >
         >::type bucket_table;
 
         typedef typename bucket_table::aux_node_type aux_node_type; ///< auxiliary node type
