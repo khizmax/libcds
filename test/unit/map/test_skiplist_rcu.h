@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CDSUNIT_MAP_TEST_SKIPLIST_RCU_H
 #define CDSUNIT_MAP_TEST_SKIPLIST_RCU_H
@@ -54,7 +54,6 @@ protected:
         ASSERT_TRUE( m.empty() );
         ASSERT_CONTAINER_SIZE( m, 0 );
 
-        typedef typename Map::value_type map_pair;
         typedef typename Map::exempt_ptr exempt_ptr;
         size_t const kkSize = base_class::kSize;
 
