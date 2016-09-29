@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSSTRESS_PQUEUE_ITEM_H
@@ -52,61 +52,33 @@ namespace pqueue {
         simple_value( key_type n )
             : key(n) 
         {}
+
+        friend bool operator <( simple_value const& lhs, simple_value const& rhs )
+        {
+            return lhs.key < rhs.key;
+        }
+        friend bool operator <( simple_value const& lhs, size_t rhs )
+        {
+            return lhs.key < rhs;
+        }
+        friend bool operator <( size_t lhs, simple_value const& rhs )
+        {
+            return lhs < rhs.key;
+        }
+
+        friend bool operator >( simple_value const& lhs, simple_value const& rhs )
+        {
+            return lhs.key > rhs.key;
+        }
+        friend bool operator >( simple_value const& lhs, size_t rhs )
+        {
+            return lhs.key > rhs;
+        }
+        friend bool operator >( size_t lhs, simple_value const& rhs )
+        {
+            return lhs > rhs.key;
+        }
     };
 } // namespace pqueue
-
-namespace std {
-    template <class T> struct less;
-    template <class T> struct greater;
-
-    template <>
-    struct less<pqueue::simple_value>
-    {
-        bool operator()( pqueue::simple_value const& k1, pqueue::simple_value const& k2 ) const
-        {
-            return k1.key < k2.key;
-        }
-
-        bool operator()( pqueue::simple_value const& k1, size_t k2 ) const
-        {
-            return k1.key < k2;
-        }
-
-        bool operator()( size_t k1, pqueue::simple_value const& k2 ) const
-        {
-            return k1 < k2.key;
-        }
-
-        bool operator()( size_t k1, size_t k2 ) const
-        {
-            return k1 < k2;
-        }
-    };
-
-    template <>
-    struct greater<pqueue::simple_value>
-    {
-        bool operator()( pqueue::simple_value const& k1, pqueue::simple_value const& k2 ) const
-        {
-            return k1.key > k2.key;
-        }
-
-        bool operator()( pqueue::simple_value const& k1, size_t k2 ) const
-        {
-            return k1.key > k2;
-        }
-
-        bool operator()( size_t k1, pqueue::simple_value const& k2 ) const
-        {
-            return k1 > k2.key;
-        }
-
-        bool operator()( size_t k1, size_t k2 ) const
-        {
-            return k1 > k2;
-        }
-    };
-
-} // namespace std
 
 #endif // #ifndef CDSSTRESS_PQUEUE_ITEM_H

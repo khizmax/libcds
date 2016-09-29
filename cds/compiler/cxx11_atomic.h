@@ -114,6 +114,13 @@ namespace cds { namespace cxx11_atomic {
         {
             typedef std::uint64_t type;
         };
+#if CDS_BUILD_BITS == 64 && CDS_DCAS_SUPPORT
+        template <>
+        struct primary_type<16>
+        {
+            typedef unsigned __int128_t type;
+        };
+#endif
 
         template <typename T, typename Primary>
         struct make_atomic_primary

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -48,7 +48,7 @@
 #   error "Compiler version error. Clang version 3.3.0 and above is supported"
 #endif
 
-#if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC)
+#if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC) && CDS_COMPILER_VERSION < 30700
     // Note: Clang libc++ atomic leads to program crash.
     // So, we use libcds atomic implementation
 #   define CDS_USE_LIBCDS_ATOMIC

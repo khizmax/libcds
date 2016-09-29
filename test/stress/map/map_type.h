@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_MAP_TYPE_H
@@ -73,7 +73,7 @@ namespace map {
     template <typename Key>
     struct hash;
 
-#define CDSUNIT_INT_COMPARE(t)  template <> struct cmp<t> { int operator()( t k1, t k2 ){ return (int)(k1 - k2); } }
+#define CDSUNIT_INT_COMPARE(t)  template <> struct cmp<t> { int operator()( t k1, t k2 ) const { return (int)(k1 - k2); } }
     CDSUNIT_INT_COMPARE(char);
     CDSUNIT_INT_COMPARE(unsigned char);
     CDSUNIT_INT_COMPARE(int);
@@ -84,7 +84,7 @@ namespace map {
     CDSUNIT_INT_COMPARE(unsigned long long);
 #undef CDSUNIT_INT_COMPARE
 
-#define CDSUNIT_INT_LESS(t)  template <> struct less<t> { bool operator()( t k1, t k2 ){ return k1 < k2; } }
+#define CDSUNIT_INT_LESS(t)  template <> struct less<t> { bool operator()( t k1, t k2 ) const { return k1 < k2; } }
     CDSUNIT_INT_LESS( char );
     CDSUNIT_INT_LESS( unsigned char );
     CDSUNIT_INT_LESS( int );
