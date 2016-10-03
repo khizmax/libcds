@@ -1151,7 +1151,7 @@ namespace cds { namespace intrusive {
                     // and then set it to another.
                     // To prevent this we mark pos.pCur data as undeletable by setting LSB
                     marked_data_ptr val( pos.pFound );
-                    if ( !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                    if ( pos.pCur && !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                         // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
                         m_Stat.onInsertReuseFailed();
                         return false;
@@ -1163,7 +1163,8 @@ namespace cds { namespace intrusive {
                         memory_model::memory_order_release, atomics::memory_order_relaxed );
 
                     // Clear pos.pCur data mark
-                    pos.pCur->data.store( val, memory_model::memory_order_relaxed );
+                    if ( pos.pCur )
+                        pos.pCur->data.store( val, memory_model::memory_order_relaxed );
 
                     if ( result )
                         m_Stat.onInsertReuse();
