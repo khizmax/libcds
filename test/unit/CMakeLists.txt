@@ -1,4 +1,5 @@
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deque)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/intrusive-list)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/list)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/misc)
@@ -14,6 +15,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tree)
 add_custom_target(unit-all
     DEPENDS 
         unit-deque
+        unit-intrusive-list
         unit-list
         unit-map
         unit-misc
