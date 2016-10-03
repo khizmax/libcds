@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -46,6 +46,8 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nInsertSuccess )
             << CDSSTRESS_STAT_OUT( s, m_nInsertFailed )
             << CDSSTRESS_STAT_OUT( s, m_nInsertRetry )
+            << CDSSTRESS_STAT_OUT( s, m_nInsertReuse )
+            << CDSSTRESS_STAT_OUT( s, m_nInsertReuseFailed )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateNew )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateExisting )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateFailed )

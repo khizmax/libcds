@@ -163,6 +163,7 @@ namespace cds { namespace intrusive {
         //@cond
         typedef atomics::atomic< node_type* > atomic_node_ptr;  ///< Atomic node pointer
         typedef atomic_node_ptr               auxiliary_head;   ///< Auxiliary head type (for split-list support)
+        typedef typename node_type::marked_data_ptr marked_data_ptr;
 
         atomic_node_ptr m_pHead;        ///< Head pointer
         item_counter    m_ItemCounter;  ///< Item counter
@@ -189,7 +190,7 @@ namespace cds { namespace intrusive {
             friend class IterableList;
 
         protected:
-            node_type*  m_pNode;
+            node_type*          m_pNode;
             typename gc::Guard  m_Guard; // data guard
 
             void next()
@@ -200,7 +201,7 @@ namespace cds { namespace intrusive {
                         m_Guard.clear();
                         break;
                     }
-                    if ( m_Guard.protect( m_pNode->data ))
+                    if ( m_Guard.protect( m_pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
                         break;
                 }
             }
@@ -209,7 +210,7 @@ namespace cds { namespace intrusive {
                 : m_pNode( pNode.load( memory_model::memory_order_acquire ))
             {
                 if ( m_pNode ) {
-                    if ( !m_Guard.protect( m_pNode->data ))
+                    if ( !m_Guard.protect( m_pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
                         next();
                 }
             }
@@ -775,7 +776,7 @@ namespace cds { namespace intrusive {
             position pos;
             for ( pos.pCur = m_pHead.load( memory_model::memory_order_relaxed ); pos.pCur; pos.pCur = pos.pCur->next.load( memory_model::memory_order_relaxed )) {
                 while ( true ) {
-                    pos.pFound = pos.guard.protect( pos.pCur->data );
+                    pos.pFound = pos.guard.protect( pos.pCur->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr();
                     if ( !pos.pFound )
                         break;
                     if ( cds_likely( unlink_node( pos ))) {
@@ -893,7 +894,10 @@ namespace cds { namespace intrusive {
                     assert( pos.pFound != nullptr );
                     assert( key_comparator()(*pos.pFound, val) == 0 );
 
-                    if ( cds_likely( pos.pCur->data.compare_exchange_strong( pos.pFound, &val, memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
+                    marked_data_ptr pFound( pos.pFound );
+                    if ( cds_likely( pos.pCur->data.compare_exchange_strong( pFound, marked_data_ptr( &val ), 
+                            memory_model::memory_order_release, atomics::memory_order_relaxed ))) 
+                    {
                         if ( pos.pFound != &val ) {
                             retire_data( pos.pFound );
                             func( val, pos.pFound );
@@ -1080,7 +1084,11 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                value_type * pVal = pos.guard.protect( pCur->data );
+                value_type * pVal = pos.guard.protect( pCur->data, 
+                    []( marked_data_ptr p ) -> value_type*
+                    {
+                        return p.ptr(); 
+                    }).ptr();
 
                 if ( pVal ) {
                     int nCmp = cmp( *pVal, val );
@@ -1123,7 +1131,7 @@ namespace cds { namespace intrusive {
         {
             node_type * pNode = m_pHead.load( memory_model::memory_order_relaxed );
             while ( pNode ) {
-                value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed );
+                value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
                 if ( pVal )
                     retire_data( pVal );
                 node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
@@ -1135,10 +1143,31 @@ namespace cds { namespace intrusive {
         bool link_node( value_type * pVal, position& pos )
         {
             if ( pos.pPrev ) {
-                if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == nullptr ) {
+                if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == marked_data_ptr() ) {
                     // reuse pPrev
-                    value_type * p = nullptr;
-                    return pos.pPrev->data.compare_exchange_strong( p, pVal, memory_model::memory_order_release, atomics::memory_order_relaxed );
+
+                    // We need pos.pCur data should be unchanged, otherwise ordering violation can be possible
+                    // if current thread will be preempted and another thread deletes pos.pCur data
+                    // and then set it to another.
+                    // To prevent this we mark pos.pCur data as undeletable by setting LSB
+                    marked_data_ptr val( pos.pFound );
+                    if ( !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
+                        // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
+                        m_Stat.onInsertReuseFailed();
+                        return false;
+                    }
+
+                    // Set pos.pPrev data if it is null
+                    marked_data_ptr p;
+                    bool result = pos.pPrev->data.compare_exchange_strong( p, marked_data_ptr( pVal ), 
+                        memory_model::memory_order_release, atomics::memory_order_relaxed );
+
+                    // Clear pos.pCur data mark
+                    pos.pCur->data.store( val, memory_model::memory_order_relaxed );
+
+                    if ( result )
+                        m_Stat.onInsertReuse();
+                    return result;
                 }
                 else {
                     // insert new node between pos.pPrev and pos.pCur
@@ -1167,7 +1196,8 @@ namespace cds { namespace intrusive {
             assert( pos.pCur != nullptr );
             assert( pos.pFound != nullptr );
 
-            if ( pos.pCur->data.compare_exchange_strong( pos.pFound, nullptr, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            marked_data_ptr val( pos.pFound );
+            if ( pos.pCur->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
                 retire_data( pos.pFound );
                 return true;
             }
