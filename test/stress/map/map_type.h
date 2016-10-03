@@ -206,12 +206,20 @@ namespace map {
                 return seed;
             }
         };
-
     };
 
+    struct empty_stat {};
+    static inline cds_test::property_stream& operator <<( cds_test::property_stream& o, empty_stat const& )
+    {
+        return o;
+    }
+
     template <typename Map>
-    static inline void print_stat( cds_test::property_stream&, Map const& /*m*/ )
-    {}
+    static inline void print_stat( cds_test::property_stream& o, Map const& m )
+    {
+        o << m.statistics();
+    }
+
 
     template <typename Map>
     static inline void check_before_cleanup( Map& /*m*/ )

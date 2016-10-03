@@ -385,8 +385,11 @@ namespace set {
                 << std::make_pair( "delete_failed", nDeleteFailed )
                 << std::make_pair( "final_set_size", testSet.size() );
 
-            testSet.clear();
+            //testSet.clear();
+            for (auto const& str: m_arrString )
+                testSet.erase( str );
             EXPECT_TRUE( testSet.empty() );
+            EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );
             print_stat( propout(), testSet );
@@ -462,8 +465,11 @@ namespace set {
                 << std::make_pair( "extract_failed", nExtractFailed )
                 << std::make_pair( "final_set_size", testSet.size() );
 
-            testSet.clear();
+            //testSet.clear();
+            for ( auto const& str : m_arrString )
+                testSet.erase( str );
             EXPECT_TRUE( testSet.empty() );
+            EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );
             print_stat( propout(), testSet );

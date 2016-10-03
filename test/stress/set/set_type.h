@@ -289,9 +289,17 @@ namespace set {
     // print_stat
     // *************************************************
 
+    struct empty_stat {};
+    static inline cds_test::property_stream& operator <<( cds_test::property_stream& o, empty_stat const& )
+    {
+        return o;
+    }
+
     template <typename Set>
-    static inline void print_stat( cds_test::property_stream&, Set const& /*s*/ )
-    {}
+    static inline void print_stat( cds_test::property_stream& o, Set const& s )
+    {
+        o << s.statistics();
+    }
 
 
     //*******************************************************

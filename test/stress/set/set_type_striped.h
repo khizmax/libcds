@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TYPE_STRIPED_H
@@ -92,6 +92,11 @@ namespace set {
                 : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
             {}
 
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
+
             /*
             template <typename Q, typename Less>
             bool erase_with( Q const& v, Less pred )
@@ -127,6 +132,11 @@ namespace set {
             StripedHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
                 : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )) )
             {}
+
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
 
             /*
             template <typename Q, typename Less>
@@ -165,6 +175,11 @@ namespace set {
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
             {}
 
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
+
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
@@ -192,6 +207,11 @@ namespace set {
             StripedHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.s_nLoadFactor )))
             {}
+
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -352,6 +372,11 @@ namespace set {
                 : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
             {}
 
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
+
             /*
             template <typename Q, typename Less>
             bool erase_with( Q const& v, Less pred )
@@ -387,6 +412,11 @@ namespace set {
                 : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )))
             {}
 
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
+
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
@@ -415,6 +445,11 @@ namespace set {
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
             {}
 
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
+
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;
             static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
@@ -441,6 +476,11 @@ namespace set {
             RefinableHashSet_ord_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
                 : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( 1024, cfg.s_nLoadFactor )))
             {}
+
+            empty_stat statistics() const
+            {
+                return empty_stat();
+            }
 
             // for testing
             static CDS_CONSTEXPR bool const c_bExtractSupported = false;

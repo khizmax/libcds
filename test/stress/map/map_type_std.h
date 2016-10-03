@@ -122,8 +122,10 @@ namespace map {
             return false;
         }
 
-        std::ostream& dump( std::ostream& stm ) { return stm; }
-
+        empty_stat statistics() const
+        {
+            return empty_stat();
+        }
 
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = false;
@@ -219,7 +221,10 @@ namespace map {
             return false;
         }
 
-        std::ostream& dump( std::ostream& stm ) { return stm; }
+        empty_stat statistics() const
+        {
+            return empty_stat();
+        }
 
 
         // for testing
@@ -246,6 +251,7 @@ namespace map {
         typedef StdHashMap< Key, Value, empty_lock >      StdHashMap_NoLock;
     };
 }   // namespace map
+
 
 #define CDSSTRESS_StdMap_case( fixture, test_case, std_map_type, key_type, value_type ) \
     TEST_F( fixture, std_map_type ) \
