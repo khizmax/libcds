@@ -1084,10 +1084,10 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                value_type * pVal = pos.guard.protect( pCur->data, 
+                value_type * pVal = pos.guard.protect( pCur->data,
                     []( marked_data_ptr p ) -> value_type*
                     {
-                        return p.ptr(); 
+                        return p.ptr();
                     }).ptr();
 
                 if ( pVal ) {
@@ -1153,7 +1153,7 @@ namespace cds { namespace intrusive {
                     marked_data_ptr val( pos.pFound );
                     if ( pos.pCur && !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                         // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
-                        m_Stat.onInsertReuseFailed();
+                        m_Stat.onReuseNodeFailed();
                         return false;
                     }
 
@@ -1167,7 +1167,7 @@ namespace cds { namespace intrusive {
                         pos.pCur->data.store( val, memory_model::memory_order_relaxed );
 
                     if ( result )
-                        m_Stat.onInsertReuse();
+                        m_Stat.onReuseNode();
                     return result;
                 }
                 else {

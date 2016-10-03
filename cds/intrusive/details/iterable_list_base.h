@@ -76,8 +76,8 @@ namespace cds { namespace intrusive {
             event_counter   m_nInsertSuccess;   ///< Number of success \p insert() operations
             event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
             event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
-            event_counter   m_nInsertReuse;     ///< Number of reusing empty node when inserting
-            event_counter   m_nInsertReuseFailed;   ///< Number of failed attempsof reusing free node when inserting
+            event_counter   m_nReuseNode;       ///< Number of reusing empty node when inserting/updating
+            event_counter   m_nReuseNodeFailed; ///< Number of failed attempsof reusing free node when inserting/updating
             event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
             event_counter   m_nUpdateExisting;  ///< Number of existing item updates
             event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
@@ -95,8 +95,8 @@ namespace cds { namespace intrusive {
             void onInsertSuccess()      { ++m_nInsertSuccess;   }
             void onInsertFailed()       { ++m_nInsertFailed;    }
             void onInsertRetry()        { ++m_nInsertRetry;     }
-            void onInsertReuse()        { ++m_nInsertReuse;     }
-            void onInsertReuseFailed()  { ++m_nInsertReuseFailed; }
+            void onReuseNode()          { ++m_nReuseNode;       }
+            void onReuseNodeFailed()    { ++m_nReuseNodeFailed; }
             void onUpdateNew()          { ++m_nUpdateNew;       }
             void onUpdateExisting()     { ++m_nUpdateExisting;  }
             void onUpdateFailed()       { ++m_nUpdateFailed;    }
@@ -118,8 +118,8 @@ namespace cds { namespace intrusive {
             void onInsertSuccess()              const {}
             void onInsertFailed()               const {}
             void onInsertRetry()                const {}
-            void onInsertReuse()                const {}
-            void onInsertReuseFailed()          const {}
+            void onReuseNode()                  const {}
+            void onReuseNodeFailed()            const {}
             void onUpdateNew()                  const {}
             void onUpdateExisting()             const {}
             void onUpdateFailed()               const {}
@@ -147,8 +147,8 @@ namespace cds { namespace intrusive {
             void onInsertSuccess()   { m_stat.onInsertSuccess(); }
             void onInsertFailed()    { m_stat.onInsertFailed();  }
             void onInsertRetry()     { m_stat.onInsertRetry();   }
-            void onInsertReuse()     { m_stat.onInsertReuse();   }
-            void onInsertReuseFailed() { m_stat.onInsertReuseFailed(); }
+            void onReuseNode()       { m_stat.onReuseNode();     }
+            void onReuseNodeFailed() { m_stat.onReuseNodeFailed(); }
             void onUpdateNew()       { m_stat.onUpdateNew();     }
             void onUpdateExisting()  { m_stat.onUpdateExisting();}
             void onUpdateFailed()    { m_stat.onUpdateFailed();  }
