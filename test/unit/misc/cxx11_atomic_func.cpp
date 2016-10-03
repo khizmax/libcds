@@ -706,7 +706,7 @@ namespace misc {
         test_atomic_integral_volatile<unsigned long long>();
     }
 
-#if !( CDS_COMPILER == CDS_COMPILER_CLANG && defined(_LIBCPP_VERSION) && CDS_COMPILER_VERSION < 30800 )
+#if !( CDS_COMPILER == CDS_COMPILER_CLANG && defined(_LIBCPP_VERSION) && CDS_COMPILER_VERSION < 40000 )
     //clang error (libc++) with atomic<void> fetch_add/fetch_sub
     TEST_F( cxx11_atomic_func, atomic_pointer_void )
     {
