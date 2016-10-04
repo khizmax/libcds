@@ -1153,7 +1153,15 @@ namespace cds { namespace intrusive {
                     marked_data_ptr val( pos.pFound );
                     if ( pos.pCur && !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                         // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
-                        m_Stat.onReuseNodeFailed();
+                        m_Stat.onReuseNodeMarkFailed();
+                        return false;
+                    }
+
+                    if ( pos.pPrev->next.load( memory_model::memory_order_acquire ) != pos.pCur ) {
+                        // sequence pPrev - pCur is broken
+                        if ( pos.pCur )
+                            pos.pCur->data.store( val, memory_model::memory_order_relaxed );
+                        m_Stat.onReuseNodeSeqBreak();
                         return false;
                     }
 
