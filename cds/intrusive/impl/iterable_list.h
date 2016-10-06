@@ -779,7 +779,7 @@ namespace cds { namespace intrusive {
                     pos.pFound = pos.guard.protect( pos.pCur->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr();
                     if ( !pos.pFound )
                         break;
-                    if ( cds_likely( unlink_node( pos ))) {
+                    if ( cds_likely( unlink_data( pos ))) {
                         --m_ItemCounter;
                         break;
                     }
@@ -845,7 +845,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_node( &val, pos ) ) {
+                if ( link_data( &val, pos ) ) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -869,7 +869,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_node( &val, pos ) ) {
+                if ( link_data( &val, pos ) ) {
                     f( val );
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
@@ -912,7 +912,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( false, false );
                     }
 
-                    if ( link_node( &val, pos )) {
+                    if ( link_data( &val, pos )) {
                         func( val, static_cast<value_type*>( nullptr ));
                         ++m_ItemCounter;
                         m_Stat.onUpdateNew();
@@ -931,7 +931,7 @@ namespace cds { namespace intrusive {
             back_off bkoff;
             while ( search( refHead, val, pos, key_comparator())) {
                 if ( pos.pFound == &val ) {
-                    if ( unlink_node( pos )) {
+                    if ( unlink_data( pos )) {
                         --m_ItemCounter;
                         m_Stat.onEraseSuccess();
                         return true;
@@ -954,7 +954,7 @@ namespace cds { namespace intrusive {
         {
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
-                if ( unlink_node( pos )) {
+                if ( unlink_data( pos )) {
                     f( *pos.pFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
@@ -990,7 +990,7 @@ namespace cds { namespace intrusive {
             position pos;
             back_off bkoff;
             while ( search( refHead, val, pos, cmp )) {
-                if ( unlink_node( pos )) {
+                if ( unlink_data( pos )) {
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
                     assert( pos.pFound != nullptr );
@@ -1140,7 +1140,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        bool link_node( value_type * pVal, position& pos )
+        bool link_data( value_type * pVal, position& pos )
         {
             if ( pos.pPrev ) {
                 if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == marked_data_ptr() ) {
@@ -1200,7 +1200,7 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        static bool unlink_node( position& pos )
+        static bool unlink_data( position& pos )
         {
             assert( pos.pCur != nullptr );
             assert( pos.pFound != nullptr );
