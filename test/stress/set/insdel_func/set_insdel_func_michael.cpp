@@ -33,7 +33,7 @@
 
 namespace set {
 
-    CDSSTRESS_MichaelSet( Set_InsDel_func_LF, run_test, size_t, value )
-    CDSSTRESS_MichaelIterableSet( Set_InsDel_func_LF, run_test, size_t, value )
+    CDSSTRESS_MichaelSet( Set_InsDel_func_LF, run_test2, size_t, value )
+    CDSSTRESS_MichaelIterableSet( Set_InsDel_func_LF, run_test2, size_t, value )
 
 } // namespace set

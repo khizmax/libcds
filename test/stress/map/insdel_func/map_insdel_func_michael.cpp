@@ -33,6 +33,6 @@
 
 namespace map {
 
-    CDSSTRESS_MichaelMap( Map_InsDel_func_LF, run_test, size_t, Map_InsDel_func::value_type )
+    CDSSTRESS_MichaelMap( Map_InsDel_func_LF, run_test2, size_t, Map_InsDel_func::value_type )
 
 } // namespace map

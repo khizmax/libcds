@@ -66,8 +66,8 @@ namespace map {
             s_nDeleteThreadCount = 2;
 
         s_nUpdateThreadCount = cfg.get_size_t( "UpdateThreadCount", s_nUpdateThreadCount );
-        if ( s_nUpdateThreadCount == 0 )
-            s_nUpdateThreadCount = 2;
+        //if ( s_nUpdateThreadCount == 0 )
+        //    s_nUpdateThreadCount = 2;
 
         s_nThreadPassCount = cfg.get_size_t( "ThreadPassCount", s_nThreadPassCount );
         if ( s_nThreadPassCount == 0 )

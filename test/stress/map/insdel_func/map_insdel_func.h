@@ -432,7 +432,8 @@ namespace map {
             cds_test::thread_pool& pool = get_pool();
             pool.add( new inserter( pool, testMap ), s_nInsertThreadCount );
             pool.add( new deleter( pool, testMap ), s_nDeleteThreadCount );
-            pool.add( new updater( pool, testMap ), s_nUpdateThreadCount );
+            if ( s_nUpdateThreadCount )
+                pool.add( new updater( pool, testMap ), s_nUpdateThreadCount );
 
             propout() << std::make_pair( "insert_thread_count", s_nInsertThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDeleteThreadCount )
@@ -530,6 +531,19 @@ namespace map {
             Map testMap( *this );
             do_test( testMap );
         }
+
+        template <class Map>
+        void run_test2()
+        {
+            Map testMap( *this );
+            do_test( testMap );
+
+            if ( testMap.size() != 0 ) {
+                for ( auto it = testMap.begin(); it != testMap.end(); ++it ) {
+                    std::cout << "key=" << it->first << std::endl;
+                }
+            }
+        }
     };
 
     class Map_InsDel_func_LF: public Map_InsDel_func
@@ -542,6 +556,14 @@ namespace map {
             s_nLoadFactor = GetParam();
             propout() << std::make_pair( "load_factor", s_nLoadFactor );
             Map_InsDel_func::run_test<Set>();
+        }
+
+        template <class Set>
+        void run_test2()
+        {
+            s_nLoadFactor = GetParam();
+            propout() << std::make_pair( "load_factor", s_nLoadFactor );
+            Map_InsDel_func::run_test2<Set>();
         }
 
         static std::vector<size_t> get_load_factors();

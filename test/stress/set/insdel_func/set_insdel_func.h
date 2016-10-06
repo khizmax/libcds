@@ -61,8 +61,8 @@ namespace set {
             size_t      nKey;
             size_t      nData;
             atomics::atomic<size_t> nUpdateCall;
-            bool volatile   bInitialized;
-            cds::OS::ThreadId          threadId     ;   // insert thread id
+            bool volatile           bInitialized;
+            cds::OS::ThreadId       threadId;   // insert thread id
 
             typedef cds::sync::spin_lock< cds::backoff::pause > lock_type;
             mutable lock_type   m_access;
@@ -100,7 +100,7 @@ namespace set {
 
         size_t *    m_pKeyFirst;
         size_t *    m_pKeyLast;
-        size_t *    m_pKeyArr;
+        std::unique_ptr< size_t[] > m_pKeyArr;
 
         enum {
             insert_thread,
@@ -418,8 +418,8 @@ namespace set {
             typedef Deleter<Set>        DeleterThread;
             typedef Updater<Set>        UpdaterThread;
 
-            m_pKeyArr = new size_t[ s_nSetSize ];
-            m_pKeyFirst = m_pKeyArr;
+            m_pKeyArr.reset( new size_t[ s_nSetSize ] );
+            m_pKeyFirst = m_pKeyArr.get();
             m_pKeyLast = m_pKeyFirst + s_nSetSize;
             for ( size_t i = 0; i < s_nSetSize; ++i )
                 m_pKeyArr[i] = i;
@@ -439,8 +439,6 @@ namespace set {
             std::chrono::milliseconds duration = pool.run();
 
             propout() << std::make_pair( "duration", duration );
-
-            delete [] m_pKeyArr;
 
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
@@ -509,8 +507,12 @@ namespace set {
             // nTestFunctorRef is call count of insert functor
             EXPECT_EQ( nTestFunctorRef, nInsertSuccess );
 
-            testSet.clear();
+            //testSet.clear();
+            for ( size_t * p = m_pKeyFirst; p != m_pKeyLast; ++p )
+                testSet.erase( *p );
+
             EXPECT_TRUE( testSet.empty() );
+            EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );
             print_stat( propout(), testSet  );
@@ -524,6 +526,16 @@ namespace set {
             Set s( *this );
             run_test( s );
         }
+
+        template <class Set>
+        void run_test2()
+        {
+            Set s( *this );
+            run_test( s );
+
+            for ( auto it = s.begin(); it != s.end(); ++it )
+                std::cout << "key=" << it->key << std::endl;
+        }
     };
 
     class Set_InsDel_func_LF: public Set_InsDel_func
@@ -536,6 +548,14 @@ namespace set {
             s_nLoadFactor = GetParam();
             propout() << std::make_pair( "load_factor", s_nLoadFactor );
             Set_InsDel_func::run_test<Set>();
+        }
+
+        template <class Set>
+        void run_test2()
+        {
+            s_nLoadFactor = GetParam();
+            propout() << std::make_pair( "load_factor", s_nLoadFactor );
+            Set_InsDel_func::run_test2<Set>();
         }
 
         static std::vector<size_t> get_load_factors();
