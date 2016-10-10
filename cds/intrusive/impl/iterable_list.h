@@ -40,7 +40,10 @@ namespace cds { namespace intrusive {
     /** @ingroup cds_intrusive_list
         \anchor cds_intrusive_IterableList_hp
 
-        This lock-free list implementation supports thread-safe iterators.
+        This non-blocking list implementation supports thread-safe iterators;
+        searching and removing are lock-free, inserting is non-blocking because it
+        uses a light-weight synchronization based on marked pointers.
+
         Unlike \p cds::intrusive::MichaelList the iterable list does not require
         any hook in \p T to be stored in the list.
 
@@ -180,10 +183,14 @@ namespace cds { namespace intrusive {
             node_type *       pCur;   ///< Current node
 
             value_type *      pFound;       ///< Value of \p pCur->data, valid only if data found
-            value_type *      pPrevVal;     ///< Value of \p pPrev->data, can be \p nullptr
 
             typename gc::Guard guard;       ///< guard for \p pFound
-            typename gc::Guard prevGuard;   ///< guard for \p pPrevVal
+        };
+
+        struct insert_position: public position
+        {
+            value_type *        pPrevVal;     ///< Value of \p pPrev->data, can be \p nullptr
+            typename gc::Guard  prevGuard;   ///< guard for \p pPrevVal
         };
         //@endcond
 
@@ -842,10 +849,10 @@ namespace cds { namespace intrusive {
 
         bool insert_at( node_type* pHead, value_type& val )
         {
-            position pos;
+            insert_position pos;
 
             while ( true ) {
-                if ( search( pHead, val, pos, key_comparator() )) {
+                if ( inserting_search( pHead, val, pos, key_comparator() )) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -863,13 +870,13 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at( node_type* pHead, value_type& val, Func f )
         {
-            position pos;
+            insert_position pos;
 
             typename gc::Guard guard;
             guard.assign( &val );
 
             while ( true ) {
-                if ( search( pHead, val, pos, key_comparator() ) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator() ) ) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -888,13 +895,13 @@ namespace cds { namespace intrusive {
         template <typename Func>
         std::pair<bool, bool> update_at( node_type* pHead, value_type& val, Func func, bool bInsert )
         {
-            position pos;
+            insert_position pos;
 
             typename gc::Guard guard;
             guard.assign( &val );
 
             while ( true ) {
-                if ( search( pHead, val, pos, key_comparator() ) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator() ) ) {
                     // try to replace pCur->data with val
                     assert( pos.pFound != nullptr );
                     assert( key_comparator()(*pos.pFound, val) == 0 );
@@ -1085,12 +1092,49 @@ namespace cds { namespace intrusive {
         {
             pos.pHead = pHead;
             node_type*  pPrev = const_cast<node_type*>( pHead );
-            value_type* pPrevVal = nullptr;
 
             while ( true ) {
                 node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
 
                 if ( pCur == pCur->next.load( memory_model::memory_order_relaxed )) {
+                    // end-of-list
+                    pos.pPrev = pPrev;
+                    pos.pCur = pCur;
+                    pos.pFound = nullptr;
+                    return false;
+                }
+
+                value_type * pVal = pos.guard.protect( pCur->data,
+                    []( marked_data_ptr p ) -> value_type*
+                    {
+                        return p.ptr();
+                    }).ptr();
+
+                if ( pVal ) {
+                    int const nCmp = cmp( *pVal, val );
+                    if ( nCmp >= 0 ) {
+                        pos.pPrev = pPrev;
+                        pos.pCur = pCur;
+                        pos.pFound = pVal;
+                        return nCmp == 0;
+                    }
+                }
+
+                pPrev = pCur;
+            }
+        }
+
+        template <typename Q, typename Compare >
+        bool inserting_search( node_type const* pHead, Q const& val, insert_position& pos, Compare cmp ) const
+        {
+            pos.pHead = pHead;
+            node_type*  pPrev = const_cast<node_type*>(pHead);
+            value_type* pPrevVal = nullptr;
+
+            while ( true ) {
+                node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
+
+                if ( pCur == pCur->next.load( memory_model::memory_order_relaxed ) ) {
                     // end-of-list
                     pos.pPrev = pPrev;
                     pos.pCur = pCur;
@@ -1101,9 +1145,9 @@ namespace cds { namespace intrusive {
 
                 value_type * pVal = pos.guard.protect( pCur->data,
                     []( marked_data_ptr p ) -> value_type*
-                    {
-                        return p.ptr();
-                    }).ptr();
+                {
+                    return p.ptr();
+                } ).ptr();
 
                 if ( pVal ) {
                     int const nCmp = cmp( *pVal, val );
@@ -1121,6 +1165,7 @@ namespace cds { namespace intrusive {
                 pos.prevGuard.copy( pos.guard );
             }
         }
+
         //@endcond
 
     private:
@@ -1163,7 +1208,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        bool link_data( value_type * pVal, position& pos )
+        bool link_data( value_type * pVal, insert_position& pos )
         {
             assert( pos.pPrev != nullptr );
             assert( pos.pCur != nullptr );
