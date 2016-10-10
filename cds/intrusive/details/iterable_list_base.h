@@ -77,8 +77,9 @@ namespace cds { namespace intrusive {
             event_counter   m_nInsertFailed;    ///< Number of failed \p insert() operations
             event_counter   m_nInsertRetry;     ///< Number of attempts to insert new item
             event_counter   m_nReuseNode;       ///< Number of reusing empty node when inserting/updating
-            event_counter   m_nReuseNodeMarkFailed; ///< Number of unsuccessful marking attempts when we try to reuse node
-            event_counter   m_nReuseNodeSeqBreak;   ///< Number of breaking sequence of \p prev -> \p next node when we try to reuse \p prev node
+            event_counter   m_nNodeMarkFailed;  ///< Number of unsuccessful marking attempts when we try to insert new data
+            event_counter   m_nNodeSeqBreak;    ///< Number of breaking sequence events of \p prev -> \p next node when we try to insert new data
+            event_counter   m_nNewNodeCreated;  ///< Number of new node created when we try to insert new data
             event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
             event_counter   m_nUpdateExisting;  ///< Number of existing item updates
             event_counter   m_nUpdateFailed;    ///< Number of failed \p update() call
@@ -97,8 +98,9 @@ namespace cds { namespace intrusive {
             void onInsertFailed()       { ++m_nInsertFailed;    }
             void onInsertRetry()        { ++m_nInsertRetry;     }
             void onReuseNode()          { ++m_nReuseNode;       }
-            void onReuseNodeMarkFailed(){ ++m_nReuseNodeMarkFailed; }
-            void onReuseNodeSeqBreak()  { ++m_nReuseNodeSeqBreak;   }
+            void onNodeMarkFailed()     { ++m_nNodeMarkFailed;  }
+            void onNodeSeqBreak()       { ++m_nNodeSeqBreak;    }
+            void onNewNodeCreated()     { ++m_nNewNodeCreated;  }
             void onUpdateNew()          { ++m_nUpdateNew;       }
             void onUpdateExisting()     { ++m_nUpdateExisting;  }
             void onUpdateFailed()       { ++m_nUpdateFailed;    }
@@ -121,8 +123,9 @@ namespace cds { namespace intrusive {
             void onInsertFailed()               const {}
             void onInsertRetry()                const {}
             void onReuseNode()                  const {}
-            void onReuseNodeMarkFailed()        const {}
-            void onReuseNodeSeqBreak()          const {}
+            void onNodeMarkFailed()             const {}
+            void onNodeSeqBreak()               const {}
+            void onNewNodeCreated()             const {}
             void onUpdateNew()                  const {}
             void onUpdateExisting()             const {}
             void onUpdateFailed()               const {}
@@ -151,8 +154,9 @@ namespace cds { namespace intrusive {
             void onInsertFailed()    { m_stat.onInsertFailed();  }
             void onInsertRetry()     { m_stat.onInsertRetry();   }
             void onReuseNode()       { m_stat.onReuseNode();     }
-            void onReuseNodeMarkFailed() { m_stat.onReuseNodeMarkFailed(); }
-            void onReuseNodeSeqBreak()   { m_stat.onReuseNodeSeqBreak();   }
+            void onNodeMarkFailed()  { m_stat.onNodeMarkFailed();}
+            void onNodeSeqBreak()    { m_stat.onNodeSeqBreak();  }
+            void onNewNodeCreated()  { m_stat.onNewNodeCreated();}
             void onUpdateNew()       { m_stat.onUpdateNew();     }
             void onUpdateExisting()  { m_stat.onUpdateExisting();}
             void onUpdateFailed()    { m_stat.onUpdateFailed();  }

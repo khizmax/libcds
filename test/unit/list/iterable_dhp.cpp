@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -42,7 +42,6 @@ namespace {
         {
             typedef cc::IterableList< gc_type, item > list_type;
 
-            // +3 - for guarded_ptr, iterators
             cds::gc::dhp::GarbageCollector::Construct( 16, list_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }

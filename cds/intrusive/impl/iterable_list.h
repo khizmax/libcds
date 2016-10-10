@@ -141,7 +141,7 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 3; ///< Count of hazard pointer required for the algorithm
 
         //@cond
         // Rebind traits (split-list support)
@@ -165,7 +165,9 @@ namespace cds { namespace intrusive {
         typedef atomic_node_ptr               auxiliary_head;   ///< Auxiliary head type (for split-list support)
         typedef typename node_type::marked_data_ptr marked_data_ptr;
 
-        atomic_node_ptr m_pHead;        ///< Head pointer
+        node_type       m_Head;
+        node_type       m_Tail;
+
         item_counter    m_ItemCounter;  ///< Item counter
         mutable stat    m_Stat;         ///< Internal statistics
 
@@ -173,12 +175,15 @@ namespace cds { namespace intrusive {
 
         /// Position pointer for item search
         struct position {
-            atomic_node_ptr * pHead; ///< Previous node (pointer to pPrev->next or to m_pHead)
+            node_type const*  pHead;
             node_type *       pPrev;  ///< Previous node
             node_type *       pCur;   ///< Current node
 
-            value_type *      pFound; ///< Value of \p pCur->data, valid only if data found
-            typename gc::Guard guard; ///< guard for \p pFound
+            value_type *      pFound;       ///< Value of \p pCur->data, valid only if data found
+            value_type *      pPrevVal;     ///< Value of \p pPrev->data, can be \p nullptr
+
+            typename gc::Guard guard;       ///< guard for \p pFound
+            typename gc::Guard prevGuard;   ///< guard for \p pPrevVal
         };
         //@endcond
 
@@ -190,32 +195,28 @@ namespace cds { namespace intrusive {
             friend class IterableList;
 
         protected:
-            node_type*          m_pNode;
+            node_type const*          m_pNode;
             typename gc::Guard  m_Guard; // data guard
 
             void next()
             {
-                while ( m_pNode ) {
-                    m_pNode = m_pNode->next.load( memory_model::memory_order_acquire );
-                    if ( !m_pNode ) {
-                        m_Guard.clear();
-                        break;
-                    }
-                    if ( m_Guard.protect( m_pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
-                        break;
+                for ( node_type* p = m_pNode->next.load( memory_model::memory_order_relaxed ); p != m_pNode; p = p->next.load( memory_model::memory_order_relaxed ))
+                {
+                    m_pNode = p;
+                    if ( m_Guard.protect( p->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
+                        return;
                 }
+                m_Guard.clear();
             }
 
-            explicit iterator_type( atomic_node_ptr const& pNode )
-                : m_pNode( pNode.load( memory_model::memory_order_acquire ))
+            explicit iterator_type( node_type const* pNode )
+                : m_pNode( pNode )
             {
-                if ( m_pNode ) {
-                    if ( !m_Guard.protect( m_pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
-                        next();
-                }
+                if ( !m_Guard.protect( pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
+                    next();
             }
 
-            iterator_type( node_type* pNode, value_type* pVal )
+            iterator_type( node_type const* pNode, value_type* pVal )
                 : m_pNode( pNode )
             {
                 if ( m_pNode ) {
@@ -341,7 +342,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator( m_pHead );
+            return iterator( &m_Head );
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -354,46 +355,48 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator();
+            return iterator( &m_Tail );
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( m_pHead );
+            return const_iterator( &m_Head );
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( m_pHead );
+            return const_iterator( &m_Head );
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator end() const
         {
-            return const_iterator();
+            return const_iterator( &m_Tail );
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
-            return const_iterator();
+            return const_iterator( &m_Tail );
         }
     //@}
 
     public:
         /// Default constructor initializes empty list
         IterableList()
-            : m_pHead( nullptr )
-        {}
+        {
+            init_list();
+        }
 
         //@cond
         template <typename Stat, typename = std::enable_if<std::is_same<stat, iterable_list::wrapped_stat<Stat>>::value >>
         explicit IterableList( Stat& st )
-            : m_pHead( nullptr )
-            , m_Stat( st )
-        {}
+            : m_Stat( st )
+        {
+            init_list();
+        }
         //@endcond
 
         /// Destroys the list object
@@ -411,7 +414,7 @@ namespace cds { namespace intrusive {
         */
         bool insert( value_type& val )
         {
-            return insert_at( m_pHead, val );
+            return insert_at( &m_Head, val );
         }
 
         /// Inserts new node
@@ -436,7 +439,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert( value_type& val, Func f )
         {
-            return insert_at( m_pHead, val, f );
+            return insert_at( &m_Head, val, f );
         }
 
         /// Updates the node
@@ -462,7 +465,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
         {
-            return update_at( m_pHead, val, func, bInsert );
+            return update_at( &m_Head, val, func, bInsert );
         }
 
         /// Insert or update
@@ -480,7 +483,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> upsert( value_type& val, bool bInsert = true )
         {
-            return update_at( m_pHead, val, []( value_type&, value_type* ) {}, bInsert );
+            return update_at( &m_Head, val, []( value_type&, value_type* ) {}, bInsert );
         }
 
         /// Unlinks the item \p val from the list
@@ -499,7 +502,7 @@ namespace cds { namespace intrusive {
         */
         bool unlink( value_type& val )
         {
-            return unlink_at( m_pHead, val );
+            return unlink_at( &m_Head, val );
         }
 
         /// Deletes the item from the list
@@ -513,7 +516,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( Q const& key )
         {
-            return erase_at( m_pHead, key, key_comparator());
+            return erase_at( &m_Head, key, key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -529,7 +532,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+            return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Deletes the item from the list
@@ -549,7 +552,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool erase( Q const& key, Func func )
         {
-            return erase_at( m_pHead, key, key_comparator(), func );
+            return erase_at( &m_Head, key, key_comparator(), func );
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -565,7 +568,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
 
         /// Extracts the item from the list with specified \p key
@@ -598,7 +601,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            return extract_at( m_pHead, key, key_comparator());
+            return extract_at( &m_Head, key, key_comparator());
         }
 
         /// Extracts the item using compare functor \p pred
@@ -614,7 +617,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+            return extract_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Finds \p key in the list
@@ -638,13 +641,13 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Func>
         bool find( Q& key, Func f ) const
         {
-            return find_at( m_pHead, key, key_comparator(), f );
+            return find_at( &m_Head, key, key_comparator(), f );
         }
         //@cond
         template <typename Q, typename Func>
         bool find( Q const& key, Func f ) const
         {
-            return find_at( m_pHead, key, key_comparator(), f );
+            return find_at( &m_Head, key, key_comparator(), f );
         }
         //@endcond
 
@@ -655,7 +658,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         iterator find( Q const& key ) const
         {
-            return find_iterator_at( m_pHead, key, key_comparator());
+            return find_iterator_at( &m_Head, key, key_comparator());
         }
 
         /// Finds the \p key using \p pred predicate for searching
@@ -669,14 +672,14 @@ namespace cds { namespace intrusive {
         bool find_with( Q& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
-            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
-            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
         }
         //@endcond
 
@@ -692,7 +695,7 @@ namespace cds { namespace intrusive {
         iterator find_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return find_iterator_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+            return find_iterator_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Checks whether the list contains \p key
@@ -703,7 +706,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool contains( Q const& key ) const
         {
-            return find_at( m_pHead, key, key_comparator());
+            return find_at( &m_Head, key, key_comparator());
         }
 
         /// Checks whether the list contains \p key using \p pred predicate for searching
@@ -716,7 +719,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Finds the \p key and return the item found
@@ -751,7 +754,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key ) const
         {
-            return get_at( m_pHead, key, key_comparator());
+            return get_at( &m_Head, key, key_comparator());
         }
 
         /// Finds the \p key and return the item found
@@ -767,14 +770,15 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return get_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
+            return get_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Clears the list (thread safe, not atomic)
         void clear()
         {
             position pos;
-            for ( pos.pCur = m_pHead.load( memory_model::memory_order_relaxed ); pos.pCur; pos.pCur = pos.pCur->next.load( memory_model::memory_order_relaxed )) {
+            pos.pPrev = nullptr;
+            for ( pos.pCur = m_Head.next.load( memory_model::memory_order_relaxed ); pos.pCur != pos.pPrev; pos.pCur = pos.pCur->next.load( memory_model::memory_order_relaxed )) {
                 while ( true ) {
                     pos.pFound = pos.guard.protect( pos.pCur->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr();
                     if ( !pos.pFound )
@@ -784,6 +788,7 @@ namespace cds { namespace intrusive {
                         break;
                     }
                 }
+                pos.pPrev = pos.pCur;
             }
         }
 
@@ -820,27 +825,27 @@ namespace cds { namespace intrusive {
         // split-list support
         bool insert_aux_node( node_type * pNode )
         {
-            return insert_aux_node( m_pHead, pNode );
+            return insert_aux_node( &m_Head, pNode );
         }
 
         // split-list support
-        bool insert_aux_node( atomic_node_ptr& refHead, node_type * pNode )
+        bool insert_aux_node( node_type* pHead, node_type * pNode )
         {
             assert( pNode != nullptr );
 
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
             // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( refHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
         }
 #endif
 
-        bool insert_at( atomic_node_ptr& refHead, value_type& val )
+        bool insert_at( node_type* pHead, value_type& val )
         {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator() )) {
+                if ( search( pHead, val, pos, key_comparator() )) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -856,7 +861,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        bool insert_at( atomic_node_ptr& refHead, value_type& val, Func f )
+        bool insert_at( node_type* pHead, value_type& val, Func f )
         {
             position pos;
 
@@ -864,7 +869,7 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator() ) ) {
+                if ( search( pHead, val, pos, key_comparator() ) ) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -881,7 +886,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Func>
-        std::pair<bool, bool> update_at( atomic_node_ptr& refHead, value_type& val, Func func, bool bInsert )
+        std::pair<bool, bool> update_at( node_type* pHead, value_type& val, Func func, bool bInsert )
         {
             position pos;
 
@@ -889,13 +894,13 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( search( refHead, val, pos, key_comparator() ) ) {
+                if ( search( pHead, val, pos, key_comparator() ) ) {
                     // try to replace pCur->data with val
                     assert( pos.pFound != nullptr );
                     assert( key_comparator()(*pos.pFound, val) == 0 );
 
                     marked_data_ptr pFound( pos.pFound );
-                    if ( cds_likely( pos.pCur->data.compare_exchange_strong( pFound, marked_data_ptr( &val ), 
+                    if ( cds_likely( pos.pCur->data.compare_exchange_strong( pFound, marked_data_ptr( &val ),
                             memory_model::memory_order_release, atomics::memory_order_relaxed ))) 
                     {
                         if ( pos.pFound != &val ) {
@@ -924,12 +929,12 @@ namespace cds { namespace intrusive {
             }
         }
 
-        bool unlink_at( atomic_node_ptr& refHead, value_type& val )
+        bool unlink_at( node_type* pHead, value_type& val )
         {
             position pos;
 
             back_off bkoff;
-            while ( search( refHead, val, pos, key_comparator())) {
+            while ( search( pHead, val, pos, key_comparator())) {
                 if ( pos.pFound == &val ) {
                     if ( unlink_data( pos )) {
                         --m_ItemCounter;
@@ -950,10 +955,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( atomic_node_ptr& refHead, const Q& val, Compare cmp, Func f, position& pos )
+        bool erase_at( node_type* pHead, const Q& val, Compare cmp, Func f, position& pos )
         {
             back_off bkoff;
-            while ( search( refHead, val, pos, cmp )) {
+            while ( search( pHead, val, pos, cmp )) {
                 if ( unlink_data( pos )) {
                     f( *pos.pFound );
                     --m_ItemCounter;
@@ -971,25 +976,25 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( atomic_node_ptr& refHead, const Q& val, Compare cmp, Func f )
+        bool erase_at( node_type* pHead, const Q& val, Compare cmp, Func f )
         {
             position pos;
-            return erase_at( refHead, val, cmp, f, pos );
+            return erase_at( pHead, val, cmp, f, pos );
         }
 
         template <typename Q, typename Compare>
-        bool erase_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
+        bool erase_at( node_type* pHead, Q const& val, Compare cmp )
         {
             position pos;
-            return erase_at( refHead, val, cmp, [](value_type const&){}, pos );
+            return erase_at( pHead, val, cmp, [](value_type const&){}, pos );
         }
 
         template <typename Q, typename Compare>
-        guarded_ptr extract_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
+        guarded_ptr extract_at( node_type* pHead, Q const& val, Compare cmp )
         {
             position pos;
             back_off bkoff;
-            while ( search( refHead, val, pos, cmp )) {
+            while ( search( pHead, val, pos, cmp )) {
                 if ( unlink_data( pos )) {
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
@@ -1007,10 +1012,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool find_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
+        bool find_at( node_type const* pHead, Q const& val, Compare cmp ) const
         {
             position pos;
-            if ( search( refHead, val, pos, cmp ) ) {
+            if ( search( pHead, val, pos, cmp ) ) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1020,10 +1025,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool find_at( atomic_node_ptr const& refHead, Q& val, Compare cmp, Func f ) const
+        bool find_at( node_type const* pHead, Q& val, Compare cmp, Func f ) const
         {
             position pos;
-            if ( search( refHead, val, pos, cmp )) {
+            if ( search( pHead, val, pos, cmp )) {
                 assert( pos.pFound != nullptr );
                 f( *pos.pFound, val );
                 m_Stat.onFindSuccess();
@@ -1035,10 +1040,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        iterator find_iterator_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
+        iterator find_iterator_at( node_type const* pHead, Q const& val, Compare cmp ) const
         {
             position pos;
-            if ( search( refHead, val, pos, cmp )) {
+            if ( search( pHead, val, pos, cmp )) {
                 assert( pos.pCur != nullptr );
                 assert( pos.pFound != nullptr );
                 m_Stat.onFindSuccess();
@@ -1046,14 +1051,14 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onFindFailed();
-            return iterator{};
+            return iterator( &m_Tail );
         }
 
         template <typename Q, typename Compare>
-        guarded_ptr get_at( atomic_node_ptr const& refHead, Q const& val, Compare cmp ) const
+        guarded_ptr get_at( node_type const* pHead, Q const& val, Compare cmp ) const
         {
             position pos;
-            if ( search( refHead, val, pos, cmp )) {
+            if ( search( pHead, val, pos, cmp )) {
                 m_Stat.onFindSuccess();
                 return guarded_ptr( std::move( pos.guard ));
             }
@@ -1061,26 +1066,36 @@ namespace cds { namespace intrusive {
             m_Stat.onFindFailed();
             return guarded_ptr();
         }
+
+        node_type* head()
+        {
+            return &m_Head;
+        }
+
+        node_type const* head() const
+        {
+            return &m_Head;
+        }
         //@endcond
 
     protected:
-
         //@cond
         template <typename Q, typename Compare >
-        bool search( atomic_node_ptr const& refHead, const Q& val, position& pos, Compare cmp ) const
+        bool search( node_type const* pHead, Q const& val, position& pos, Compare cmp ) const
         {
-            atomic_node_ptr* pHead = const_cast<atomic_node_ptr*>( &refHead );
-            node_type * pPrev = nullptr;
+            pos.pHead = pHead;
+            node_type*  pPrev = const_cast<node_type*>( pHead );
+            value_type* pPrevVal = nullptr;
 
             while ( true ) {
-                node_type * pCur = pHead->load( memory_model::memory_order_relaxed );
+                node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
 
-                if ( pCur == nullptr ) {
+                if ( pCur == pCur->next.load( memory_model::memory_order_relaxed )) {
                     // end-of-list
-                    pos.pHead = pHead;
                     pos.pPrev = pPrev;
-                    pos.pCur = nullptr;
+                    pos.pCur = pCur;
                     pos.pFound = nullptr;
+                    pos.pPrevVal = pPrevVal;
                     return false;
                 }
 
@@ -1091,24 +1106,32 @@ namespace cds { namespace intrusive {
                     }).ptr();
 
                 if ( pVal ) {
-                    int nCmp = cmp( *pVal, val );
+                    int const nCmp = cmp( *pVal, val );
                     if ( nCmp >= 0 ) {
-                        pos.pHead = pHead;
                         pos.pPrev = pPrev;
                         pos.pCur = pCur;
                         pos.pFound = pVal;
+                        pos.pPrevVal = pPrevVal;
                         return nCmp == 0;
                     }
                 }
 
                 pPrev = pCur;
-                pHead = &( pCur->next );
+                pPrevVal = pVal;
+                pos.prevGuard.copy( pos.guard );
             }
         }
         //@endcond
 
     private:
         //@cond
+        void init_list()
+        {
+            m_Head.next.store( &m_Tail, memory_model::memory_order_relaxed );
+            // end-of-list mark: node.next == node
+            m_Tail.next.store( &m_Tail, memory_model::memory_order_release );
+        }
+
         node_type * alloc_node( value_type * pVal )
         {
             m_Stat.onNodeCreated();
@@ -1129,8 +1152,8 @@ namespace cds { namespace intrusive {
 
         void destroy()
         {
-            node_type * pNode = m_pHead.load( memory_model::memory_order_relaxed );
-            while ( pNode ) {
+            node_type * pNode = m_Head.next.load( memory_model::memory_order_relaxed );
+            while ( pNode != pNode->next.load( memory_model::memory_order_relaxed )) {
                 value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
                 if ( pVal )
                     retire_data( pVal );
@@ -1142,61 +1165,72 @@ namespace cds { namespace intrusive {
 
         bool link_data( value_type * pVal, position& pos )
         {
-            if ( pos.pPrev ) {
-                if ( pos.pPrev->data.load( memory_model::memory_order_relaxed ) == marked_data_ptr() ) {
-                    // reuse pPrev
+            assert( pos.pPrev != nullptr );
+            assert( pos.pCur != nullptr );
 
-                    // We need pos.pCur data should be unchanged, otherwise ordering violation can be possible
-                    // if current thread will be preempted and another thread deletes pos.pCur data
-                    // and then set it to another.
-                    // To prevent this we mark pos.pCur data as undeletable by setting LSB
-                    marked_data_ptr val( pos.pFound );
-                    if ( pos.pCur && !pos.pCur->data.compare_exchange_strong( val, val | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
-                        // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
-                        m_Stat.onReuseNodeMarkFailed();
-                        return false;
-                    }
+            // We need pos.pCur data should be unchanged, otherwise ordering violation can be possible
+            // if current thread will be preempted and another thread will delete pos.pCur data
+            // and then set it to another.
+            // To prevent this we mark pos.pCur data as undeletable by setting LSB
+            marked_data_ptr valCur( pos.pFound );
+            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
+                m_Stat.onNodeMarkFailed();
+                return false;
+            }
 
-                    if ( pos.pPrev->next.load( memory_model::memory_order_acquire ) != pos.pCur ) {
-                        // sequence pPrev - pCur is broken
-                        if ( pos.pCur )
-                            pos.pCur->data.store( val, memory_model::memory_order_relaxed );
-                        m_Stat.onReuseNodeSeqBreak();
-                        return false;
-                    }
+            marked_data_ptr valPrev( pos.pPrevVal );
+            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+                m_Stat.onNodeMarkFailed();
+                return false;
+            }
 
-                    // Set pos.pPrev data if it is null
-                    marked_data_ptr p;
-                    bool result = pos.pPrev->data.compare_exchange_strong( p, marked_data_ptr( pVal ), 
-                        memory_model::memory_order_release, atomics::memory_order_relaxed );
+            // checks if link pPrev -> pCur is broken
+            if ( pos.pPrev->next.load( memory_model::memory_order_acquire ) != pos.pCur ) {
+                // sequence pPrev - pCur is broken
+                pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+                m_Stat.onNodeSeqBreak();
+                return false;
+            }
 
-                    // Clear pos.pCur data mark
-                    if ( pos.pCur )
-                        pos.pCur->data.store( val, memory_model::memory_order_relaxed );
+            if ( pos.pPrev != pos.pHead && pos.pPrevVal == nullptr )
+            {
+                // reuse pPrev
 
-                    if ( result )
-                        m_Stat.onReuseNode();
+                // Set pos.pPrev data if it is null
+                valPrev |= 1;
+                bool result = pos.pPrev->data.compare_exchange_strong( valPrev, marked_data_ptr( pVal ),
+                    memory_model::memory_order_release, atomics::memory_order_relaxed );
+
+                // Clears data marks
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
+                if ( result ) {
+                    m_Stat.onReuseNode();
                     return result;
-                }
-                else {
-                    // insert new node between pos.pPrev and pos.pCur
-                    node_type * pNode = alloc_node( pVal );
-                    pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
-
-                    if ( cds_likely( pos.pPrev->next.compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed )))
-                        return true;
-
-                    delete_node( pNode );
                 }
             }
             else {
+                // insert new node between pos.pPrev and pos.pCur
                 node_type * pNode = alloc_node( pVal );
                 pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
-                if ( cds_likely( pos.pHead->compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) )
-                    return true;
+
+                bool result = pos.pPrev->next.compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed );
+
+                // Clears data marks
+                pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
+                if ( result ) {
+                    m_Stat.onNewNodeCreated();
+                    return result;
+                }
 
                 delete_node( pNode );
             }
+
             return false;
         }
 
@@ -1212,7 +1246,6 @@ namespace cds { namespace intrusive {
             }
             return false;
         }
-
         //@endcond
     };
 }} // namespace cds::intrusive

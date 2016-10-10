@@ -157,9 +157,9 @@ namespace cds { namespace container {
 
     protected:
         //@cond
-        typedef typename maker::cxx_data_allocator   cxx_data_allocator;
-        typedef typename maker::data_disposer        data_disposer;
-        typedef typename base_class::atomic_node_ptr head_type;
+        typedef typename maker::cxx_data_allocator  cxx_data_allocator;
+        typedef typename maker::data_disposer       data_disposer;
+        typedef typename base_class::node_type      head_type;
         //@endcond
 
     public:
@@ -173,10 +173,6 @@ namespace cds { namespace container {
         {
             typedef typename base_class::template iterator_type<IsConst> iterator_base;
             friend class IterableList;
-
-            iterator_type( head_type const& pNode )
-                : iterator_base( pNode )
-            {}
 
             iterator_type( iterator_base it )
                 : iterator_base( it )
@@ -289,7 +285,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( head() );
+            return iterator( base_class::begin() );
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -302,31 +298,31 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator();
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( head() );
+            return const_iterator( base_class::cbegin() );
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( head() );
+            return const_iterator( base_class::cbegin() );
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator end() const
         {
-            return const_iterator();
+            return const_iterator( base_class::cend());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
-            return const_iterator();
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -771,15 +767,7 @@ namespace cds { namespace container {
 
         typedef std::unique_ptr< value_type, data_disposer > scoped_data_ptr;
 
-        head_type& head()
-        {
-            return base_class::m_pHead;
-        }
-
-        head_type const& head() const
-        {
-            return base_class::m_pHead;
-        }
+        using base_class::head;
         //@endcond
 
     protected:
@@ -789,11 +777,11 @@ namespace cds { namespace container {
             return insert_node_at( head(), pData );
         }
 
-        bool insert_node_at( head_type& refHead, value_type* pData )
+        bool insert_node_at( head_type* pHead, value_type* pData )
         {
             assert( pData );
             scoped_data_ptr p( pData );
-            if ( base_class::insert_at( refHead, *pData )) {
+            if ( base_class::insert_at( pHead, *pData )) {
                 p.release();
                 return true;
             }
@@ -802,17 +790,17 @@ namespace cds { namespace container {
         }
 
         template <typename Q>
-        bool insert_at( head_type& refHead, Q&& val )
+        bool insert_at( head_type* pHead, Q&& val )
         {
-            return insert_node_at( refHead, alloc_data( std::forward<Q>( val )));
+            return insert_node_at( pHead, alloc_data( std::forward<Q>( val )));
         }
 
         template <typename Q, typename Func>
-        bool insert_at( head_type& refHead, Q&& key, Func f )
+        bool insert_at( head_type* pHead, Q&& key, Func f )
         {
             scoped_data_ptr pNode( alloc_data( std::forward<Q>( key )));
 
-            if ( base_class::insert_at( refHead, *pNode, f )) {
+            if ( base_class::insert_at( pHead, *pNode, f )) {
                 pNode.release();
                 return true;
             }
@@ -820,17 +808,17 @@ namespace cds { namespace container {
         }
 
         template <typename... Args>
-        bool emplace_at( head_type& refHead, Args&&... args )
+        bool emplace_at( head_type* pHead, Args&&... args )
         {
-            return insert_node_at( refHead, alloc_data( std::forward<Args>(args)... ));
+            return insert_node_at( pHead, alloc_data( std::forward<Args>(args)... ));
         }
 
         template <typename Q, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, Q&& key, Func f, bool bAllowInsert )
+        std::pair<bool, bool> update_at( head_type* pHead, Q&& key, Func f, bool bAllowInsert )
         {
             scoped_data_ptr pData( alloc_data( std::forward<Q>( key )));
 
-            std::pair<bool, bool> ret = base_class::update_at( refHead, *pData, f, bAllowInsert );
+            std::pair<bool, bool> ret = base_class::update_at( pHead, *pData, f, bAllowInsert );
             if ( ret.first )
                 pData.release();
 
@@ -838,41 +826,40 @@ namespace cds { namespace container {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
+        bool erase_at( head_type* pHead, Q const& key, Compare cmp, Func f )
         {
-            return base_class::erase_at( refHead, key, cmp, f );
+            return base_class::erase_at( pHead, key, cmp, f );
         }
 
         template <typename Q, typename Compare>
-        guarded_ptr extract_at( head_type& refHead, Q const& key, Compare cmp )
+        guarded_ptr extract_at( head_type* pHead, Q const& key, Compare cmp )
         {
-            return base_class::extract_at( refHead, key, cmp );
+            return base_class::extract_at( pHead, key, cmp );
         }
 
         template <typename Q, typename Compare>
-        bool find_at( head_type const& refHead, Q const& key, Compare cmp ) const
+        bool find_at( head_type const* pHead, Q const& key, Compare cmp ) const
         {
-            return base_class::find_at( refHead, key, cmp );
+            return base_class::find_at( pHead, key, cmp );
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool find_at( head_type const& refHead, Q& val, Compare cmp, Func f ) const
+        bool find_at( head_type const* pHead, Q& val, Compare cmp, Func f ) const
         {
-            return base_class::find_at( refHead, val, cmp, f );
+            return base_class::find_at( pHead, val, cmp, f );
         }
 
         template <typename Q, typename Compare>
-        iterator find_iterator_at( head_type const& refHead, Q const& key, Compare cmp ) const
+        iterator find_iterator_at( head_type const* pHead, Q const& key, Compare cmp ) const
         {
-            return iterator( base_class::find_iterator_at( refHead, key, cmp ));
+            return iterator( base_class::find_iterator_at( pHead, key, cmp ));
         }
 
         template <typename Q, typename Compare>
-        guarded_ptr get_at( head_type const& refHead, Q const& key, Compare cmp ) const
+        guarded_ptr get_at( head_type const* pHead, Q const& key, Compare cmp ) const
         {
-            return base_class::get_at( refHead, key, cmp );
+            return base_class::get_at( pHead, key, cmp );
         }
-
         //@endcond
     };
 

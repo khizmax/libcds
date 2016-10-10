@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CDSUNIT_LIST_TEST_INTRUSIVE_ITERABLE_LIST_H
 #define CDSUNIT_LIST_TEST_INTRUSIVE_ITERABLE_LIST_H
@@ -242,6 +242,7 @@ namespace cds_test {
                 EXPECT_FALSE( l.contains( i.nKey ));
                 EXPECT_FALSE( l.contains( other_item( i.nKey ), other_less()));
                 EXPECT_FALSE( l.find( i.nKey, []( value_type& item, int ) { ++item.s.nFindCall; } ));
+                EXPECT_TRUE( l.find( i.nKey ) == l.end());
                 EXPECT_EQ( i.s.nFindCall, 0 );
                 EXPECT_FALSE( l.find_with( other_item( i.nKey ), other_less(), []( value_type& item, other_item const& ) { ++item.s.nFindCall; } ));
                 EXPECT_EQ( i.s.nFindCall, 0 );
@@ -292,6 +293,7 @@ namespace cds_test {
                 EXPECT_TRUE( l.contains( i.nKey ));
                 EXPECT_TRUE( l.contains( i ));
                 EXPECT_TRUE( l.contains( other_item( i.nKey ), other_less()));
+                EXPECT_FALSE( l.find( i.nKey ) == l.end() );
                 EXPECT_TRUE( l.find( i.nKey, []( value_type& item, int ) { ++item.s.nFindCall; } ));
                 EXPECT_EQ( i.s.nFindCall, 1 );
                 EXPECT_TRUE( l.find( i, []( value_type& item, value_type const& ) { ++item.s.nFindCall; } ));
