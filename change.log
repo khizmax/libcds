@@ -2,6 +2,9 @@
     General release
     - Changed: CMake is used for build libcds. Ancient build.sh is removed
     - Changed: unit and stress tests are migrated to googletest framework
+    - Added: IterableList - an implementation of ordered list with 
+      thread-safe iterator. MichaelSet/Map supports this type of
+      ordered list and thread-safe iterable too.
     - Added: wait strategies for flat combining technique. Based on
       research of Marsel Galimullin and Nikolai Rapotkin.
     - Fixed: serious bug in MichaelSet::emplace() function

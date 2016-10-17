@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -45,7 +45,7 @@ namespace cds { namespace intrusive {
         The algorithm is taken from <a href="http://moodycamel.com/blog/2014/solving-the-aba-problem-for-lock-free-free-lists">this article</a>.
         The algo does not require any SMR like Hazard Pointer to prevent ABA problem.
 
-        There is \ref TaggedFreeList "tagged pointers" variant of free list for processors which support double-width CAS.
+        There is \ref TaggedFreeList "tagged pointers" variant of free list for processors with double-width CAS support.
 
         \b How to use
         \code
