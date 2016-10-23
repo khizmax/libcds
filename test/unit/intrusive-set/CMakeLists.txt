@@ -37,6 +37,8 @@ set(CDSGTEST_SET_SOURCES
     intrusive_skiplist_rcu_gpt.cpp
     intrusive_skiplist_rcu_shb.cpp
     intrusive_skiplist_rcu_sht.cpp
+    intrusive_split_iterable_hp.cpp
+    intrusive_split_iterable_dhp.cpp
     intrusive_split_lazy_hp.cpp
     intrusive_split_lazy_dhp.cpp
     intrusive_split_lazy_nogc.cpp

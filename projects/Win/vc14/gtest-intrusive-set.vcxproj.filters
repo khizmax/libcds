@@ -173,6 +173,12 @@
     <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_iterable_dhp.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set.h">
@@ -218,6 +224,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_michael_iterable_hp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set_hp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

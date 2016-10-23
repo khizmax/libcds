@@ -490,7 +490,7 @@ namespace cds { namespace intrusive {
         */
         std::pair<bool, bool> upsert( value_type& val, bool bInsert = true )
         {
-            return update_at( &m_Head, val, []( value_type&, value_type* ) {}, bInsert );
+            return upsert_at( &m_Head, val, bInsert );
         }
 
         /// Unlinks the item \p val from the list
@@ -828,7 +828,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-#if 0
+
         // split-list support
         bool insert_aux_node( node_type * pNode )
         {
@@ -839,13 +839,25 @@ namespace cds { namespace intrusive {
         bool insert_aux_node( node_type* pHead, node_type * pNode )
         {
             assert( pNode != nullptr );
+            assert( pNode->data.load( memory_model::memory_order_relaxed ) != nullptr );
 
-            // Hack: convert node_type to value_type.
-            // In principle, auxiliary node can be non-reducible to value_type
-            // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
+            insert_position pos;
+
+            while ( true ) {
+                if ( inserting_search( pHead, *pNode->data.load(memory_model::memory_order_relaxed).ptr(), pos, key_comparator() ) ) {
+                    m_Stat.onInsertFailed();
+                    return false;
+                }
+
+                if ( link_aux_node( pNode, pos ) ) {
+                    ++m_ItemCounter;
+                    m_Stat.onInsertSuccess();
+                    return true;
+                }
+
+                m_Stat.onInsertRetry();
+            }
         }
-#endif
 
         bool insert_at( node_type* pHead, value_type& val )
         {
@@ -934,6 +946,11 @@ namespace cds { namespace intrusive {
 
                 m_Stat.onUpdateRetry();
             }
+        }
+
+        std::pair<bool, bool> upsert_at( node_type* pHead, value_type& val, bool bInsert )
+        {
+            return update_at( pHead, val, []( value_type&, value_type* ) {}, bInsert );
         }
 
         bool unlink_at( node_type* pHead, value_type& val )
@@ -1129,7 +1146,7 @@ namespace cds { namespace intrusive {
         {
             pos.pHead = pHead;
             node_type*  pPrev = const_cast<node_type*>(pHead);
-            value_type* pPrevVal = nullptr;
+            value_type* pPrevVal = pPrev->data.load( memory_model::memory_order_relaxed ).ptr();
 
             while ( true ) {
                 node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
@@ -1166,6 +1183,25 @@ namespace cds { namespace intrusive {
             }
         }
 
+        // split-list support
+        template <typename Predicate>
+        void destroy( Predicate pred )
+        {
+            node_type * pNode = m_Head.next.load( memory_model::memory_order_relaxed );
+            while ( pNode != pNode->next.load( memory_model::memory_order_relaxed ) ) {
+                value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
+                node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
+                bool const is_regular_node = !pVal || pred( pVal );
+                if ( is_regular_node ) {
+                    if ( pVal )
+                        retire_data( pVal );
+                    delete_node( pNode );
+                }
+                pNode = pNext;
+            }
+
+            m_Head.next.store( &m_Tail, memory_model::memory_order_relaxed );
+        }
         //@endcond
 
     private:
@@ -1277,6 +1313,51 @@ namespace cds { namespace intrusive {
             }
 
             return false;
+        }
+
+        // split-list support
+        bool link_aux_node( node_type * pNode, insert_position& pos )
+        {
+            assert( pos.pPrev != nullptr );
+            assert( pos.pCur != nullptr );
+
+            // We need pos.pCur data should be unchanged, otherwise ordering violation can be possible
+            // if current thread will be preempted and another thread will delete pos.pCur data
+            // and then set it to another.
+            // To prevent this we mark pos.pCur data as undeletable by setting LSB
+            marked_data_ptr valCur( pos.pFound );
+            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
+                m_Stat.onNodeMarkFailed();
+                return false;
+            }
+
+            marked_data_ptr valPrev( pos.pPrevVal );
+            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+                m_Stat.onNodeMarkFailed();
+                return false;
+            }
+
+            // checks if link pPrev -> pCur is broken
+            if ( pos.pPrev->next.load( memory_model::memory_order_acquire ) != pos.pCur ) {
+                // sequence pPrev - pCur is broken
+                pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+                pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+                m_Stat.onNodeSeqBreak();
+                return false;
+            }
+
+            // insert new node between pos.pPrev and pos.pCur
+            pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
+
+            bool result = pos.pPrev->next.compare_exchange_strong( pos.pCur, pNode, memory_model::memory_order_release, atomics::memory_order_relaxed );
+
+            // Clears data marks
+            pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+            pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
+            return result;
         }
 
         static bool unlink_data( position& pos )

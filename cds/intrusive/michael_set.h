@@ -318,7 +318,6 @@ namespace cds { namespace intrusive {
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
               Use this iterator on the concurrent container for debugging purpose only.
             - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
-              
         */
         typedef michael_set::details::iterator< internal_bucket_type, false > iterator;
 

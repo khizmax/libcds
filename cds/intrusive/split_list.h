@@ -97,8 +97,6 @@ namespace cds { namespace intrusive {
         - \p Traits - split-list traits, default is \p split_list::traits.
             Instead of defining \p Traits struct you can use option-based syntax provided by \p split_list::make_traits metafunction.
 
-        @warning \p IterableList is not supported as \p OrderedList template parameter.
-
         There are several specialization of the split-list class for different \p GC:
         - for \ref cds_urcu_gc "RCU type" include <tt><cds/intrusive/split_list_rcu.h></tt> - see
             \ref cds_intrusive_SplitListSet_rcu "RCU-based split-list"
@@ -134,6 +132,37 @@ namespace cds { namespace intrusive {
         \endcode
 
         <b>How to use</b>
+
+        Split-list based on \p IterableList differs from split-list based on \p MichaelList or \p LazyList
+        because \p %IterableList stores data "as is" - it cannot use any hook.
+
+        Suppose, your split-list contains values of type \p Foo.
+        For \p %MichaelList and \p %LazyList, \p Foo declaration should be based on ordered-list node:
+        - \p %MichaelList:
+        \code
+        struct Foo: public cds::intrusive::split_list::node< cds::intrusive::michael_list::node< cds::gc::HP > >
+        {
+            // ... field declarations
+        };
+        \endcode
+        - \p %LazyList:
+        \code
+        struct Foo: public cds::intrusive::split_list::node< cds::intrusive::lazy_list::node< cds::gc::HP > >
+        {
+            // ... field declarations
+        };
+        \endcode
+
+        For \p %IterableList, \p Foo should be based on \p void:
+        \code
+        struct Foo: public cds::intrusive::split_list::node<void>
+        {
+            // ... field declarations
+        };
+        \endcode
+
+        Everything else is the same.
+        Consider split-list based on \p MichaelList.
 
         First, you should choose ordered list type to use in your split-list set:
         \code
@@ -228,25 +257,25 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
+        typedef split_list::details::rebind_list_traits<OrderedList, traits> ordered_list_adapter;
         //@endcond
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef OrderedList         ordered_list;   ///< type of ordered list used as a base for split-list
 #   else
-        typedef typename wrapped_ordered_list::result   ordered_list;
+        typedef typename ordered_list_adapter::result   ordered_list;
 #   endif
         typedef typename ordered_list::value_type       value_type;     ///< type of value stored in the split-list
         typedef typename ordered_list::key_comparator   key_comparator; ///< key comparison functor
         typedef typename ordered_list::disposer         disposer;       ///< Node disposer functor
 
-        /// Hash functor for \p %value_type and all its derivatives that you use
+        /// Hash functor for \p %value_type and all its derivatives you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
 
         typedef typename traits::item_counter      item_counter; ///< Item counter type
         typedef typename traits::back_off          back_off;     ///< back-off strategy for spinning
-        typedef typename traits::memory_model      memory_model; ///< Memory ordering. See cds::opt::memory_model option
+        typedef typename traits::memory_model      memory_model; ///< Memory ordering. See \p cds::opt::memory_model option
         typedef typename traits::stat              stat;         ///< Internal statistics, see \p spit_list::stat
         typedef typename ordered_list::guarded_ptr guarded_ptr;  ///< Guarded pointer
 
@@ -255,21 +284,14 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef typename ordered_list::node_type    list_node_type;  ///< Node type as declared in ordered list
-        typedef split_list::node<list_node_type>    node_type;       ///< split-list node type
-
-        /// Split-list node traits
-        /**
-            This traits is intended for converting between underlying ordered list node type \p list_node_type
-            and split-list node type \p node_type
-        */
-        typedef split_list::node_traits<typename ordered_list::node_traits>  node_traits;
+        typedef split_list::node<typename ordered_list_adapter::ordered_list_node_type> node_type; ///< split-list node type
+        typedef typename ordered_list_adapter::node_traits node_traits;
 
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
             , gc
-            , node_type
+            , typename ordered_list_adapter::aux_node
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
             , opt::free_list< typename traits::free_list >
@@ -284,7 +306,7 @@ namespace cds { namespace intrusive {
         class ordered_list_wrapper: public ordered_list
         {
             typedef ordered_list base_class;
-            typedef typename base_class::auxiliary_head       bucket_head_type;
+            typedef typename base_class::auxiliary_head bucket_head_type;
 
         public:
             bool insert_at( aux_node_type* pHead, value_type& val )
@@ -308,6 +330,18 @@ namespace cds { namespace intrusive {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
                 return base_class::update_at( h, val, func, bAllowInsert );
+            }
+
+            template <typename Q>
+            typename std::enable_if<
+                std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
+                std::pair<bool, bool>
+            >::type
+            upsert_at( aux_node_type * pHead, Q& val, bool bAllowInsert )
+            {
+                assert( pHead != nullptr );
+                bucket_head_type h( pHead );
+                return base_class::upsert_at( h, val, bAllowInsert );
             }
 
             bool unlink_at( aux_node_type * pHead, value_type& val )
@@ -358,6 +392,18 @@ namespace cds { namespace intrusive {
             }
 
             template <typename Q, typename Compare>
+            typename std::enable_if<
+                std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value,
+                typename base_class::iterator
+            >::type
+            find_iterator_at( aux_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp )
+            {
+                assert( pHead != nullptr );
+                bucket_head_type h( pHead );
+                return base_class::find_iterator_at( h, val, cmp );
+            }
+
+            template <typename Q, typename Compare>
             guarded_ptr get_at( aux_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp )
             {
                 assert( pHead != nullptr );
@@ -374,8 +420,108 @@ namespace cds { namespace intrusive {
                 bucket_head_type h(pHead);
                 return base_class::insert_aux_node( h, pNode );
             }
+
+            template <typename Predicate>
+            void destroy( Predicate pred )
+            {
+                base_class::destroy( pred );
+            }
         };
         //@endcond
+
+    protected:
+        //@cond
+        template <bool IsConst>
+        class iterator_type
+            :public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
+        {
+            typedef split_list::details::iterator_type<node_traits, ordered_list, IsConst> iterator_base_class;
+            typedef typename iterator_base_class::list_iterator list_iterator;
+        public:
+            iterator_type()
+                : iterator_base_class()
+            {}
+
+            iterator_type( iterator_type const& src )
+                : iterator_base_class( src )
+            {}
+
+            // This ctor should be protected...
+            iterator_type( list_iterator itCur, list_iterator itEnd )
+                : iterator_base_class( itCur, itEnd )
+            {}
+        };
+        //@endcond
+
+    public:
+    ///@name Forward iterators
+    //@{
+        /// Forward iterator
+        /**
+            The forward iterator is based on \p OrderedList forward iterator and has some features:
+            - it has no post-increment operator
+            - it iterates items in unordered fashion
+            - iterator cannot be moved across thread boundary because it may contain GC's guard that is thread-private GC data.
+
+            Iterator thread safety depends on type of \p OrderedList:
+            - for \p MichaelList and \p LazyList: iterator guarantees safety even if you delete the item that iterator points to
+              because that item is guarded by hazard pointer.
+              However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
+              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
+              Use this iterator on the concurrent container for debugging purpose only.
+            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
+        */
+        typedef iterator_type<false>    iterator;
+
+        /// Const forward iterator
+        /**
+            For iterator's features and requirements see \ref iterator
+        */
+        typedef iterator_type<true>     const_iterator;
+
+        /// Returns a forward iterator addressing the first element in a split-list
+        /**
+            For empty list \code begin() == end() \endcode
+        */
+        iterator begin()
+        {
+            return iterator( m_List.begin(), m_List.end());
+        }
+
+        /// Returns an iterator that addresses the location succeeding the last element in a split-list
+        /**
+            Do not use the value returned by <tt>end</tt> function to access any item.
+
+            The returned value can be used only to control reaching the end of the split-list.
+            For empty list \code begin() == end() \endcode
+        */
+        iterator end()
+        {
+            return iterator( m_List.end(), m_List.end());
+        }
+
+        /// Returns a forward const iterator addressing the first element in a split-list
+        const_iterator begin() const
+        {
+            return cbegin();
+        }
+        /// Returns a forward const iterator addressing the first element in a split-list
+        const_iterator cbegin() const
+        {
+            return const_iterator( m_List.cbegin(), m_List.cend());
+        }
+
+        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
+        const_iterator end() const
+        {
+            return cend();
+        }
+        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
+        const_iterator cend() const
+        {
+            return const_iterator( m_List.cend(), m_List.cend());
+        }
+    //@}
 
     public:
         /// Initialize split-ordered list of default capacity
@@ -408,7 +554,11 @@ namespace cds { namespace intrusive {
         {
             // list contains aux node that cannot be retired
             // all aux nodes will be destroyed by bucket table dtor
-            m_List.clear();
+            m_List.destroy(
+                []( node_type * pNode ) -> bool {
+                    return !pNode->is_dummy();
+                }
+            );
             gc::force_dispose();
         }
 
@@ -482,26 +632,38 @@ namespace cds { namespace intrusive {
             If the item \p val is not found in the set, then \p val is inserted
             iff \p bAllowInsert is \p true.
             Otherwise, the functor \p func is called with item found.
-            The functor signature is:
-            \code
-                void func( bool bNew, value_type& item, value_type& val );
-            \endcode
-            with arguments:
-            - \p bNew - \p true if the item has been inserted, \p false otherwise
-            - \p item - item of the set
-            - \p val - argument \p val passed into the \p update() function
-            If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
-            refers to the same thing.
 
-            The functor may change non-key fields of the \p item.
+            The functor signature depends of the type of \p OrderedList:
+
+            <b>for \p MichaelList, \p LazyList</b>
+                \code
+                    struct functor {
+                        void operator()( bool bNew, value_type& item, value_type& val );
+                    };
+                \endcode
+                with arguments:
+                - \p bNew - \p true if the item has been inserted, \p false otherwise
+                - \p item - item of the set
+                - \p val - argument \p val passed into the \p %update() function
+                If new item has been inserted (i.e. \p bNew is \p true) then \p item and \p val arguments
+                refers to the same thing.
+
+                The functor may change non-key fields of the \p item.
+                @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
+                \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
+                synchronization.
+
+            <b>for \p IterableList</b>
+                \code
+                void func( value_type& val, value_type * old );
+                \endcode
+                where
+                - \p val - argument \p val passed into the \p %update() function
+                - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p val
             already is in the list.
-
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
-            \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
-            synchronization.
         */
         template <typename Func>
         std::pair<bool, bool> update( value_type& val, Func func, bool bAllowInsert = true )
@@ -529,6 +691,45 @@ namespace cds { namespace intrusive {
             return update( val, func, true );
         }
         //@endcond
+
+        /// Inserts or updates the node (only for \p IterableList)
+        /**
+            The operation performs inserting or changing data with lock-free manner.
+
+            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
+            Otherwise, the current element is changed to \p val, the old element will be retired later
+            by call \p Traits::disposer.
+
+            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+            \p second is \p true if \p val has been added or \p false if the item with that key
+            already in the set.
+        */
+#ifdef CDS_DOXYGEN_INVOKED
+        std::pair<bool, bool> upsert( value_type& val, bool bAllowInsert = true )
+#else
+        template <typename Q>
+        typename std::enable_if< 
+            std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
+            std::pair<bool, bool>
+        >::type
+        upsert( Q& val, bool bAllowInsert = true )
+#endif
+        {
+            size_t nHash = hash_value( val );
+            aux_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
+
+            std::pair<bool, bool> bRet = m_List.upsert_at( pHead, val, bAllowInsert );
+            if ( bRet.first && bRet.second ) {
+                inc_item_count();
+                m_Stat.onUpdateNew();
+            }
+            else
+                m_Stat.onUpdateExist();
+            return bRet;
+        }
 
         /// Unlinks the item \p val from the set
         /**
@@ -588,7 +789,7 @@ namespace cds { namespace intrusive {
         bool erase_with( const Q& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
 
         /// Deletes the item from the set
@@ -626,7 +827,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
 
         /// Extracts the item with specified \p key
@@ -711,6 +912,32 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
+        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find( Q& key )
+        {
+            return find_iterator_( key, key_comparator() );
+        }
+        //@cond
+        template <typename Q>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find( Q const& key )
+        {
+            return find_iterator_( key, key_comparator() );
+        }
+        //@endcond
+
+
         /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_hp_find_func "find(Q&, Func)"
@@ -722,16 +949,48 @@ namespace cds { namespace intrusive {
         bool find_with( Q& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
         //@endcond
+
+        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the set.
+
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for the set based on \p IterableList
+        */
+        template <typename Q, typename Less>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find_with( Q& key, Less pred )
+        {
+            CDS_UNUSED( pred );
+            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+        }
+        //@cond
+        template <typename Q, typename Less>
+        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
+        find_with( Q const& key, Less pred )
+        {
+            CDS_UNUSED( pred );
+            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+        }
+        //@endcond
+
 
         /// Checks whether the set contains \p key
         /**
@@ -747,14 +1006,6 @@ namespace cds { namespace intrusive {
         {
             return find_( key, key_comparator());
         }
-        //@cond
-        template <typename Q>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find( Q const& key )
-        {
-            return contains( key );
-        }
-        //@endcond
 
         /// Checks whether the set contains \p key using \p pred predicate for searching
         /**
@@ -766,16 +1017,8 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
-        //@cond
-        template <typename Q, typename Less>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find_with( Q const& key, Less pred )
-        {
-            return contains( key, pred );
-        }
-        //@endcond
 
         /// Finds the key \p key and return the item found
         /** \anchor cds_intrusive_SplitListSet_hp_get
@@ -867,95 +1110,11 @@ namespace cds { namespace intrusive {
             return m_Stat;
         }
 
-    protected:
-        //@cond
-        template <bool IsConst>
-        class iterator_type
-            :public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
+        /// Returns internal statistics for \p OrderedList
+        typename OrderedList::stat const& list_statistics() const
         {
-            typedef split_list::details::iterator_type<node_traits, ordered_list, IsConst> iterator_base_class;
-            typedef typename iterator_base_class::list_iterator list_iterator;
-        public:
-            iterator_type()
-                : iterator_base_class()
-            {}
-
-            iterator_type( iterator_type const& src )
-                : iterator_base_class( src )
-            {}
-
-            // This ctor should be protected...
-            iterator_type( list_iterator itCur, list_iterator itEnd )
-                : iterator_base_class( itCur, itEnd )
-            {}
-        };
-        //@endcond
-    public:
-    ///@name Forward iterators (only for debugging purpose)
-    //@{
-        /// Forward iterator
-        /**
-            The forward iterator for a split-list has some features:
-            - it has no post-increment operator
-            - it depends on iterator of underlying \p OrderedList
-            - The iterator cannot be moved across thread boundary since it may contain GC's guard that is thread-private GC data.
-            - Iterator ensures thread-safety even if you delete the item that iterator points to. However, in case of concurrent
-              deleting operations it is no guarantee that you iterate all item in the set.
-              Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
-
-            @warning Use this iterator on the concurrent container for debugging purpose only.
-        */
-        typedef iterator_type<false>    iterator;
-
-        /// Const forward iterator
-        /**
-            For iterator's features and requirements see \ref iterator
-        */
-        typedef iterator_type<true>     const_iterator;
-
-        /// Returns a forward iterator addressing the first element in a split-list
-        /**
-            For empty list \code begin() == end() \endcode
-        */
-        iterator begin()
-        {
-            return iterator( m_List.begin(), m_List.end());
+            return m_List.statistics();
         }
-
-        /// Returns an iterator that addresses the location succeeding the last element in a split-list
-        /**
-            Do not use the value returned by <tt>end</tt> function to access any item.
-
-            The returned value can be used only to control reaching the end of the split-list.
-            For empty list \code begin() == end() \endcode
-        */
-        iterator end()
-        {
-            return iterator( m_List.end(), m_List.end());
-        }
-
-        /// Returns a forward const iterator addressing the first element in a split-list
-        const_iterator begin() const
-        {
-            return cbegin();
-        }
-        /// Returns a forward const iterator addressing the first element in a split-list
-        const_iterator cbegin() const
-        {
-            return const_iterator( m_List.cbegin(), m_List.cend());
-        }
-
-        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
-        const_iterator end() const
-        {
-            return cend();
-        }
-        /// Returns an const iterator that addresses the location succeeding the last element in a split-list
-        const_iterator cend() const
-        {
-            return const_iterator( m_List.cend(), m_List.cend());
-        }
-    //@}
 
     protected:
         //@cond
@@ -1127,6 +1286,17 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
+        iterator find_iterator_( Q const& val, Compare cmp )
+        {
+            size_t nHash = hash_value( val );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            aux_node_type * pHead = get_bucket( nHash );
+            assert( pHead != nullptr );
+
+            return iterator( m_List.find_iterator_at( pHead, sv, cmp ), m_List.end());
+        }
+
+        template <typename Q, typename Compare>
         guarded_ptr get_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
@@ -1148,7 +1318,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr get_with_( Q const& key, Less )
         {
-            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return get_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -1212,7 +1382,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Less>
         guarded_ptr extract_with_( Q const& key, Less )
         {
-            return extract_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return extract_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
         }
         //@endcond
 

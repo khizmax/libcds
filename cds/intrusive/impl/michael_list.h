@@ -1170,6 +1170,13 @@ namespace cds { namespace intrusive {
             return guarded_ptr();
         }
 
+        // split-list support
+        template <typename Predicate>
+        void destroy( Predicate /*pred*/ )
+        {
+            clear();
+        }
+
         //@endcond
 
     protected:

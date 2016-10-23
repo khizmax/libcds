@@ -29,6 +29,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_iterable_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_michael_iterable_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
     <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_feldman_hashset_hp.cpp" />
@@ -210,6 +212,8 @@
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_nogc.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_skiplist_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set_hp.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_lazy_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_michael_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_michael_michael_rcu.h" />

@@ -101,14 +101,14 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        typedef split_list::details::rebind_list_traits<OrderedList, traits> wrapped_ordered_list;
+        typedef split_list::details::rebind_list_traits<OrderedList, traits> ordered_list_adapter;
         //@endcond
 
     public:
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef OrderedList         ordered_list;   ///< type of ordered list used as base for split-list
 #   else
-        typedef typename wrapped_ordered_list::result    ordered_list;
+        typedef typename ordered_list_adapter::result    ordered_list;
 #   endif
         typedef typename ordered_list::value_type     value_type;     ///< type of value stored in the split-list
         typedef typename ordered_list::key_comparator key_comparator; ///< key compare functor
@@ -141,13 +141,13 @@ namespace cds { namespace intrusive {
             This traits is intended for converting between underlying ordered list node type \ref list_node_type
             and split-list node type \ref node_type
         */
-        typedef split_list::node_traits<typename ordered_list::node_traits>  node_traits;
+        typedef typename ordered_list_adapter::node_traits node_traits;
 
         /// Bucket table implementation
         typedef typename split_list::details::bucket_table_selector<
             traits::dynamic_bucket_table
             , gc
-            , node_type
+            , typename ordered_list_adapter::aux_node
             , opt::allocator< typename traits::allocator >
             , opt::memory_model< memory_model >
             , opt::free_list< typename traits::free_list >
@@ -491,7 +491,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
         }
 
         /// Deletes the item from the set
@@ -531,7 +531,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
 
         /// Extracts an item from the set
@@ -639,14 +639,14 @@ namespace cds { namespace intrusive {
         bool find_with( Q& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>(), f );
+            return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
         //@endcond
 
@@ -683,7 +683,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_value( key, typename wrapped_ordered_list::template make_compare_from_less<Less>() );
+            return find_value( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
         }
         //@cond
         template <typename Q, typename Less>
@@ -741,7 +741,7 @@ namespace cds { namespace intrusive {
         raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_( key, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return get_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
 
 
@@ -1061,7 +1061,7 @@ namespace cds { namespace intrusive {
         value_type * extract_with_( Q const& val, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_( val, typename wrapped_ordered_list::template make_compare_from_less<Less>());
+            return extract_( val, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
 
         template <typename Q, typename Compare>

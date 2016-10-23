@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -1206,6 +1206,13 @@ namespace cds { namespace intrusive {
 
             m_Stat.onFindFailed();
             return guarded_ptr();
+        }
+
+        // split-list support
+        template <typename Predicate>
+        void destroy( Predicate /*pred*/ )
+        {
+            clear();
         }
 
         //@endcond
