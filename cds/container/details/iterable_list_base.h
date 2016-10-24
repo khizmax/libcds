@@ -148,34 +148,6 @@ namespace cds { namespace container {
     template <typename GC, typename Key, typename Value, typename Traits=iterable_list::traits>
     class IterableKVList;
 
-    // Tag for selecting iterable list implementation
-    /**
-        This struct is empty and it is used only as a tag for selecting \p IterableList
-        as ordered list implementation in declaration of some classes.
-
-        See \p split_list::traits::ordered_list as an example.
-    */
-    struct iterable_list_tag
-    {};
-
-    //@cond
-    template <typename GC, typename T, typename Traits>
-    struct is_iterable_list< IterableList<GC, T, Traits >>
-    {
-        enum {
-            value = true
-        };
-    };
-
-    template <typename GC, typename K, typename V, typename Traits>
-    struct is_iterable_list< IterableKVList<GC, K, V, Traits >>
-    {
-        enum {
-            value = true
-        };
-    };
-    //@endcond
-
 }}  // namespace cds::container
 
 

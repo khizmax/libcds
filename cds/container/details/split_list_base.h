@@ -119,6 +119,7 @@ namespace cds { namespace container {
                 Supported types are:
                 - \p michael_list_tag - for \p MichaelList
                 - \p lazy_list_tag - for \p LazyList
+                - \p iterable_list_tag - for \p IterableList
             */
             typedef michael_list_tag    ordered_list;
 
@@ -127,6 +128,7 @@ namespace cds { namespace container {
                 Specifyes traits for selected ordered list type, default type:
                 - for \p michael_list_tag: \p container::michael_list::traits.
                 - for \p lazy_list_tag: \p container::lazy_list::traits.
+                - for \p iterable_list_tag: \p container::iterable_list::traits.
 
                 If this type is \p opt::none, the ordered list traits is combined with default
                 ordered list traits and split-list traits.

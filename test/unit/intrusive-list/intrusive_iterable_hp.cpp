@@ -171,4 +171,22 @@ namespace {
         test_hp( l );
     }
 
+    TEST_F( IntrusiveIterableList_HP, derived )
+    {
+        class list_type: public ci::IterableList< gc_type, item_type,
+            typename ci::iterable_list::make_traits< 
+                ci::opt::disposer< mock_disposer >
+                ,cds::opt::less< less< item_type >>
+                ,cds::opt::item_counter< cds::atomicity::item_counter >
+
+            >::type 
+        >
+        {};
+
+       list_type l;
+       test_common( l );
+       test_ordered_iterator( l );
+       test_hp( l );
+    }
+
 } // namespace

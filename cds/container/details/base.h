@@ -81,6 +81,16 @@ namespace container {
         @ingroup cds_nonintrusive_containers
     */
 
+
+    // Tag for selecting iterable list implementation
+    /** @ingroup cds_nonintrusive_helper
+        This struct is empty and it is used only as a tag for selecting \p IterableList
+        as ordered list implementation in declaration of some classes.
+
+        See \p split_list::traits::ordered_list as an example.
+    */
+    typedef intrusive::iterable_list_tag iterable_list_tag;
+
     //@cond
     template <typename List>
     struct is_iterable_list: public cds::intrusive::is_iterable_list< List >

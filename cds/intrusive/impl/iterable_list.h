@@ -120,6 +120,9 @@ namespace cds { namespace intrusive {
 #endif
     >
     class IterableList
+#ifndef CDS_DOXYGEN_INVOKED
+        : public iterable_list_tag
+#endif
     {
     public:
         typedef T       value_type; ///< type of value stored in the list

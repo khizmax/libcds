@@ -240,4 +240,25 @@ namespace {
     }
 
 
+    TEST_F( IntrusiveSplitListIterableSet_DHP, bucket_type )
+    {
+        class bucket_type: public ci::IterableList< gc_type
+            , item_type
+            ,ci::iterable_list::make_traits<
+                ci::opt::compare< cmp<item_type> >
+                ,ci::opt::disposer< mock_disposer >
+            >::type
+        >
+        {};
+
+        typedef ci::SplitListSet< gc_type, bucket_type,
+            ci::split_list::make_traits<
+                ci::opt::hash< hash_int >
+            >::type
+        > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
 } // namespace

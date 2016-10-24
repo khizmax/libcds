@@ -325,12 +325,12 @@ namespace intrusive {
     */
 
     //@cond
+    class iterable_list_tag
+    {};
+
     template <typename List>
-    struct is_iterable_list {
-        enum {
-            value = false
-        };
-    };
+    struct is_iterable_list: public std::is_base_of< iterable_list_tag, List>
+    {};
     //@endcond
 
 }} // namespace cds::intrusuve

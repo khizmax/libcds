@@ -167,4 +167,25 @@ namespace {
         EXPECT_GE( s.statistics().m_nInsertSuccess, 0u );
     }
 
+    TEST_F( IntrusiveMichaelIterableSet_DHP, derived_list )
+    {
+        class bucket_type: public ci::IterableList< gc_type
+            , item_type
+            ,ci::iterable_list::make_traits<
+                ci::opt::compare< cmp<item_type> >
+                ,ci::opt::disposer< mock_disposer >
+            >::type
+        >
+        {};
+
+        typedef ci::MichaelHashSet< gc_type, bucket_type,
+            ci::michael_set::make_traits<
+                ci::opt::hash< hash_int >
+            >::type
+        > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
 } // namespace
