@@ -86,6 +86,10 @@ namespace cds_test {
                     EXPECT_TRUE( false );
                 } ));
 
+                EXPECT_TRUE( m.find( i ) == m.end() );
+                EXPECT_TRUE( m.find( i.nKey ) == m.end() );
+                EXPECT_TRUE( m.find_with( other_item( i.nKey ), other_less() ) == m.end() );
+
                 std::pair< bool, bool > updResult;
 
                 switch ( i.nKey % 17 ) {
@@ -287,6 +291,15 @@ namespace cds_test {
                     EXPECT_EQ( v.first.nKey, v.second.nVal );
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                 } ));
+
+                ASSERT_TRUE( m.find( i ) != m.end() );
+                ASSERT_TRUE( m.find( i.nKey ) != m.end() );
+                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less() ) != m.end() );
+
+                EXPECT_EQ( m.find( i )->first.nKey, i.nKey );
+                EXPECT_EQ( m.find( i.nKey )->first.nKey, i.nKey );
+                EXPECT_EQ( m.find_with( other_item( i.nKey ), other_less() )->first.nKey, i.nKey );
+
             }
             EXPECT_FALSE( m.empty() );
             EXPECT_CONTAINER_SIZE( m, kkSize );

@@ -507,7 +507,7 @@ namespace cds { namespace container {
             (note that in this case the \ref key_type should be constructible from type \p K).
             Otherwise, if \p key is found, the functor \p func is called with item found.
 
-            The functor \p func signature depends of \p OrderedList:
+            The functor \p func signature depends on \p OrderedList:
 
             <b>for \p MichaelKVList, \p LazyKVList</b>
             \code
@@ -536,7 +536,7 @@ namespace cds { namespace container {
             \p second is true if new item has been added or \p false if the item with \p key
             already exists.
 
-            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" and \ref cds_nonintrusive_IterableKVList_gc "IterableKVList" 
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" and \ref cds_nonintrusive_IterableKVList_gc "IterableKVList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -565,7 +565,7 @@ namespace cds { namespace container {
         /**
             The operation performs inserting or changing data with lock-free manner.
 
-            If the item \p val is not found in the map, then \p val is inserted iff \p bAllowInsert is \p true.
+            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
             Otherwise, the current element is changed to \p val, the old element will be retired later.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
@@ -752,6 +752,28 @@ namespace cds { namespace container {
             return bucket( key ).find( key, f );
         }
 
+        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for map based on \p IterableList
+        */
+        template <typename K>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<K,K>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find( K const& key )
+        {
+            auto& b = bucket( key );
+            auto it = b.find( key );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end());
+        }
+
+
         /// Finds the key \p val using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelMap_find_cfunc "find(K const&, Func)"
@@ -765,6 +787,31 @@ namespace cds { namespace container {
             return bucket( key ).find_with( key, pred, f );
         }
 
+        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
+        /**
+            The function is an analog of \p find(K&) but \p pred is used for key comparing.
+            \p Less functor has the interface like \p std::less.
+            \p pred must imply the same element order as the comparator used for building the set.
+
+            If \p key is not found the function returns \p end().
+
+            @note This function is supported only for map based on \p IterableList
+        */
+        template <typename K, typename Less>
+#ifdef CDS_DOXYGEN_INVOKED
+        iterator
+#else
+        typename std::enable_if< std::is_same<K, K>::value && is_iterable_list< ordered_list >::value, iterator >::type
+#endif
+        find_with( K const& key, Less pred )
+        {
+            auto& b = bucket( key );
+            auto it = b.find_with( key, pred );
+            if ( it == b.end() )
+                return end();
+            return iterator( it, &b, bucket_end() );
+        }
+
         /// Checks whether the map contains \p key
         /**
             The function searches the item with key equal to \p key
@@ -775,14 +822,6 @@ namespace cds { namespace container {
         {
             return bucket( key ).contains( key );
         }
-        //@cond
-        template <typename K>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find( K const& key )
-        {
-            return bucket( key ).contains( key );
-        }
-        //@endcond
 
         /// Checks whether the map contains \p key using \p pred predicate for searching
         /**
@@ -795,14 +834,6 @@ namespace cds { namespace container {
         {
             return bucket( key ).contains( key, pred );
         }
-        //@cond
-        template <typename K, typename Less>
-        CDS_DEPRECATED("deprecated, use contains()")
-        bool find_with( K const& key, Less pred )
-        {
-            return bucket( key ).contains( key, pred );
-        }
-        //@endcond
 
         /// Finds \p key and return the item found
         /** \anchor cds_nonintrusive_MichaelHashMap_hp_get

@@ -96,6 +96,8 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_shb.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\skiplist_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\split_iterable_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\map\split_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\map\split_lazy_dhp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
