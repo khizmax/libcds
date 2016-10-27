@@ -43,6 +43,7 @@ namespace cds { namespace container {
     struct lazy_list_tag;
 
 }} // namespace cds::container
+//@endcond
 
 
 #ifdef CDSLIB_CONTAINER_DETAILS_MICHAEL_LIST_BASE_H

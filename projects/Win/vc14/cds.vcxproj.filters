@@ -1291,5 +1291,8 @@
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_michael_list.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_iterable_list.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

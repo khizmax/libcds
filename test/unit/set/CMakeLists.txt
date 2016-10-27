@@ -35,6 +35,8 @@ set(CDSGTEST_SET_SOURCES
     skiplist_rcu_gpt.cpp
     skiplist_rcu_shb.cpp
     skiplist_rcu_sht.cpp
+    split_iterable_hp.cpp
+    split_iterable_dhp.cpp
     split_lazy_hp.cpp
     split_lazy_dhp.cpp
     split_lazy_nogc.cpp

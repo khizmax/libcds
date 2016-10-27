@@ -421,6 +421,7 @@
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_map.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_skip_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set.h" />
+    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_iterable_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_lazy_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_michael_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\michael_list_base.h" />

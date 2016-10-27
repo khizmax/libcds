@@ -173,6 +173,12 @@
     <ClCompile Include="..\..\..\test\unit\set\michael_iterable_dhp.cpp">
       <Filter>Source Files\MichaelSet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_iterable_hp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\set\split_iterable_dhp.cpp">
+      <Filter>Source Files\SplitList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_set.h">
@@ -221,6 +227,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\set\test_set_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_split_iterable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\unit\set\test_split_iterable_hp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
