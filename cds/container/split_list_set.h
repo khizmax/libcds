@@ -892,7 +892,7 @@ namespace cds { namespace container {
         /// Returns internal statistics for \p ordered_list
         typename ordered_list::stat const& list_statistics() const
         {
-            return base_class::statistics();
+            return base_class::list_statistics();
         }
 
     protected:
