@@ -72,7 +72,7 @@ namespace {
             >::type
         > list_type;
 
-        typedef cc::MichaelHashMap< rcu_type, list_type, 
+        typedef cc::MichaelHashMap< rcu_type, list_type,
             typename cc::michael_map::make_traits<
                 cds::opt::hash< typename TestFixture::hash1 >
             >::type
@@ -94,7 +94,7 @@ namespace {
             >::type
         > list_type;
 
-        typedef cc::MichaelHashMap< rcu_type, list_type, 
+        typedef cc::MichaelHashMap< rcu_type, list_type,
             typename cc::michael_map::make_traits<
                 cds::opt::hash< typename TestFixture::hash1 >
             >::type

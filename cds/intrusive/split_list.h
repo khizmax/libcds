@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -708,7 +708,7 @@ namespace cds { namespace intrusive {
         std::pair<bool, bool> upsert( value_type& val, bool bAllowInsert = true )
 #else
         template <typename Q>
-        typename std::enable_if< 
+        typename std::enable_if<
             std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
             std::pair<bool, bool>
         >::type

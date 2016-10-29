@@ -204,7 +204,7 @@ namespace map {
                 EXPECT_EQ( w.m_KeyNotExists.nSuccess, (s_Data.size() - s_nRealMapSize) * s_nPassCount ) << "thread " << i;
             }
 
-            propout() 
+            propout()
                 << std::make_pair( "exist_found", nExistSuccess )
                 << std::make_pair( "exist_not_found",  nExistFailed )  // must = 0
                 << std::make_pair( "missing_not_found", nMissingSuccess )

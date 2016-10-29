@@ -77,7 +77,7 @@ namespace cds_test {
 
     public:
         explicit thread( thread_pool& master, int type = 0 );
-        
+
         thread_pool& pool() { return m_pool; }
         int type() const { return m_type; }
         size_t id() const { return m_id;  }
@@ -156,7 +156,7 @@ namespace cds_test {
                     if ( time_now >= expected_end )
                         break;
                     native_duration = expected_end - time_now;
-                } 
+                }
             }
             m_bTimeElapsed.store( true, std::memory_order_release );
 

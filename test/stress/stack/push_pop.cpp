@@ -199,7 +199,7 @@ namespace {
             propout() << std::make_pair( "producer_thread_count", s_nPushThreadCount )
                 << std::make_pair( "consumer_thread_count", s_nPopThreadCount )
                 << std::make_pair( "push_count", s_nStackSize )
-                ;
+;
 
             std::chrono::milliseconds duration = pool.run();
 
@@ -273,7 +273,7 @@ namespace {
                       << std::make_pair( "push_error", nPushError )
                       << std::make_pair( "pop_empty", nPopEmpty )
                       << std::make_pair( "dirty_pop", nDirtyPop )
-                      ;
+;
         }
     };
 

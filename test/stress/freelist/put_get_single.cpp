@@ -49,7 +49,7 @@ namespace {
             size_t  counter;
 
             value_type()
-                : counter(0) 
+                : counter(0)
             {}
         };
 

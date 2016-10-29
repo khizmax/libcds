@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -382,7 +382,7 @@ namespace cds { namespace container {
             where \p val is the item inserted.
             The user-defined functor is called only if the inserting is success.
 
-            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList" 
+            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -467,7 +467,7 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         std::pair<bool, bool>
 #else
-        typename std::enable_if< 
+        typename std::enable_if<
             std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
             std::pair<bool, bool>
         >::type

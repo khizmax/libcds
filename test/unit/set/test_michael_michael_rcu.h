@@ -70,7 +70,7 @@ TYPED_TEST_P( MichaelSet, compare )
         >::type
     > list_type;
 
-    typedef cc::MichaelHashSet< rcu_type, list_type, 
+    typedef cc::MichaelHashSet< rcu_type, list_type,
         typename cc::michael_set::make_traits<
             cds::opt::hash< typename TestFixture::hash_int >
         >::type
@@ -91,7 +91,7 @@ TYPED_TEST_P( MichaelSet, less )
         >::type
     > list_type;
 
-    typedef cc::MichaelHashSet< rcu_type, list_type, 
+    typedef cc::MichaelHashSet< rcu_type, list_type,
         typename cc::michael_set::make_traits<
             cds::opt::hash< typename TestFixture::hash_int >
         >::type

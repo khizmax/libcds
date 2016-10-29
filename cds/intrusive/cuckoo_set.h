@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_CUCKOO_SET_H
@@ -1879,7 +1879,7 @@ namespace cds { namespace intrusive {
             Otherwise, it is unordered and \p Traits should provide \p equal_to functor.
         */
         static bool const c_isSorted = !( std::is_same< typename traits::compare, opt::none >::value
-                && std::is_same< typename traits::less, opt::none >::value ) ;
+                && std::is_same< typename traits::less, opt::none >::value );
         static size_t const c_nArity = hash::size ; ///< the arity of cuckoo hashing: the number of hash functors provided; minimum 2.
 
         /// Key equality functor; used only for unordered probe-set

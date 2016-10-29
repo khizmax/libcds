@@ -165,7 +165,7 @@ namespace cds { namespace algo { namespace flat_combining {
 
             /// Incorporates back-off strategy into publication record
             template <typename PublicationRecord>
-            struct make_publication_record 
+            struct make_publication_record
             {
                 //@cond
                 struct type: public PublicationRecord

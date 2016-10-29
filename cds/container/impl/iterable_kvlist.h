@@ -47,8 +47,8 @@ namespace cds { namespace container {
         Usually, ordered single-linked list is used as a building block for the hash table implementation.
         Iterable list is suitable for almost append-only hash table because the list doesn't delete
         its internal node when erasing a key but it is marked them as empty to be reused in the future.
-        However, plenty of empty nodes degrades performance. 
-        
+        However, plenty of empty nodes degrades performance.
+
         The complexity of searching is <tt>O(N)</tt>.
 
         Template arguments:
@@ -362,7 +362,7 @@ namespace cds { namespace container {
 
             If the item \p key is not found in the list, then \p key is inserted
             iff \p bInsert is \p true.
-            Otherwise, the current element is changed to <tt> value_type( key, val )</tt>, 
+            Otherwise, the current element is changed to <tt> value_type( key, val )</tt>,
             the old element will be retired later.
 
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,

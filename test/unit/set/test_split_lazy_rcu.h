@@ -67,11 +67,11 @@ TYPED_TEST_P( SplitListLazySet, compare )
     typedef typename TestFixture::int_item int_item;
     typedef typename TestFixture::hash_int hash_int;
 
-    typedef cc::SplitListSet< rcu_type, int_item, 
+    typedef cc::SplitListSet< rcu_type, int_item,
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::lazy_list_tag >
             , cds::opt::hash< hash_int >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::lazy_list::make_traits<
                     cds::opt::compare< typename TestFixture::cmp >
                 >::type
@@ -93,7 +93,7 @@ TYPED_TEST_P( SplitListLazySet, less )
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::lazy_list_tag >
             , cds::opt::hash< hash_int >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::lazy_list::make_traits<
                     cds::opt::less< typename TestFixture::less >
                 >::type
@@ -115,7 +115,7 @@ TYPED_TEST_P( SplitListLazySet, cmpmix )
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::lazy_list_tag >
             , cds::opt::hash< hash_int >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::lazy_list::make_traits<
                     cds::opt::less< typename TestFixture::less >
                     , cds::opt::compare< typename TestFixture::cmp >
@@ -272,7 +272,7 @@ TYPED_TEST_P( SplitListLazySet, free_list )
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::lazy_list_tag >
             , cds::opt::hash< hash_int >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::lazy_list::make_traits<
                     cds::opt::less< typename TestFixture::less >
                 >::type

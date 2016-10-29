@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_LIST_TEST_LIST_H
@@ -217,7 +217,7 @@ namespace cds_test {
                 EXPECT_TRUE( l.contains( i ));
                 EXPECT_TRUE( l.contains( i.nKey ));
                 EXPECT_TRUE( l.contains( other_item( i.nKey ), other_less()));
-                EXPECT_TRUE( l.find( i, []( value_type& n, value_type const& arg ) { 
+                EXPECT_TRUE( l.find( i, []( value_type& n, value_type const& arg ) {
                     EXPECT_EQ( arg.nKey, n.nKey );
                     n.nVal = n.nKey;
                 } ));
@@ -280,7 +280,7 @@ namespace cds_test {
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // clear test
-            for ( auto& i : arr ) 
+            for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i ));
 
             ASSERT_FALSE( l.empty() );

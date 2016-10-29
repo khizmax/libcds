@@ -304,7 +304,7 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
             || std::is_same<typename set_type::rcu_tag, signal_threaded_tag >::value
 #endif
-        ;
+;
         if ( !threaded_rcu ) {
             EXPECT_EQ( ellen_bintree_pool::internal_node_counter::m_nAlloc.get(), ellen_bintree_pool::internal_node_counter::m_nFree.get());
         }

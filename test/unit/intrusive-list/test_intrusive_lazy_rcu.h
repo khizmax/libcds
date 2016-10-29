@@ -182,11 +182,11 @@ TYPED_TEST_P( IntrusiveLazyList, base_hook_wrapped_stat )
 TYPED_TEST_P( IntrusiveLazyList, member_hook )
 {
     typedef ci::LazyList< typename TestFixture::rcu_type, typename TestFixture::member_item,
-        typename ci::lazy_list::make_traits< 
+        typename ci::lazy_list::make_traits<
             ci::opt::hook< ci::lazy_list::member_hook< offsetof( typename TestFixture::member_item, hMember ), cds::opt::gc< typename TestFixture::rcu_type >>>
             ,ci::opt::disposer< typename TestFixture::mock_disposer >
             ,cds::opt::less< typename TestFixture::template less< typename TestFixture::member_item >>
-        >::type 
+        >::type
     > list_type;
 
     list_type l;
@@ -306,5 +306,5 @@ REGISTER_TYPED_TEST_CASE_P( IntrusiveLazyList,
 );
 
 
-#endif // CDSUNIT_LIST_TEST_INTRUSIVE_LAZY_LIST_RCU_H 
+#endif // CDSUNIT_LIST_TEST_INTRUSIVE_LAZY_LIST_RCU_H
 

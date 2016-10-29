@@ -49,7 +49,7 @@ namespace cds_test {
         {
             unsigned int nDisposeCount  ;   // count of disposer calling
             unsigned int nFindCount     ;   // count of find-functor calling
-            unsigned int nInsertCount   ;
+            unsigned int nInsertCount;
             mutable unsigned int nEraseCount;
 
             stat()

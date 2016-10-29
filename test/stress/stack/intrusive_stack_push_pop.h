@@ -242,7 +242,7 @@ namespace cds_test {
                 << std::make_pair( "pop_count", nPopCount )
                 << std::make_pair( "pop_empty", nPopEmpty )
                 << std::make_pair( "dirty_pop", nDirtyPop )
-                ;
+;
 
         }
 
@@ -274,7 +274,7 @@ namespace cds_test {
             propout() << std::make_pair( "producer_thread_count", s_nPushThreadCount )
                 << std::make_pair( "consumer_thread_count", s_nPopThreadCount )
                 << std::make_pair( "push_count", nPushCount * s_nPushThreadCount )
-                ;
+;
 
             std::chrono::milliseconds duration = pool.run();
 

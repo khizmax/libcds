@@ -56,11 +56,11 @@ namespace {
     TEST_F( IntrusiveIterableList_DHP, less )
     {
         typedef ci::IterableList< gc_type, item_type,
-            typename ci::iterable_list::make_traits< 
+            typename ci::iterable_list::make_traits<
                 ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< item_type >>
                 , cds::opt::item_counter< cds::atomicity::item_counter >
-            >::type 
+            >::type
        > list_type;
 
        list_type l;

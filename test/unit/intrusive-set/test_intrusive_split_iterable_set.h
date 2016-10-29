@@ -80,9 +80,9 @@ namespace cds_test {
                 , nVal(0)
             {}
 
-            int key() const 
-            { 
-                return nKey; 
+            int key() const
+            {
+                return nKey;
             }
         };
 
@@ -257,7 +257,7 @@ namespace cds_test {
                 case 0:
                     ASSERT_TRUE( s.insert( i ));
                     ASSERT_FALSE( s.insert( i ));
-                    updResult = s.update( i, []( value_type& val, value_type* arg) 
+                    updResult = s.update( i, []( value_type& val, value_type* arg)
                         {
                             ASSERT_TRUE( arg != nullptr );
                             EXPECT_EQ( val.key(), arg->key() );

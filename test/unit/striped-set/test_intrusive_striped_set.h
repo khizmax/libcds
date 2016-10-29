@@ -64,7 +64,7 @@ namespace {
 
     TYPED_TEST_P( IntrusiveStripedSet, striped_basehook_compare )
     {
-        typedef ci::StripedSet< 
+        typedef ci::StripedSet<
             typename TestFixture::base_hook_container,
             ci::opt::hash< typename TestFixture::hash1 >,
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::base_item >>
@@ -233,7 +233,7 @@ namespace {
 
     TYPED_TEST_P( IntrusiveStripedSet, refinable_basehook_compare )
     {
-        typedef ci::StripedSet< 
+        typedef ci::StripedSet<
             typename TestFixture::base_hook_container,
             ci::opt::hash< typename TestFixture::hash1 >,
             ci::opt::compare< typename TestFixture::template cmp< typename TestFixture::base_item >>

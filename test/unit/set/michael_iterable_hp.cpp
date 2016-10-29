@@ -67,7 +67,7 @@ namespace {
             >::type
         > list_type;
 
-        typedef cc::MichaelHashSet< gc_type, list_type, 
+        typedef cc::MichaelHashSet< gc_type, list_type,
             typename cc::michael_set::make_traits<
                 cds::opt::hash< hash_int >
             >::type
@@ -85,7 +85,7 @@ namespace {
             >::type
         > list_type;
 
-        typedef cc::MichaelHashSet< gc_type, list_type, 
+        typedef cc::MichaelHashSet< gc_type, list_type,
             typename cc::michael_set::make_traits<
                 cds::opt::hash< hash_int >
             >::type
@@ -104,7 +104,7 @@ namespace {
         };
         typedef cc::IterableList< gc_type, int_item, list_traits > list_type;
 
-        typedef cc::MichaelHashSet< gc_type, list_type, 
+        typedef cc::MichaelHashSet< gc_type, list_type,
             typename cc::michael_set::make_traits<
                 cds::opt::hash< hash_int >
             >::type

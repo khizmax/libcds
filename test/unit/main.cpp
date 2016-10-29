@@ -31,7 +31,7 @@
 #include <gtest/gtest.h>
 #include <cds/init.h>
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
     int result;
     cds::Initialize();

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_TREE_TEST_INTRUSIVE_ELLEN_BINTREE_RCU_H
@@ -374,6 +374,6 @@ namespace {
         base_cmp, base_less, base_item_counter, base_backoff, base_seq_cst, base_update_desc_pool, base_update_desc_lazy_pool, member_cmp, member_less, member_item_counter, member_backoff, member_seq_cst, member_update_desc_pool, member_update_desc_lazy_pool
         );
 
-} // namespace 
+} // namespace
 
 #endif // #ifndef CDSUNIT_TREE_TEST_INTRUSIVE_ELLEN_BINTREE_RCU_H

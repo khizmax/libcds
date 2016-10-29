@@ -201,7 +201,7 @@ namespace cds_test {
         };
 
         template <typename T>
-        struct cmp 
+        struct cmp
         {
             int operator ()(T const& v1, T const& v2 ) const
             {
@@ -320,7 +320,7 @@ namespace cds_test {
                 case 0:
                     ASSERT_TRUE( t.insert( i ));
                     ASSERT_FALSE( t.insert( i ));
-                    updResult = t.update( i, []( bool bNew, value_type& val, value_type& arg) 
+                    updResult = t.update( i, []( bool bNew, value_type& val, value_type& arg)
                         {
                             EXPECT_FALSE( bNew );
                             EXPECT_EQ( &val, &arg );

@@ -233,7 +233,7 @@ namespace cds_test {
                 EXPECT_TRUE( l.contains( i ));
                 EXPECT_TRUE( l.contains( i.nKey ));
                 EXPECT_TRUE( l.contains( other_item( i.nKey ), other_less()));
-                EXPECT_TRUE( l.find( i, []( value_type& n, value_type const& arg ) { 
+                EXPECT_TRUE( l.find( i, []( value_type& n, value_type const& arg ) {
                     EXPECT_EQ( arg.nKey, n.nKey );
                     n.nVal = n.nKey;
                 } ));
@@ -312,7 +312,7 @@ namespace cds_test {
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // clear test
-            for ( auto& i : arr ) 
+            for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i ));
 
             ASSERT_FALSE( l.empty() );

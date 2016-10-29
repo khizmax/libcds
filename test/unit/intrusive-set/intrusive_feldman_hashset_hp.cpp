@@ -45,7 +45,7 @@ namespace {
 
         void SetUp()
         {
-            typedef ci::FeldmanHashSet< gc_type, int_item, 
+            typedef ci::FeldmanHashSet< gc_type, int_item,
                 typename ci::feldman_hashset::make_traits<
                     ci::feldman_hashset::hash_accessor< hash_accessor >
                     ,ci::opt::less< std::less<int>>

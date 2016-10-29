@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_STRIPED_SET_H
@@ -195,7 +195,7 @@ namespace cds { namespace intrusive {
                         You should provide two different hash function \p h1 and \p h2 - one for \p boost::intrusive::unordered_set
                         and other for \p %StripedSet. For the best result, \p h1 and \p h2 must be orthogonal i.e. <tt>h1(X) != h2(X)</tt> for any value \p X
 
-                        The option \p opt::buffer is used for \p boost::intrusive::bucket_traits. 
+                        The option \p opt::buffer is used for \p boost::intrusive::bucket_traits.
                         Default is <tt> cds::opt::v::initialized_static_buffer< cds::any_type, 256 > </tt>.
                         The resizing policy should correlate with the buffer capacity.
                         The default resizing policy is <tt>cds::container::striped_set::load_factor_resizing<256> </tt> what gives load factor 1 for

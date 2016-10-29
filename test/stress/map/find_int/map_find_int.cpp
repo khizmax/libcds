@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,13 +25,13 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "map_find_int.h"
 
 namespace map {
-    
+
     size_t Map_find_int::s_nThreadCount = 8;
     size_t Map_find_int::s_nMapSize = 10000000;
     size_t Map_find_int::s_nMaxLoadFactor = 8;
@@ -58,7 +58,7 @@ namespace map {
             nPercent = 100;
         else if ( nPercent < 1 )
             nPercent = 1;
-        
+
         s_nRealMapSize = 0;
 
         s_Data.resize( s_nMapSize );

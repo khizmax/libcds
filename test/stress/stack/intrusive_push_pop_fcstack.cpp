@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "intrusive_stack_push_pop.h"
@@ -78,7 +78,7 @@ namespace {
                 std::stringstream ss;
                 ss << "compact_factor" << p.param.nCompactFactor
                    << "__combine_pass_count" << p.param.nCombinePassCount
-                   ;
+;
                 return ss.str();
             }
             else {
@@ -98,7 +98,7 @@ namespace {
             if ( s_bFCIterative ) {
                 fc_param arg = GetParam();
                 if ( arg.nCombinePassCount ) {
-                    propout() 
+                    propout()
                         << std::make_pair( "compact_factor", arg.nCompactFactor )
                         << std::make_pair( "combine_pass_count", arg.nCombinePassCount );
                     Stack stack( arg.nCompactFactor, arg.nCombinePassCount );

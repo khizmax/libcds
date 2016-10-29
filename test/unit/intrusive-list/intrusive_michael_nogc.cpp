@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_intrusive_list_nogc.h"
@@ -45,11 +45,11 @@ namespace {
     TEST_F( IntrusiveMichaelList_NOGC, base_hook )
     {
         typedef ci::MichaelList< gc_type, base_item,
-            typename ci::michael_list::make_traits< 
+            typename ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::base_hook< cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< base_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;
@@ -125,11 +125,11 @@ namespace {
     TEST_F( IntrusiveMichaelList_NOGC, member_hook )
     {
         typedef ci::MichaelList< gc_type, member_item,
-            typename ci::michael_list::make_traits< 
+            typename ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< member_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;

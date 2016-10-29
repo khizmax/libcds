@@ -41,7 +41,7 @@
 #   include <cds/urcu/signal_threaded.h>
 #endif
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
     int result;
     cds::Initialize();

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -165,7 +165,7 @@ namespace cds { namespace container {
               may be thrown if the limit of guard count per thread is exceeded.
             - The iterator cannot be moved across thread boundary because it contains thread-private GC's guard.
             - Iterator ensures thread-safety even if you delete the item the iterator points to. However, in case of concurrent
-              deleting operations there is no guarantee that you iterate all item in the list. 
+              deleting operations there is no guarantee that you iterate all item in the list.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
 
             @warning Use this iterator on the concurrent container for debugging purpose only.

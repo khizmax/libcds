@@ -51,7 +51,7 @@ namespace {
             cds::threading::Manager::attachThread();
         }
 
-        void TearDown() 
+        void TearDown()
         {
             cds::threading::Manager::detachThread();
             cds::gc::hp::GarbageCollector::Destruct( true );

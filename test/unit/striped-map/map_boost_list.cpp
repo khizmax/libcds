@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
@@ -36,7 +36,7 @@
     // Skipped; for Microsoft Visual C++ 2013 and boost::container::list you should use boost version 1.55 or above" );
 #elif BOOST_VERSION >= 104800
 
-#include <cds/container/striped_map/boost_list.h> 
+#include <cds/container/striped_map/boost_list.h>
 #include "test_striped_map.h"
 
 namespace {
@@ -64,6 +64,6 @@ namespace {
 
 #else // BOOST_VERSION < 104800
 // Skipped; for boost::container::list you should use boost version 1.48 or above
-#endif  // BOOST_VERSION 
+#endif  // BOOST_VERSION
 
 #endif // #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER

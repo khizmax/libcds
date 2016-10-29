@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -180,11 +180,11 @@ TYPED_TEST_P( IntrusiveMichaelList, base_hook_wrapped_stat )
 TYPED_TEST_P( IntrusiveMichaelList, member_hook )
 {
     typedef ci::MichaelList< typename TestFixture::rcu_type, typename TestFixture::member_item,
-        typename ci::michael_list::make_traits< 
+        typename ci::michael_list::make_traits<
             ci::opt::hook< ci::michael_list::member_hook< offsetof( typename TestFixture::member_item, hMember ), cds::opt::gc< typename TestFixture::rcu_type >>>
             ,ci::opt::disposer< typename TestFixture::mock_disposer >
             ,cds::opt::less< typename TestFixture::template less< typename TestFixture::member_item >>
-        >::type 
+        >::type
     > list_type;
 
     list_type l;
@@ -302,5 +302,5 @@ REGISTER_TYPED_TEST_CASE_P( IntrusiveMichaelList,
 );
 
 
-#endif // CDSUNIT_LIST_TEST_INTRUSIVE_LIST_RCU_H 
+#endif // CDSUNIT_LIST_TEST_INTRUSIVE_LIST_RCU_H
 

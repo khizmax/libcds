@@ -617,7 +617,7 @@ namespace cds_test {
 
     static inline property_stream& operator <<( property_stream& o, cds::container::fcpqueue::stat<> const& s )
     {
-        return o 
+        return o
             << CDSSTRESS_STAT_OUT( s, m_nPush )
             << CDSSTRESS_STAT_OUT( s, m_nPushMove )
             << CDSSTRESS_STAT_OUT( s, m_nPop )

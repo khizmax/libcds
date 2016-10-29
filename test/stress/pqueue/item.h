@@ -50,7 +50,7 @@ namespace pqueue {
         {}
 
         simple_value( key_type n )
-            : key(n) 
+            : key(n)
         {}
 
         friend bool operator <( simple_value const& lhs, simple_value const& rhs )

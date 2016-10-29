@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -58,12 +58,12 @@ namespace {
     TEST_F( IntrusiveIterableList_HP, less )
     {
         typedef ci::IterableList< gc_type, item_type,
-            typename ci::iterable_list::make_traits< 
+            typename ci::iterable_list::make_traits<
                 ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< item_type >>
                 ,cds::opt::item_counter< cds::atomicity::item_counter >
 
-            >::type 
+            >::type
        > list_type;
 
        list_type l;
@@ -174,12 +174,12 @@ namespace {
     TEST_F( IntrusiveIterableList_HP, derived )
     {
         class list_type: public ci::IterableList< gc_type, item_type,
-            typename ci::iterable_list::make_traits< 
+            typename ci::iterable_list::make_traits<
                 ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< item_type >>
                 ,cds::opt::item_counter< cds::atomicity::item_counter >
 
-            >::type 
+            >::type
         >
         {};
 

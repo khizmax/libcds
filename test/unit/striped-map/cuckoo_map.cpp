@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "test_map.h"
@@ -256,7 +256,7 @@ namespace {
                 ,cc::cuckoo::probeset_type< cc::cuckoo::list >
                 ,cc::cuckoo::store_hash< true >
             >::type
-        > map_type; 
+        > map_type;
 
         typename map_type::hash_tuple_type ht;
         map_type m( 32, 6, 0, std::move( ht ));
@@ -273,7 +273,7 @@ namespace {
                 ,cc::cuckoo::probeset_type< cc::cuckoo::vector<6>>
                 ,cc::cuckoo::store_hash< true >
             >::type
-        > map_type; 
+        > map_type;
 
         typename map_type::hash_tuple_type ht;
         map_type m( std::move( ht ));
@@ -488,7 +488,7 @@ namespace {
                 ,cc::cuckoo::probeset_type< cc::cuckoo::list >
                 ,cc::cuckoo::store_hash< true >
             >::type
-        > map_type; 
+        > map_type;
 
         typename map_type::hash_tuple_type ht;
         map_type m( 32, 6, 0, std::move( ht ));
@@ -506,7 +506,7 @@ namespace {
                 ,cc::cuckoo::probeset_type< cc::cuckoo::vector<6>>
                 ,cc::cuckoo::store_hash< true >
             >::type
-        > map_type; 
+        > map_type;
 
         typename map_type::hash_tuple_type ht;
         map_type m( std::move( ht ));

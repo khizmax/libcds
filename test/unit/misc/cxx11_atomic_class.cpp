@@ -850,4 +850,4 @@ namespace {
     {
         test_atomic_pointer_for<long long, true>();
     }
-}   // namespace 
+}   // namespace

@@ -280,15 +280,15 @@ namespace cds_test {
                 EXPECT_TRUE( s.contains( i ) );
                 EXPECT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
                 EXPECT_TRUE( s.find( i.nKey, []( value_type& v, int )
-                    { 
+                    {
                         v.nFindCount = 1;
                     }));
                 EXPECT_TRUE( s.find( i, []( value_type& v, value_type const& )
-                    { 
+                    {
                         EXPECT_EQ( ++v.nFindCount, 2u );
                     }));
                 EXPECT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& )
-                    { 
+                    {
                         EXPECT_EQ( ++v.nFindCount, 3u );
                     }));
 

@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
@@ -47,7 +47,7 @@ namespace {
 #else
         typedef bi::bs_set_base_hook<> splay_set_base_hook;
         typedef bi::bs_set_member_hook<> splay_set_member_hook;
-#endif 
+#endif
         typedef cds_test::intrusive_set::base_int_item< splay_set_base_hook > base_item;
         typedef cds_test::intrusive_set::member_int_item< splay_set_member_hook > member_item;
 

@@ -72,9 +72,9 @@ namespace {
         template <typename Func>
         bool operator()( Set& s, int key, Func f ) const
         {
-            return s.find( key, [&f]( typename Set::value_type& v, int key ) { 
+            return s.find( key, [&f]( typename Set::value_type& v, int key ) {
                 cds_test::container_set::other_item oi( key );
-                f( v, oi ); 
+                f( v, oi );
             });
         }
     };
@@ -413,7 +413,7 @@ namespace {
 
     TYPED_TEST_P( StripedSet, compare )
     {
-        typedef cc::StripedSet< 
+        typedef cc::StripedSet<
             typename TestFixture::container_type,
             cds::opt::hash< typename TestFixture::hash1 >,
             cds::opt::compare< typename TestFixture::cmp >,
@@ -426,7 +426,7 @@ namespace {
 
     TYPED_TEST_P( StripedSet, less )
     {
-        typedef cc::StripedSet< 
+        typedef cc::StripedSet<
             typename TestFixture::container_type,
             cds::opt::hash< typename TestFixture::hash1 >,
             cds::opt::less< typename TestFixture::less >

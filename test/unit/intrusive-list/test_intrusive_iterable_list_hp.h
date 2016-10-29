@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -107,4 +107,4 @@ namespace cds_test {
 
 } // namespace cds_test
 
-#endif // CDSUNIT_LIST_TEST_INTRUSIVE_ITERABLE_LIST_HP_H 
+#endif // CDSUNIT_LIST_TEST_INTRUSIVE_ITERABLE_LIST_HP_H

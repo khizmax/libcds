@@ -417,7 +417,7 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGE_INVOKED
         std::pair<bool, bool>
 #else
-        typename std::enable_if< 
+        typename std::enable_if<
             std::is_same<K,K>::value && !is_iterable_list< ordered_list >::value,
             std::pair<bool, bool>
         >::type
@@ -471,7 +471,7 @@ namespace cds { namespace container {
 #ifdef CDS_DOXYGEN_INVOKED
         std::pair<bool, bool>
 #else
-        typename std::enable_if< 
+        typename std::enable_if<
             std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
             std::pair<bool, bool>
         >::type

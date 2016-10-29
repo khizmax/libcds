@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER
@@ -42,7 +42,7 @@
 namespace {
     struct test_traits
     {
-        typedef boost::container::flat_map< 
+        typedef boost::container::flat_map<
             cds_test::striped_map_fixture::key_type,
             cds_test::striped_map_fixture::value_type,
             cds_test::striped_map_fixture::less
@@ -68,6 +68,6 @@ namespace {
 
 #else // BOOST_VERSION < 104800
 // Skipped; for boost::container::flat_map you should use boost version 1.48 or above
-#endif  // BOOST_VERSION 
+#endif  // BOOST_VERSION
 
 #endif // #ifdef CDSUNIT_ENABLE_BOOST_CONTAINER

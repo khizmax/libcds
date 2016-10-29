@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -903,7 +903,7 @@ namespace cds { namespace intrusive {
         using base_class::array_node_size;
 
         /// Collects tree level statistics into \p stat
-        /** 
+        /**
             The function traverses the set and collects statistics for each level of the tree
             into \p feldman_hashset::level_statistics struct. The element of \p stat[i]
             represents statistics for level \p i, level 0 is head array.

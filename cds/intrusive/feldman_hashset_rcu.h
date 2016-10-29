@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -897,8 +897,8 @@ namespace cds { namespace intrusive {
             The set supports thread-safe iterators: you may iterate over the set in multi-threaded environment
             under explicit RCU lock.
 
-            RCU lock requirement means that inserting or searching is allowed for iterating thread 
-            but you must not erase the items from the set because erasing under RCU lock can lead 
+            RCU lock requirement means that inserting or searching is allowed for iterating thread
+            but you must not erase the items from the set because erasing under RCU lock can lead
             to a deadlock. However, another thread can call \p erase() safely while your thread is iterating.
 
             A typical example is:

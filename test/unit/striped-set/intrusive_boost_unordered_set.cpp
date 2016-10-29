@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_SET_TEST_INTRUSIVE_BOOST_UNORDERED_SET_H
@@ -169,7 +169,7 @@ namespace {
 
     TEST_F( IntrusiveStripedBoostUnorderedSet, memberhook_resize_bucket_threshold_rt )
     {
-        typedef ci::StripedSet< 
+        typedef ci::StripedSet<
             bi::unordered_set< member_item
                 , bi::member_hook< member_item, bi::unordered_set_member_hook<>, &member_item::hMember>
                 , bi::hash< hash1 >
@@ -299,7 +299,7 @@ namespace {
 
     TEST_F( IntrusiveStripedBoostUnorderedSet, refinable_memberhook_resize_bucket_threshold_rt )
     {
-        typedef ci::StripedSet< 
+        typedef ci::StripedSet<
             bi::unordered_set< member_item
                 , bi::member_hook< member_item, bi::unordered_set_member_hook<>, &member_item::hMember>
                 , bi::hash< hash1 >

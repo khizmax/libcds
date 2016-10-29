@@ -369,7 +369,7 @@ namespace cds { namespace container {
         /**
             This function inserts new node with default-constructed value and then it calls
             \p func functor with signature
-            \code 
+            \code
             void func( value_type& data );
             \endcode
 

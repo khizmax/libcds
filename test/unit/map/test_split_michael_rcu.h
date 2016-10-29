@@ -67,11 +67,11 @@ TYPED_TEST_P( SplitListMichaelMap, compare )
     typedef typename TestFixture::value_type value_type;
     typedef typename TestFixture::hash1      hash1;
 
-    typedef cc::SplitListMap< rcu_type, key_type, value_type, 
+    typedef cc::SplitListMap< rcu_type, key_type, value_type,
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::michael_list_tag >
             , cds::opt::hash< hash1 >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::michael_list::make_traits<
                     cds::opt::compare< typename TestFixture::cmp >
                 >::type
@@ -94,7 +94,7 @@ TYPED_TEST_P( SplitListMichaelMap, less )
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::michael_list_tag >
             , cds::opt::hash< hash1 >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::michael_list::make_traits<
                     cds::opt::less< typename TestFixture::less >
                 >::type
@@ -117,7 +117,7 @@ TYPED_TEST_P( SplitListMichaelMap, cmpmix )
         typename cc::split_list::make_traits<
             cc::split_list::ordered_list< cc::michael_list_tag >
             , cds::opt::hash< hash1 >
-            , cc::split_list::ordered_list_traits< 
+            , cc::split_list::ordered_list_traits<
                 typename cc::michael_list::make_traits<
                     cds::opt::less< typename TestFixture::less >
                     , cds::opt::compare< typename TestFixture::cmp >

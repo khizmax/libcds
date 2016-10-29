@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -64,11 +64,11 @@ namespace {
     TEST_F( IntrusiveMichaelList_DHP, base_hook )
     {
         typedef ci::MichaelList< gc_type, base_item,
-            typename ci::michael_list::make_traits< 
+            typename ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::base_hook< cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< base_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;
@@ -183,11 +183,11 @@ namespace {
     TEST_F( IntrusiveMichaelList_DHP, member_hook )
     {
         typedef ci::MichaelList< gc_type, member_item,
-            typename ci::michael_list::make_traits< 
+            typename ci::michael_list::make_traits<
                 ci::opt::hook< ci::michael_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< member_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;

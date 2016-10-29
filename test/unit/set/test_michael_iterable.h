@@ -88,7 +88,7 @@ namespace cds_test {
                 case 0:
                     EXPECT_TRUE( s.insert( i ));
                     EXPECT_FALSE( s.insert( i ));
-                    updResult = s.update( i, []( value_type& val, value_type* old) 
+                    updResult = s.update( i, []( value_type& val, value_type* old)
                         {
                             ASSERT_FALSE( old == nullptr );
                             EXPECT_EQ( val.key(), old->key() );
@@ -99,7 +99,7 @@ namespace cds_test {
                 case 1:
                     EXPECT_TRUE( s.insert( i.key() ));
                     EXPECT_FALSE( s.insert( i.key() ));
-                    updResult = s.update( i.key(), []( value_type& val, value_type* old) 
+                    updResult = s.update( i.key(), []( value_type& val, value_type* old)
                         {
                             ASSERT_FALSE( old == nullptr );
                             EXPECT_EQ( val.key(), old->key() );
@@ -110,7 +110,7 @@ namespace cds_test {
                 case 2:
                     EXPECT_TRUE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
                     EXPECT_FALSE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
-                    EXPECT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
+                    EXPECT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                         {
                             EXPECT_EQ( v.key(), key );
                             EXPECT_EQ( v.nFindCount, 1u );
@@ -119,7 +119,7 @@ namespace cds_test {
                 case 3:
                     EXPECT_TRUE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
                     EXPECT_FALSE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
-                    EXPECT_TRUE( s.find( i.nKey, []( value_type const& v, int key ) 
+                    EXPECT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                         {
                             EXPECT_EQ( v.key(), key );
                             EXPECT_EQ( v.nFindCount, 1u );
@@ -274,16 +274,16 @@ namespace cds_test {
                 EXPECT_TRUE( s.contains( i.nKey ) );
                 EXPECT_TRUE( s.contains( i ) );
                 EXPECT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
-                EXPECT_TRUE( s.find( i.nKey, []( value_type& v, int ) 
-                    { 
+                EXPECT_TRUE( s.find( i.nKey, []( value_type& v, int )
+                    {
                         v.nFindCount = 1;
                     }));
-                EXPECT_TRUE( s.find( i, []( value_type& v, value_type const& ) 
-                    { 
+                EXPECT_TRUE( s.find( i, []( value_type& v, value_type const& )
+                    {
                         EXPECT_EQ( ++v.nFindCount, 2u );
                     }));
-                EXPECT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) 
-                    { 
+                EXPECT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& )
+                    {
                         EXPECT_EQ( ++v.nFindCount, 3u );
                     }));
 

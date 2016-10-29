@@ -194,7 +194,7 @@ namespace cds { namespace intrusive {
     private:
         //@cond
         atomics::atomic<tagged_ptr> m_Head;
-        //@endcond    
+        //@endcond
     };
 
 }} // namespace cds::intrusive

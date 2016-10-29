@@ -68,11 +68,11 @@ namespace {
 
     TEST_F( SplitListIterableMap_DHP, compare )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::iterable_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         cds::opt::compare< cmp >
                     >::type
@@ -86,11 +86,11 @@ namespace {
 
     TEST_F( SplitListIterableMap_DHP, less )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::iterable_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         cds::opt::less< less >
                     >::type
@@ -104,11 +104,11 @@ namespace {
 
     TEST_F( SplitListIterableMap_DHP, cmpmix )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::iterable_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         cds::opt::less< less >
                         , cds::opt::compare< cmp >

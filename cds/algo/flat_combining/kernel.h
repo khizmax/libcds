@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -143,7 +143,7 @@ namespace cds { namespace algo {
             void    onInvokeExclusive()         { ++m_nInvokeExclusive;         }
             void    onWakeupByNotifying()       { ++m_nWakeupByNotifying;       }
             void    onPassiveToCombiner()       { ++m_nPassiveToCombiner;       }
-            
+
             //@endcond
         };
 
@@ -391,7 +391,7 @@ namespace cds { namespace algo {
                 Some operation in flat combining containers should be called in exclusive mode
                 i.e the current thread should become the combiner to process the operation.
                 The typical example is \p empty() function.
-                
+
                 \p %invoke_exclusive() allows do that: the current thread becomes the combiner,
                 invokes \p f exclusively but unlike a typical usage the thread does not process any pending request.
                 Instead, after end of \p f call the current thread wakes up a pending thread if any.

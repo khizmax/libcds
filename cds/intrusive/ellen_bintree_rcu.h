@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSLIB_INTRUSIVE_ELLEN_BINTREE_RCU_H
@@ -917,7 +917,7 @@ namespace cds { namespace intrusive {
             unlinks it from the tree, and returns \p true.
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q
             that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.
@@ -970,7 +970,7 @@ namespace cds { namespace intrusive {
 
             If the item with key equal to \p key is not found the function return \p false.
 
-            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q 
+            Note the \p Traits::less and/or \p Traits::compare predicate should accept a parameter of type \p Q
             that can be not the same as \p value_type.
 
             RCU \p synchronize method can be called. RCU should not be locked.

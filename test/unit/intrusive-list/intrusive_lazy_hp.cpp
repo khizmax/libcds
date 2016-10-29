@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -68,11 +68,11 @@ namespace {
     TEST_F( IntrusiveLazyList_HP, base_hook )
     {
         typedef ci::LazyList< gc_type, base_item,
-            typename ci::lazy_list::make_traits< 
+            typename ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::base_hook< cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< base_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;
@@ -205,11 +205,11 @@ namespace {
     TEST_F( IntrusiveLazyList_HP, member_hook )
     {
         typedef ci::LazyList< gc_type, member_item,
-            typename ci::lazy_list::make_traits< 
+            typename ci::lazy_list::make_traits<
                 ci::opt::hook< ci::lazy_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >>>
                 ,ci::opt::disposer< mock_disposer >
                 ,cds::opt::less< less< member_item >>
-            >::type 
+            >::type
        > list_type;
 
        list_type l;

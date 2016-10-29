@@ -72,7 +72,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, base_cmp )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< gc_type >>>
                 ,ci::opt::compare< cmp<base_item_type>>
@@ -86,7 +86,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, base_less )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< gc_type >>>
                 ,ci::opt::less< less<base_item_type>>
@@ -100,7 +100,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, base_item_counter )
     {
         typedef ci::EllenBinTree< gc_type, key_type, base_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::base_hook< ci::opt::gc< gc_type >>>
                 ,ci::opt::compare< cmp<base_item_type>>
@@ -183,7 +183,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, member_cmp )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember), ci::opt::gc< gc_type >>>
                 ,ci::opt::compare< cmp<member_item_type>>
@@ -197,7 +197,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, member_less )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >>>
                 ,ci::opt::less< less<member_item_type>>
@@ -211,7 +211,7 @@ namespace {
     TEST_F( IntrusiveEllenBinTree_DHP, member_item_counter )
     {
         typedef ci::EllenBinTree< gc_type, key_type, member_item_type,
-            ci::ellen_bintree::make_traits< 
+            ci::ellen_bintree::make_traits<
                 ci::opt::type_traits< generic_traits >
                 ,ci::opt::hook< ci::ellen_bintree::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >>>
                 ,ci::opt::compare< cmp<member_item_type>>

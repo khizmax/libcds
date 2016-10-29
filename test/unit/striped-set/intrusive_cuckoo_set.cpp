@@ -132,7 +132,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -154,7 +154,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 , ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -177,7 +177,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 , ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -200,7 +200,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -224,7 +224,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -248,7 +248,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -273,7 +273,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -297,7 +297,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -311,7 +311,7 @@ namespace {
         typedef base_class::base_int_item< ci::cuckoo::node< ci::cuckoo::list, 2 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            typedef ci::cuckoo::base_hook< 
+            typedef ci::cuckoo::base_hook<
                 ci::cuckoo::probeset_type< item_type::probeset_type >
                 ,ci::cuckoo::store_hash< item_type::hash_array_size >
             > hook;
@@ -334,7 +334,7 @@ namespace {
         typedef base_class::base_int_item< ci::cuckoo::node< ci::cuckoo::vector<4>, 2 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            typedef ci::cuckoo::base_hook< 
+            typedef ci::cuckoo::base_hook<
                 ci::cuckoo::probeset_type< item_type::probeset_type >
                 ,ci::cuckoo::store_hash< item_type::hash_array_size >
             > hook;
@@ -367,7 +367,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -392,7 +392,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -429,7 +429,7 @@ namespace {
         typedef base_class::member_int_item< ci::cuckoo::node< ci::cuckoo::vector<4>, 0 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            
+
             typedef ci::cuckoo::member_hook< offsetof( item_type, hMember ), ci::cuckoo::probeset_type< item_type::member_type::probeset_type >> hook;
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to<item_type> equal_to;
@@ -457,7 +457,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -479,7 +479,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 , ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -502,7 +502,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 , ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -525,7 +525,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -549,7 +549,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -573,7 +573,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -598,7 +598,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -622,7 +622,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -692,7 +692,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -717,7 +717,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -783,7 +783,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -806,7 +806,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 , ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -830,7 +830,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -854,7 +854,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -879,7 +879,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -904,7 +904,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -930,7 +930,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -955,7 +955,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -969,7 +969,7 @@ namespace {
         typedef base_class::base_int_item< ci::cuckoo::node< ci::cuckoo::list, 2 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            typedef ci::cuckoo::base_hook< 
+            typedef ci::cuckoo::base_hook<
                 ci::cuckoo::probeset_type< item_type::probeset_type >
                 ,ci::cuckoo::store_hash< item_type::hash_array_size >
             > hook;
@@ -993,7 +993,7 @@ namespace {
         typedef base_class::base_int_item< ci::cuckoo::node< ci::cuckoo::vector<4>, 2 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            typedef ci::cuckoo::base_hook< 
+            typedef ci::cuckoo::base_hook<
                 ci::cuckoo::probeset_type< item_type::probeset_type >
                 ,ci::cuckoo::store_hash< item_type::hash_array_size >
             > hook;
@@ -1028,7 +1028,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1054,7 +1054,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1092,7 +1092,7 @@ namespace {
         typedef base_class::member_int_item< ci::cuckoo::node< ci::cuckoo::vector<4>, 0 >> item_type;
         struct set_traits: public ci::cuckoo::traits
         {
-            
+
             typedef ci::cuckoo::member_hook< offsetof( item_type, hMember ), ci::cuckoo::probeset_type< item_type::member_type::probeset_type >> hook;
             typedef ci::cuckoo::refinable<> mutex_policy;
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
@@ -1122,7 +1122,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1145,7 +1145,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1169,7 +1169,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1193,7 +1193,7 @@ namespace {
                 ,ci::opt::less< less<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1218,7 +1218,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1243,7 +1243,7 @@ namespace {
                 ,ci::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1269,7 +1269,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1294,7 +1294,7 @@ namespace {
                 ,ci::opt::stat< ci::cuckoo::stat >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1367,7 +1367,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {
@@ -1393,7 +1393,7 @@ namespace {
                 ,cds::opt::compare< cmp<item_type> >
                 ,ci::opt::disposer< mock_disposer >
             >::type
-        > set_type; 
+        > set_type;
 
         std::vector< typename set_type::value_type > data;
         {

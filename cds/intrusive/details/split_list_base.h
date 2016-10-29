@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -269,7 +269,7 @@ namespace cds { namespace intrusive {
             typedef cds::backoff::Default back_off;
 
             /// Padding; default is cache-line padding
-            enum { 
+            enum {
                 padding = cds::opt::cache_line_padding
             };
 

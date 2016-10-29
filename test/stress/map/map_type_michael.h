@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -354,7 +354,7 @@ namespace map {
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_cmp_michaelAlloc,     key_type, value_type, 0 ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_cmp_michaelAlloc,     key_type, value_type, 1 ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHB_less_michaelAlloc,    key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc,    key_type, value_type, 0 ) 
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_SHT_less_michaelAlloc,    key_type, value_type, 0 )
 #else
 #   define CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif

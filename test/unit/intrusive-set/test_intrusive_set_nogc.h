@@ -304,7 +304,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.insert( i ));
                     ASSERT_FALSE( s.insert( i ));
                     EXPECT_EQ( i.nUpdateCount, 0u );
-                    updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg) 
+                    updResult = s.update( i, []( bool bNew, value_type& val, value_type& arg)
                         {
                             EXPECT_FALSE( bNew );
                             EXPECT_EQ( &val, &arg );

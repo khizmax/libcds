@@ -68,11 +68,11 @@ namespace {
 
     TEST_F( SplitListMichaelSet_DHP, compare )
     {
-        typedef cc::SplitListSet< gc_type, int_item, 
+        typedef cc::SplitListSet< gc_type, int_item,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::michael_list_tag >
                 , cds::opt::hash< hash_int >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         cds::opt::compare< cmp >
                     >::type
@@ -86,11 +86,11 @@ namespace {
 
     TEST_F( SplitListMichaelSet_DHP, less )
     {
-        typedef cc::SplitListSet< gc_type, int_item, 
+        typedef cc::SplitListSet< gc_type, int_item,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::michael_list_tag >
                 , cds::opt::hash< hash_int >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         cds::opt::less< less >
                     >::type
@@ -104,11 +104,11 @@ namespace {
 
     TEST_F( SplitListMichaelSet_DHP, cmpmix )
     {
-        typedef cc::SplitListSet< gc_type, int_item, 
+        typedef cc::SplitListSet< gc_type, int_item,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::michael_list_tag >
                 , cds::opt::hash< hash_int >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         cds::opt::less< less >
                         , cds::opt::compare< cmp >

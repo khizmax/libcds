@@ -57,9 +57,9 @@ namespace cds_test {
                 s.nKey = 0;
             }
 
-            int key() const 
-            { 
-                return nKey; 
+            int key() const
+            {
+                return nKey;
             }
         };
 
@@ -99,7 +99,7 @@ namespace cds_test {
             }
         };
 
-        struct cmp 
+        struct cmp
         {
             int operator()( key_type const& lhs, key_type const& rhs ) const
             {
@@ -290,7 +290,7 @@ namespace cds_test {
                 EXPECT_TRUE( l.contains( i.key ));
                 EXPECT_TRUE( l.contains( list_key_type(i.key)));
                 EXPECT_TRUE( l.contains( other_key( i.key ), other_less()));
-                EXPECT_TRUE( l.find( i.key, []( list_value_type& n  ) { 
+                EXPECT_TRUE( l.find( i.key, []( list_value_type& n  ) {
                     n.second.val = n.first.nKey;
                 } ));
                 EXPECT_TRUE( l.find( i.key, []( list_value_type& n ) {
@@ -356,7 +356,7 @@ namespace cds_test {
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // clear test
-            for ( auto& i : arr ) 
+            for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i.key, i.val ));
 
             ASSERT_FALSE( l.empty() );

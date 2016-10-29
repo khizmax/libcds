@@ -52,11 +52,11 @@ namespace {
 
     TEST_F( SplitListLazyMap_NoGC, compare )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::lazy_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         cds::opt::compare< cmp >
                     >::type
@@ -70,11 +70,11 @@ namespace {
 
     TEST_F( SplitListLazyMap_NoGC, less )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::lazy_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         cds::opt::less< less >
                     >::type
@@ -88,11 +88,11 @@ namespace {
 
     TEST_F( SplitListLazyMap_NoGC, cmpmix )
     {
-        typedef cc::SplitListMap< gc_type, key_type, value_type, 
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
             typename cc::split_list::make_traits<
                 cc::split_list::ordered_list< cc::lazy_list_tag >
                 , cds::opt::hash< hash1 >
-                , cc::split_list::ordered_list_traits< 
+                , cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         cds::opt::less< less >
                         , cds::opt::compare< cmp >

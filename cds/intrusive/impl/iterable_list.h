@@ -923,7 +923,7 @@ namespace cds { namespace intrusive {
 
                     marked_data_ptr pFound( pos.pFound );
                     if ( cds_likely( pos.pCur->data.compare_exchange_strong( pFound, marked_data_ptr( &val ),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ))) 
+                            memory_model::memory_order_release, atomics::memory_order_relaxed )))
                     {
                         if ( pos.pFound != &val ) {
                             retire_data( pos.pFound );
