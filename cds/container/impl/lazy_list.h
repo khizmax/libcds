@@ -273,7 +273,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            iterator it( head() );
+            iterator it( head());
             ++it        ;   // skip dummy head node
             return it;
         }
@@ -287,13 +287,13 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( tail() );
+            return iterator( tail());
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it        ;   // skip dummy head node
             return it;
         }
@@ -301,7 +301,7 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it        ;   // skip dummy head node
             return it;
         }
@@ -309,13 +309,13 @@ namespace cds { namespace container {
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator end() const
         {
-            return const_iterator( tail() );
+            return const_iterator( tail());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
-            return const_iterator( tail() );
+            return const_iterator( tail());
         }
     //@}
 
@@ -532,7 +532,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            return extract_at( head(), key, intrusive_key_comparator() );
+            return extract_at( head(), key, intrusive_key_comparator());
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -548,7 +548,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks whether the list contains \p key
@@ -559,7 +559,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( head(), key, intrusive_key_comparator() );
+            return find_at( head(), key, intrusive_key_comparator());
         }
         //@cond
         template <typename Q>
@@ -580,7 +580,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
         //@cond
         template <typename Q, typename Less>
@@ -675,7 +675,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            return get_at( head(), key, intrusive_key_comparator() );
+            return get_at( head(), key, intrusive_key_comparator());
         }
 
         /// Finds the key \p key and return the item found
@@ -691,7 +691,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks whether the list is empty
@@ -809,7 +809,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( std::forward<Q>( key )));
 
-            if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ f( node_to_value(node) ); } )) {
+            if ( base_class::insert_at( &refHead, *pNode, [&f](node_type& node){ f( node_to_value(node)); } )) {
                 pNode.release();
                 return true;
             }
@@ -819,7 +819,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
         {
-            return base_class::erase_at( &refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node) ); } );
+            return base_class::erase_at( &refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node)); } );
         }
 
         template <typename Q, typename Compare>

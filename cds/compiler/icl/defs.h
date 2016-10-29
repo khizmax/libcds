@@ -121,9 +121,9 @@
 // Alignment macro
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
-#   define CDS_TYPE_ALIGNMENT(n)     __declspec( align(n) )
-#   define CDS_DATA_ALIGNMENT(n)     __declspec( align(n) )
-#   define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n) )
+#   define CDS_TYPE_ALIGNMENT(n)     __declspec( align(n))
+#   define CDS_DATA_ALIGNMENT(n)     __declspec( align(n))
+#   define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n))
 #else
 #   define CDS_TYPE_ALIGNMENT(n)   __attribute__ ((aligned (n)))
 #   define CDS_CLASS_ALIGNMENT(n)  __attribute__ ((aligned (n)))

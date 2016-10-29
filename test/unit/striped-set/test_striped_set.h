@@ -133,7 +133,7 @@ namespace {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -144,20 +144,20 @@ namespace {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
+                ASSERT_FALSE( s.contains( i.nKey ));
                 ASSERT_FALSE( s.contains( i ));
                 ASSERT_FALSE( (call_contains_with< c_hasFindWith, Set >()( s, i.key())));
-                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ) );
-                ASSERT_FALSE( s.find( i, []( value_type&, value_type const& ) {} ) );
+                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
+                ASSERT_FALSE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_FALSE( (call_find_with< c_hasFindWith, Set >()(s, i.key(), []( value_type&, other_item const& ) {} )));
 
                 std::pair<bool, bool> updResult;
@@ -172,19 +172,19 @@ namespace {
 
                 switch ( idx % 8 ) {
                 case 0:
-                    ASSERT_TRUE( s.insert( i ) );
-                    ASSERT_FALSE( s.insert( i ) );
+                    ASSERT_TRUE( s.insert( i ));
+                    ASSERT_FALSE( s.insert( i ));
                     updResult = s.update( i, []( bool bNew, value_type& val, value_type const& arg )
                     {
                         EXPECT_FALSE( bNew );
-                        EXPECT_EQ( val.key(), arg.key() );
+                        EXPECT_EQ( val.key(), arg.key());
                     }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    ASSERT_TRUE( s.insert( i.key() ) );
-                    ASSERT_FALSE( s.insert( i.key() ) );
+                    ASSERT_TRUE( s.insert( i.key()) );
+                    ASSERT_FALSE( s.insert( i.key()) );
                     updResult = s.update( i.key(), []( bool bNew, value_type& val, int arg )
                     {
                         EXPECT_FALSE( bNew );
@@ -194,28 +194,28 @@ namespace {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 2:
-                    ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ) );
-                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ) );
+                    ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
+                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                     {
                         EXPECT_EQ( v.key(), key );
                         EXPECT_EQ( v.nFindCount, 1u );
-                    } ) );
+                    } ));
                     break;
                 case 3:
-                    ASSERT_TRUE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ) );
-                    ASSERT_FALSE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ) );
+                    ASSERT_TRUE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
+                    ASSERT_FALSE( s.insert( i.key(), []( value_type& v ) { ++v.nFindCount; } ));
                     ASSERT_TRUE( s.find( i.nKey, []( value_type const& v, int key )
                     {
                         EXPECT_EQ( v.key(), key );
                         EXPECT_EQ( v.nFindCount, 1u );
-                    } ) );
+                    } ));
                     break;
                 case 4:
                     updResult = s.update( i, []( bool bNew, value_type& v, value_type const& arg )
                     {
                         EXPECT_TRUE( bNew );
-                        EXPECT_EQ( v.key(), arg.key() );
+                        EXPECT_EQ( v.key(), arg.key());
                         ++v.nUpdateNewCount;
                     } );
                     EXPECT_TRUE( updResult.first );
@@ -224,7 +224,7 @@ namespace {
                     updResult = s.update( i, []( bool bNew, value_type& v, value_type const& arg )
                     {
                         EXPECT_FALSE( bNew );
-                        EXPECT_EQ( v.key(), arg.key() );
+                        EXPECT_EQ( v.key(), arg.key());
                         ++v.nUpdateNewCount;
                     }, false );
                     EXPECT_TRUE( updResult.first );
@@ -234,7 +234,7 @@ namespace {
                     {
                         EXPECT_EQ( v.key(), key );
                         EXPECT_EQ( v.nUpdateNewCount, 2u );
-                    } ) );
+                    } ));
                     break;
                 case 5:
                     updResult = s.update( i.key(), []( bool bNew, value_type& v, int arg )
@@ -257,52 +257,52 @@ namespace {
 
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                     {
-                        EXPECT_EQ( v.key(), arg.key() );
+                        EXPECT_EQ( v.key(), arg.key());
                         EXPECT_EQ( v.nUpdateNewCount, 2u );
-                    } ) );
+                    } ));
                     break;
                 case 6:
-                    ASSERT_TRUE( s.emplace( i.key() ) );
+                    ASSERT_TRUE( s.emplace( i.key()) );
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                     {
-                        EXPECT_EQ( v.key(), arg.key() );
+                        EXPECT_EQ( v.key(), arg.key());
                         EXPECT_EQ( v.nVal, arg.nVal );
-                    } ) );
+                    } ));
                     break;
                 case 7:
                     str = "Hello!";
-                    ASSERT_TRUE( s.emplace( i.key(), std::move( str ) ) );
-                    EXPECT_TRUE( str.empty() );
+                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )) );
+                    EXPECT_TRUE( str.empty());
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                     {
-                        EXPECT_EQ( v.key(), arg.key() );
+                        EXPECT_EQ( v.key(), arg.key());
                         EXPECT_EQ( v.nVal, arg.nVal );
-                        EXPECT_EQ( v.strVal, std::string( "Hello!" ) );
-                    } ) );
+                        EXPECT_EQ( v.strVal, std::string( "Hello!" ));
+                    } ));
                     break;
                 default:
                     // forgot anything?..
                     ASSERT_TRUE( false );
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( (call_contains_with< c_hasFindWith, Set>()( s, i.key() )));
-                ASSERT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ) );
-                ASSERT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( (call_contains_with< c_hasFindWith, Set>()( s, i.key())));
+                ASSERT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ));
+                ASSERT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_TRUE( (call_find_with< c_hasFindWith, Set >()(s, i.key(), []( value_type&, other_item const& ) {})));
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
                 ASSERT_TRUE( (call_contains_with<c_hasFindWith, Set>()(s, i.key())));
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int )
                 {
@@ -319,12 +319,12 @@ namespace {
                 int nKey = i.key() - 1;
                 switch ( idx % 6 ) {
                 case 0:
-                    ASSERT_TRUE( s.erase( i.key() ) );
-                    ASSERT_FALSE( s.erase( i.key() ) );
+                    ASSERT_TRUE( s.erase( i.key()) );
+                    ASSERT_FALSE( s.erase( i.key()) );
                     break;
                 case 1:
-                    ASSERT_TRUE( s.erase( i ) );
-                    ASSERT_FALSE( s.erase( i ) );
+                    ASSERT_TRUE( s.erase( i ));
+                    ASSERT_FALSE( s.erase( i ));
                     break;
                 case 2:
                     ASSERT_TRUE( (call_erase_with<c_hasEraseWith, Set>()( s, i.key())));
@@ -341,21 +341,21 @@ namespace {
                     ASSERT_FALSE( s.erase( i.key(), [&nKey]( value_type const& v )
                     {
                         nKey = v.key();
-                    } ) );
+                    } ));
                     EXPECT_EQ( i.key(), nKey + 1 );
                     break;
                 case 4:
                     ASSERT_TRUE( s.erase( i, [&nKey]( value_type const& v )
                     {
                         nKey = v.key();
-                    } ) );
+                    } ));
                     EXPECT_EQ( i.key(), nKey );
 
                     nKey = i.key() - 1;
                     ASSERT_FALSE( s.erase( i, [&nKey]( value_type const& v )
                     {
                         nKey = v.key();
-                    } ) );
+                    } ));
                     EXPECT_EQ( i.key(), nKey + 1 );
                     break;
                 case 5:
@@ -374,28 +374,28 @@ namespace {
                     break;
                 }
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
-                ASSERT_FALSE( s.contains( i ) );
+                ASSERT_FALSE( s.contains( i.nKey ));
+                ASSERT_FALSE( s.contains( i ));
                 ASSERT_FALSE( (call_contains_with<c_hasFindWith, Set>()( s, i.key())));
-                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ) );
+                ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_FALSE( (call_find_with<c_hasFindWith, Set>()( s, i.key(), []( value_type&, other_item const& ) {})));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
         }
 
@@ -543,7 +543,7 @@ namespace {
             cds::opt::copy_policy< cc::striped_set::move_item >
         > set_type;
 
-        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( s );
     }
 
@@ -660,7 +660,7 @@ namespace {
             cds::opt::resizing_policy< cc::striped_set::load_factor_resizing<0>>
         > set_type;
 
-        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( s );
     }
 
@@ -720,7 +720,7 @@ namespace {
             cds::opt::copy_policy< cc::striped_set::move_item >
         > set_type;
 
-        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        set_type s( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( s );
     }
 

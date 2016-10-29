@@ -84,7 +84,7 @@ namespace cds { namespace sync {
             {
                 ++m_nLockAllocation;
                 int nDiff = static_cast<int>( m_nLockAllocation.get() - m_nLockDeallocation.get());
-                if ( nDiff > 0 && m_nMaxAllocated.get() < static_cast<typename event_counter::value_type>( nDiff ) )
+                if ( nDiff > 0 && m_nMaxAllocated.get() < static_cast<typename event_counter::value_type>( nDiff ))
                     m_nMaxAllocated = static_cast<typename event_counter::value_type>( nDiff );
             }
             void onLockDeallocation()   { ++m_nLockDeallocation;}
@@ -195,7 +195,7 @@ namespace cds { namespace sync {
             // try lock spin and increment reference counter
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
+                atomics::memory_order_acquire, atomics::memory_order_relaxed ))
             {
                 back_off bkoff;
                 do {
@@ -237,7 +237,7 @@ namespace cds { namespace sync {
             // try lock spin
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
+                atomics::memory_order_acquire, atomics::memory_order_relaxed ))
             {
                 back_off bkoff;
                 do {

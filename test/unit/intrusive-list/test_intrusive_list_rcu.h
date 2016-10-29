@@ -57,7 +57,7 @@ namespace cds_test {
             typedef typename List::raw_ptr    raw_ptr;
             typedef typename List::rcu_lock   rcu_lock;
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // get() test
@@ -81,7 +81,7 @@ namespace cds_test {
                 }
                 {
                     rcu_lock lock;
-                    raw_ptr rp = l.get_with( other_item( i.nKey ), other_less() );
+                    raw_ptr rp = l.get_with( other_item( i.nKey ), other_less());
                     ASSERT_FALSE( !rp );
                     EXPECT_EQ( rp->nKey, i.nKey );
                     EXPECT_EQ( rp->nVal, i.nVal );
@@ -109,7 +109,7 @@ namespace cds_test {
 
                         gp = l.extract( i );
                         EXPECT_TRUE( !gp );
-                        gp = l.extract_with( other_item( i ), other_less() );
+                        gp = l.extract_with( other_item( i ), other_less());
                         EXPECT_TRUE( !gp );
                     }
                 }
@@ -119,24 +119,24 @@ namespace cds_test {
                     if ( i & 1 )
                         gp = l.extract( i );
                     else
-                        gp = l.extract_with( other_item( i ), other_less() );
+                        gp = l.extract_with( other_item( i ), other_less());
                     ASSERT_FALSE( !gp );
                     EXPECT_EQ( gp->nKey, i );
 
                     gp = l.extract( i );
                     EXPECT_TRUE( !gp );
-                    gp = l.extract_with( other_item( i ), other_less() );
+                    gp = l.extract_with( other_item( i ), other_less());
                     EXPECT_TRUE( !gp );
                 }
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             List::gc::force_dispose();
             for ( auto const& i : arr ) {
                 EXPECT_EQ( i.s.nDisposeCount, 1 );
-                EXPECT_FALSE( l.contains( i ) );
+                EXPECT_FALSE( l.contains( i ));
             }
         }
     };

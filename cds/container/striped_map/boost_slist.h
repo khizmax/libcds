@@ -69,7 +69,7 @@ namespace cds { namespace container {
 
             void operator()( list_type& list, iterator itInsert, iterator itWhat )
             {
-                pair_type newVal( itWhat->first, typename pair_type::mapped_type() );
+                pair_type newVal( itWhat->first, typename pair_type::mapped_type());
                 itInsert = list.insert_after( itInsert, newVal );
                 std::swap( itInsert->second, itWhat->second );
             }
@@ -85,7 +85,7 @@ namespace cds { namespace container {
 
             void operator()( list_type& list, iterator itInsert, iterator itWhat )
             {
-                list.insert_after( itInsert, std::move( *itWhat ) );
+                list.insert_after( itInsert, std::move( *itWhat ));
             }
         };
     } // namespace striped_set
@@ -178,7 +178,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             {
                 std::pair< iterator, bool > pos = find_prev_item( key );
                 if ( !pos.second ) {
-                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type() ));
+                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type()));
                     f( *pos.first );
                     return true;
                 }
@@ -207,13 +207,13 @@ namespace cds { namespace intrusive { namespace striped_set {
                     if ( !bAllowInsert )
                         return std::make_pair( false, false );
 
-                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type() ));
+                    pos.first = m_List.insert_after( pos.first, value_type( key_type( key ), mapped_type()));
                     func( true, *pos.first );
                     return std::make_pair( true, true );
                 }
                 else {
                     // already exists
-                    func( false, *(++pos.first) );
+                    func( false, *(++pos.first));
                     return std::make_pair( true, false );
                 }
             }
@@ -227,7 +227,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                f( *(++it) );
+                f( *(++it));
                 m_List.erase_after( pos.first );
 
                 return true;
@@ -242,7 +242,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                f( *(++it) );
+                f( *(++it));
                 m_List.erase_after( pos.first );
 
                 return true;

@@ -409,7 +409,7 @@ namespace cds { namespace intrusive {
                 for ( bucket_iterator it = pCur->begin(); it != itEnd; it = itNext ) {
                     itNext = it;
                     ++itNext;
-                    bucket( m_Hash( *it ) )->move_item( *pCur, it );
+                    bucket( m_Hash( *it ))->move_item( *pCur, it );
                 }
                 pCur->clear();
             }
@@ -425,7 +425,7 @@ namespace cds { namespace intrusive {
             size_t volatile& refBucketMask = m_nBucketMask;
 
             scoped_resize_lock al( m_MutexPolicy );
-            if ( al.success() ) {
+            if ( al.success()) {
                 if ( nOldCapacity != refBucketMask + 1 ) {
                     // someone resized already
                     return;
@@ -486,7 +486,7 @@ namespace cds { namespace intrusive {
         : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
         , m_MutexPolicy( m_nBucketMask + 1 )
-        , m_ResizingPolicy( std::forward<resizing_policy>( resizingPolicy ) )
+        , m_ResizingPolicy( std::forward<resizing_policy>( resizingPolicy ))
         {
             alloc_bucket_table( m_nBucketMask + 1 );
         }

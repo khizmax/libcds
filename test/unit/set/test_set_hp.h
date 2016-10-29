@@ -46,7 +46,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             base_class::test( s );
@@ -59,15 +59,15 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // iterator test
@@ -89,7 +89,7 @@ namespace cds_test {
                 ASSERT_TRUE( !gp );
                 switch ( idx % 3 ) {
                 case 0:
-                    gp = s.get( i.key() );
+                    gp = s.get( i.key());
                     ASSERT_FALSE( !gp );
                     break;
                 case 1:
@@ -97,10 +97,10 @@ namespace cds_test {
                     ASSERT_FALSE( !gp );
                     break;
                 case 2:
-                    gp = s.get_with( other_item( i.key() ), other_less() );
+                    gp = s.get_with( other_item( i.key()), other_less());
                     ASSERT_FALSE( !gp );
                 }
-                EXPECT_EQ( gp->key(), i.key() );
+                EXPECT_EQ( gp->key(), i.key());
                 EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 3 ));
                 gp->nFindCount *= 2;
 
@@ -114,7 +114,7 @@ namespace cds_test {
                 ASSERT_TRUE( !gp );
                 switch ( idx % 3 ) {
                 case 0:
-                    gp = s.extract( i.key() );
+                    gp = s.extract( i.key());
                     ASSERT_FALSE( !gp );
                     break;
                 case 1:
@@ -122,28 +122,28 @@ namespace cds_test {
                     ASSERT_FALSE( !gp );
                     break;
                 case 2:
-                    gp = s.extract_with( other_item( i.key() ), other_less() );
+                    gp = s.extract_with( other_item( i.key()), other_less());
                     ASSERT_FALSE( !gp );
                     break;
                 }
-                EXPECT_EQ( gp->key(), i.key() );
+                EXPECT_EQ( gp->key(), i.key());
                 EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 6 ));
 
                 switch ( idx % 3 ) {
                 case 0:
-                    gp = s.extract( i.key() );
+                    gp = s.extract( i.key());
                     break;
                 case 1:
                     gp = s.extract( i );
                     break;
                 case 2:
-                    gp = s.extract_with( other_item( i.key() ), other_less() );
+                    gp = s.extract_with( other_item( i.key()), other_less());
                     break;
                 }
                 ASSERT_TRUE( !gp );
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
         }
 

@@ -43,7 +43,7 @@ namespace {
     {
         bool operator()( Map& m, int key ) const
         {
-            return m.contains( cds_test::striped_map_fixture::other_item( key ), cds_test::striped_map_fixture::other_less() );
+            return m.contains( cds_test::striped_map_fixture::other_item( key ), cds_test::striped_map_fixture::other_less());
         }
     };
 
@@ -81,7 +81,7 @@ namespace {
     {
         bool operator()( Map& m, int key ) const
         {
-            return m.erase_with( cds_test::striped_map_fixture::other_item( key ), cds_test::striped_map_fixture::other_less() );
+            return m.erase_with( cds_test::striped_map_fixture::other_item( key ), cds_test::striped_map_fixture::other_less());
         }
 
         template <typename Func>
@@ -157,7 +157,7 @@ namespace {
 
                 ASSERT_FALSE( m.contains( i.nKey ));
                 ASSERT_FALSE( m.contains( i ));
-                ASSERT_FALSE(( call_contains_with<c_hasFindWith, Map>()( m, i.nKey ) ));
+                ASSERT_FALSE(( call_contains_with<c_hasFindWith, Map>()( m, i.nKey )));
                 ASSERT_FALSE( m.find( i, []( map_pair const& ) {
                     ASSERT_TRUE( false );
                 } ));
@@ -334,7 +334,7 @@ namespace {
 
                 ASSERT_TRUE( m.contains( i.nKey ));
                 ASSERT_TRUE( m.contains( i ));
-                ASSERT_TRUE(( call_contains_with<c_hasFindWith, Map>()( m, i.nKey ) ));
+                ASSERT_TRUE(( call_contains_with<c_hasFindWith, Map>()( m, i.nKey )));
                 ASSERT_TRUE( m.find( i, []( map_pair const& v ) {
                     EXPECT_EQ( v.first.nKey, v.second.nVal );
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
@@ -348,17 +348,17 @@ namespace {
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                 } )));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 ASSERT_TRUE( m.contains( i.nKey ));
-                ASSERT_TRUE( m.contains( val.strVal ) );
+                ASSERT_TRUE( m.contains( val.strVal ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE(( call_contains_with<c_hasFindWith, Map>()( m, i.nKey )));
                 ASSERT_TRUE( m.find( i, []( map_pair const& v ) {
@@ -444,19 +444,19 @@ namespace {
                     EXPECT_TRUE( false );
                 } )));
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // clear
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i ));
 
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
         }
     };
@@ -548,7 +548,7 @@ namespace {
             cds::opt::resizing_policy< cc::striped_set::load_factor_resizing<0>>
         > map_type;
 
-        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( m );
     }
 
@@ -604,7 +604,7 @@ namespace {
             cds::opt::copy_policy< cc::striped_set::move_item >
         > map_type;
 
-        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( m );
     }
 
@@ -721,7 +721,7 @@ namespace {
             cds::opt::resizing_policy< cc::striped_set::load_factor_resizing<0>>
         > map_type;
 
-        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( m );
     }
 
@@ -781,7 +781,7 @@ namespace {
             cds::opt::copy_policy< cc::striped_set::move_item >
         > map_type;
 
-        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ) );
+        map_type m( 30, cc::striped_set::load_factor_resizing<0>( 8 ));
         this->test( m );
     }
 

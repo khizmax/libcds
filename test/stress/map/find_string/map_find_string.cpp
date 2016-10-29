@@ -140,7 +140,7 @@ namespace map {
         hasher h;
         for ( size_t i = 0; i < s_arrString.size(); ++i ) {
             hash_type hash = h( s_arrString.at( i ));
-            if ( mapHash.insert( std::make_pair( hash, i ) ).second ) {
+            if ( mapHash.insert( std::make_pair( hash, i )).second ) {
                 if ( ++nDiffHash >= nSize )
                     break;
                 bool bExists = rand( 100 ) <= s_nPercentExists;
@@ -195,5 +195,5 @@ namespace map {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors()) );
 } // namespace map

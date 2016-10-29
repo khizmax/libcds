@@ -67,7 +67,7 @@ namespace pqueue {
                 typedef typename PQueue::value_type value_type;
 
                 for ( auto it = m_arr.begin(); it != m_arr.end(); ++it ) {
-                    if ( !m_Queue.push( value_type( *it ) ))
+                    if ( !m_Queue.push( value_type( *it )))
                         ++m_nPushError;
                 }
             }
@@ -77,7 +77,7 @@ namespace pqueue {
                 m_arr.reserve( nEnd - nStart );
                 for ( size_t i = nStart; i < nEnd; ++i )
                     m_arr.push_back( i );
-                shuffle( m_arr.begin(), m_arr.end() );
+                shuffle( m_arr.begin(), m_arr.end());
             }
 
         public:
@@ -179,7 +179,7 @@ namespace pqueue {
     { \
         typedef pqueue::Types<pqueue::simple_value>::pqueue_t pqueue_type; \
         std::unique_ptr< pqueue_type > pq( new pqueue_type ); \
-        test( *pq.get() ); \
+        test( *pq.get()); \
     }
     //CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_static_less )
     //CDSSTRESS_MSPriorityQueue( pqueue_push, MSPriorityQueue_static_less_stat )

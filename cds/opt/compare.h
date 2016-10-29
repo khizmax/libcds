@@ -93,7 +93,7 @@ namespace cds { namespace opt {
             /// Operator that compares two value of type \p T
             int operator()(T const& v1, T const& v2)
             {
-                if ( std::less<T>()( v1, v2 ) )
+                if ( std::less<T>()( v1, v2 ))
                     return -1;
                 if ( std::less<T>()( v2, v1 ))
                     return 1;
@@ -186,9 +186,9 @@ namespace cds { namespace opt {
             int operator ()( T const& t, Q const& q ) const
             {
                 less_functor f;
-                if ( f( t, q ) )
+                if ( f( t, q ))
                     return -1;
-                if ( f( q, t ) )
+                if ( f( q, t ))
                     return 1;
                 return 0;
             }

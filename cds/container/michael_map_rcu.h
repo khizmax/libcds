@@ -61,7 +61,7 @@ namespace cds { namespace container {
         \p key_type and an argument of template type \p K must meet the following requirements:
         - \p key_type should be constructible from value of type \p K;
         - the hash functor should be able to calculate correct hash value from argument \p key of type \p K:
-            <tt> hash( key_type(key) ) == hash( key ) </tt>
+            <tt> hash( key_type(key)) == hash( key ) </tt>
         - values of type \p key_type and \p K should be comparable
 
         <b>How to use</b>
@@ -283,7 +283,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a map
@@ -294,7 +294,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
 
         /// Returns a forward const iterator addressing the first element in a map
@@ -349,7 +349,7 @@ namespace cds { namespace container {
             clear();
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node with key and default value
@@ -847,11 +847,11 @@ namespace cds { namespace container {
         //@cond
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count());
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
 
         template <typename Stat>

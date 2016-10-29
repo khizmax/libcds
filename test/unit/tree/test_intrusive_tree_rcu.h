@@ -56,7 +56,7 @@ namespace cds_test {
 
             base_class::test( t );
 
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0 );
 
             typedef typename Tree::value_type value_type;
@@ -67,10 +67,10 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             typename Tree::exempt_ptr xp;
 
@@ -82,9 +82,9 @@ namespace cds_test {
                     rcu_lock l;
                     value_type * p = t.get( i );
                     ASSERT_TRUE( p == nullptr );
-                    p = t.get( i.key() );
+                    p = t.get( i.key());
                     ASSERT_TRUE( !p );
-                    p = t.get_with( other_item( i.key() ), other_less() );
+                    p = t.get_with( other_item( i.key()), other_less());
                     ASSERT_TRUE( p == nullptr );
                 }
 
@@ -105,7 +105,7 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( t.insert( i ) );
+                ASSERT_TRUE( t.insert( i ));
             }
 
             // get/extract
@@ -122,12 +122,12 @@ namespace cds_test {
                     ++p->nFindCount;
                     EXPECT_EQ( i.nFindCount, 1u );
 
-                    p = t.get( i.key() );
+                    p = t.get( i.key());
                     ASSERT_FALSE( !p );
                     ++p->nFindCount;
                     EXPECT_EQ( i.nFindCount, 2u );
 
-                    p = t.get_with( other_item( i.key() ), other_less() );
+                    p = t.get_with( other_item( i.key()), other_less());
                     ASSERT_FALSE( !p );
                     ++p->nFindCount;
                     EXPECT_EQ( i.nFindCount, 3u );
@@ -142,7 +142,7 @@ namespace cds_test {
                     xp = t.extract( i );
                     break;
                 case 2:
-                    xp = t.extract_with( other_item( i.key() ), other_less() );
+                    xp = t.extract_with( other_item( i.key()), other_less());
                     break;
                 }
                 ASSERT_FALSE( !xp );
@@ -151,13 +151,13 @@ namespace cds_test {
 
                 xp = t.extract( i );
                 ASSERT_TRUE( !xp );
-                xp = t.extract( i.key() );
+                xp = t.extract( i.key());
                 ASSERT_TRUE( !xp );
-                xp = t.extract_with( other_item( i.key() ), other_less() );
+                xp = t.extract_with( other_item( i.key()), other_less());
                 ASSERT_TRUE( !xp );
             }
 
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0u );
 
             // Force retiring cycle
@@ -170,12 +170,12 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( t.insert( i ) );
+                ASSERT_TRUE( t.insert( i ));
             }
 
             size_t nCount = 0;
             int nKey = -1;
-            while ( !t.empty() ) {
+            while ( !t.empty()) {
                 xp = t.extract_min();
                 ASSERT_FALSE( !xp );
                 EXPECT_EQ( xp->key(), nKey + 1 );
@@ -183,9 +183,9 @@ namespace cds_test {
                 nKey = xp->key();
             }
             xp.release();
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0u );
-            EXPECT_EQ( nCount, data.size() );
+            EXPECT_EQ( nCount, data.size());
 
             // Force retiring cycle
             Tree::gc::force_dispose();
@@ -197,12 +197,12 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( t.insert( i ) );
+                ASSERT_TRUE( t.insert( i ));
             }
 
             nCount = 0;
             nKey = static_cast<int>( data.size());
-            while ( !t.empty() ) {
+            while ( !t.empty()) {
                 xp = t.extract_max();
                 ASSERT_FALSE( !xp );
                 EXPECT_EQ( xp->key(), nKey - 1 );
@@ -210,9 +210,9 @@ namespace cds_test {
                 nKey = xp->key();
             }
             xp.release();
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0u );
-            EXPECT_EQ( nCount, data.size() );
+            EXPECT_EQ( nCount, data.size());
 
             // Force retiring cycle
             Tree::gc::force_dispose();

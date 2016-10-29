@@ -96,7 +96,7 @@ namespace cds { namespace gc {
                 assert( m_p );
                 m_funcFree( m_p );
 
-                CDS_STRICT_DO( clear() );
+                CDS_STRICT_DO( clear());
             }
 
             /// Checks if the retired pointer is not empty

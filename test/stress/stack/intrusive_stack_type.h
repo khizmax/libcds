@@ -74,7 +74,7 @@ namespace istack {
             T * pop()
             {
                 unique_lock l( m_Lock );
-                if ( !m_Impl.empty() ) {
+                if ( !m_Impl.empty()) {
                      T * v = m_Impl.top();
                     m_Impl.pop();
                     return v;

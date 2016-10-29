@@ -287,7 +287,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            iterator it( head() );
+            iterator it( head());
             ++it ;  // skip dummy head
             return it;
         }
@@ -308,14 +308,14 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it ;  // skip dummy head
             return it;
         }
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it ;  // skip dummy head
             return it;
         }
@@ -475,7 +475,7 @@ namespace cds { namespace container {
         template <typename Q>
         iterator contains( Q const& key )
         {
-            return node_to_iterator( find_at( head(), key, intrusive_key_comparator() ) );
+            return node_to_iterator( find_at( head(), key, intrusive_key_comparator()) );
         }
         //@cond
         template <typename Q>
@@ -496,7 +496,7 @@ namespace cds { namespace container {
         typename std::enable_if<Sort, iterator>::type contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type() ) );
+            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type()) );
         }
         //@cond
         template <typename Q, typename Less, bool Sort = c_bSort>
@@ -516,7 +516,7 @@ namespace cds { namespace container {
         typename std::enable_if<!Sort, iterator>::type contains( Q const& key, Equal equal )
         {
             CDS_UNUSED( equal );
-            return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type() ) );
+            return node_to_iterator( find_at( head(), key, typename maker::template equal_to_wrapper<Equal>::type()) );
         }
         //@cond
         template <typename Q, typename Equal, bool Sort = c_bSort>

@@ -180,7 +180,7 @@ namespace {
         template <class Queue>
         void analyze( Queue& q  )
         {
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
 
             std::vector< size_t > arrPushCount;
             arrPushCount.resize( s_nThreadCount, 0 );

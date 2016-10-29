@@ -114,7 +114,7 @@ namespace cds { namespace container { namespace details {
 
                 size_t operator()(node_type const& v ) const
                 {
-                    return base_class::operator()( key_accessor()( v.m_Value ) );
+                    return base_class::operator()( key_accessor()( v.m_Value ));
                 }
                 template <typename Q>
                 size_t operator()( Q const& k ) const

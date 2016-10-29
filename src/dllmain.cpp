@@ -92,7 +92,7 @@ static void discover_topology()
                 if (buffer)
                     free(buffer);
 
-                buffer = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION>( ::malloc( returnLength ) );
+                buffer = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION>( ::malloc( returnLength ));
 
                 if ( buffer == nullptr ) {
                     // allocation failed
@@ -149,7 +149,7 @@ static void discover_topology()
     // Build relationship processor -> cell
     /*
     s_arrProcessorCellRelationship = new unsigned int[s_nProcessorCount];
-    memset( s_arrProcessorCellRelationship, 0, s_nProcessorCount * sizeof(s_arrProcessorCellRelationship[0]) );
+    memset( s_arrProcessorCellRelationship, 0, s_nProcessorCount * sizeof(s_arrProcessorCellRelationship[0]));
     byteOffset = 0;
     ptr = buffer;
     while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength)
@@ -159,7 +159,7 @@ static void discover_topology()
         case RelationNumaNode:
             // Non-NUMA systems report a single record of this type.
             for ( unsigned int i = 0; i < sizeof(ptr->ProcessorMask) * 8; ++i ) {
-                if ( ptr->ProcessorMask & (1 << i) ) {
+                if ( ptr->ProcessorMask & (1 << i)) {
                     assert( i < s_nProcessorCount );
                     assert( ptr->NumaNode.NodeNumber < s_nProcessorGroupCount );
                     if ( i < s_nProcessorCount )

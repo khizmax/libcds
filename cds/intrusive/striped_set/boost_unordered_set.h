@@ -93,7 +93,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
             public:
                 adapted_container()
-                    : m_Set( typename container_type::bucket_traits( m_Buckets.buffer(), m_Buckets.capacity() ) )
+                    : m_Set( typename container_type::bucket_traits( m_Buckets.buffer(), m_Buckets.capacity()) )
                 {}
 
                 container_type& base_container()
@@ -120,7 +120,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     }
                     else {
                         auto it = m_Set.find( val );
-                        if ( it == m_Set.end() )
+                        if ( it == m_Set.end())
                             return std::make_pair( false, false );
                         f( false, *it, val );
                         return std::make_pair( true, false );
@@ -129,7 +129,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = m_Set.find( value_type( val ) );
+                    iterator it = m_Set.find( value_type( val ));
                     if ( it == m_Set.end() || &(*it) != &val )
                         return false;
                     m_Set.erase( it );
@@ -139,8 +139,8 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q, typename Func>
                 value_type * erase( Q const& key, Func f )
                 {
-                    iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal() );
-                    if ( it == m_Set.end() )
+                    iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal());
+                    if ( it == m_Set.end())
                         return nullptr;
                     value_type& val = *it;
                     f( val );
@@ -151,8 +151,8 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q, typename Less, typename Func>
                 value_type * erase( Q const& key, Less pred, Func f )
                 {
-                    iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>( pred ) );
-                    if ( it == m_Set.end() )
+                    iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>( pred ));
+                    if ( it == m_Set.end())
                         return nullptr;
                     value_type& val = *it;
                     f( val );
@@ -163,8 +163,8 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q, typename Func>
                 bool find( Q& key, Func f )
                 {
-                    iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal() );
-                    if ( it == m_Set.end() )
+                    iterator it = m_Set.find( key, typename container_type::hasher(), typename container_type::key_equal());
+                    if ( it == m_Set.end())
                         return false;
                     f( *it, key );
                     return true;
@@ -173,8 +173,8 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q, typename Less, typename Func>
                 bool find( Q& key, Less pred, Func f )
                 {
-                    iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>( pred ) );
-                    if ( it == m_Set.end() )
+                    iterator it = m_Set.find( key, typename container_type::hasher(), equal_from_compare<Less>( pred ));
+                    if ( it == m_Set.end())
                         return false;
                     f( *it, key );
                     return true;

@@ -215,36 +215,36 @@ namespace cds { namespace container {
         /// Returns a forward iterator addressing the first element in a set
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator begin() const
         {
-            return const_iterator( base_class::begin() );
+            return const_iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator end() const
         {
-            return const_iterator( base_class::end() );
+            return const_iterator( base_class::end());
         }
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -278,8 +278,8 @@ namespace cds { namespace container {
         iterator insert( const Q& val )
         {
             scoped_node_ptr sp( node_allocator().New( base_class::random_level(), val ));
-            if ( base_class::insert( *sp.get() )) {
-                return node_to_iterator( sp.release() );
+            if ( base_class::insert( *sp.get())) {
+                return node_to_iterator( sp.release());
             }
             return end();
         }
@@ -292,8 +292,8 @@ namespace cds { namespace container {
         iterator emplace( Args&&... args )
         {
             scoped_node_ptr sp( node_allocator().New( base_class::random_level(), std::forward<Args>(args)... ));
-            if ( base_class::insert( *sp.get() )) {
-                return node_to_iterator( sp.release() );
+            if ( base_class::insert( *sp.get())) {
+                return node_to_iterator( sp.release());
             }
             return end();
         }
@@ -362,7 +362,7 @@ namespace cds { namespace container {
         iterator contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, key_accessor>() );
+            node_type * pNode = base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, key_accessor>());
             if ( pNode )
                 return node_to_iterator( pNode );
             return base_class::nonconst_end();

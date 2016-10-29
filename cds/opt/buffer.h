@@ -139,14 +139,14 @@ namespace cds { namespace opt {
             /// Get item \p i
             value_type& operator []( size_t i )
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i].v;
             }
 
             /// Get item \p i, const version
             const value_type& operator []( size_t i ) const
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i].v;
             }
 
@@ -159,7 +159,7 @@ namespace cds { namespace opt {
             /// Zeroize the buffer
             void zeroize()
             {
-                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]) );
+                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]));
             }
 
             /// Returns pointer to buffer array
@@ -231,14 +231,14 @@ namespace cds { namespace opt {
             /// Get item \p i
             value_type& operator []( size_t i )
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
             /// Get item \p i, const version
             const value_type& operator []( size_t i ) const
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
@@ -251,7 +251,7 @@ namespace cds { namespace opt {
             /// Zeroize the buffer
             void zeroize()
             {
-                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]) );
+                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]));
             }
 
             /// Returns pointer to buffer array
@@ -333,14 +333,14 @@ namespace cds { namespace opt {
             /// Get item \p i
             value_type& operator []( size_t i )
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
             /// Get item \p i, const version
             const value_type& operator []( size_t i ) const
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
@@ -353,7 +353,7 @@ namespace cds { namespace opt {
             /// Zeroize the buffer
             void zeroize()
             {
-                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]) );
+                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]));
             }
 
             /// Returns pointer to buffer array
@@ -437,14 +437,14 @@ namespace cds { namespace opt {
             /// Get item \p i
             value_type& operator []( size_t i )
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
             /// Get item \p i, const version
             const value_type& operator []( size_t i ) const
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_buffer[i];
             }
 
@@ -457,7 +457,7 @@ namespace cds { namespace opt {
             /// Zeroize the buffer
             void zeroize()
             {
-                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]) );
+                memset( m_buffer, 0, capacity() * sizeof(m_buffer[0]));
             }
 
             /// Returns pointer to buffer array

@@ -61,7 +61,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -96,7 +96,7 @@ namespace cds_test {
 
             template <typename Q>
             explicit int_item( Q const& src )
-                : nKey( src.key() )
+                : nKey( src.key())
                 , nVal( 0 )
             {}
 
@@ -109,17 +109,17 @@ namespace cds_test {
             int_item( int_item&& src )
                 : nKey( src.nKey )
                 , nVal( src.nVal )
-                , strVal( std::move( src.strVal ) )
+                , strVal( std::move( src.strVal ))
             {}
 
             int_item( int k, std::string&& s )
                 : nKey( k )
                 , nVal( k * 2 )
-                , strVal( std::move( s ) )
+                , strVal( std::move( s ))
             {}
 
             explicit int_item( other_item const& s )
-                : nKey( s.key() )
+                : nKey( s.key())
                 , nVal( s.key() * 2 )
             {}
 
@@ -199,7 +199,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -210,16 +210,16 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
+                ASSERT_FALSE( s.contains( i.nKey ));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type& ) {} ));
 
                 std::pair<bool, bool> updResult;
@@ -239,18 +239,18 @@ namespace cds_test {
                     updResult = s.update( i, []( value_type& val, value_type * prev )
                         {
                             ASSERT_TRUE( prev != nullptr );
-                            EXPECT_EQ( val.key(), prev->key() );
+                            EXPECT_EQ( val.key(), prev->key());
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    ASSERT_TRUE( s.insert( i.key() ));
-                    ASSERT_FALSE( s.insert( i.key() ));
+                    ASSERT_TRUE( s.insert( i.key()));
+                    ASSERT_FALSE( s.insert( i.key()));
                     updResult = s.update( i.key(), []( value_type& val, value_type * prev )
                         {
                             ASSERT_TRUE( prev != nullptr );
-                            EXPECT_EQ( val.key(), prev->key() );
+                            EXPECT_EQ( val.key(), prev->key());
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
@@ -284,7 +284,7 @@ namespace cds_test {
                         {
                             ASSERT_TRUE( prev != nullptr );
                             EXPECT_EQ( prev->nUpdateNewCount, 1u );
-                            EXPECT_EQ( v.key(), prev->key() );
+                            EXPECT_EQ( v.key(), prev->key());
                             ++v.nUpdateCount;
                         }, false );
                     EXPECT_TRUE( updResult.first );
@@ -308,7 +308,7 @@ namespace cds_test {
                         updResult = s.update( i.key(), []( value_type& v, value_type * prev )
                         {
                             ASSERT_TRUE( prev != nullptr );
-                            EXPECT_EQ( v.key(), prev->key() );
+                            EXPECT_EQ( v.key(), prev->key());
                             EXPECT_EQ( prev->nUpdateNewCount, 1u );
                             EXPECT_EQ( v.nUpdateNewCount, 0u );
                             ++v.nUpdateNewCount;
@@ -319,77 +319,77 @@ namespace cds_test {
                         ASSERT_TRUE( s.find( i.key(), []( value_type const& v )
                         {
                             EXPECT_EQ( v.nUpdateNewCount, 1u );
-                        } ) );
+                        } ));
                         break;
                 case 6:
-                    ASSERT_TRUE( s.emplace( i.key() ) );
-                    ASSERT_TRUE( s.contains( i.key() ) );
+                    ASSERT_TRUE( s.emplace( i.key()) );
+                    ASSERT_TRUE( s.contains( i.key()) );
                     break;
                 case 7:
                     str = "Hello!";
-                    ASSERT_TRUE( s.emplace( i.key(), std::move( str ) ) );
-                    EXPECT_TRUE( str.empty() );
+                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )) );
+                    EXPECT_TRUE( str.empty());
                     ASSERT_TRUE( s.find( i.key(), []( value_type const& v )
                     {
-                        EXPECT_EQ( v.strVal, std::string( "Hello!" ) );
-                    } ) );
+                        EXPECT_EQ( v.strVal, std::string( "Hello!" ));
+                    } ));
                     break;
                 default:
                     // forgot anything?..
                     ASSERT_TRUE( false );
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.find( i.nKey, []( value_type& ) {} ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& ) {} ));
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v )
                 {
                     v.nFindCount = 1;
-                } ) );
+                } ));
 
                 int nKey = i.key() - 1;
                 switch ( idx % 2 ) {
                 case 0:
-                    ASSERT_TRUE( s.erase( i.key() ) );
-                    ASSERT_FALSE( s.erase( i.key() ) );
+                    ASSERT_TRUE( s.erase( i.key()) );
+                    ASSERT_FALSE( s.erase( i.key()) );
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )
                     {
                         EXPECT_EQ( v.nFindCount, 1u );
                         nKey = v.key();
-                    } ) );
+                    } ));
                     EXPECT_EQ( i.key(), nKey );
 
                     nKey = i.key() - 1;
                     ASSERT_FALSE( s.erase( i.key(), [&nKey]( value_type const& v )
                     {
                         nKey = v.key();
-                    } ) );
+                    } ));
                     EXPECT_EQ( i.key(), nKey + 1 );
                     break;
                 }
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
-                ASSERT_FALSE( s.find( i.nKey, []( value_type const& ) {} ) );
+                ASSERT_FALSE( s.contains( i.nKey ));
+                ASSERT_FALSE( s.find( i.nKey, []( value_type const& ) {} ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
             {
@@ -398,24 +398,24 @@ namespace cds_test {
 
                 std::vector< typename Set::level_statistics > lstat;
                 s.get_level_statistics( lstat );
-                EXPECT_EQ( lstat[0].node_capacity, s.head_size() );
+                EXPECT_EQ( lstat[0].node_capacity, s.head_size());
                 for ( size_t i = 1; i < lstat.size(); ++i ) {
                     EXPECT_EQ( lstat[i].node_capacity, s.array_node_size());
                 }
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
-            ASSERT_TRUE( s.rbegin() == s.rend() );
-            ASSERT_TRUE( s.crbegin() == s.crend() );
+            ASSERT_TRUE( s.begin() == s.end());
+            ASSERT_TRUE( s.cbegin() == s.cend());
+            ASSERT_TRUE( s.rbegin() == s.rend());
+            ASSERT_TRUE( s.crbegin() == s.crend());
         }
     };
 

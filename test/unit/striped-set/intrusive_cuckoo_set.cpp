@@ -56,14 +56,14 @@ namespace {
             // clear
             for ( auto& i : data ) {
                 i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             for ( auto& i : data ) {
                 EXPECT_EQ( i.nDisposeCount, 1u );

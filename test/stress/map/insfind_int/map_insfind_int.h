@@ -82,7 +82,7 @@ namespace map {
                 size_t nItem = id();
                 for ( size_t i = 0; i < nSize; nItem += nThreadCount, ++i )
                     m_arrVal[i] = nItem;
-                shuffle( m_arrVal.begin(), m_arrVal.end() );
+                shuffle( m_arrVal.begin(), m_arrVal.end());
             }
         public:
             size_t  m_nInsertSuccess = 0;
@@ -171,7 +171,7 @@ namespace map {
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "find_success", nFindSuccess )
                 << std::make_pair( "find_failed", nFindFailed )
-                << std::make_pair( "finish_map_size", testMap.size() );
+                << std::make_pair( "finish_map_size", testMap.size());
 
             EXPECT_EQ( nInsertFailed, 0u );
             EXPECT_EQ( nFindFailed, 0u );

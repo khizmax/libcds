@@ -256,7 +256,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -267,7 +267,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -278,7 +278,7 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
@@ -289,7 +289,7 @@ namespace cds { namespace container {
         /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -301,7 +301,7 @@ namespace cds { namespace container {
             scoped_node_ptr p(pNode);
 
             iterator it( base_class::insert_( *pNode ));
-            if ( it != end() ) {
+            if ( it != end()) {
                 p.release();
                 return it;
             }
@@ -322,7 +322,7 @@ namespace cds { namespace container {
         template <typename Q>
         iterator insert( const Q& val )
         {
-            return insert_node( alloc_node( val ) );
+            return insert_node( alloc_node( val ));
         }
 
         /// Inserts data of type \p value_type created from \p args
@@ -332,7 +332,7 @@ namespace cds { namespace container {
         template <typename... Args>
         iterator emplace( Args&&... args )
         {
-            return insert_node( alloc_node( std::forward<Args>(args)... ) );
+            return insert_node( alloc_node( std::forward<Args>(args)... ));
         }
 
         /// Updates the item
@@ -407,7 +407,7 @@ namespace cds { namespace container {
         iterator contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>::type() ));
+            return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>::type()));
         }
         //@cond
         // eprecated, use contains()

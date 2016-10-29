@@ -148,7 +148,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ) );
+        map_type m( std::move( ht ));
         test( m );
     }
 
@@ -164,7 +164,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ) );
+        map_type m( 32, 6, 0, std::move( ht ));
         test( m );
     }
 
@@ -180,7 +180,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ) );
+        map_type m( std::move( ht ));
         test( m );
     }
 
@@ -373,7 +373,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ) );
+        map_type m( std::move( ht ));
         test( m );
     }
 
@@ -390,7 +390,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ) );
+        map_type m( 32, 6, 0, std::move( ht ));
         test( m );
     }
 
@@ -407,7 +407,7 @@ namespace {
         > map_type;
 
         typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ) );
+        map_type m( std::move( ht ));
         test( m );
     }
 

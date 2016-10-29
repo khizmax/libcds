@@ -175,7 +175,7 @@ namespace {
                     }
                     else {
                         ++m_nPopEmpty;
-                        if ( s_nProducerCount.load( atomics::memory_order_acquire ) == 0 && m_Queue.empty() )
+                        if ( s_nProducerCount.load( atomics::memory_order_acquire ) == 0 && m_Queue.empty())
                             break;
                     }
                 }
@@ -225,7 +225,7 @@ namespace {
             typedef typename Reader::const_data_iterator    ReaderIterator;
 
             size_t nPostTestPops = 0;
-            while ( testQueue.pop() )
+            while ( testQueue.pop())
                 ++nPostTestPops;
 
             size_t nTotalPops = 0;
@@ -272,7 +272,7 @@ namespace {
 
             size_t nQueueSize = s_nThreadPushCount * s_nWriterThreadCount;
             EXPECT_EQ( nTotalPops + nPostTestPops, nQueueSize );
-            EXPECT_TRUE( testQueue.empty() );
+            EXPECT_TRUE( testQueue.empty());
 
             // Test that all items have been popped
             // Test FIFO order
@@ -294,7 +294,7 @@ namespace {
                     for ( it = arrReaders[nReader]->m_WriterData[nWriter].begin(); it != itEnd; ++it )
                         arrData.push_back( *it );
                 }
-                std::sort( arrData.begin(), arrData.end() );
+                std::sort( arrData.begin(), arrData.end());
                 for ( size_t i=1; i < arrData.size(); ++i ) {
                     if ( arrData[i-1] + 1 != arrData[i] ) {
                         EXPECT_EQ( arrData[i-1] + 1,  arrData[i] ) << "Writer " << nWriter << ": [" << (i-1) << "]=" << arrData[i-1]
@@ -514,6 +514,6 @@ namespace {
 
     INSTANTIATE_TEST_CASE_P( SQ,
         intrusive_segmented_queue_push_pop,
-        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters() ) );
+        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters()) );
 
 } // namespace

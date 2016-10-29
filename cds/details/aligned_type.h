@@ -41,7 +41,7 @@ namespace cds { namespace details {
         equal to another type alignment. For example, the following declaration produces an error in Microsoft Visual Studio 2008 compiler:
         \code
             typedef double  my_double;
-            typedef __declspec(align( __alignof(my_double) )) int   aligned_int;
+            typedef __declspec(align( __alignof(my_double))) int   aligned_int;
         \endcode
         In MS VS, the __declspec(align(N)) construction requires that N must be a integer constant (1, 2, 4 and so on)
         but not an integer constant expression.

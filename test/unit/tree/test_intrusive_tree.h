@@ -62,7 +62,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -205,7 +205,7 @@ namespace cds_test {
         {
             int operator ()(T const& v1, T const& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -219,7 +219,7 @@ namespace cds_test {
 
             int operator()( int lhs, T const& rhs ) const
             {
-                if ( lhs < rhs.key() )
+                if ( lhs < rhs.key())
                     return -1;
                 return lhs > rhs.key() ? 1 : 0;
             }
@@ -281,7 +281,7 @@ namespace cds_test {
             // Precondition: tree is empty
             // Postcondition: tree is empty
 
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0 );
             size_t const nTreeSize = kSize;
 
@@ -295,7 +295,7 @@ namespace cds_test {
                 data.push_back( value_type( static_cast<int>( key )));
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
@@ -332,7 +332,7 @@ namespace cds_test {
                     EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( t.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
-                    ASSERT_FALSE( t.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
+                    ASSERT_FALSE( t.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
@@ -371,34 +371,34 @@ namespace cds_test {
                     break;
                 }
 
-                ASSERT_TRUE( t.contains( i.nKey ) );
-                ASSERT_TRUE( t.contains( i ) );
-                ASSERT_TRUE( t.contains( other_item( i.key() ), other_less()));
+                ASSERT_TRUE( t.contains( i.nKey ));
+                ASSERT_TRUE( t.contains( i ));
+                ASSERT_TRUE( t.contains( other_item( i.key()), other_less()));
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( t.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( t.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
+                ASSERT_TRUE( t.find_with( other_item( i.key()), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
-                ASSERT_TRUE( t.find( i, []( value_type& v, value_type& ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( t.find( i, []( value_type& v, value_type& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 3u );
             }
-            ASSERT_FALSE( t.empty() );
+            ASSERT_FALSE( t.empty());
             ASSERT_CONTAINER_SIZE( t, nTreeSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[ idx ];
 
-                ASSERT_TRUE( t.contains( i.nKey ) );
-                ASSERT_TRUE( t.contains( i ) );
-                ASSERT_TRUE( t.contains( other_item( i.key() ), other_less() ) );
+                ASSERT_TRUE( t.contains( i.nKey ));
+                ASSERT_TRUE( t.contains( i ));
+                ASSERT_TRUE( t.contains( other_item( i.key()), other_less()) );
                 EXPECT_EQ( i.nFindCount, 0u );
-                ASSERT_TRUE( t.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( t.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( t.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( t.find_with( other_item( i.key()), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
 
                 value_type v( i );
@@ -406,19 +406,19 @@ namespace cds_test {
                 case 0:
                     ASSERT_FALSE( t.unlink( v ));
                     ASSERT_TRUE( t.unlink( i ));
-                    ASSERT_FALSE( t.unlink( i ) );
+                    ASSERT_FALSE( t.unlink( i ));
                     break;
                 case 1:
                     ASSERT_TRUE( t.erase( i.key()));
-                    ASSERT_FALSE( t.erase( i.key() ) );
+                    ASSERT_FALSE( t.erase( i.key()) );
                     break;
                 case 2:
                     ASSERT_TRUE( t.erase( v ));
-                    ASSERT_FALSE( t.erase( v ) );
+                    ASSERT_FALSE( t.erase( v ));
                     break;
                 case 3:
                     ASSERT_TRUE( t.erase_with( other_item( i.key()), other_less()));
-                    ASSERT_FALSE( t.erase_with( other_item( i.key() ), other_less() ) );
+                    ASSERT_FALSE( t.erase_with( other_item( i.key()), other_less()) );
                     break;
                 case 4:
                     EXPECT_EQ( i.nEraseCount, 0u );
@@ -429,9 +429,9 @@ namespace cds_test {
                     break;
                 case 5:
                     EXPECT_EQ( i.nEraseCount, 0u );
-                    ASSERT_TRUE( t.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_TRUE( t.erase_with( other_item( i.key()), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
-                    ASSERT_FALSE( t.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_FALSE( t.erase_with( other_item( i.key()), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
@@ -443,7 +443,7 @@ namespace cds_test {
                 ASSERT_FALSE( t.find( i,      []( value_type&, value_type const& ) {} ));
                 ASSERT_FALSE( t.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
             }
-            ASSERT_TRUE( t.empty() );
+            ASSERT_TRUE( t.empty());
             ASSERT_CONTAINER_SIZE( t, 0 );
 
             // Force retiring cycle
@@ -458,7 +458,7 @@ namespace cds_test {
                 i.clear_stat();
                 ASSERT_TRUE( t.insert( i ));
             }
-            ASSERT_FALSE( t.empty() );
+            ASSERT_FALSE( t.empty());
             ASSERT_CONTAINER_SIZE( t, nTreeSize );
 
             // clear test

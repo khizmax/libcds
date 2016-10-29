@@ -57,7 +57,7 @@ namespace set {
         template <typename Q, typename Pred>
         bool erase_with( Q const& key, Pred /*pred*/ )
         {
-            return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
+            return cuckoo_base_class::erase_with( key, typename std::conditional< cuckoo_base_class::c_isSorted, Pred, typename Pred::equal_to>::type());
         }
 
         // for testing
@@ -202,7 +202,7 @@ namespace set {
     static inline void print_stat( cds_test::property_stream& o, CuckooSet< V, Traits > const& s )
     {
         typedef CuckooSet< V, Traits > set_type;
-        print_stat( o, static_cast<typename set_type::cuckoo_base_class const&>(s) );
+        print_stat( o, static_cast<typename set_type::cuckoo_base_class const&>(s));
     }
 
 } // namespace set

@@ -75,35 +75,35 @@ namespace {
             typedef typename Stack::value_type  value_type;
             Stack stack;
 
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
 
             value_type v1, v2, v3;
             v1.nVal = 1;
             v2.nVal = 2;
             v3.nVal = 3;
-            ASSERT_TRUE( stack.push( v1 ) );
-            ASSERT_TRUE( !stack.empty() );
-            ASSERT_TRUE( stack.push( v2 ) );
-            ASSERT_TRUE( !stack.empty() );
-            ASSERT_TRUE( stack.push( v3 ) );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( stack.push( v1 ));
+            ASSERT_TRUE( !stack.empty());
+            ASSERT_TRUE( stack.push( v2 ));
+            ASSERT_TRUE( !stack.empty());
+            ASSERT_TRUE( stack.push( v3 ));
+            ASSERT_TRUE( !stack.empty());
 
             value_type * pv;
             pv = stack.pop();
             ASSERT_TRUE( pv != nullptr );
             ASSERT_EQ( pv->nVal, 3 );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( !stack.empty());
             pv = stack.pop();
             ASSERT_TRUE( pv != nullptr );
             ASSERT_EQ( pv->nVal, 2 );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( !stack.empty());
             pv = stack.pop();
             ASSERT_TRUE( pv != nullptr );
             ASSERT_EQ( pv->nVal, 1 );
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
             pv = stack.pop();
             ASSERT_TRUE( pv == nullptr );
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
 
             if ( !std::is_same<typename Stack::disposer, cds::intrusive::opt::v::empty_disposer>::value ) {
                 int v1disp = v1.nDisposeCount;
@@ -115,19 +115,19 @@ namespace {
                 ASSERT_TRUE( stack.push( v3 ));
 
                 stack.clear();
-                ASSERT_TRUE( stack.empty() );
+                ASSERT_TRUE( stack.empty());
 
                 EXPECT_EQ( v1.nDisposeCount, v1disp);
                 EXPECT_EQ( v2.nDisposeCount, v2disp);
                 EXPECT_EQ( v3.nDisposeCount, v3disp);
 
-                ASSERT_TRUE( stack.push( v1 ) );
-                ASSERT_TRUE( stack.push( v2 ) );
-                ASSERT_TRUE( stack.push( v3 ) );
-                ASSERT_TRUE( !stack.empty() );
+                ASSERT_TRUE( stack.push( v1 ));
+                ASSERT_TRUE( stack.push( v2 ));
+                ASSERT_TRUE( stack.push( v3 ));
+                ASSERT_TRUE( !stack.empty());
 
                 stack.clear( true );
-                ASSERT_TRUE( stack.empty() );
+                ASSERT_TRUE( stack.empty());
 
                 EXPECT_EQ( v1.nDisposeCount, v1disp + 1 );
                 EXPECT_EQ( v2.nDisposeCount, v2disp + 1 );

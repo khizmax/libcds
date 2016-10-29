@@ -173,7 +173,7 @@ namespace cds { namespace container {
                 static unsigned char * alloc_space( unsigned int nHeight )
                 {
                     if ( nHeight > 1 ) {
-                        unsigned char * pMem = tower_allocator_type().allocate( node_size(nHeight) );
+                        unsigned char * pMem = tower_allocator_type().allocate( node_size(nHeight));
 
                         // check proper alignments
                         assert( (((uintptr_t) pMem) & (alignof(node_type) - 1)) == 0 );

@@ -352,7 +352,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K&& key )
         {
-            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key) ));
+            scoped_node_ptr sp( cxx_node_allocator().MoveNew( m_Hasher, std::forward<K>(key)));
             if ( base_class::insert( *sp )) {
                 sp.release();
                 return true;
@@ -566,7 +566,7 @@ namespace cds { namespace container {
         template <typename K>
         bool contains( K const& key )
         {
-            return base_class::contains( m_Hasher( key_type( key )) );
+            return base_class::contains( m_Hasher( key_type( key )));
         }
 
         /// Find the key \p key

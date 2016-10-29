@@ -58,7 +58,7 @@ namespace cds { namespace container { namespace details {
 
             template <typename Q>
             node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q const& key )
-                : m_Value( std::make_pair( key, mapped_type() ))
+                : m_Value( std::make_pair( key, mapped_type()))
             {
                 init_tower( nHeight, pTower );
             }

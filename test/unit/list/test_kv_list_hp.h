@@ -59,7 +59,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             guarded_ptr gp;
@@ -87,16 +87,16 @@ namespace cds_test {
                 gp->second.val = gp->first.nKey * 10;
 
                 ++nCount;
-                ASSERT_FALSE( l.empty() );
+                ASSERT_FALSE( l.empty());
                 ASSERT_CONTAINER_SIZE( l, nCount );
             }
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             ASSERT_CONTAINER_SIZE( l, nSize );
 
             // extract() test
             for ( auto const& i : arr ) {
-                ASSERT_FALSE( l.empty() );
+                ASSERT_FALSE( l.empty());
                 ASSERT_CONTAINER_SIZE( l, nCount );
                 --nCount;
 
@@ -125,7 +125,7 @@ namespace cds_test {
                 EXPECT_FALSE( gp );
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
         }
     };

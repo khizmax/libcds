@@ -75,8 +75,8 @@ namespace {
             }
 
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             // iterators
@@ -157,7 +157,7 @@ namespace {
                     EXPECT_TRUE( p == nullptr );
                 }
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
         }
 

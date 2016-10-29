@@ -91,7 +91,7 @@ namespace {
                 typedef typename Queue::value_type value_type;
                 value_type value;
                 size_t nPopCount = 0;
-                while ( m_Queue.pop( value ) ) {
+                while ( m_Queue.pop( value )) {
                     ++m_arr[ value.nNo ];
                     ++nPopCount;
                 }

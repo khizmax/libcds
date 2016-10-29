@@ -98,7 +98,7 @@ namespace cds { namespace OS {
             /// Returns duration (in seconds) from start time to current
             double duration()
             {
-                return duration( native_duration() );
+                return duration( native_duration());
             }
 
             /// Returns duration (in native format) from start time to current

@@ -101,7 +101,7 @@ namespace cds { namespace algo {
         */
         uint_type cut( size_t nBits )
         {
-            assert( !eos() );
+            assert( !eos());
             assert( nBits <= c_nBitPerInt );
             assert( m_offset + nBits <= c_nBitPerHash );
 #   ifdef _DEBUG
@@ -145,7 +145,7 @@ namespace cds { namespace algo {
         */
         uint_type safe_cut( size_t nBits )
         {
-            if ( eos() )
+            if ( eos())
                 return 0;
 
             assert( nBits <= sizeof(uint_type) * c_nBitPerByte );

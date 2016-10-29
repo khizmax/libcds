@@ -203,7 +203,7 @@ namespace cds { namespace threading {
                 assert( pData );
 
                 if ( pData ) {
-                    if ( pData->fini() )
+                    if ( pData->fini())
                         _threadData( do_detachThread );
                 }
                 else

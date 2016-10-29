@@ -98,7 +98,7 @@ namespace map {
                 if ( id() & 1 ) {
                     for ( size_t nPass = 0; nPass < s_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = s_arrKeys.cbegin(), itEnd = s_arrKeys.cend(); it != itEnd; ++it ) {
-                            if ( rMap.insert( *it, *it * 8 ) )
+                            if ( rMap.insert( *it, *it * 8 ))
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -108,7 +108,7 @@ namespace map {
                 else {
                     for ( size_t nPass = 0; nPass < s_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = s_arrKeys.crbegin(), itEnd = s_arrKeys.crend(); it != itEnd; ++it ) {
-                            if ( rMap.insert( *it, *it * 8 ) )
+                            if ( rMap.insert( *it, *it * 8 ))
                                 ++m_nInsertSuccess;
                             else
                                 ++m_nInsertFailed;
@@ -150,7 +150,7 @@ namespace map {
                 if ( id() & 1 ) {
                     for ( size_t nPass = 0; nPass < s_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_iterator it = s_arrKeys.cbegin(), itEnd = s_arrKeys.cend(); it != itEnd; ++it ) {
-                            if ( rMap.erase( *it ) )
+                            if ( rMap.erase( *it ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -160,7 +160,7 @@ namespace map {
                 else {
                     for ( size_t nPass = 0; nPass < s_nThreadPassCount; ++nPass ) {
                         for ( key_array::const_reverse_iterator it = s_arrKeys.crbegin(), itEnd = s_arrKeys.crend(); it != itEnd; ++it ) {
-                            if ( rMap.erase( *it ) )
+                            if ( rMap.erase( *it ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;
@@ -197,7 +197,7 @@ namespace map {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         inserter& t = static_cast<inserter&>( thr );
@@ -222,7 +222,7 @@ namespace map {
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
                 << std::make_pair( "delete_failed", nDeleteFailed )
-                << std::make_pair( "finish_map_size", testMap.size() );
+                << std::make_pair( "finish_map_size", testMap.size());
 
             check_before_cleanup( testMap );
 

@@ -206,7 +206,7 @@ namespace map {
                 v.reserve( s_nMapSize );
                 for ( size_t i = 0; i < s_nMapSize; ++i )
                     v.push_back( i );
-                shuffle( v.begin(), v.end() );
+                shuffle( v.begin(), v.end());
                 for ( auto i: v )
                     EXPECT_TRUE( testMap.insert( i, i ));
             }
@@ -233,7 +233,7 @@ namespace map {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                 {
                     inserter& t = static_cast<inserter&>(thr);
@@ -267,7 +267,7 @@ namespace map {
 
             // Check if the map contains all items
             for ( size_t i = 0; i < s_nMapSize; ++i )
-                EXPECT_TRUE( testMap.contains( i ) ) << "key=" << i;
+                EXPECT_TRUE( testMap.contains( i )) << "key=" << i;
 
             check_before_cleanup( testMap );
 

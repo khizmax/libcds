@@ -116,7 +116,7 @@ namespace cds { namespace urcu {
         /// Returns singleton instance
         static signal_threaded * instance()
         {
-            return static_cast<signal_threaded *>( base_class::instance() );
+            return static_cast<signal_threaded *>( base_class::instance());
         }
         /// Checks if the singleton is created and ready to use
         static bool isUsed()
@@ -137,7 +137,7 @@ namespace cds { namespace urcu {
         bool push_buffer( epoch_retired_ptr&& p )
         {
             bool bPushed = m_Buffer.push( p );
-            if ( !bPushed || m_Buffer.size() >= capacity() ) {
+            if ( !bPushed || m_Buffer.size() >= capacity()) {
                 synchronize();
                 if ( !bPushed ) {
                     p.free();
@@ -164,7 +164,7 @@ namespace cds { namespace urcu {
         static void Construct( size_t nBufferCapacity = 256, int nSignal = SIGUSR1 )
         {
             if ( !singleton_ptr::s_pRCU ) {
-                std::unique_ptr< signal_threaded, scoped_disposer > pRCU( new signal_threaded( nBufferCapacity, nSignal ) );
+                std::unique_ptr< signal_threaded, scoped_disposer > pRCU( new signal_threaded( nBufferCapacity, nSignal ));
                 pRCU->m_DisposerThread.start();
 
                 singleton_ptr::s_pRCU = pRCU.release();
@@ -174,7 +174,7 @@ namespace cds { namespace urcu {
         /// Destroys singleton object and terminates internal reclamation thread
         static void Destruct( bool bDetachAll = false )
         {
-            if ( isUsed() ) {
+            if ( isUsed()) {
                 signal_threaded * pThis = instance();
                 if ( bDetachAll )
                     pThis->m_ThreadList.detach_all();

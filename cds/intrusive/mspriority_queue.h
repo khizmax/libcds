@@ -223,7 +223,7 @@ namespace cds { namespace intrusive {
             /// Creates empty node
             node()
                 : m_pVal( nullptr )
-                , m_nTag( tag_type(Empty) )
+                , m_nTag( tag_type(Empty))
             {}
 
             /// Lock the node
@@ -283,7 +283,7 @@ namespace cds { namespace intrusive {
 
             // Insert new item at bottom of the heap
             m_Lock.lock();
-            if ( m_ItemCounter.value() >= capacity() ) {
+            if ( m_ItemCounter.value() >= capacity()) {
                 // the heap is full
                 m_Lock.unlock();
                 m_Stat.onPushFailed();
@@ -291,7 +291,7 @@ namespace cds { namespace intrusive {
             }
 
             counter_type i = m_ItemCounter.inc();
-            assert( i < m_Heap.capacity() );
+            assert( i < m_Heap.capacity());
 
             node& refNode = m_Heap[i];
             refNode.lock();
@@ -326,7 +326,7 @@ namespace cds { namespace intrusive {
                 return nullptr;
             }
             counter_type nBottom = m_ItemCounter.dec();
-            assert( nBottom < m_Heap.capacity() );
+            assert( nBottom < m_Heap.capacity());
             assert( nBottom > 0 );
 
             refTop.lock();
@@ -348,7 +348,7 @@ namespace cds { namespace intrusive {
             refBottom.m_pVal = nullptr;
             refBottom.unlock();
 
-            if ( refTop.m_nTag == tag_type(Empty) ) {
+            if ( refTop.m_nTag == tag_type(Empty)) {
                 // nBottom == nTop
                 refTop.unlock();
                 m_Stat.onPopSuccess();
@@ -457,7 +457,7 @@ namespace cds { namespace intrusive {
                         i = 0;
                     }
                 }
-                else if ( refParent.m_nTag == tag_type( Empty ) ) {
+                else if ( refParent.m_nTag == tag_type( Empty )) {
                     m_Stat.onItemMovedTop();
                     i = 0;
                 }

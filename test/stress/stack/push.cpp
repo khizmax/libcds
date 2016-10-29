@@ -86,7 +86,7 @@ namespace {
                 value_type v;
                 v.nThread = id();
                 for ( v.nNo = m_nStartItem; v.nNo < m_nEndItem; ++v.nNo ) {
-                    if ( !m_stack.push( v ) )
+                    if ( !m_stack.push( v ))
                         ++m_nPushError;
                 }
             }
@@ -145,7 +145,7 @@ namespace {
         void test_elimination( Stack& stack )
         {
             test( stack );
-            check_elimination_stat( stack.statistics() );
+            check_elimination_stat( stack.statistics());
         }
 
         void check_elimination_stat( cds::container::treiber_stack::empty_stat const& )
@@ -153,7 +153,7 @@ namespace {
 
         void check_elimination_stat( cds::container::treiber_stack::stat<> const& s )
         {
-            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get() );
+            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get());
         }
 
         template <class Stack>

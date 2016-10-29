@@ -127,7 +127,7 @@ namespace map {
                 size_t const nNormalize = size_t(-1) / ( s_nMapSize * 2 );
 
                 size_t nRand = 0;
-                while ( !time_elapsed() ) {
+                while ( !time_elapsed()) {
                     nRand = cds::bitop::RandXorShift( nRand );
                     size_t n = nRand / nNormalize;
                     switch ( s_arrShuffle[i] ) {
@@ -177,7 +177,7 @@ namespace map {
                 arr.reserve( s_nMapSize );
                 for ( size_t i = 0; i < s_nMapSize; ++i )
                     arr.push_back( i * 2 + 1);
-                shuffle( arr.begin(), arr.end() );
+                shuffle( arr.begin(), arr.end());
                 for ( size_t i = 0; i < s_nMapSize; ++i )
                     testMap.insert( arr[i], arr[i] );
             }
@@ -218,7 +218,7 @@ namespace map {
                 << std::make_pair( "delete_failed", nDeleteFailed )
                 << std::make_pair( "find_success", nFindSuccess )
                 << std::make_pair( "find_failed", nFindFailed )
-                << std::make_pair( "finish_map_size", testMap.size() );
+                << std::make_pair( "finish_map_size", testMap.size());
 
             {
                 ASSERT_TRUE( std::chrono::duration_cast<std::chrono::seconds>(duration).count() > 0 );

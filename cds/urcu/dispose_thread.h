@@ -136,7 +136,7 @@ namespace cds { namespace urcu {
             while ( ( p = pBuf->front()) != nullptr ) {
                 if ( p->m_nEpoch <= nCurEpoch ) {
                     p->free();
-                    CDS_VERIFY( pBuf->pop_front() );
+                    CDS_VERIFY( pBuf->pop_front());
                 }
                 else
                     break;

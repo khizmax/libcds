@@ -148,9 +148,9 @@
 // *************************************************
 // Alignment macro
 
-#define CDS_TYPE_ALIGNMENT(n)     __declspec( align(n) )
-#define CDS_DATA_ALIGNMENT(n)     __declspec( align(n) )
-#define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n) )
+#define CDS_TYPE_ALIGNMENT(n)     __declspec( align(n))
+#define CDS_DATA_ALIGNMENT(n)     __declspec( align(n))
+#define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n))
 
 // Attributes
 #if CDS_COMPILER_VERSION >= CDS_COMPILER_MSVC14

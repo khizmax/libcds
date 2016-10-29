@@ -53,7 +53,7 @@ namespace {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             base_class::test( s );
@@ -66,15 +66,15 @@ namespace {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             typedef typename Set::rcu_lock rcu_lock;
@@ -110,7 +110,7 @@ namespace {
                     rcu_lock l;
                     value_type * p = s.get( i.key());
                     ASSERT_TRUE( p != nullptr );
-                    EXPECT_EQ( p->key(), i.key() );
+                    EXPECT_EQ( p->key(), i.key());
                     EXPECT_EQ( p->nFindCount, static_cast<size_t>( i.key() * 2 ));
                     p->nFindCount *= 2;
                 }
@@ -122,22 +122,22 @@ namespace {
                 auto& i = data[idx];
 
                 ASSERT_TRUE( !xp );
-                xp = s.extract( i.key() );
+                xp = s.extract( i.key());
                 ASSERT_FALSE( !xp );
-                EXPECT_EQ( xp->key(), i.key() );
+                EXPECT_EQ( xp->key(), i.key());
                 EXPECT_EQ( xp->nFindCount, static_cast<size_t>( i.key() * 4 ));
 
-                xp = s.extract( i.key() );
+                xp = s.extract( i.key());
                 ASSERT_TRUE( !xp );
 
                 {
                     rcu_lock l;
-                    value_type * p = s.get( i.key() );
+                    value_type * p = s.get( i.key());
                     EXPECT_TRUE( p == nullptr );
                 }
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
         }
 

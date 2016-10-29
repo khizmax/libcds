@@ -60,7 +60,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -95,7 +95,7 @@ namespace cds_test {
 
             template <typename Q>
             explicit int_item( Q const& src )
-                : nKey( src.key() )
+                : nKey( src.key())
                 , nVal( 0 )
             {}
 
@@ -108,17 +108,17 @@ namespace cds_test {
             int_item( int_item&& src )
                 : nKey( src.nKey )
                 , nVal( src.nVal )
-                , strVal( std::move( src.strVal ) )
+                , strVal( std::move( src.strVal ))
             {}
 
             int_item( int k, std::string&& s )
                 : nKey( k )
                 , nVal( k * 2 )
-                , strVal( std::move( s ) )
+                , strVal( std::move( s ))
             {}
 
             explicit int_item( other_item const& s )
-                : nKey( s.key() )
+                : nKey( s.key())
                 , nVal( s.key() * 2 )
             {}
 
@@ -192,7 +192,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( int_item const& v1, int_item const& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -208,7 +208,7 @@ namespace cds_test {
             template <typename T>
             int operator ()( int v1, T const& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -229,7 +229,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -240,18 +240,18 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_FALSE( s.contains( i.nKey ) != s.end() );
-                ASSERT_FALSE( s.contains( i ) != s.end() );
-                ASSERT_FALSE( s.contains( other_item( i.key() ), other_less()) != s.end());
+                ASSERT_FALSE( s.contains( i.nKey ) != s.end());
+                ASSERT_FALSE( s.contains( i ) != s.end());
+                ASSERT_FALSE( s.contains( other_item( i.key()), other_less()) != s.end());
 
                 std::pair<typename Set::iterator, bool> updResult;
 
@@ -264,7 +264,7 @@ namespace cds_test {
                 switch ( idx % 6 ) {
                 case 0:
                     it = s.insert( i );
-                    ASSERT_TRUE( it != s.end() );
+                    ASSERT_TRUE( it != s.end());
                     it->nFindCount = it->nKey;
                     ASSERT_TRUE( s.insert( i ) == s.end());
                     updResult = s.update( i, false );
@@ -272,9 +272,9 @@ namespace cds_test {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    it = s.insert( i.key() );
+                    it = s.insert( i.key());
                     ASSERT_TRUE( it != s.end());
-                    ASSERT_TRUE( s.insert( i.key() ) == s.end());
+                    ASSERT_TRUE( s.insert( i.key()) == s.end());
                     it->nFindCount = it->nKey;
                     updResult = s.update( i.key(), false );
                     EXPECT_TRUE( updResult.first == it );
@@ -288,7 +288,7 @@ namespace cds_test {
                     break;
                 case 3:
                     updResult = s.update( i.key());
-                    EXPECT_TRUE( updResult.first != s.end() );
+                    EXPECT_TRUE( updResult.first != s.end());
                     EXPECT_TRUE( updResult.second );
                     updResult.first->nFindCount = updResult.first->nKey;
                     break;
@@ -296,17 +296,17 @@ namespace cds_test {
                     it = s.emplace( i.key());
                     ASSERT_TRUE( it != s.end());
                     it->nFindCount = it->nKey;
-                    ASSERT_FALSE( s.emplace( i.key() ) != s.end());
+                    ASSERT_FALSE( s.emplace( i.key()) != s.end());
                     break;
                 case 5:
                     str = "Hello!";
                     it = s.emplace( i.key(), std::move( str ));
-                    ASSERT_TRUE( it != s.end() );
+                    ASSERT_TRUE( it != s.end());
                     EXPECT_TRUE( str.empty());
                     it->nFindCount = it->nKey;
                     str = "Hello!";
                     ASSERT_TRUE( s.emplace( i.key(), std::move( str )) == s.end());
-                    EXPECT_TRUE( str.empty() ); // yes, that's is :(
+                    EXPECT_TRUE( str.empty()); // yes, that's is :(
                     break;
                 default:
                     // forgot anything?..
@@ -314,13 +314,13 @@ namespace cds_test {
                 }
 
                 it = s.contains( i.nKey );
-                ASSERT_TRUE( it != s.end() );
+                ASSERT_TRUE( it != s.end());
                 EXPECT_EQ( it->nFindCount, static_cast<unsigned>( it->nKey ));
-                ASSERT_TRUE( s.contains( i ) != s.end() );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less() ) != s.end());
+                ASSERT_TRUE( s.contains( i ) != s.end());
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()) != s.end());
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // iterators
@@ -336,11 +336,11 @@ namespace cds_test {
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
+            ASSERT_TRUE( s.begin() == s.end());
+            ASSERT_TRUE( s.cbegin() == s.cend());
         }
     };
 

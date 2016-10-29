@@ -269,24 +269,24 @@ namespace cds { namespace intrusive {
                 index_type temp = ( ate + 1 ) & nModulo ;    // next item after tail
 
                 // Looking for actual tail
-                while ( !is_free( tt ) ) {
-                    if ( te != m_nTail.load(memory_model::memory_order_relaxed) )    // check the tail consistency
+                while ( !is_free( tt )) {
+                    if ( te != m_nTail.load(memory_model::memory_order_relaxed))    // check the tail consistency
                         goto TryAgain;
-                    if ( temp == m_nHead.load(memory_model::memory_order_acquire) )    // queue full?
+                    if ( temp == m_nHead.load(memory_model::memory_order_acquire))    // queue full?
                         break;
                     tt = m_buffer[ temp ].load(memory_model::memory_order_relaxed);
                     ate = temp;
                     temp = (temp + 1) & nModulo;
                 }
 
-                if ( te != m_nTail.load(memory_model::memory_order_acquire) )
+                if ( te != m_nTail.load(memory_model::memory_order_acquire))
                     continue;
 
                 // Check whether queue is full
-                if ( temp == m_nHead.load(memory_model::memory_order_acquire) ) {
+                if ( temp == m_nHead.load(memory_model::memory_order_acquire)) {
                     ate = ( temp + 1 ) & nModulo;
                     tt = m_buffer[ ate ].load(memory_model::memory_order_relaxed);
-                    if ( !is_free( tt ) ) {
+                    if ( !is_free( tt )) {
                         return false;   // Queue is full
                     }
 
@@ -295,13 +295,13 @@ namespace cds { namespace intrusive {
                     continue;
                 }
 
-                if ( tt == reinterpret_cast<value_type *>(free1) )
+                if ( tt == reinterpret_cast<value_type *>(free1))
                     pNewNode = reinterpret_cast<value_type *>(reinterpret_cast<intptr_t>( pNewNode ) | 1);
-                if ( te != m_nTail.load(memory_model::memory_order_acquire) )
+                if ( te != m_nTail.load(memory_model::memory_order_acquire))
                     continue;
 
                 // get actual tail and try to enqueue new node
-                if ( m_buffer[ate].compare_exchange_strong( tt, pNewNode, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                if ( m_buffer[ate].compare_exchange_strong( tt, pNewNode, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                     if ( temp % 2 == 0 )
                         m_nTail.compare_exchange_strong( te, temp, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     ++m_ItemCounter;
@@ -332,23 +332,23 @@ namespace cds { namespace intrusive {
                 value_type * pNull;
 
                 // find the actual head after this loop
-                while ( is_free( tt ) ) {
-                    if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
+                while ( is_free( tt )) {
+                    if ( th != m_nHead.load(memory_model::memory_order_relaxed))
                         goto TryAgain;
 
                     // two consecutive nullptr means the queue is empty
-                    if ( temp == m_nTail.load(memory_model::memory_order_acquire) )
+                    if ( temp == m_nTail.load(memory_model::memory_order_acquire))
                         return nullptr;
 
                     temp = ( temp + 1 ) & nModulo;
                     tt = m_buffer[ temp ].load(memory_model::memory_order_relaxed);
                 }
 
-                if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
+                if ( th != m_nHead.load(memory_model::memory_order_relaxed))
                     continue;
 
                 // check whether the queue is empty
-                if ( temp == m_nTail.load(memory_model::memory_order_acquire) ) {
+                if ( temp == m_nTail.load(memory_model::memory_order_acquire)) {
                     // help the enqueue to update end
                     m_nTail.compare_exchange_weak( temp, (temp + 1) & nModulo, memory_model::memory_order_release, atomics::memory_order_relaxed );
                     continue;
@@ -356,7 +356,7 @@ namespace cds { namespace intrusive {
 
                 pNull = reinterpret_cast<value_type *>((reinterpret_cast<uintptr_t>(tt) & 1) ? free0 : free1);
 
-                if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
+                if ( th != m_nHead.load(memory_model::memory_order_relaxed))
                     continue;
 
                 // Get the actual head, null means empty
@@ -397,11 +397,11 @@ namespace cds { namespace intrusive {
             const value_type * tt = m_buffer[ temp ].load(memory_model::memory_order_relaxed);
 
             // find the actual head after this loop
-            while ( is_free( tt ) ) {
-                if ( th != m_nHead.load(memory_model::memory_order_relaxed) )
+            while ( is_free( tt )) {
+                if ( th != m_nHead.load(memory_model::memory_order_relaxed))
                     goto TryAgain;
                 // two consecutive nullptr means queue empty
-                if ( temp == m_nTail.load(memory_model::memory_order_relaxed) )
+                if ( temp == m_nTail.load(memory_model::memory_order_relaxed))
                     return true;
                 temp = ( temp + 1 ) & nModulo;
                 tt = m_buffer[ temp ].load(memory_model::memory_order_relaxed);
@@ -432,7 +432,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear( disposer() );
+            clear( disposer());
         }
 
         /// Returns queue's item count

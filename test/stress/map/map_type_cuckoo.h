@@ -57,7 +57,7 @@ namespace map {
         template <typename Q, typename Pred>
         bool erase_with( Q const& key, Pred /*pred*/ )
         {
-            return base_class::erase_with( key, typename std::conditional< base_class::c_isSorted, Pred, typename Pred::equal_to>::type() );
+            return base_class::erase_with( key, typename std::conditional< base_class::c_isSorted, Pred, typename Pred::equal_to>::type());
         }
 
         // for testing
@@ -295,7 +295,7 @@ namespace map {
     static inline void print_stat( cds_test::property_stream& o, CuckooMap< Key, V, Traits > const& s )
     {
         typedef CuckooMap< Key, V, Traits > map_type;
-        print_stat( o, static_cast<typename map_type::base_class const&>(s) );
+        print_stat( o, static_cast<typename map_type::base_class const&>(s));
     }
 
 }   // namespace map

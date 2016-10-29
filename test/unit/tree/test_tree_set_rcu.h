@@ -46,7 +46,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             base_class::test( s );
@@ -59,15 +59,15 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             for ( auto i : indices ) {
                 ASSERT_TRUE( s.insert( data[i] ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             typedef typename Set::exempt_ptr exempt_ptr;
@@ -84,7 +84,7 @@ namespace cds_test {
                     ASSERT_TRUE( !rp );
                     switch ( idx % 3 ) {
                     case 0:
-                        rp = s.get( i.key() );
+                        rp = s.get( i.key());
                         ASSERT_FALSE( !rp );
                         break;
                     case 1:
@@ -92,10 +92,10 @@ namespace cds_test {
                         ASSERT_FALSE( !rp );
                         break;
                     case 2:
-                        rp = s.get_with( other_item( i.key() ), other_less() );
+                        rp = s.get_with( other_item( i.key()), other_less());
                         ASSERT_FALSE( !rp );
                     }
-                    EXPECT_EQ( rp->key(), i.key() );
+                    EXPECT_EQ( rp->key(), i.key());
                     rp->nFindCount = rp->key() * 3;
                 }
             }
@@ -112,7 +112,7 @@ namespace cds_test {
 
                         switch ( idx % 3 ) {
                         case 0:
-                            xp = s.extract( i.key() );
+                            xp = s.extract( i.key());
                             ASSERT_FALSE( !xp );
                             break;
                         case 1:
@@ -120,11 +120,11 @@ namespace cds_test {
                             ASSERT_FALSE( !xp );
                             break;
                         case 2:
-                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            xp = s.extract_with( other_item( i.key()), other_less());
                             ASSERT_FALSE( !xp );
                             break;
                         }
-                        EXPECT_EQ( xp->key(), i.key() );
+                        EXPECT_EQ( xp->key(), i.key());
                         EXPECT_EQ( xp->nFindCount, static_cast<unsigned>( i.key() * 3 ));
                     }
                     xp.release();
@@ -134,13 +134,13 @@ namespace cds_test {
 
                         switch ( idx % 3 ) {
                         case 0:
-                            xp = s.extract( i.key() );
+                            xp = s.extract( i.key());
                             break;
                         case 1:
                             xp = s.extract( i );
                             break;
                         case 2:
-                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            xp = s.extract_with( other_item( i.key()), other_less());
                             break;
                         }
                         ASSERT_TRUE( !xp );
@@ -149,7 +149,7 @@ namespace cds_test {
                 else {
                     switch ( idx % 3 ) {
                     case 0:
-                        xp = s.extract( i.key() );
+                        xp = s.extract( i.key());
                         ASSERT_FALSE( !xp );
                         break;
                     case 1:
@@ -157,73 +157,73 @@ namespace cds_test {
                         ASSERT_FALSE( !xp );
                         break;
                     case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
+                        xp = s.extract_with( other_item( i.key()), other_less());
                         ASSERT_FALSE( !xp );
                         break;
                     }
-                    EXPECT_EQ( xp->key(), i.key() );
+                    EXPECT_EQ( xp->key(), i.key());
                     EXPECT_EQ( xp->nFindCount, static_cast<unsigned>( i.key() * 3 ));
 
                     switch ( idx % 3 ) {
                     case 0:
-                        xp = s.extract( i.key() );
+                        xp = s.extract( i.key());
                         break;
                     case 1:
                         xp = s.extract( i );
                         break;
                     case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
+                        xp = s.extract_with( other_item( i.key()), other_less());
                         break;
                     }
                     ASSERT_TRUE( !xp );
                 }
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             for ( auto i : indices ) {
-                ASSERT_TRUE( s.insert( data[i] ) );
+                ASSERT_TRUE( s.insert( data[i] ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // extract_min
             size_t nCount = 0;
             int nKey = -1;
-            while ( !s.empty() ) {
+            while ( !s.empty()) {
                 xp = s.extract_min();
                 ASSERT_FALSE( !xp );
-                EXPECT_EQ( nKey + 1, xp->key() );
+                EXPECT_EQ( nKey + 1, xp->key());
                 ++nCount;
                 nKey = xp->key();
             }
             xp.release();
             EXPECT_EQ( nCount, nSetSize );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // extract_max
             for ( auto i : indices ) {
-                ASSERT_TRUE( s.insert( data[i] ) );
+                ASSERT_TRUE( s.insert( data[i] ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             nCount = 0;
             nKey = nSetSize;
-            while ( !s.empty() ) {
+            while ( !s.empty()) {
                 xp = s.extract_max();
                 ASSERT_FALSE( !xp );
-                EXPECT_EQ( nKey - 1, xp->key() );
+                EXPECT_EQ( nKey - 1, xp->key());
                 ++nCount;
                 nKey = xp->key();
             }
             xp.release();
             EXPECT_EQ( nCount, nSetSize );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
         }
 

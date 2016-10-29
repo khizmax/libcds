@@ -820,7 +820,7 @@ namespace cds { namespace intrusive {
                 pTop = m_Top.load( memory_model::memory_order_relaxed );
                 if ( pTop == nullptr )
                     return;
-                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                if ( m_Top.compare_exchange_weak( pTop, nullptr, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                     m_ItemCounter.reset();
                     break;
                 }
@@ -831,7 +831,7 @@ namespace cds { namespace intrusive {
                 node_type * p = pTop;
                 pTop = p->m_pNext.load(memory_model::memory_order_relaxed);
                 clear_links( p );
-                gc::template retire<disposer>( node_traits::to_value_ptr( *p ) );
+                gc::template retire<disposer>( node_traits::to_value_ptr( *p ));
             }
         }
 

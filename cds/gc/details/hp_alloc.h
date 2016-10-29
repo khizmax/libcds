@@ -195,7 +195,7 @@ namespace cds {
 
             hp_guard* release( size_t nIndex ) CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 hp_guard* p = m_arr[ nIndex ];
                 m_arr[ nIndex ] = nullptr;
@@ -249,7 +249,7 @@ namespace cds {
             /// Dtor
             ~hp_allocator()
             {
-                allocator_impl().Delete( m_arrHazardPtr, capacity() );
+                allocator_impl().Delete( m_arrHazardPtr, capacity());
             }
 
             /// Get capacity of array
@@ -342,7 +342,7 @@ namespace cds {
             /// Returns i-th hazard pointer
             hp_guard& operator []( size_t i ) CDS_NOEXCEPT
             {
-                assert( i < capacity() );
+                assert( i < capacity());
                 return m_arrHazardPtr[i];
             }
 

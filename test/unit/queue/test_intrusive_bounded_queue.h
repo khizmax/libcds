@@ -57,7 +57,7 @@ namespace cds_test {
 
             const size_t nSize = q.capacity();
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             std::vector< value_type > arr;
@@ -74,14 +74,14 @@ namespace cds_test {
                     ASSERT_TRUE( q.enqueue( i ));
                 }
                 ASSERT_CONTAINER_SIZE( q, i.nVal + 1 );
-                ASSERT_FALSE( q.empty() );
+                ASSERT_FALSE( q.empty());
             }
 
-            ASSERT_CONTAINER_SIZE( q, q.capacity() );
+            ASSERT_CONTAINER_SIZE( q, q.capacity());
 
             // pop
             int val = 0;
-            while ( !q.empty() ) {
+            while ( !q.empty()) {
                 value_type * v;
                 if ( val & 1 )
                     v = q.pop();
@@ -95,25 +95,25 @@ namespace cds_test {
             }
             ASSERT_EQ( val, static_cast<int>( nSize ));
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // pop from empty queue
             {
                 value_type * v = q.pop();
                 ASSERT_TRUE( v == nullptr );
-                ASSERT_TRUE( q.empty() );
+                ASSERT_TRUE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, 0 );
             }
 
             // clear
             for ( auto& i : arr ) {
-                ASSERT_TRUE( q.push( i ) );
+                ASSERT_TRUE( q.push( i ));
             }
-            ASSERT_FALSE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, q.capacity() );
+            ASSERT_FALSE( q.empty());
+            ASSERT_CONTAINER_SIZE( q, q.capacity());
             q.clear();
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             if ( std::is_same<typename Queue::disposer, cds::intrusive::opt::v::empty_disposer>::value ) {
@@ -131,13 +131,13 @@ namespace cds_test {
 
             // clear with disposer
             for ( auto& i : arr ) {
-                ASSERT_TRUE( q.push( i ) );
+                ASSERT_TRUE( q.push( i ));
                 i.nDisposeCount = 0;
             }
-            ASSERT_FALSE( q.empty() );
-            ASSERT_CONTAINER_SIZE( q, q.capacity() );
+            ASSERT_FALSE( q.empty());
+            ASSERT_CONTAINER_SIZE( q, q.capacity());
             q.clear( []( value_type * p ) { p->nDisposeCount = p->nVal + 1; } );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
             // check the disposer has not been called
             for ( auto& i : arr ) {

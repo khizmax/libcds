@@ -231,10 +231,10 @@ namespace cds { namespace container {
             typedef typename base_class::template iterator_type<IsConst>    iterator_base;
 
             iterator_type( head_type const& pNode )
-                : iterator_base( const_cast<head_type *>(&pNode) )
+                : iterator_base( const_cast<head_type *>(&pNode))
             {}
             iterator_type( head_type const * pNode )
-                : iterator_base( const_cast<head_type *>(pNode) )
+                : iterator_base( const_cast<head_type *>(pNode))
             {}
 
             friend class LazyKVList;
@@ -337,7 +337,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            iterator it( head() );
+            iterator it( head());
             ++it ;  // skip dummy head
             return it;
         }
@@ -352,13 +352,13 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( tail() );
+            return iterator( tail());
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it;   // skip dummy head
             return it;
         }
@@ -366,7 +366,7 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            const_iterator it( head() );
+            const_iterator it( head());
             ++it;   // skip dummy head
             return it;
         }
@@ -527,7 +527,7 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            return erase_at( head(), key, intrusive_key_comparator() );
+            return erase_at( head(), key, intrusive_key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -541,7 +541,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Deletes \p key from the list
@@ -606,7 +606,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            return extract_at( head(), key, intrusive_key_comparator() );
+            return extract_at( head(), key, intrusive_key_comparator());
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -622,7 +622,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks whether the list contains \p key
@@ -633,7 +633,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( head(), key, intrusive_key_comparator() );
+            return find_at( head(), key, intrusive_key_comparator());
         }
         //@cond
         template <typename Q>
@@ -654,7 +654,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
         //@cond
         template <typename Q, typename Less>
@@ -732,7 +732,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            return get_at( head(), key, intrusive_key_comparator() );
+            return get_at( head(), key, intrusive_key_comparator());
         }
 
         /// Finds the key \p val and return the item found
@@ -748,7 +748,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks if the list is empty

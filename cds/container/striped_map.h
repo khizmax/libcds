@@ -339,7 +339,7 @@ namespace cds { namespace container {
                                 std::list<std::pair<const Key, T> >::iterator itInsert,
                                 std::list<std::pair<const Key, T> >::iterator itWhat )
                             {
-                                std::pair<Key, T> newVal( itWhat->first, T() );
+                                std::pair<Key, T> newVal( itWhat->first, T());
                                 std::swap( list.insert( itInsert, newVal )->second, itWhat->second );
                             }
                         } \endcode
@@ -351,7 +351,7 @@ namespace cds { namespace container {
                                 std::list<std::pair<const Key, T> >::iterator itInsert,
                                 std::list<std::pair<const Key, T> >::iterator itWhat )
                             {
-                                list.insert( itInsert, std::move( *itWhat ) );
+                                list.insert( itInsert, std::move( *itWhat ));
                             }
                         } \endcode
                     </td>
@@ -378,7 +378,7 @@ namespace cds { namespace container {
                             {
                                 std::swap(
                                     map.insert(
-                                        std::map::value_type( itWhat->first, T() ) ).first->second
+                                        std::map::value_type( itWhat->first, T()) ).first->second
                                         , itWhat->second
                                 ));
                             }
@@ -414,7 +414,7 @@ namespace cds { namespace container {
                                 bc::slist<std::pair<const Key, T> >::iterator itInsert,
                                 bc::slist<std::pair<const Key, T> >::iterator itWhat )
                             {
-                                std::pair<Key, T> newVal( itWhat->first, T() );
+                                std::pair<Key, T> newVal( itWhat->first, T());
                                 std::swap( list.insert( itInsert, newVal )->second, itWhat->second );
                             }
                         } \endcode
@@ -426,7 +426,7 @@ namespace cds { namespace container {
                                 bc::slist<std::pair<const Key, T> >::iterator itInsert,
                                 bc::slist<std::pair<const Key, T> >::iterator itWhat )
                             {
-                                list.insert_after( itInsert, std::move( *itWhat ) );
+                                list.insert_after( itInsert, std::move( *itWhat ));
                             }
                         } \endcode
                     </td>
@@ -566,7 +566,7 @@ template <class Container, typename... Options>
         StripedMap(
             size_t nCapacity    ///< Initial size of bucket table and lock array. Must be power of two, the minimum is 16.
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
-            ) : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
+            ) : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy))
         {}
 
         /// Destructor destroys internal data
@@ -858,7 +858,7 @@ template <class Container, typename... Options>
         bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< value_type, Less, key_accessor >());
         }
         //@cond
         template <typename K, typename Less

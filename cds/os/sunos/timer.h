@@ -48,7 +48,7 @@ namespace cds { namespace OS {
             typedef hrtime_t    native_timer_type;
             typedef long long    native_duration_type;
 
-            Timer() : m_tmStart( current() ) {}
+            Timer() : m_tmStart( current()) {}
 
             static native_timer_type    current()            { return gethrtime();    }
             static void current( native_timer_type& tmr )    { tmr = gethrtime();    }
@@ -68,12 +68,12 @@ namespace cds { namespace OS {
 
             double duration()
             {
-                return duration( native_duration() );
+                return duration( native_duration());
             }
 
             native_duration_type    native_duration()
             {
-                return native_duration( m_tmStart, current() );
+                return native_duration( m_tmStart, current());
             }
 
             static native_duration_type    native_duration( native_timer_type nStart, native_timer_type nEnd )

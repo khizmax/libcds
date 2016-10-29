@@ -64,7 +64,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -148,7 +148,7 @@ namespace cds_test {
             template <typename Item>
             size_t operator()( const Item& i ) const
             {
-                return (*this)( i.key() );
+                return (*this)( i.key());
             }
         };
         typedef hash_int hash1;
@@ -227,7 +227,7 @@ namespace cds_test {
         struct cmp {
             int operator ()(const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -243,7 +243,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()(const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -334,7 +334,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             typedef typename Set::value_type value_type;
@@ -348,7 +348,7 @@ namespace cds_test {
                 data.push_back( value_type( static_cast<int>( key )));
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
@@ -385,7 +385,7 @@ namespace cds_test {
                     EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
-                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
+                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
@@ -400,32 +400,32 @@ namespace cds_test {
                     break;
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate()));
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()));
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[ idx ];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate() ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()) );
                 EXPECT_EQ( i.nFindCount, 0u );
-                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_predicate(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
 
                 value_type v( i );
@@ -433,19 +433,19 @@ namespace cds_test {
                 case 0:
                     ASSERT_FALSE( s.unlink( v ));
                     ASSERT_TRUE( s.unlink( i ));
-                    ASSERT_FALSE( s.unlink( i ) );
+                    ASSERT_FALSE( s.unlink( i ));
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key()));
-                    ASSERT_FALSE( s.erase( i.key() ) );
+                    ASSERT_FALSE( s.erase( i.key()) );
                     break;
                 case 2:
                     ASSERT_TRUE( s.erase( v ));
-                    ASSERT_FALSE( s.erase( v ) );
+                    ASSERT_FALSE( s.erase( v ));
                     break;
                 case 3:
                     ASSERT_TRUE( s.erase_with( other_item( i.key()), other_predicate()));
-                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_predicate() ) );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_predicate()) );
                     break;
                 case 4:
                     EXPECT_EQ( i.nEraseCount, 0u );
@@ -456,9 +456,9 @@ namespace cds_test {
                     break;
                 case 5:
                     EXPECT_EQ( i.nEraseCount, 0u );
-                    ASSERT_TRUE( s.erase_with( other_item( i.key() ), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_TRUE( s.erase_with( other_item( i.key()), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
-                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_predicate(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
@@ -469,7 +469,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
             // clear
@@ -477,25 +477,25 @@ namespace cds_test {
                 i.clear_stat();
                 ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
             // clear_and_dispose
             for ( auto& i : data ) {
                 i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
-            s.clear_and_dispose( mock_disposer() );
+            s.clear_and_dispose( mock_disposer());
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             for ( auto& i : data ) {
                 EXPECT_EQ( i.nDisposeCount, 1u );

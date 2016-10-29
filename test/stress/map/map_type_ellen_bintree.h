@@ -259,13 +259,13 @@ namespace map {
     static inline void additional_check( EllenBinTreeMap<GC, Key, T, Traits>& m )
     {
         GC::force_dispose();
-        ellen_bintree_check::check_stat( m.statistics() );
+        ellen_bintree_check::check_stat( m.statistics());
     }
 
     template <typename GC, typename Key, typename T, typename Traits>
     static inline void check_before_cleanup( EllenBinTreeMap<GC, Key, T, Traits>& m )
     {
-        EXPECT_TRUE( m.check_consistency() );
+        EXPECT_TRUE( m.check_consistency());
     }
 }   // namespace map
 

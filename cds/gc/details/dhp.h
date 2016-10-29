@@ -318,7 +318,7 @@ namespace cds { namespace gc {
                     do {
                         pLast->m_pNext.store( pHead, atomics::memory_order_relaxed );
                         // pHead is changed by compare_exchange_weak
-                    } while ( !m_pHead.compare_exchange_weak( pHead, pFirst, atomics::memory_order_release, atomics::memory_order_relaxed ) );
+                    } while ( !m_pHead.compare_exchange_weak( pHead, pFirst, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
                     return m_nItemCount.fetch_add( nSize, atomics::memory_order_relaxed ) + 1;
                 }
@@ -668,15 +668,15 @@ namespace cds { namespace gc {
             /**@anchor dhp_gc_retirePtr
             */
             template <typename T>
-            void retirePtr( T * p, void (* pFunc)(T *) )
+            void retirePtr( T * p, void (* pFunc)(T *))
             {
-                retirePtr( retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ) ) );
+                retirePtr( retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )) );
             }
 
             /// Places retired pointer \p into thread's array of retired pointer for deferred reclamation
             void retirePtr( retired_ptr const& p )
             {
-                if ( m_RetiredBuffer.push( m_RetiredAllocator.alloc(p)) >= m_nLiberateThreshold.load(atomics::memory_order_relaxed) )
+                if ( m_RetiredBuffer.push( m_RetiredAllocator.alloc(p)) >= m_nLiberateThreshold.load(atomics::memory_order_relaxed))
                     scan();
             }
 
@@ -736,7 +736,7 @@ namespace cds { namespace gc {
         public:
             /// Default constructor
             ThreadGC()
-                : m_gc( GarbageCollector::instance() )
+                : m_gc( GarbageCollector::instance())
                 , m_pList( nullptr )
                 , m_pFree( nullptr )
             {}
@@ -852,7 +852,7 @@ namespace cds { namespace gc {
 
             /// Places retired pointer \p and its deleter \p pFunc into list of retired pointer for deferred reclamation
             template <typename T>
-            void retirePtr( T * p, void (* pFunc)(T *) )
+            void retirePtr( T * p, void (* pFunc)(T *))
             {
                 m_gc.retirePtr( p, pFunc );
             }

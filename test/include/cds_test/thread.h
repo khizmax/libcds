@@ -126,7 +126,7 @@ namespace cds_test {
 
         std::chrono::milliseconds run()
         {
-            return run( std::chrono::seconds::zero() );
+            return run( std::chrono::seconds::zero());
         }
 
         std::chrono::milliseconds run( std::chrono::seconds duration )
@@ -134,7 +134,7 @@ namespace cds_test {
             m_bStopped = false;
             m_doneCount = 0;
 
-            while ( m_readyCount.load() != m_threads.size() )
+            while ( m_readyCount.load() != m_threads.size())
                 std::this_thread::yield();
 
             m_bTimeElapsed.store( false, std::memory_order_release );
@@ -149,7 +149,7 @@ namespace cds_test {
                 m_cvStart.notify_all();
             }
 
-            if ( duration != std::chrono::seconds::zero() ) {
+            if ( duration != std::chrono::seconds::zero()) {
                 for ( ;; ) {
                     std::this_thread::sleep_for( native_duration );
                     auto time_now = std::chrono::steady_clock::now();
@@ -162,7 +162,7 @@ namespace cds_test {
 
             {
                 scoped_lock l( m_cvMutex );
-                while ( m_doneCount != m_threads.size() )
+                while ( m_doneCount != m_threads.size())
                     m_cvDone.wait( l );
                 m_bStopped = true;
             }
@@ -263,7 +263,7 @@ namespace cds_test {
     inline thread::thread( thread const& sample )
         : m_pool( sample.m_pool )
         , m_type( sample.m_type )
-        , m_id( m_pool.get_next_id() )
+        , m_id( m_pool.get_next_id())
         , m_impl( &thread::run, this )
     {}
 

@@ -135,7 +135,7 @@ namespace cds { namespace memory {
         //@cond
         void preallocate_pool()
         {
-            m_pFirst = std_allocator().allocate( m_Queue.capacity() );
+            m_pFirst = std_allocator().allocate( m_Queue.capacity());
             m_pLast = m_pFirst + m_Queue.capacity();
 
             for ( value_type * p = m_pFirst; p < m_pLast; ++p ) {
@@ -184,7 +184,7 @@ namespace cds { namespace memory {
 
             value_type * p = m_Queue.pop();
             if ( p ) {
-                assert( from_pool(p) );
+                assert( from_pool(p));
                 return new( p ) value_type;
             }
             // The pool is empty - allocate new from the heap
@@ -205,7 +205,7 @@ namespace cds { namespace memory {
             CDS_UNUSED(n);
 
             if ( p ) {
-                if ( from_pool(p) ) {
+                if ( from_pool(p)) {
                     p->~value_type();
                     // The queue can notify about false fullness state
                     // so we push in loop
@@ -309,7 +309,7 @@ namespace cds { namespace memory {
         ~lazy_vyukov_queue_pool()
         {
             std_allocator a;
-            while ( !m_Queue.empty() )
+            while ( !m_Queue.empty())
                 a.deallocate( m_Queue.pop(), 1 );
         }
 
@@ -502,7 +502,7 @@ namespace cds { namespace memory {
 
             if ( !p ) {
                 back_off bkoff;
-                while ( m_Queue.size() ) {
+                while ( m_Queue.size()) {
                     p = m_Queue.pop();
                     if ( p )
                         goto ok;
@@ -514,7 +514,7 @@ namespace cds { namespace memory {
             }
 
         ok:
-            assert( from_pool(p) );
+            assert( from_pool(p));
             return p;
         }
 
@@ -535,7 +535,7 @@ namespace cds { namespace memory {
                 back_off bkoff;
                 // The queue can notify it is full but that is false fullness state
                 // So, we push in loop
-                while ( !m_Queue.push(*p) )
+                while ( !m_Queue.push(*p))
                     bkoff();
             }
         }

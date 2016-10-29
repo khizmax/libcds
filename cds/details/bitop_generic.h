@@ -164,7 +164,7 @@ namespace cds {
                 return 0;
             if ( x & 0xffffffffu )
                 return lsb32( (uint32_t) x );
-            return lsb32( (uint32_t) (x >> 32) ) + 32;
+            return lsb32( (uint32_t) (x >> 32)) + 32;
         }
 #endif
 
@@ -198,7 +198,7 @@ namespace cds {
         static inline uint64_t rbo64( uint64_t x )
         {
             //                      Low 32bit                                          Hight 32bit
-            return ( static_cast<uint64_t>(rbo32( (uint32_t) x )) << 32 ) | ( static_cast<uint64_t>( rbo32( (uint32_t) (x >> 32) )));
+            return ( static_cast<uint64_t>(rbo32( (uint32_t) x )) << 32 ) | ( static_cast<uint64_t>( rbo32( (uint32_t) (x >> 32))));
         }
 #endif
 
@@ -225,7 +225,7 @@ namespace cds {
 #        ifdef cds_beans_zbc64_DEFINED
             return 64 - zbc64( x );
 #        else
-            return sbc32( (uint32_t) (x >> 32) ) + sbc32( (uint32_t) x );
+            return sbc32( (uint32_t) (x >> 32)) + sbc32( (uint32_t) x );
 #        endif
         }
 #endif

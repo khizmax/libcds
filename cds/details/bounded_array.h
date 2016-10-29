@@ -77,24 +77,24 @@ namespace cds {
             explicit bounded_array(
                 size_t nCapacity            ///< capacity
             )
-            : m_arr( allocator_impl().NewArray( nCapacity ) )
+            : m_arr( allocator_impl().NewArray( nCapacity ))
             , m_nCapacity( nCapacity )
             {}
 
             ~bounded_array()
             {
-                allocator_impl().Delete( m_arr, capacity() );
+                allocator_impl().Delete( m_arr, capacity());
             }
 
             const value_type& operator []( size_t nItem ) const
             {
-                assert( nItem < capacity() );
+                assert( nItem < capacity());
                 return m_arr[nItem];
             }
 
             value_type& operator []( size_t nItem )
             {
-                assert( nItem < capacity() );
+                assert( nItem < capacity());
                 return m_arr[nItem];
             }
 

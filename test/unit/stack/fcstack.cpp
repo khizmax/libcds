@@ -45,46 +45,46 @@ namespace {
             Stack stack;
             value_type v;
 
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
             ASSERT_EQ( stack.size(), 0u );
 
-            ASSERT_TRUE( stack.push( 1 ) );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( stack.push( 1 ));
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 1u );
-            ASSERT_TRUE( stack.push( 2 ) );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( stack.push( 2 ));
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 2u );
-            ASSERT_TRUE( stack.push( 3 ) );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( stack.push( 3 ));
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 3u );
 
-            ASSERT_TRUE( stack.pop( v ) );
+            ASSERT_TRUE( stack.pop( v ));
             EXPECT_EQ( v, value_type( 3 ));
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 2u );
-            ASSERT_TRUE( stack.pop( v ) );
+            ASSERT_TRUE( stack.pop( v ));
             EXPECT_EQ( v, value_type( 2 ));
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 1u );
-            ASSERT_TRUE( stack.pop( v ) );
+            ASSERT_TRUE( stack.pop( v ));
             EXPECT_EQ( v, value_type( 1 ));
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
             ASSERT_EQ( stack.size(), 0u );
             v = 1000;
-            ASSERT_TRUE( !stack.pop( v ) );
+            ASSERT_TRUE( !stack.pop( v ));
             EXPECT_EQ( v, value_type( 1000 ));
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
             ASSERT_EQ( stack.size(), 0u );
 
-            ASSERT_TRUE( stack.push( 10 ) );
-            ASSERT_TRUE( stack.push( 20 ) );
-            ASSERT_TRUE( stack.push( 30 ) );
-            ASSERT_TRUE( !stack.empty() );
+            ASSERT_TRUE( stack.push( 10 ));
+            ASSERT_TRUE( stack.push( 20 ));
+            ASSERT_TRUE( stack.push( 30 ));
+            ASSERT_TRUE( !stack.empty());
             ASSERT_EQ( stack.size(), 3u );
 
-            while ( stack.pop( v ) );
+            while ( stack.pop( v ));
 
-            ASSERT_TRUE( stack.empty() );
+            ASSERT_TRUE( stack.empty());
             ASSERT_EQ( stack.size(), 0u );
         }
     };

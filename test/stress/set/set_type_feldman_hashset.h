@@ -83,13 +83,13 @@ namespace set {
         template <typename Q>
         extracted_ptr extract(Q const& key)
         {
-            return base_class::extract( hasher()(key) );
+            return base_class::extract( hasher()(key));
         }
 
         template <typename Q>
         bool contains( Q const& key )
         {
-            return base_class::contains( hasher()(key) );
+            return base_class::contains( hasher()(key));
         }
 
         // for testing

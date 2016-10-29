@@ -68,7 +68,7 @@ namespace map {
             if ( s_Data[i].bExists )
                 ++s_nRealMapSize;
         }
-        shuffle( s_Data.begin(), s_Data.end() );
+        shuffle( s_Data.begin(), s_Data.end());
     }
 
     void Map_find_int::SetUpTestCase()
@@ -128,5 +128,5 @@ namespace map {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Map_find_int_LF, ::testing::ValuesIn( Map_find_int_LF::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Map_find_int_LF, ::testing::ValuesIn( Map_find_int_LF::get_load_factors()) );
 } // namespace map

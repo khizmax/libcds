@@ -201,7 +201,7 @@ namespace cds { namespace container {
         bool insert( Q const& val )
         {
             scoped_node_ptr sp( cxx_leaf_node_allocator().New( val ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -291,7 +291,7 @@ namespace cds { namespace container {
         bool emplace( Args&&... args )
         {
             scoped_node_ptr sp( cxx_leaf_node_allocator().MoveNew( std::forward<Args>(args)... ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -566,7 +566,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED(pred);
             return base_class::get_with_( key,
-                cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >() );
+                cds::details::predicate_wrapper< leaf_node, Less, typename maker::value_accessor >());
         }
 
         /// Clears the set (not atomic)
@@ -576,7 +576,7 @@ namespace cds { namespace container {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 

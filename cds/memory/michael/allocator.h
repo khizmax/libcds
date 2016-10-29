@@ -199,7 +199,7 @@ namespace michael {
         ~page_cached_allocator()
         {
             void * pPage;
-            while ( m_FreeList.pop(pPage) )
+            while ( m_FreeList.pop(pPage))
                 base_class::free( pPage );
         }
         //@endcond
@@ -208,7 +208,7 @@ namespace michael {
         void * alloc()
         {
             void * pPage;
-            if ( !m_FreeList.pop( pPage ) )
+            if ( !m_FreeList.pop( pPage ))
                 pPage = base_class::alloc();
             return pPage;
         }
@@ -305,7 +305,7 @@ namespace michael {
         /// Gets details::size_class struct for size-class index \p nIndex
         static const size_class * at( sizeclass_index nIndex )
         {
-            assert( nIndex < size() );
+            assert( nIndex < size());
             return m_szClass + nIndex;
         }
     };
@@ -352,7 +352,7 @@ namespace michael {
         /// Push superblock descriptor to free-list
         void push( T * pDesc )
         {
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc) ) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) );
             auto_lock al(m_access);
             base_class::push_back( *pDesc );
         }
@@ -361,11 +361,11 @@ namespace michael {
         T *   pop()
         {
             auto_lock al(m_access);
-            if ( base_class::empty() )
+            if ( base_class::empty())
                 return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc) ) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)) );
             return &rDesc;
         }
 
@@ -407,7 +407,7 @@ namespace michael {
         void    push( T * pDesc )
         {
             auto_lock al( m_access );
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc) ) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) );
             base_class::push_back( *pDesc );
         }
 
@@ -415,11 +415,11 @@ namespace michael {
         T * pop()
         {
             auto_lock al( m_access );
-            if ( base_class::empty() )
+            if ( base_class::empty())
                 return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc) ) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)) );
             return &rDesc;
         }
 
@@ -429,8 +429,8 @@ namespace michael {
             assert(pDesc != nullptr);
             auto_lock al( m_access );
             // !inited(pDesc) is equal to "pDesc is being linked to partial list"
-            if ( !base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc) ) ) {
-                base_class::erase( base_class::iterator_to( *pDesc ) );
+            if ( !base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) ) {
+                base_class::erase( base_class::iterator_to( *pDesc ));
                 return true;
             }
             return false;
@@ -899,7 +899,7 @@ namespace michael {
 
             size_t getOSAllocSize() const
             {
-                assert( isOSAllocated() );
+                assert( isOSAllocated());
                 return nSize;
             }
 
@@ -925,13 +925,13 @@ namespace michael {
 
             superblock_desc * desc()
             {
-                assert( !isOSAllocated() );
-                return (pDesc.bits() & bitAligned) ? reinterpret_cast<block_header *>( pDesc.ptr() )->desc() : pDesc.ptr();
+                assert( !isOSAllocated());
+                return (pDesc.bits() & bitAligned) ? reinterpret_cast<block_header *>( pDesc.ptr())->desc() : pDesc.ptr();
             }
 
             block_header * begin()
             {
-                return (pDesc.bits() & bitAligned) ? reinterpret_cast<block_header *>( pDesc.ptr() ) : this;
+                return (pDesc.bits() & bitAligned) ? reinterpret_cast<block_header *>( pDesc.ptr()) : this;
             }
 
             bool isAligned() const
@@ -952,8 +952,8 @@ namespace michael {
 
             size_t getOSAllocSize() const
             {
-                assert( isOSAllocated() );
-                return reinterpret_cast<uintptr_t>( pDesc.ptr() ) >> 2;
+                assert( isOSAllocated());
+                return reinterpret_cast<uintptr_t>( pDesc.ptr()) >> 2;
             }
 
         };
@@ -1143,10 +1143,10 @@ namespace michael {
                         pDesc =  partialList.pop();
                         break;
                     }
-                } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ) );
+                } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
-                //assert( pDesc == nullptr || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc) ));
-                //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
+                //assert( pDesc == nullptr || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc)));
+                //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)) );
                 return pDesc;
             }
 
@@ -1154,10 +1154,10 @@ namespace michael {
             void add_partial( superblock_desc * pDesc )
             {
                 assert( pPartial != pDesc );
-                //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc) ) );
+                //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)) );
 
                 superblock_desc * pCur = nullptr;
-                if ( !pPartial.compare_exchange_strong(pCur, pDesc, atomics::memory_order_acq_rel, atomics::memory_order_relaxed) )
+                if ( !pPartial.compare_exchange_strong(pCur, pDesc, atomics::memory_order_acq_rel, atomics::memory_order_relaxed))
                     partialList.push( pDesc );
             }
 
@@ -1205,7 +1205,7 @@ namespace michael {
         /// Allocates large block from system memory
         block_header * alloc_from_OS( size_t nSize )
         {
-            block_header * p = reinterpret_cast<block_header *>( m_LargeHeap.alloc( nSize ) );
+            block_header * p = reinterpret_cast<block_header *>( m_LargeHeap.alloc( nSize ));
             m_OSAllocStat.incBytesAllocated( nSize );
             p->setOSAllocated( nSize );
             return p;
@@ -1221,7 +1221,7 @@ namespace michael {
             while ( true ) {
                 ++nCollision;
                 oldActive = pProcHeap->active.load(atomics::memory_order_acquire);
-                if ( !oldActive.ptr() )
+                if ( !oldActive.ptr())
                     return nullptr;
                 unsigned int nCredits = oldActive.credits();
                 active_tag  newActive   ; // default = 0
@@ -1284,8 +1284,8 @@ namespace michael {
             // block_header fields is not needed to setup
             // It was set in alloc_from_new_superblock
             assert( reinterpret_cast<block_header *>( pAddr )->desc() == pDesc );
-            assert( !reinterpret_cast<block_header *>( pAddr )->isOSAllocated() );
-            assert( !reinterpret_cast<block_header *>( pAddr )->isAligned() );
+            assert( !reinterpret_cast<block_header *>( pAddr )->isOSAllocated());
+            assert( !reinterpret_cast<block_header *>( pAddr )->isAligned());
 
             return reinterpret_cast<block_header *>( pAddr );
         }
@@ -1318,7 +1318,7 @@ namespace michael {
                 newAnchor.count -= nMoreCredits + 1;
                 newAnchor.state = (nMoreCredits > 0) ? SBSTATE_ACTIVE : SBSTATE_FULL;
                 newAnchor.tag += 1;
-            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed) );
+            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed));
 
             if ( nCollision )
                 pProcHeap->stat.incPartialDescCASFailureCount( nCollision );
@@ -1339,7 +1339,7 @@ namespace michael {
                 pAddr = pDesc->pSB + oldAnchor.avail * pDesc->nBlockSize;
                 newAnchor.avail = reinterpret_cast<free_block_header *>( pAddr )->nNextFree;
                 ++newAnchor.tag;
-            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed) );
+            } while ( !pDesc->anchor.compare_exchange_strong(oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed));
 
             if ( nCollision )
                 pProcHeap->stat.incPartialAnchorCASFailureCount( nCollision );
@@ -1354,8 +1354,8 @@ namespace michael {
             // block_header fields is not needed to setup
             // It was set in alloc_from_new_superblock
             assert( reinterpret_cast<block_header *>( pAddr )->desc() == pDesc );
-            assert( !reinterpret_cast<block_header *>( pAddr )->isAligned() );
-            assert( !reinterpret_cast<block_header *>( pAddr )->isOSAllocated() );
+            assert( !reinterpret_cast<block_header *>( pAddr )->isAligned());
+            assert( !reinterpret_cast<block_header *>( pAddr )->isOSAllocated());
 
             return reinterpret_cast<block_header *>( pAddr );
         }
@@ -1401,7 +1401,7 @@ namespace michael {
         /// Find appropriate processor heap based on size-class selected
         processor_heap * find_heap( typename sizeclass_selector::sizeclass_index nSizeClassIndex )
         {
-            assert( nSizeClassIndex < m_SizeClassSelector.size() );
+            assert( nSizeClassIndex < m_SizeClassSelector.size());
 
             unsigned int nProcessorId = m_Topology.current_processor();
             assert( nProcessorId < m_nProcessorCount );
@@ -1413,7 +1413,7 @@ namespace michael {
             while ( !pDesc ) {
 
                 processor_desc * pNewDesc = new_processor_desc( nProcessorId );
-                if ( m_arrProcDesc[nProcessorId].compare_exchange_strong( pDesc, pNewDesc, atomics::memory_order_release, atomics::memory_order_relaxed ) ) {
+                if ( m_arrProcDesc[nProcessorId].compare_exchange_strong( pDesc, pNewDesc, atomics::memory_order_release, atomics::memory_order_relaxed )) {
                     pDesc = pNewDesc;
                     break;
                 }
@@ -1432,7 +1432,7 @@ namespace michael {
             active_tag  newActive;
             newActive.set( pDesc, nCredits - 1 );
 
-            if ( pProcHeap->active.compare_exchange_strong( nullActive, newActive, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ) )
+            if ( pProcHeap->active.compare_exchange_strong( nullActive, newActive, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ))
                 return;
 
             // Someone installed another active superblock.
@@ -1486,7 +1486,7 @@ namespace michael {
             // TSan false positive: a new descriptor will be linked further with release fence
             CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
 
-            pDesc = new( m_AlignedHeap.alloc( szTotal, c_nAlignment ) ) processor_desc;
+            pDesc = new( m_AlignedHeap.alloc( szTotal, c_nAlignment )) processor_desc;
 
             pDesc->pageHeaps = reinterpret_cast<page_heap *>( pDesc + 1 );
             for ( size_t i = 0; i < nPageHeapCount; ++i )
@@ -1575,7 +1575,7 @@ namespace michael {
             anchor_tag anchor;
             superblock_desc * pDesc = pProcHeap->pProcDesc->listSBDescFree.pop();
             if ( pDesc == nullptr ) {
-                pDesc = new( m_AlignedHeap.alloc(sizeof(superblock_desc), c_nAlignment ) ) superblock_desc;
+                pDesc = new( m_AlignedHeap.alloc(sizeof(superblock_desc), c_nAlignment )) superblock_desc;
                 assert( (uintptr_t(pDesc) & (c_nAlignment - 1)) == 0 );
 
                 anchor = pDesc->anchor.load( atomics::memory_order_relaxed );
@@ -1631,7 +1631,7 @@ namespace michael {
             if ( nSizeClassIndex == sizeclass_selector::c_nNoSizeClass ) {
                 return alloc_from_OS( nSize );
             }
-            assert( nSizeClassIndex < m_SizeClassSelector.size() );
+            assert( nSizeClassIndex < m_SizeClassSelector.size());
 
             block_header * pBlock;
             processor_heap * pProcHeap;
@@ -1694,7 +1694,7 @@ namespace michael {
             block_header * pBlock = int_alloc( nSize + sizeof(block_header) + bound_checker::trailer_size );
 
             // Bound checking is only for our blocks
-            if ( !pBlock->isOSAllocated() ) {
+            if ( !pBlock->isOSAllocated()) {
                 // the block is allocated from our heap - bound checker is applicable
                 m_BoundChecker.make_trailer(
                     reinterpret_cast<byte *>(pBlock + 1),
@@ -1718,14 +1718,14 @@ namespace michael {
             block_header * pRedirect = (reinterpret_cast<block_header *>( pMemory ) - 1);
             block_header * pBlock = pRedirect->begin();
 
-            if ( pBlock->isOSAllocated() ) {
+            if ( pBlock->isOSAllocated()) {
                 // Block has been allocated from OS
-                m_OSAllocStat.incBytesDeallocated( pBlock->getOSAllocSize() );
+                m_OSAllocStat.incBytesDeallocated( pBlock->getOSAllocSize());
                 m_LargeHeap.free( pBlock );
                 return;
             }
 
-            assert( !pBlock->isAligned() );
+            assert( !pBlock->isAligned());
             superblock_desc * pDesc = pBlock->desc();
 
             m_BoundChecker.check_bounds(
@@ -1760,7 +1760,7 @@ namespace michael {
                 }
                 else
                     newAnchor.count += 1;
-            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed ) );
+            } while ( !pDesc->anchor.compare_exchange_strong( oldAnchor, newAnchor, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
             pProcHeap->stat.incFreeCount();
 
@@ -1802,12 +1802,12 @@ namespace michael {
             block_header * pBlock = reinterpret_cast<block_header *>( pMemory ) - 1;
 
             // Reallocation of aligned block is not possible
-            if ( pBlock->isAligned() ) {
+            if ( pBlock->isAligned()) {
                 assert( false );
                 return nullptr;
             }
 
-            if ( pBlock->isOSAllocated() ) {
+            if ( pBlock->isOSAllocated()) {
                 // The block has been allocated from OS
                 size_t nCurSize = pBlock->getOSAllocSize();
 
@@ -1817,7 +1817,7 @@ namespace michael {
                 // Grow block size
                 void * pNewBuf = alloc( nOrigSize );
                 if ( pNewBuf ) {
-                    memcpy( pNewBuf, pMemory, nCurSize - sizeof(block_header) );
+                    memcpy( pNewBuf, pMemory, nCurSize - sizeof(block_header));
                     free( pMemory );
                 }
                 return pNewBuf;
@@ -1837,7 +1837,7 @@ namespace michael {
 
             void * pNew = alloc( nNewSize );
             if ( pNew ) {
-                memcpy( pNew, pMemory, pDesc->nBlockSize - sizeof(block_header) );
+                memcpy( pNew, pMemory, pDesc->nBlockSize - sizeof(block_header));
                 free( pMemory );
                 return pNew;
             }
@@ -1872,7 +1872,7 @@ namespace michael {
 
 
             // Bound checking is only for our blocks
-            if ( !pBlock->isOSAllocated() ) {
+            if ( !pBlock->isOSAllocated()) {
                 // the block is allocated from our heap - bound checker is applicable
                 m_BoundChecker.make_trailer(
                     reinterpret_cast<byte *>(pRedirect + 1),

@@ -65,7 +65,7 @@ namespace cds {
     {
         CDS_UNUSED( nFeatureFlags );
 
-        if ( cds::details::init_first_call() )
+        if ( cds::details::init_first_call())
         {
             cds::OS::topology::init();
             cds::threading::ThreadData::s_nProcCount = cds::OS::topology::processor_count();
@@ -85,7 +85,7 @@ namespace cds {
     */
     static inline void Terminate()
     {
-        if ( cds::details::fini_last_call() ) {
+        if ( cds::details::fini_last_call()) {
             cds::threading::Manager::fini();
 
             cds::OS::topology::fini();

@@ -191,7 +191,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPush();
             return true;
@@ -211,7 +211,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push_move, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onPushMove();
@@ -232,7 +232,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_pop, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onPop( pRec->bEmpty );
@@ -249,7 +249,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -277,7 +277,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_empty, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             return pRec->bEmpty;
         }
@@ -303,14 +303,14 @@ namespace cds { namespace container {
 
             // this function is called under FC mutex, so switch TSan off
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_push:
                 assert( pRec->pValPush );
-                m_Stack.push( *(pRec->pValPush ) );
+                m_Stack.push( *(pRec->pValPush ));
                 break;
             case op_push_move:
                 assert( pRec->pValPush );
-                m_Stack.push( std::move( *(pRec->pValPush )) );
+                m_Stack.push( std::move( *(pRec->pValPush )));
                 break;
             case op_pop:
                 assert( pRec->pValPop );
@@ -321,7 +321,7 @@ namespace cds { namespace container {
                 }
                 break;
             case op_clear:
-                while ( !m_Stack.empty() )
+                while ( !m_Stack.empty())
                     m_Stack.pop();
                 break;
             case op_empty:
@@ -342,7 +342,7 @@ namespace cds { namespace container {
 
             typedef typename fc_kernel::iterator fc_iterator;
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
-                switch ( it->op() ) {
+                switch ( it->op()) {
                 case op_push:
                 case op_push_move:
                 case op_pop:
@@ -361,7 +361,7 @@ namespace cds { namespace container {
         //@cond
         bool collide( fc_record& rec1, fc_record& rec2 )
         {
-            switch ( rec1.op() ) {
+            switch ( rec1.op()) {
                 case op_push:
                     if ( rec2.op() == op_pop ) {
                         assert(rec1.pValPush);
@@ -381,7 +381,7 @@ namespace cds { namespace container {
                     }
                     break;
                 case op_pop:
-                    switch ( rec2.op() ) {
+                    switch ( rec2.op()) {
                     case op_push:
                     case op_push_move:
                         return collide( rec2, rec1 );

@@ -175,7 +175,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -186,7 +186,7 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -197,7 +197,7 @@ namespace cds { namespace intrusive {
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[0].cbegin(), m_Buckets, m_Buckets + bucket_count());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a set
@@ -208,7 +208,7 @@ namespace cds { namespace intrusive {
         /// Returns an const iterator that addresses the location succeeding the last element in a set
         const_iterator cend() const
         {
-            return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( m_Buckets[bucket_count() - 1].cend(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
     //@}
 
@@ -225,7 +225,7 @@ namespace cds { namespace intrusive {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
-          , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()) )
         {
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 construct_bucket<bucket_stat>( it );
@@ -238,7 +238,7 @@ namespace cds { namespace intrusive {
 
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node

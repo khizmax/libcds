@@ -150,7 +150,7 @@
     int plugin_entry_point()
     {
         // Attach the thread if it is not attached yet
-        if ( !cds::threading::Manager::isThreadAttached() )
+        if ( !cds::threading::Manager::isThreadAttached())
             cds::threading::Manager::attachThread();
 
         // Do some work with HP-related containers

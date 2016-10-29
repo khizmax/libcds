@@ -333,7 +333,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), bucket_begin(), bucket_end() );
+            return iterator( m_Buckets[0].begin(), bucket_begin(), bucket_end());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -344,7 +344,7 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end() );
+            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -398,7 +398,7 @@ namespace cds { namespace intrusive {
 
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node
@@ -733,7 +733,7 @@ namespace cds { namespace intrusive {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
             return iterator( it, &b, bucket_end());
         }
@@ -744,9 +744,9 @@ namespace cds { namespace intrusive {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@endcond
 
@@ -791,9 +791,9 @@ namespace cds { namespace intrusive {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@cond
         template <typename Q, typename Less>
@@ -802,9 +802,9 @@ namespace cds { namespace intrusive {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@endcond
 
@@ -946,11 +946,11 @@ namespace cds { namespace intrusive {
 
         const_iterator get_const_begin() const
         {
-            return const_iterator( m_Buckets[0].cbegin(), bucket_begin(), bucket_end() );
+            return const_iterator( m_Buckets[0].cbegin(), bucket_begin(), bucket_end());
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( bucket_end()[-1].cend(), bucket_end() - 1, bucket_end() );
+            return const_iterator( bucket_end()[-1].cend(), bucket_end() - 1, bucket_end());
         }
 
         template <typename Stat>

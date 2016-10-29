@@ -67,8 +67,8 @@ namespace cds_test {
             }
 
             for ( auto const& i : arrKeys )
-                EXPECT_TRUE( m.insert( i ) );
-            EXPECT_FALSE( m.empty() );
+                EXPECT_TRUE( m.insert( i ));
+            EXPECT_FALSE( m.empty());
             EXPECT_CONTAINER_SIZE( m, kkSize );
 
             // iterators
@@ -128,10 +128,10 @@ namespace cds_test {
                 ASSERT_TRUE( !gp );
                 gp = m.get( i );
                 ASSERT_TRUE( !gp );
-                gp = m.get_with( other_item( i.nKey ), other_less() );
+                gp = m.get_with( other_item( i.nKey ), other_less());
                 ASSERT_TRUE( !gp );
             }
-            EXPECT_TRUE( m.empty() );
+            EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
         }
     };

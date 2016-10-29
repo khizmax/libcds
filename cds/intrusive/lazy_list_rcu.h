@@ -854,9 +854,9 @@ namespace cds { namespace intrusive {
         static void dispose_node( node_type * pNode )
         {
             assert( pNode );
-            assert( !gc::is_locked() );
+            assert( !gc::is_locked());
 
-            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
+            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ));
         }
 
         static void link_node( node_type * pNode, node_type * pPred, node_type * pCur )
@@ -1183,7 +1183,7 @@ namespace cds { namespace intrusive {
 
         bool validate( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
         {
-            if ( validate_link( pPred, pCur ) ) {
+            if ( validate_link( pPred, pCur )) {
                 m_Stat.onValidationSuccess();
                 return true;
             }
@@ -1287,13 +1287,13 @@ namespace cds { namespace intrusive {
         //@cond
         const_iterator get_const_begin() const
         {
-            const_iterator it( const_cast<node_type *>(&m_Head) );
+            const_iterator it( const_cast<node_type *>(&m_Head));
             ++it;   // skip dummy head
             return it;
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<node_type *>(&m_Tail) );
+            return const_iterator( const_cast<node_type *>(&m_Tail));
         }
         //@endcond
     };

@@ -75,7 +75,7 @@ namespace cds { namespace bitop {
             --m_nCounter;
             int nBit;
             for ( nBit = m_nHighBit - 1; nBit >= 0; --nBit ) {
-                if ( cds::bitop::complement( m_nReversed, nBit ) )
+                if ( cds::bitop::complement( m_nReversed, nBit ))
                     break;
             }
             if ( nBit < 0 ) {

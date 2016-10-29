@@ -54,11 +54,11 @@ namespace {
         template <class PQueue>
         void test( PQueue& pq )
         {
-            data_array<value_type> arr( pq.capacity() );
+            data_array<value_type> arr( pq.capacity());
             value_type * pFirst = arr.begin();
             value_type * pLast = pFirst + pq.capacity();
 
-            ASSERT_TRUE( pq.empty() );
+            ASSERT_TRUE( pq.empty());
             ASSERT_EQ( pq.size(), 0u );
             ASSERT_EQ( pq.capacity(), size_t( base_class::c_nCapacity - 1 ));
 
@@ -68,50 +68,50 @@ namespace {
             for ( value_type * p = pFirst; p < pLast; ++p ) {
                 switch ( pq.size() & 3 ) {
                 case 0:
-                    ASSERT_TRUE( pq.push_with( [p]( value_type& dest ) { dest = *p; } ) );
+                    ASSERT_TRUE( pq.push_with( [p]( value_type& dest ) { dest = *p; } ));
                     break;
                 case 1:
-                    ASSERT_TRUE( pq.emplace( p->k, p->v ) );
+                    ASSERT_TRUE( pq.emplace( p->k, p->v ));
                     break;
                 case 2:
-                    ASSERT_TRUE( pq.emplace( std::make_pair( p->k, p->v ) ) );
+                    ASSERT_TRUE( pq.emplace( std::make_pair( p->k, p->v )) );
                     break;
                 default:
-                    ASSERT_TRUE( pq.push( *p ) );
+                    ASSERT_TRUE( pq.push( *p ));
                 }
-                ASSERT_TRUE( !pq.empty() );
+                ASSERT_TRUE( !pq.empty());
                 ASSERT_TRUE( pq.size() == ++nSize );
             }
 
-            ASSERT_TRUE( pq.full() );
-            ASSERT_EQ( pq.size(), pq.capacity() );
+            ASSERT_TRUE( pq.full());
+            ASSERT_EQ( pq.size(), pq.capacity());
 
             // The queue is full
             key_type k = base_class::c_nMinValue + key_type( base_class::c_nCapacity );
-            ASSERT_TRUE( !pq.push( k ) );
-            ASSERT_TRUE( pq.full() );
-            ASSERT_EQ( pq.size(), pq.capacity() );
+            ASSERT_TRUE( !pq.push( k ));
+            ASSERT_TRUE( pq.full());
+            ASSERT_EQ( pq.size(), pq.capacity());
 
             // Pop test
-            key_type nPrev = base_class::c_nMinValue + key_type( pq.capacity() ) - 1;
+            key_type nPrev = base_class::c_nMinValue + key_type( pq.capacity()) - 1;
             value_type kv( 0 );
             key_type   key;
-            ASSERT_TRUE( pq.pop( kv ) );
+            ASSERT_TRUE( pq.pop( kv ));
             EXPECT_EQ( kv.k, nPrev );
 
             ASSERT_EQ( pq.size(), pq.capacity() - 1 );
-            ASSERT_TRUE( !pq.full() );
-            ASSERT_TRUE( !pq.empty() );
+            ASSERT_TRUE( !pq.full());
+            ASSERT_TRUE( !pq.empty());
 
             nSize = pq.size();
             while ( pq.size() > 1 ) {
                 if ( pq.size() & 1 ) {
-                    ASSERT_TRUE( pq.pop( kv ) );
+                    ASSERT_TRUE( pq.pop( kv ));
                     EXPECT_EQ( kv.k, nPrev - 1 );
                     nPrev = kv.k;
                 }
                 else {
-                    ASSERT_TRUE( pq.pop_with( [&key]( value_type& src ) { key = src.k;  } ) );
+                    ASSERT_TRUE( pq.pop_with( [&key]( value_type& src ) { key = src.k;  } ));
                     EXPECT_EQ( key, nPrev - 1 );
                     nPrev = key;
                 }
@@ -120,44 +120,44 @@ namespace {
                 ASSERT_EQ( pq.size(), nSize );
             }
 
-            ASSERT_TRUE( !pq.full() );
-            ASSERT_TRUE( !pq.empty() );
+            ASSERT_TRUE( !pq.full());
+            ASSERT_TRUE( !pq.empty());
             ASSERT_EQ( pq.size(), 1u );
 
-            ASSERT_TRUE( pq.pop( kv ) );
+            ASSERT_TRUE( pq.pop( kv ));
             EXPECT_EQ( kv.k, base_class::c_nMinValue );
 
-            ASSERT_TRUE( !pq.full() );
-            ASSERT_TRUE( pq.empty() );
+            ASSERT_TRUE( !pq.full());
+            ASSERT_TRUE( pq.empty());
             ASSERT_EQ( pq.size(), 0u );
 
             // Clear test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
-                ASSERT_TRUE( pq.push( *p ) );
+                ASSERT_TRUE( pq.push( *p ));
             }
-            ASSERT_TRUE( !pq.empty() );
-            ASSERT_TRUE( pq.full() );
-            ASSERT_EQ( pq.size(), pq.capacity() );
+            ASSERT_TRUE( !pq.empty());
+            ASSERT_TRUE( pq.full());
+            ASSERT_EQ( pq.size(), pq.capacity());
             pq.clear();
-            ASSERT_TRUE( pq.empty() );
-            ASSERT_TRUE( !pq.full() );
+            ASSERT_TRUE( pq.empty());
+            ASSERT_TRUE( !pq.full());
             ASSERT_EQ( pq.size(), 0u );
 
             // clear_with test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
-                ASSERT_TRUE( pq.push( *p ) );
+                ASSERT_TRUE( pq.push( *p ));
             }
-            ASSERT_TRUE( !pq.empty() );
-            ASSERT_TRUE( pq.full() );
-            ASSERT_EQ( pq.size(), pq.capacity() );
+            ASSERT_TRUE( !pq.empty());
+            ASSERT_TRUE( pq.full());
+            ASSERT_EQ( pq.size(), pq.capacity());
 
             {
                 disposer disp;
-                pq.clear_with( std::ref( disp ) );
-                ASSERT_TRUE( pq.empty() );
-                ASSERT_TRUE( !pq.full() );
+                pq.clear_with( std::ref( disp ));
+                ASSERT_TRUE( pq.empty());
+                ASSERT_TRUE( !pq.full());
                 ASSERT_EQ( pq.size(), 0u );
-                ASSERT_EQ( disp.m_nCallCount, pq.capacity() );
+                ASSERT_EQ( disp.m_nCallCount, pq.capacity());
             }
         }
     };

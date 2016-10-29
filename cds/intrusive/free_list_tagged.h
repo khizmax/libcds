@@ -130,7 +130,7 @@ namespace cds { namespace intrusive {
         */
         ~TaggedFreeList()
         {
-            assert( empty() );
+            assert( empty());
         }
 
         /// Puts \p pNode to the free list

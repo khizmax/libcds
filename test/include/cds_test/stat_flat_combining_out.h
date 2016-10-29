@@ -43,7 +43,7 @@ namespace cds_test {
     static inline property_stream& operator <<( property_stream& o, cds::algo::flat_combining::stat<> const& s )
     {
         return o
-            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor() )
+            << CDSSTRESS_STAT_OUT_( "combining_factor", s.combining_factor())
             << CDSSTRESS_STAT_OUT( s, m_nOperationCount )
             << CDSSTRESS_STAT_OUT( s, m_nCombiningCount )
             << CDSSTRESS_STAT_OUT( s, m_nCompactPublicationList )

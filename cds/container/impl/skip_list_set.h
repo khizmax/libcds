@@ -237,37 +237,37 @@ namespace cds { namespace container {
         /// Returns a forward iterator addressing the first element in a set
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator begin() const
         {
-            return const_iterator( base_class::begin() );
+            return const_iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator end() const
         {
-            return const_iterator( base_class::end() );
+            return const_iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -287,7 +287,7 @@ namespace cds { namespace container {
         bool insert( Q const& val )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -377,7 +377,7 @@ namespace cds { namespace container {
         bool emplace( Args&&... args )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), std::forward<Args>(args)... ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -409,7 +409,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >() );
+            return base_class::erase_with( key, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >());
         }
 
         /// Delete \p key from the set
@@ -483,7 +483,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            return base_class::extract_( key, typename base_class::key_comparator() );
+            return base_class::extract_( key, typename base_class::key_comparator());
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -500,7 +500,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >  wrapped_less;
-            return base_class::extract_( key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
+            return base_class::extract_( key, cds::opt::details::make_comparator_from_less<wrapped_less>());
         }
 
         /// Extracts an item with minimal key from the set
@@ -692,7 +692,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            return base_class::get_with_( key, typename base_class::key_comparator() );
+            return base_class::get_with_( key, typename base_class::key_comparator());
         }
 
         /// Finds \p key and return the item found
@@ -719,7 +719,7 @@ namespace cds { namespace container {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 

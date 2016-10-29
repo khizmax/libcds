@@ -208,7 +208,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push_front, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPushFront();
             return true;
@@ -230,7 +230,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push_front_move, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPushFrontMove();
             return true;
@@ -252,7 +252,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push_back, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPushBack();
             return true;
@@ -274,7 +274,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_push_back_move, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPushBackMove();
             return true;
@@ -297,7 +297,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_pop_front, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPopFront( pRec->bEmpty );
             return !pRec->bEmpty;
@@ -320,7 +320,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_pop_back, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPopBack( pRec->bEmpty );
             return !pRec->bEmpty;
@@ -336,7 +336,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -384,22 +384,22 @@ namespace cds { namespace container {
             // this function is called under FC mutex, so switch TSan off
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_push_front:
                 assert( pRec->pValPush );
-                m_Deque.push_front( *(pRec->pValPush) );
+                m_Deque.push_front( *(pRec->pValPush));
                 break;
             case op_push_front_move:
                 assert( pRec->pValPush );
-                m_Deque.push_front( std::move( *(pRec->pValPush )) );
+                m_Deque.push_front( std::move( *(pRec->pValPush )));
                 break;
             case op_push_back:
                 assert( pRec->pValPush );
-                m_Deque.push_back( *(pRec->pValPush) );
+                m_Deque.push_back( *(pRec->pValPush));
                 break;
             case op_push_back_move:
                 assert( pRec->pValPush );
-                m_Deque.push_back( std::move( *(pRec->pValPush )) );
+                m_Deque.push_back( std::move( *(pRec->pValPush )));
                 break;
             case op_pop_front:
                 assert( pRec->pValPop );
@@ -418,7 +418,7 @@ namespace cds { namespace container {
                 }
                 break;
             case op_clear:
-                while ( !m_Deque.empty() )
+                while ( !m_Deque.empty())
                     m_Deque.pop_front();
                 break;
             default:
@@ -437,10 +437,10 @@ namespace cds { namespace container {
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
-                switch ( it->op() ) {
+                switch ( it->op()) {
                 case op_push_front:
                     if ( itPrev != itEnd
-                        && (itPrev->op() == op_pop_front || (m_Deque.empty() && itPrev->op() == op_pop_back)) )
+                        && (itPrev->op() == op_pop_front || (m_Deque.empty() && itPrev->op() == op_pop_back)))
                     {
                         collide( *it, *itPrev );
                         itPrev = itEnd;
@@ -460,7 +460,7 @@ namespace cds { namespace container {
                     break;
                 case op_push_back:
                     if ( itPrev != itEnd
-                        && (itPrev->op() == op_pop_back || (m_Deque.empty() && itPrev->op() == op_pop_front)) )
+                        && (itPrev->op() == op_pop_back || (m_Deque.empty() && itPrev->op() == op_pop_front)))
                     {
                         collide( *it, *itPrev );
                         itPrev = itEnd;
@@ -480,8 +480,8 @@ namespace cds { namespace container {
                     break;
                 case op_pop_front:
                     if ( itPrev != itEnd ) {
-                        if ( m_Deque.empty() ) {
-                            switch ( itPrev->op() ) {
+                        if ( m_Deque.empty()) {
+                            switch ( itPrev->op()) {
                             case op_push_back:
                                 collide( *itPrev, *it );
                                 itPrev = itEnd;
@@ -496,7 +496,7 @@ namespace cds { namespace container {
                             }
                         }
                         else {
-                            switch ( itPrev->op() ) {
+                            switch ( itPrev->op()) {
                             case op_push_front:
                                 collide( *itPrev, *it );
                                 itPrev = itEnd;
@@ -516,8 +516,8 @@ namespace cds { namespace container {
                     break;
                 case op_pop_back:
                     if ( itPrev != itEnd ) {
-                        if ( m_Deque.empty() ) {
-                            switch ( itPrev->op() ) {
+                        if ( m_Deque.empty()) {
+                            switch ( itPrev->op()) {
                             case op_push_front:
                                 collide( *itPrev, *it );
                                 itPrev = itEnd;
@@ -532,7 +532,7 @@ namespace cds { namespace container {
                             }
                         }
                         else {
-                            switch ( itPrev->op() ) {
+                            switch ( itPrev->op()) {
                             case op_push_back:
                                 collide( *itPrev, *it );
                                 itPrev = itEnd;

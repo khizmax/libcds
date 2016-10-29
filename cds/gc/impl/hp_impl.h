@@ -49,7 +49,7 @@ namespace cds { namespace gc {
         )
         : m_bPersistent( bPersistent )
     {
-        if ( !threading::Manager::isThreadAttached() )
+        if ( !threading::Manager::isThreadAttached())
             threading::Manager::attachThread();
     }
 
@@ -120,7 +120,7 @@ namespace cds { namespace gc {
     template <typename T>
     inline T * HP::GuardArray<Count>::assign( size_t nIndex, T* p )
     {
-        assert( nIndex < capacity() );
+        assert( nIndex < capacity());
 
         m_arr.set(nIndex, p);
         hp::get_thread_gc().sync();
@@ -128,7 +128,7 @@ namespace cds { namespace gc {
     }
 
     template <typename T>
-    inline void HP::retire( T * p, void (* pFunc)(T *) )
+    inline void HP::retire( T * p, void (* pFunc)(T *))
     {
         cds::threading::getGC<HP>().retirePtr( p, pFunc );
     }

@@ -54,21 +54,21 @@ protected:
 
         base_class::test( s );
 
-        ASSERT_TRUE( s.empty() );
+        ASSERT_TRUE( s.empty());
         ASSERT_CONTAINER_SIZE( s, 0 );
 
         typedef typename Set::value_type value_type;
-        size_t const nSetSize = std::max( s.head_size() * 2, static_cast<size_t>(100) );
+        size_t const nSetSize = std::max( s.head_size() * 2, static_cast<size_t>(100));
 
         std::vector< value_type > data;
         std::vector< size_t> indices;
         data.reserve( nSetSize );
         indices.reserve( nSetSize );
         for ( size_t key = 0; key < nSetSize; ++key ) {
-            data.push_back( value_type( static_cast<int>(key) ) );
+            data.push_back( value_type( static_cast<int>(key)) );
             indices.push_back( key );
         }
-        shuffle( indices.begin(), indices.end() );
+        shuffle( indices.begin(), indices.end());
 
         typename Set::exempt_ptr xp;
         value_type * rp;
@@ -80,18 +80,18 @@ protected:
 
             {
                 rcu_lock l;
-                rp = s.get( i.key() );
+                rp = s.get( i.key());
                 ASSERT_TRUE( !rp );
             }
 
-            xp = s.extract( i.key() );
+            xp = s.extract( i.key());
             ASSERT_TRUE( !xp );
         }
 
         // fill set
         for ( auto& i : data ) {
             i.nDisposeCount = 0;
-            ASSERT_TRUE( s.insert( i ) );
+            ASSERT_TRUE( s.insert( i ));
         }
 
         // get/extract
@@ -101,7 +101,7 @@ protected:
             {
                 rcu_lock l;
                 EXPECT_EQ( i.nFindCount, 0u );
-                rp = s.get( i.key() );
+                rp = s.get( i.key());
                 ASSERT_FALSE( !rp );
                 ++rp->nFindCount;
                 EXPECT_EQ( i.nFindCount, 1u );
@@ -113,11 +113,11 @@ protected:
             ++xp->nEraseCount;
             EXPECT_EQ( i.nEraseCount, 1u );
 
-            xp = s.extract( i.key() );
+            xp = s.extract( i.key());
             ASSERT_TRUE( !xp );
         }
 
-        ASSERT_TRUE( s.empty() );
+        ASSERT_TRUE( s.empty());
         ASSERT_CONTAINER_SIZE( s, 0 );
 
         // Force retiring cycle

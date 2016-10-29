@@ -115,7 +115,7 @@ namespace cds { namespace intrusive {
         */
         ~FreeList()
         {
-            assert( empty() );
+            assert( empty());
         }
 
         /// Puts \p pNode to the free list

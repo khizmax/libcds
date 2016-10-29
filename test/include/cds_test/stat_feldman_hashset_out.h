@@ -69,7 +69,7 @@ namespace cds_test {
 #       define CDSSTRESS_LEVELSTAT_OUT( level, field ) \
             CDSSTRESS_STAT_OUT_( "level_stat." + std::to_string(level) + "." + #field, it->field )
 
-        o << CDSSTRESS_STAT_OUT_( "stat.level_count", level_stat.size() );
+        o << CDSSTRESS_STAT_OUT_( "stat.level_count", level_stat.size());
         size_t i = 0;
         for ( auto it = level_stat.begin(); it != level_stat.end(); ++it, ++i ) {
             o << CDSSTRESS_LEVELSTAT_OUT( i, array_node_count )

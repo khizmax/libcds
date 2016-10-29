@@ -290,7 +290,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( head() );
+            return iterator( head());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -309,13 +309,13 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( head() );
+            return const_iterator( head());
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( head() );
+            return const_iterator( head());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
@@ -558,7 +558,7 @@ namespace cds { namespace container {
             rcu_michael_list::exempt_ptr p;
 
             // The RCU should NOT be locked when extract() is called!
-            assert( !rcu::is_locked() );
+            assert( !rcu::is_locked());
 
             // extract() call
             p = theList.extract( 10 )
@@ -575,7 +575,7 @@ namespace cds { namespace container {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( extract_at( head(), key, intrusive_key_comparator() ));
+            return exempt_ptr( extract_at( head(), key, intrusive_key_comparator()));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -590,7 +590,7 @@ namespace cds { namespace container {
         exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
+            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type()));
         }
 
         /// Checks whether the list contains \p key
@@ -603,7 +603,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( head(), key, intrusive_key_comparator() );
+            return find_at( head(), key, intrusive_key_comparator());
         }
         //@cond
         template <typename Q>
@@ -624,7 +624,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
         //@cond
         // Deprecatd, use contains()
@@ -804,7 +804,7 @@ namespace cds { namespace container {
         {
             scoped_node_ptr pNode( alloc_node( std::forward<Q>( key )));
 
-            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { f( node_to_value(node) ); } )) {
+            if ( base_class::insert_at( refHead, *pNode, [&f]( node_type& node ) { f( node_to_value(node)); } )) {
                 pNode.release();
                 return true;
             }
@@ -820,7 +820,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         bool erase_at( head_type& refHead, Q const& key, Compare cmp, Func f )
         {
-            return base_class::erase_at( refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node) ); } );
+            return base_class::erase_at( refHead, key, cmp, [&f](node_type const& node){ f( node_to_value(node)); } );
         }
 
         template <typename Q, typename Func>

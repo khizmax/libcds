@@ -255,8 +255,8 @@ namespace cds { namespace intrusive {
                         return std::make_pair( true, res.second );
                     }
                     else {
-                        auto it = m_Set.find( val, key_comparator() );
-                        if ( it == m_Set.end() )
+                        auto it = m_Set.find( val, key_comparator());
+                        if ( it == m_Set.end())
                             return std::make_pair( false, false );
                         f( false, *it, val );
                         return std::make_pair( true, false );
@@ -265,7 +265,7 @@ namespace cds { namespace intrusive {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = m_Set.find( val, key_comparator() );
+                    iterator it = m_Set.find( val, key_comparator());
                     if ( it == m_Set.end() || &(*it) != &val )
                         return false;
                     m_Set.erase( it );
@@ -275,7 +275,7 @@ namespace cds { namespace intrusive {
                 template <typename Q, typename Func>
                 value_type * erase( Q const& key, Func f )
                 {
-                    iterator it = m_Set.find( key, key_comparator() );
+                    iterator it = m_Set.find( key, key_comparator());
                     if (it == m_Set.end())
                         return nullptr;
                     value_type& val = *it;
@@ -306,7 +306,7 @@ namespace cds { namespace intrusive {
                 bool find( Q const& key, Compare cmp, Func f )
                 {
                     iterator it = m_Set.find( key, cmp );
-                    if ( it == m_Set.end() )
+                    if ( it == m_Set.end())
                         return false;
                     f( *it, key );
                     return true;

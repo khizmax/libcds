@@ -570,11 +570,11 @@ namespace cds { namespace intrusive {
                     {
                         assert( p != nullptr );
 
-                        OptimisticQueue::clear_links( node_traits::to_node_ptr( *p ) );
+                        OptimisticQueue::clear_links( node_traits::to_node_ptr( *p ));
                         disposer()(p);
                     }
                 };
-                gc::template retire<internal_disposer>( node_traits::to_value_ptr(p) );
+                gc::template retire<internal_disposer>( node_traits::to_value_ptr(p));
             }
         }
 

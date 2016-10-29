@@ -489,7 +489,7 @@ namespace cds { namespace container {
         bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >());
         }
         //@cond
         template <typename K, typename Less>
@@ -527,7 +527,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             return guarded_ptr( base_class::get_with_( key,
-                cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >() ));
+                cds::details::predicate_wrapper< leaf_node, Less, typename maker::key_accessor >()));
         }
 
         /// Clears the map (not atomic)

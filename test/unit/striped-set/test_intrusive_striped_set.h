@@ -138,7 +138,7 @@ namespace {
 
         std::vector< typename set_type::value_type > data;
         {
-            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
             this->test( s, data );
         }
     }
@@ -222,7 +222,7 @@ namespace {
 
         std::vector< typename set_type::value_type > data;
         {
-            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
             this->test( s, data );
         }
     }
@@ -391,7 +391,7 @@ namespace {
 
         std::vector< typename set_type::value_type > data;
         {
-            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ) );
+            set_type s( 64, ci::striped_set::single_bucket_size_threshold<0>( 4 ));
             this->test( s, data );
         }
     }

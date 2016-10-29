@@ -49,7 +49,7 @@ namespace {
                 do {
                     typename Gen::integer_type i = gen;
                     ++arr[ i ];
-                } while ( gen.next() );
+                } while ( gen.next());
 
                 for ( size_t i = 0; i < nLen; ++i )
                     EXPECT_EQ( arr[i], 1u ) << "i=" << i;

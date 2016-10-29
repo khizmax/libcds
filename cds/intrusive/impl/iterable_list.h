@@ -333,7 +333,7 @@ namespace cds { namespace intrusive {
             this code
             \code
                 if ( it1 == it2 )
-                    assert( &(*it1) == &(*it2) );
+                    assert( &(*it1) == &(*it2));
             \endcode
             can throw assertion. The point is that the iterator stores the value of element which can be modified later by other thread.
             The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after such changing.
@@ -847,12 +847,12 @@ namespace cds { namespace intrusive {
             insert_position pos;
 
             while ( true ) {
-                if ( inserting_search( pHead, *pNode->data.load(memory_model::memory_order_relaxed).ptr(), pos, key_comparator() ) ) {
+                if ( inserting_search( pHead, *pNode->data.load(memory_model::memory_order_relaxed).ptr(), pos, key_comparator()) ) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                if ( link_aux_node( pNode, pos ) ) {
+                if ( link_aux_node( pNode, pos )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -867,12 +867,12 @@ namespace cds { namespace intrusive {
             insert_position pos;
 
             while ( true ) {
-                if ( inserting_search( pHead, val, pos, key_comparator() )) {
+                if ( inserting_search( pHead, val, pos, key_comparator())) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                if ( link_data( &val, pos ) ) {
+                if ( link_data( &val, pos )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -891,12 +891,12 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( inserting_search( pHead, val, pos, key_comparator() ) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator()) ) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                if ( link_data( &val, pos ) ) {
+                if ( link_data( &val, pos )) {
                     f( val );
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
@@ -916,7 +916,7 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( inserting_search( pHead, val, pos, key_comparator() ) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator()) ) {
                     // try to replace pCur->data with val
                     assert( pos.pFound != nullptr );
                     assert( key_comparator()(*pos.pFound, val) == 0 );
@@ -1042,7 +1042,7 @@ namespace cds { namespace intrusive {
         bool find_at( node_type const* pHead, Q const& val, Compare cmp ) const
         {
             position pos;
-            if ( search( pHead, val, pos, cmp ) ) {
+            if ( search( pHead, val, pos, cmp )) {
                 m_Stat.onFindSuccess();
                 return true;
             }
@@ -1191,7 +1191,7 @@ namespace cds { namespace intrusive {
         void destroy( Predicate pred )
         {
             node_type * pNode = m_Head.next.load( memory_model::memory_order_relaxed );
-            while ( pNode != pNode->next.load( memory_model::memory_order_relaxed ) ) {
+            while ( pNode != pNode->next.load( memory_model::memory_order_relaxed )) {
                 value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
                 node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
                 bool const is_regular_node = !pVal || pred( pVal );
@@ -1257,14 +1257,14 @@ namespace cds { namespace intrusive {
             // and then set it to another.
             // To prevent this we mark pos.pCur data as undeletable by setting LSB
             marked_data_ptr valCur( pos.pFound );
-            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
                 m_Stat.onNodeMarkFailed();
                 return false;
             }
 
             marked_data_ptr valPrev( pos.pPrevVal );
-            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
                 m_Stat.onNodeMarkFailed();
                 return false;
@@ -1329,14 +1329,14 @@ namespace cds { namespace intrusive {
             // and then set it to another.
             // To prevent this we mark pos.pCur data as undeletable by setting LSB
             marked_data_ptr valCur( pos.pFound );
-            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            if ( !pos.pCur->data.compare_exchange_strong( valCur, valCur | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 // oops, pos.pCur data has been changed or another thread is setting pos.pPrev data
                 m_Stat.onNodeMarkFailed();
                 return false;
             }
 
             marked_data_ptr valPrev( pos.pPrevVal );
-            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
                 m_Stat.onNodeMarkFailed();
                 return false;
@@ -1369,7 +1369,7 @@ namespace cds { namespace intrusive {
             assert( pos.pFound != nullptr );
 
             marked_data_ptr val( pos.pFound );
-            if ( pos.pCur->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            if ( pos.pCur->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 retire_data( pos.pFound );
                 return true;
             }

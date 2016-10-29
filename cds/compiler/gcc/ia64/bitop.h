@@ -49,7 +49,7 @@ namespace cds {
             x |= x >> 16;
 
             uint64_t    nRes;
-            asm __volatile__( "popcnt %0=%1\n\t" : "=r" (nRes) : "r" (x) );
+            asm __volatile__( "popcnt %0=%1\n\t" : "=r" (nRes) : "r" (x));
             return (int) nRes;
         }
 

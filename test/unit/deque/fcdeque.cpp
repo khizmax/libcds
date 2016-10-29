@@ -44,13 +44,13 @@ namespace {
 
             // push_front/pop_front
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_front( i ) );
+                EXPECT_TRUE( dq.push_front( i ));
             EXPECT_EQ( dq.size(), c_nSize );
 
             size_t nCount = 0;
             int val;
-            while ( !dq.empty() ) {
-                EXPECT_TRUE( dq.pop_front( val ) );
+            while ( !dq.empty()) {
+                EXPECT_TRUE( dq.pop_front( val ));
                 ++nCount;
                 EXPECT_EQ( static_cast<int>(c_nSize - nCount), val );
             }
@@ -58,12 +58,12 @@ namespace {
 
             // push_back/pop_back
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_back( i ) );
+                EXPECT_TRUE( dq.push_back( i ));
             EXPECT_EQ( dq.size(), c_nSize );
 
             nCount = 0;
-            while ( !dq.empty() ) {
-                EXPECT_TRUE( dq.pop_back( val ) );
+            while ( !dq.empty()) {
+                EXPECT_TRUE( dq.pop_back( val ));
                 ++nCount;
                 EXPECT_EQ( static_cast<int>(c_nSize - nCount), val );
             }
@@ -71,12 +71,12 @@ namespace {
 
             // push_back/pop_front
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_back( i ) );
+                EXPECT_TRUE( dq.push_back( i ));
             EXPECT_EQ( dq.size(), c_nSize );
 
             nCount = 0;
-            while ( !dq.empty() ) {
-                EXPECT_TRUE( dq.pop_front( val ) );
+            while ( !dq.empty()) {
+                EXPECT_TRUE( dq.pop_front( val ));
                 EXPECT_EQ( static_cast<int>( nCount ), val );
                 ++nCount;
             }
@@ -84,12 +84,12 @@ namespace {
 
             // push_front/pop_back
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_front( i ) );
+                EXPECT_TRUE( dq.push_front( i ));
             EXPECT_EQ( dq.size(), c_nSize );
 
             nCount = 0;
-            while ( !dq.empty() ) {
-                EXPECT_TRUE( dq.pop_back( val ) );
+            while ( !dq.empty()) {
+                EXPECT_TRUE( dq.pop_back( val ));
                 EXPECT_EQ( static_cast<int>( nCount ), val );
                 ++nCount;
             }
@@ -97,12 +97,12 @@ namespace {
 
             // clear
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_front( i ) );
+                EXPECT_TRUE( dq.push_front( i ));
             EXPECT_EQ( dq.size(), c_nSize );
 
-            EXPECT_FALSE( dq.empty() );
+            EXPECT_FALSE( dq.empty());
             dq.clear();
-            EXPECT_TRUE( dq.empty() );
+            EXPECT_TRUE( dq.empty());
         }
     };
 

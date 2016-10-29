@@ -46,7 +46,7 @@ namespace cds { namespace urcu { namespace details {
     template <typename RCUtag>
     inline sh_thread_gc<RCUtag>::sh_thread_gc()
     {
-        if ( !threading::Manager::isThreadAttached() )
+        if ( !threading::Manager::isThreadAttached())
             cds::threading::Manager::attachThread();
     }
 

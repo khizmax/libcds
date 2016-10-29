@@ -54,14 +54,14 @@ namespace cds { namespace intrusive {
             hash_node()
                 : m_nHash( 0 )
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Initializes dummy node with \p nHash value
             hash_node( size_t nHash )
                 : m_nHash( nHash )
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Checks if the node is dummy node
@@ -88,14 +88,14 @@ namespace cds { namespace intrusive {
             node()
                 : hash_node(0)
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Initializes dummy node with \p nHash value
             node( size_t nHash )
                 : hash_node( nHash )
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Checks if the node is dummy node
@@ -114,14 +114,14 @@ namespace cds { namespace intrusive {
             node()
                 : hash_node( 0 )
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Initializes dummy node with \p nHash value
             node( size_t nHash )
                 : hash_node( nHash )
             {
-                assert( is_dummy() );
+                assert( is_dummy());
             }
 
             /// Checks if the node is dummy node
@@ -416,11 +416,11 @@ namespace cds { namespace intrusive {
                 size_t nLoadFactor        ///< Load factor
                 )
                 : m_nLoadFactor( nLoadFactor > 0 ? nLoadFactor : (size_t) 1 )
-                , m_nCapacity( cds::beans::ceil2( nItemCount / m_nLoadFactor ) )
+                , m_nCapacity( cds::beans::ceil2( nItemCount / m_nLoadFactor ))
                 , m_nAuxNodeAllocated( 0 )
             {
                 // m_nCapacity must be power of 2
-                assert( cds::beans::is_power2( m_nCapacity ) );
+                assert( cds::beans::is_power2( m_nCapacity ));
                 allocate_table();
             }
 
@@ -433,14 +433,14 @@ namespace cds { namespace intrusive {
             /// Returns head node of bucket \p nBucket
             aux_node_type * bucket( size_t nBucket ) const
             {
-                assert( nBucket < capacity() );
+                assert( nBucket < capacity());
                 return m_Table[ nBucket ].load(memory_model::memory_order_acquire);
             }
 
             /// Set \p pNode as a head of bucket \p nBucket
             void bucket( size_t nBucket, aux_node_type * pNode )
             {
-                assert( nBucket < capacity() );
+                assert( nBucket < capacity());
                 assert( bucket( nBucket ) == nullptr );
 
                 m_Table[ nBucket ].store( pNode, memory_model::memory_order_release );
@@ -449,10 +449,10 @@ namespace cds { namespace intrusive {
             /// Allocates auxiliary node; can return \p nullptr if the table exhausted
             aux_node_type* alloc_aux_node()
             {
-                if ( m_nAuxNodeAllocated.load( memory_model::memory_order_relaxed ) < capacity() ) {
+                if ( m_nAuxNodeAllocated.load( memory_model::memory_order_relaxed ) < capacity()) {
                     // alloc next free node from m_auxNode
                     size_t const idx = m_nAuxNodeAllocated.fetch_add( 1, memory_model::memory_order_relaxed );
-                    if ( idx < capacity() )
+                    if ( idx < capacity())
                         return new( &m_auxNode[idx] ) aux_node_type();
                 }
 
@@ -560,7 +560,7 @@ namespace cds { namespace intrusive {
                 metrics()
                     : nSegmentCount( 1024 )
                     , nSegmentSize( 512 )
-                    , nSegmentSizeLog2( cds::beans::log2( nSegmentSize ) )
+                    , nSegmentSizeLog2( cds::beans::log2( nSegmentSize ))
                     , nLoadFactor( 1 )
                     , nCapacity( nSegmentCount * nSegmentSize )
                 {}
@@ -670,7 +670,7 @@ namespace cds { namespace intrusive {
                     aux_node_segment* new_aux_segment = allocate_aux_segment();
                     new_aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
                     if ( m_auxNodeList.compare_exchange_strong( aux_segment, new_aux_segment, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ))
-                        return new( new_aux_segment->segment() ) aux_node_type();
+                        return new( new_aux_segment->segment()) aux_node_type();
 
                     free_aux_segment( new_aux_segment );
                 }
@@ -761,11 +761,11 @@ namespace cds { namespace intrusive {
             void init()
             {
                 // m_nSegmentSize must be 2**N
-                assert( cds::beans::is_power2( m_metrics.nSegmentSize ) );
+                assert( cds::beans::is_power2( m_metrics.nSegmentSize ));
                 assert( (((size_t)1) << m_metrics.nSegmentSizeLog2) == m_metrics.nSegmentSize );
 
                 // m_nSegmentCount must be 2**K
-                assert( cds::beans::is_power2( m_metrics.nSegmentCount ) );
+                assert( cds::beans::is_power2( m_metrics.nSegmentCount ));
 
                 m_Segments = allocate_table();
                 m_auxNodeList = allocate_aux_segment();
@@ -837,12 +837,12 @@ namespace cds { namespace intrusive {
                         if ( n1->m_nHash != n2->m_nHash )
                             return n1->m_nHash < n2->m_nHash ? -1 : 1;
 
-                        if ( n1->is_dummy() ) {
-                            assert( n2->is_dummy() );
+                        if ( n1->is_dummy()) {
+                            assert( n2->is_dummy());
                             return 0;
                         }
 
-                        assert( !n1->is_dummy() && !n2->is_dummy() );
+                        assert( !n1->is_dummy() && !n2->is_dummy());
 
                         return native_key_comparator()(v1, v2);
                     }
@@ -854,7 +854,7 @@ namespace cds { namespace intrusive {
                         if ( n->m_nHash != q.nHash )
                             return n->m_nHash < q.nHash ? -1 : 1;
 
-                        assert( !n->is_dummy() );
+                        assert( !n->is_dummy());
                         return native_key_comparator()(v, q.val);
                     }
 
@@ -870,7 +870,7 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * v )
                     {
                         splitlist_node_type * p = static_cast<splitlist_node_type *>(native_node_traits::to_node_ptr( v ));
-                        if ( !p->is_dummy() )
+                        if ( !p->is_dummy())
                             native_disposer()(v);
                     }
                 };
@@ -913,25 +913,25 @@ namespace cds { namespace intrusive {
                     /// Convert node reference to value pointer
                     static value_type * to_value_ptr( node_type&  n )
                     {
-                        return base_class::to_value_ptr( static_cast<base_node_type &>(n) );
+                        return base_class::to_value_ptr( static_cast<base_node_type &>(n));
                     }
 
                     /// Convert node pointer to value pointer
                     static value_type * to_value_ptr( node_type *  n )
                     {
-                        return base_class::to_value_ptr( static_cast<base_node_type *>(n) );
+                        return base_class::to_value_ptr( static_cast<base_node_type *>(n));
                     }
 
                     /// Convert node reference to value pointer (const version)
                     static const value_type * to_value_ptr( node_type const & n )
                     {
-                        return base_class::to_value_ptr( static_cast<base_node_type const &>(n) );
+                        return base_class::to_value_ptr( static_cast<base_node_type const &>(n));
                     }
 
                     /// Convert node pointer to value pointer (const version)
                     static const value_type * to_value_ptr( node_type const * n )
                     {
-                        return base_class::to_value_ptr( static_cast<base_node_type const *>(n) );
+                        return base_class::to_value_ptr( static_cast<base_node_type const *>(n));
                     }
                 };
 
@@ -947,7 +947,7 @@ namespace cds { namespace intrusive {
                         if ( n->m_nHash != q.nHash )
                             return n->m_nHash < q.nHash ? -1 : 1;
 
-                        assert( !n->is_dummy() );
+                        assert( !n->is_dummy());
                         return base_class()(v, q.val);
                     }
 
@@ -958,7 +958,7 @@ namespace cds { namespace intrusive {
                         if ( n->m_nHash != q.nHash )
                             return q.nHash < n->m_nHash ? -1 : 1;
 
-                        assert( !n->is_dummy() );
+                        assert( !n->is_dummy());
                         return base_class()(q.val, v);
                     }
 
@@ -995,12 +995,12 @@ namespace cds { namespace intrusive {
                         if ( n1.m_nHash != n2.m_nHash )
                             return n1.m_nHash < n2.m_nHash ? -1 : 1;
 
-                        if ( n1.is_dummy() ) {
-                            assert( n2.is_dummy() );
+                        if ( n1.is_dummy()) {
+                            assert( n2.is_dummy());
                             return 0;
                         }
 
-                        assert( !n1.is_dummy() && !n2.is_dummy() );
+                        assert( !n1.is_dummy() && !n2.is_dummy());
 
                         return native_key_comparator()(v1, v2);
                     }
@@ -1012,7 +1012,7 @@ namespace cds { namespace intrusive {
                         if ( n.m_nHash != q.nHash )
                             return n.m_nHash < q.nHash ? -1 : 1;
 
-                        assert( !n.is_dummy() );
+                        assert( !n.is_dummy());
                         return native_key_comparator()(v, q.val);
                     }
 
@@ -1028,7 +1028,7 @@ namespace cds { namespace intrusive {
                     void operator()( value_type * v )
                     {
                         hash_node* p = static_cast<hash_node*>( v );
-                        if ( !p->is_dummy() )
+                        if ( !p->is_dummy())
                             native_disposer()(v);
                     }
                 };
@@ -1083,7 +1083,7 @@ namespace cds { namespace intrusive {
                         if ( n.m_nHash != q.nHash )
                             return n.m_nHash < q.nHash ? -1 : 1;
 
-                        assert( !n.is_dummy() );
+                        assert( !n.is_dummy());
                         return base_class()(v, q.val);
                     }
 
@@ -1094,7 +1094,7 @@ namespace cds { namespace intrusive {
                         if ( n.m_nHash != q.nHash )
                             return q.nHash < n.m_nHash ? -1 : 1;
 
-                        assert( !n.is_dummy() );
+                        assert( !n.is_dummy());
                         return base_class()(q.val, v);
                     }
 
@@ -1163,7 +1163,7 @@ namespace cds { namespace intrusive {
                     , m_itEnd( itEnd )
                 {
                     // skip dummy nodes
-                    while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy() )
+                    while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy())
                         ++m_itCur;
                 }
 
@@ -1183,7 +1183,7 @@ namespace cds { namespace intrusive {
                     if ( m_itCur != m_itEnd ) {
                         do {
                             ++m_itCur;
-                        } while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy() );
+                        } while ( m_itCur != m_itEnd && node_traits::to_node_ptr( *m_itCur )->is_dummy());
                     }
                     return *this;
                 }

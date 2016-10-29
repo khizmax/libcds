@@ -55,7 +55,7 @@ namespace cds_test {
 
             typedef typename List::guarded_ptr guarded_ptr;
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             guarded_ptr gp;
@@ -73,7 +73,7 @@ namespace cds_test {
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->nKey, i.nKey );
                 EXPECT_EQ( gp->nVal, i.nVal );
-                gp = l.get_with( other_item( i.nKey ), other_less() );
+                gp = l.get_with( other_item( i.nKey ), other_less());
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->nKey, i.nKey );
                 EXPECT_EQ( gp->nVal, i.nVal );
@@ -90,17 +90,17 @@ namespace cds_test {
 
                 gp = l.extract( i );
                 EXPECT_TRUE( !gp );
-                gp = l.extract_with( other_item( i ), other_less() );
+                gp = l.extract_with( other_item( i ), other_less());
                 EXPECT_TRUE( !gp );
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             List::gc::force_dispose();
             for ( auto const& i : arr ) {
                 EXPECT_EQ( i.s.nDisposeCount, 1 );
-                EXPECT_FALSE( l.contains( i ) );
+                EXPECT_FALSE( l.contains( i ));
             }
         }
     };

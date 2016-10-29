@@ -194,7 +194,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_enq, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onEnqueue();
             return true;
@@ -220,7 +220,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_enq_move, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onEnqMove();
@@ -247,7 +247,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_deq, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onDequeue( pRec->bEmpty );
@@ -270,7 +270,7 @@ namespace cds { namespace container {
             else
                 m_FlatCombining.combine( op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -318,14 +318,14 @@ namespace cds { namespace container {
             // this function is called under FC mutex, so switch TSan off
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_enq:
                 assert( pRec->pValEnq );
-                m_Queue.push( *(pRec->pValEnq ) );
+                m_Queue.push( *(pRec->pValEnq ));
                 break;
             case op_enq_move:
                 assert( pRec->pValEnq );
-                m_Queue.push( std::move( *(pRec->pValEnq )) );
+                m_Queue.push( std::move( *(pRec->pValEnq )));
                 break;
             case op_deq:
                 assert( pRec->pValDeq );
@@ -336,7 +336,7 @@ namespace cds { namespace container {
                 }
                 break;
             case op_clear:
-                while ( !m_Queue.empty() )
+                while ( !m_Queue.empty())
                     m_Queue.pop();
                 break;
             default:
@@ -355,11 +355,11 @@ namespace cds { namespace container {
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
-                switch ( it->op() ) {
+                switch ( it->op()) {
                 case op_enq:
                 case op_enq_move:
                 case op_deq:
-                    if ( m_Queue.empty() ) {
+                    if ( m_Queue.empty()) {
                         if ( itPrev != itEnd && collide( *itPrev, *it ))
                             itPrev = itEnd;
                         else
@@ -376,7 +376,7 @@ namespace cds { namespace container {
         //@cond
         bool collide( fc_record& rec1, fc_record& rec2 )
         {
-            switch ( rec1.op() ) {
+            switch ( rec1.op()) {
                 case op_enq:
                     if ( rec2.op() == op_deq ) {
                         assert(rec1.pValEnq);
@@ -396,7 +396,7 @@ namespace cds { namespace container {
                     }
                     break;
                 case op_deq:
-                    switch ( rec2.op() ) {
+                    switch ( rec2.op()) {
                     case op_enq:
                     case op_enq_move:
                         return collide( rec2, rec1 );

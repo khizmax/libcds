@@ -240,14 +240,14 @@ namespace cds { namespace intrusive {
                 : base_class( true )
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
-                , m_pUpdate( update_ptr() )
+                , m_pUpdate( update_ptr())
                 , m_nEmptyUpdate(0)
             {}
 
             //@cond
             update_ptr null_update_desc()
             {
-                return update_ptr( reinterpret_cast<update_desc_type *>( (++m_nEmptyUpdate << 2) & 0xFFFF ) );
+                return update_ptr( reinterpret_cast<update_desc_type *>( (++m_nEmptyUpdate << 2) & 0xFFFF ));
             }
 
             base_class * get_child( bool bRight, atomics::memory_order mo ) const
@@ -629,9 +629,9 @@ namespace cds { namespace intrusive {
                 template <typename LeafNode>
                 int operator()( internal_node<key_type, LeafNode> const& n1, internal_node<key_type, LeafNode> const& n2 ) const
                 {
-                    if ( n1.infinite_key() )
+                    if ( n1.infinite_key())
                         return n2.infinite_key() ? n1.infinite_key() - n2.infinite_key() : 1;
-                    else if ( n2.infinite_key() )
+                    else if ( n2.infinite_key())
                         return -1;
                     return operator()( n1.m_Key, n2.m_Key );
                 }
@@ -639,7 +639,7 @@ namespace cds { namespace intrusive {
                 template <typename LeafNode, typename Q>
                 int operator()( internal_node<key_type, LeafNode> const& n, Q const& v ) const
                 {
-                    if ( n.infinite_key() )
+                    if ( n.infinite_key())
                         return 1;
                     return operator()( n.m_Key, v );
                 }
@@ -647,7 +647,7 @@ namespace cds { namespace intrusive {
                 template <typename LeafNode, typename Q>
                 int operator()( Q const& v, internal_node<key_type, LeafNode> const& n ) const
                 {
-                    if ( n.infinite_key() )
+                    if ( n.infinite_key())
                         return -1;
                     return operator()( v, n.m_Key );
                 }
@@ -655,7 +655,7 @@ namespace cds { namespace intrusive {
                 template <typename GC, typename Tag>
                 int operator()( node<GC, Tag> const& n1, node<GC, Tag> const& n2 ) const
                 {
-                    if ( n1.infinite_key() != n2.infinite_key() )
+                    if ( n1.infinite_key() != n2.infinite_key())
                         return n1.infinite_key() - n2.infinite_key();
                     return operator()( *node_traits::to_value_ptr( n1 ), *node_traits::to_value_ptr( n2 ));
                 }
@@ -663,7 +663,7 @@ namespace cds { namespace intrusive {
                 template <typename GC, typename Tag, typename Q>
                 int operator()( node<GC, Tag> const& n, Q const& v ) const
                 {
-                    if ( n.infinite_key() )
+                    if ( n.infinite_key())
                         return 1;
                     return operator()( *node_traits::to_value_ptr( n ), v );
                 }
@@ -671,24 +671,24 @@ namespace cds { namespace intrusive {
                 template <typename GC, typename Tag, typename Q>
                 int operator()( Q const& v, node<GC, Tag> const& n ) const
                 {
-                    if ( n.infinite_key() )
+                    if ( n.infinite_key())
                         return -1;
-                    return operator()( v, *node_traits::to_value_ptr( n ) );
+                    return operator()( v, *node_traits::to_value_ptr( n ));
                 }
 
                 template <typename GC>
                 int operator()( base_node<GC> const& n1, base_node<GC> const& n2 ) const
                 {
-                    if ( n1.infinite_key() != n2.infinite_key() )
+                    if ( n1.infinite_key() != n2.infinite_key())
                         return n1.infinite_key() - n2.infinite_key();
-                    if ( n1.is_leaf() ) {
-                        if ( n2.is_leaf() )
+                    if ( n1.is_leaf()) {
+                        if ( n2.is_leaf())
                             return operator()( node_traits::to_leaf_node( n1 ), node_traits::to_leaf_node( n2 ));
                         else
                             return operator()( node_traits::to_leaf_node( n1 ), node_traits::to_internal_node( n2 ));
                     }
 
-                    if ( n2.is_leaf() )
+                    if ( n2.is_leaf())
                         return operator()( node_traits::to_internal_node( n1 ), node_traits::to_leaf_node( n2 ));
                     else
                         return operator()( node_traits::to_internal_node( n1 ), node_traits::to_internal_node( n2 ));
@@ -699,7 +699,7 @@ namespace cds { namespace intrusive {
                 {
                     if ( n.infinite_key())
                         return 1;
-                    if ( n.is_leaf() )
+                    if ( n.is_leaf())
                         return operator()( node_traits::to_leaf_node( n ), v );
                     return operator()( node_traits::to_internal_node( n ), v );
                 }
@@ -713,7 +713,7 @@ namespace cds { namespace intrusive {
                 template <typename GC, typename LeafNode >
                 int operator()( base_node<GC> const& i, internal_node<key_type, LeafNode> const& n ) const
                 {
-                    if ( i.is_leaf() )
+                    if ( i.is_leaf())
                         return operator()( static_cast<LeafNode const&>(i), n );
                     return operator()( static_cast<internal_node<key_type, LeafNode> const&>(i), n );
                 }
@@ -727,8 +727,8 @@ namespace cds { namespace intrusive {
                 template <typename GC, typename Tag >
                 int operator()( node<GC, Tag> const& n, internal_node<key_type, node<GC, Tag> > const& i ) const
                 {
-                    if ( !n.infinite_key() ) {
-                        if ( i.infinite_key() )
+                    if ( !n.infinite_key()) {
+                        if ( i.infinite_key())
                             return -1;
                         return operator()( n, i.m_Key );
                     }

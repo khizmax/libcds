@@ -89,7 +89,7 @@ namespace cds { namespace OS {
 
             double duration()
             {
-                return duration( native_duration() );
+                return duration( native_duration());
             }
 
             native_duration_type    native_duration()

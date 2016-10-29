@@ -57,7 +57,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             typedef typename List::exempt_ptr exempt_ptr;
@@ -70,7 +70,7 @@ namespace cds_test {
                     rcu_lock lock;
                     raw_ptr rp = l.get( i.key );
                     EXPECT_TRUE( !rp );
-                    rp = l.get_with( other_key( i.key ), other_less() );
+                    rp = l.get_with( other_key( i.key ), other_less());
                     EXPECT_TRUE( !rp );
                 }
 
@@ -99,7 +99,7 @@ namespace cds_test {
                 }
             }
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             ASSERT_CONTAINER_SIZE( l, nSize );
 
             // extract()
@@ -144,7 +144,7 @@ namespace cds_test {
                 }
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
         }
     };

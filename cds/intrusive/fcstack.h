@@ -188,7 +188,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( op_push, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPush();
             return true;
@@ -205,7 +205,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( op_pop, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onPop( pRec->bEmpty );
@@ -226,7 +226,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -274,10 +274,10 @@ namespace cds { namespace intrusive {
 
             // this function is called under FC mutex, so switch TSan off
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_push:
                 assert( pRec->pVal );
-                m_Stack.push_front( *(pRec->pVal ) );
+                m_Stack.push_front( *(pRec->pVal ));
                 break;
             case op_pop:
                 pRec->bEmpty = m_Stack.empty();
@@ -290,7 +290,7 @@ namespace cds { namespace intrusive {
                 m_Stack.clear();
                 break;
             case op_clear_and_dispose:
-                m_Stack.clear_and_dispose( disposer() );
+                m_Stack.clear_and_dispose( disposer());
                 break;
             default:
                 assert(false);
@@ -307,7 +307,7 @@ namespace cds { namespace intrusive {
 
             typedef typename fc_kernel::iterator fc_iterator;
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
-                switch ( it->op() ) {
+                switch ( it->op()) {
                 case op_push:
                 case op_pop:
                     if ( itPrev != itEnd && collide( *itPrev, *it ))
@@ -325,7 +325,7 @@ namespace cds { namespace intrusive {
         //@cond
         bool collide( fc_record& rec1, fc_record& rec2 )
         {
-            switch ( rec1.op() ) {
+            switch ( rec1.op()) {
                 case op_push:
                     if ( rec2.op() == op_pop ) {
                         assert(rec1.pVal);

@@ -232,15 +232,15 @@ namespace cds { namespace sync {
         /// Locks a lock at cell \p hint
         /**
             To define real array's cell which should be locked, \ref select_cell_policy is used.
-            The target cell is a result of <tt>select_cell_policy( hint, size() )</tt>.
+            The target cell is a result of <tt>select_cell_policy( hint, size())</tt>.
 
             Returns the index of locked lock.
         */
         template <typename Q>
         size_t lock( Q const& hint )
         {
-            size_t nCell = m_SelectCellPolicy( hint, size() );
-            assert( nCell < size() );
+            size_t nCell = m_SelectCellPolicy( hint, size());
+            assert( nCell < size());
             m_arrLocks[nCell].lock();
             return nCell;
         }
@@ -248,16 +248,16 @@ namespace cds { namespace sync {
         /// Try lock a lock at cell \p hint
         /**
             To define real array's cell which should be locked, \ref select_cell_policy is used.
-            The target cell is a result of <tt>select_cell_policy( hint, size() )</tt>.
+            The target cell is a result of <tt>select_cell_policy( hint, size())</tt>.
 
             Returns the index of locked lock if success, \ref c_nUnspecifiedCell constant otherwise.
         */
         template <typename Q>
         size_t try_lock( Q const& hint )
         {
-            size_t nCell = m_SelectCellPolicy( hint, size() );
-            assert( nCell < size() );
-            if ( m_arrLocks[nCell].try_lock() )
+            size_t nCell = m_SelectCellPolicy( hint, size());
+            assert( nCell < size());
+            if ( m_arrLocks[nCell].try_lock())
                 return nCell;
             return c_nUnspecifiedCell;
         }
@@ -265,7 +265,7 @@ namespace cds { namespace sync {
         /// Unlock the lock specified by index \p nCell
         void unlock( size_t nCell )
         {
-            assert( nCell < size() );
+            assert( nCell < size());
             m_arrLocks[nCell].unlock();
         }
 
@@ -291,7 +291,7 @@ namespace cds { namespace sync {
         */
         lock_type& at( size_t nCell ) const
         {
-            assert( nCell < size() );
+            assert( nCell < size());
             return m_arrLocks[ nCell ];
         }
 
@@ -325,7 +325,7 @@ namespace std {
         template <typename Q>
         unique_lock( lock_array_type& arrLocks, Q const& hint )
             : m_arrLocks( arrLocks )
-            , m_nLockGuarded( arrLocks.lock( hint ) )
+            , m_nLockGuarded( arrLocks.lock( hint ))
         {}
 
         /// Locks all from \p arrLocks array

@@ -1134,7 +1134,7 @@ namespace cds { namespace intrusive {
         bool find_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             position pos;
-            if ( search( refHead, val, pos, cmp ) ) {
+            if ( search( refHead, val, pos, cmp )) {
                 m_Stat.onFindSuccess();
                 return true;
             }

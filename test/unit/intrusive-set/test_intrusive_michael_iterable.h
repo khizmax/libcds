@@ -65,7 +65,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -152,7 +152,7 @@ namespace cds_test {
         struct cmp {
             int operator ()(const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -168,7 +168,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()(const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -211,7 +211,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -225,7 +225,7 @@ namespace cds_test {
                 data.push_back( value_type( static_cast<int>( key )));
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
@@ -237,7 +237,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
                 ASSERT_TRUE( s.find( i.nKey ) == s.end());
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less()) == s.end());
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less()) == s.end());
 
                 std::pair<bool, bool> updResult;
 
@@ -259,7 +259,7 @@ namespace cds_test {
                     updResult = s.update( i, []( value_type& val, value_type* arg)
                         {
                             ASSERT_TRUE( arg != nullptr );
-                            EXPECT_EQ( val.key(), arg->key() );
+                            EXPECT_EQ( val.key(), arg->key());
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
@@ -268,7 +268,7 @@ namespace cds_test {
                     EXPECT_EQ( i.nUpdateNewCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
-                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ) );
+                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nUpdateNewCount;} ));
                     EXPECT_EQ( i.nUpdateNewCount, 1u );
                     i.nUpdateNewCount = 0;
                     break;
@@ -287,41 +287,41 @@ namespace cds_test {
                     break;
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()));
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()));
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
-                ASSERT_TRUE( s.find( i.nKey ) != s.end() );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less() ) != s.end() );
-                EXPECT_EQ( s.find( i.nKey )->nKey, i.key() );
-                EXPECT_EQ( s.find_with( other_item( i.key() ), other_less())->nKey, i.key() );
+                ASSERT_TRUE( s.find( i.nKey ) != s.end());
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less()) != s.end());
+                EXPECT_EQ( s.find( i.nKey )->nKey, i.key());
+                EXPECT_EQ( s.find_with( other_item( i.key()), other_less())->nKey, i.key());
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[ idx ];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less() ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()) );
                 EXPECT_EQ( i.nFindCount, 0u );
-                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
-                ASSERT_TRUE( s.find( i.nKey ) != s.end() );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less()) != s.end() );
-                EXPECT_EQ( s.find( i.nKey )->nKey, i.key() );
-                EXPECT_EQ( s.find_with( other_item( i.key() ), other_less())->nKey, i.key() );
+                ASSERT_TRUE( s.find( i.nKey ) != s.end());
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less()) != s.end());
+                EXPECT_EQ( s.find( i.nKey )->nKey, i.key());
+                EXPECT_EQ( s.find_with( other_item( i.key()), other_less())->nKey, i.key());
 
 
                 value_type v( i );
@@ -329,19 +329,19 @@ namespace cds_test {
                 case 0:
                     ASSERT_FALSE( s.unlink( v ));
                     ASSERT_TRUE( s.unlink( i ));
-                    ASSERT_FALSE( s.unlink( i ) );
+                    ASSERT_FALSE( s.unlink( i ));
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key()));
-                    ASSERT_FALSE( s.erase( i.key() ) );
+                    ASSERT_FALSE( s.erase( i.key()) );
                     break;
                 case 2:
                     ASSERT_TRUE( s.erase( v ));
-                    ASSERT_FALSE( s.erase( v ) );
+                    ASSERT_FALSE( s.erase( v ));
                     break;
                 case 3:
                     ASSERT_TRUE( s.erase_with( other_item( i.key()), other_less()));
-                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less() ) );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_less()) );
                     break;
                 case 4:
                     EXPECT_EQ( i.nEraseCount, 0u );
@@ -352,9 +352,9 @@ namespace cds_test {
                     break;
                 case 5:
                     EXPECT_EQ( i.nEraseCount, 0u );
-                    ASSERT_TRUE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_TRUE( s.erase_with( other_item( i.key()), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
-                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_less(), []( value_type& val ) { ++val.nEraseCount; } ));
                     EXPECT_EQ( i.nEraseCount, 1u );
                     break;
                 }
@@ -364,10 +364,10 @@ namespace cds_test {
                 ASSERT_FALSE( s.contains( other_item( i.key()), other_less()));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
-                ASSERT_TRUE( s.find( i.nKey ) == s.end() );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less() ) == s.end() );
+                ASSERT_TRUE( s.find( i.nKey ) == s.end());
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less()) == s.end());
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
             // Force retiring cycle
@@ -381,7 +381,7 @@ namespace cds_test {
                 i.clear_stat();
                 ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // Iterator test
@@ -400,8 +400,8 @@ namespace cds_test {
 
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
+            ASSERT_TRUE( s.begin() == s.end());
+            ASSERT_TRUE( s.cbegin() == s.cend());
 
             // Force retiring cycle
             Set::gc::force_dispose();

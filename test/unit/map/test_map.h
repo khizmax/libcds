@@ -268,19 +268,19 @@ namespace cds_test {
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                 } ));
             }
-            EXPECT_FALSE( m.empty() );
+            EXPECT_FALSE( m.empty());
             EXPECT_CONTAINER_SIZE( m, kkSize );
-            EXPECT_FALSE( m.begin() == m.end() );
-            EXPECT_FALSE( m.cbegin() == m.cend() );
+            EXPECT_FALSE( m.begin() == m.end());
+            EXPECT_FALSE( m.cbegin() == m.cend());
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 EXPECT_TRUE( m.contains( i.nKey ));
-                EXPECT_TRUE( m.contains( val.strVal ) );
+                EXPECT_TRUE( m.contains( val.strVal ));
                 EXPECT_TRUE( m.contains( i ));
                 EXPECT_TRUE( m.contains( other_item( i.nKey ), other_less()));
                 EXPECT_TRUE( m.find( i, []( map_pair const& v ) {
@@ -366,7 +366,7 @@ namespace cds_test {
                     EXPECT_TRUE( false );
                 } ));
             }
-            EXPECT_TRUE( m.empty() );
+            EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
 
             EXPECT_TRUE( m.begin() == m.end());
@@ -376,12 +376,12 @@ namespace cds_test {
             for ( auto const& i : arrKeys )
                 EXPECT_TRUE( m.insert( i ));
 
-            EXPECT_FALSE( m.empty() );
+            EXPECT_FALSE( m.empty());
             EXPECT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            EXPECT_TRUE( m.empty() );
+            EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
         }
     };

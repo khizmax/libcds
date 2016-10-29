@@ -63,9 +63,9 @@ namespace cds { namespace intrusive { namespace striped_set {
                     iterator itPrev = m_List.before_begin();
                     iterator itEnd = m_List.end();
                     for ( iterator it = m_List.begin(); it != itEnd; ++it ) {
-                        if ( pred( key, *it ) )
+                        if ( pred( key, *it ))
                             itPrev = it;
-                        else if ( pred( *it, key ) )
+                        else if ( pred( *it, key ))
                             break;
                         else
                             return std::make_pair( itPrev, true );
@@ -76,7 +76,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q>
                 std::pair< iterator, bool > find_prev_item( Q const& key )
                 {
-                    return find_prev_item_cmp( key, key_comparator() );
+                    return find_prev_item_cmp( key, key_comparator());
                 }
 
                 template <typename Q, typename Compare>

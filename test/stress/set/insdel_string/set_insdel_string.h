@@ -358,7 +358,7 @@ namespace set {
             size_t nDeleteFailed = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         InserterThread& inserter = static_cast<InserterThread&>( thr );
@@ -383,12 +383,12 @@ namespace set {
                 << std::make_pair( "delete_success", nDeleteSuccess )
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_failed", nDeleteFailed )
-                << std::make_pair( "final_set_size", testSet.size() );
+                << std::make_pair( "final_set_size", testSet.size());
 
             //testSet.clear();
             for (auto const& str: m_arrString )
                 testSet.erase( str );
-            EXPECT_TRUE( testSet.empty() );
+            EXPECT_TRUE( testSet.empty());
             EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );
@@ -429,7 +429,7 @@ namespace set {
             size_t nExtractFailed = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         InserterThread& inserter = static_cast<InserterThread&>(thr);
@@ -463,12 +463,12 @@ namespace set {
                 << std::make_pair( "insert_failed",  nInsertFailed )
                 << std::make_pair( "delete_failed",  nDeleteFailed )
                 << std::make_pair( "extract_failed", nExtractFailed )
-                << std::make_pair( "final_set_size", testSet.size() );
+                << std::make_pair( "final_set_size", testSet.size());
 
             //testSet.clear();
             for ( auto const& str : m_arrString )
                 testSet.erase( str );
-            EXPECT_TRUE( testSet.empty() );
+            EXPECT_TRUE( testSet.empty());
             EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );

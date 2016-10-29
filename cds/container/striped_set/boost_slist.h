@@ -76,7 +76,7 @@ namespace cds { namespace container {
 
             void operator()( list_type& list, iterator itInsert, iterator itWhat )
             {
-                list.insert_after( itInsert, std::move( *itWhat ) );
+                list.insert_after( itInsert, std::move( *itWhat ));
             }
         };
 
@@ -145,7 +145,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 for ( iterator it = m_List.begin(); it != itEnd; ++it ) {
                     if ( pred( key, *it ))
                         itPrev = it;
-                    else if ( pred( *it, key ) )
+                    else if ( pred( *it, key ))
                         break;
                     else
                         return std::make_pair( itPrev, true );
@@ -185,7 +185,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 value_type val( std::forward<Args>(args)... );
                 std::pair< iterator, bool > pos = find_prev_item( val );
                 if ( !pos.second ) {
-                    m_List.emplace_after( pos.first, std::move( val ) );
+                    m_List.emplace_after( pos.first, std::move( val ));
                     return true;
                 }
                 return false;
@@ -221,7 +221,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                f( *(++it) );
+                f( *(++it));
                 m_List.erase_after( pos.first );
 
                 return true;
@@ -236,7 +236,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 // key exists
                 iterator it = pos.first;
-                f( *(++it) );
+                f( *(++it));
                 m_List.erase_after( pos.first );
 
                 return true;

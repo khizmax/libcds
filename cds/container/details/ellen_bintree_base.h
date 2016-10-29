@@ -112,13 +112,13 @@ namespace cds { namespace container {
             /// Initializes key field, value if default-constructed
             template <typename K>
             map_node( K const& key )
-                : m_Value( std::make_pair( key_type(key), mapped_type() ))
+                : m_Value( std::make_pair( key_type(key), mapped_type()))
             {}
 
             /// Initializes key and value fields
             template <typename K, typename Q>
             map_node( K const& key, Q const& v )
-                : m_Value( std::make_pair(key_type(key), mapped_type(v) ))
+                : m_Value( std::make_pair(key_type(key), mapped_type(v)))
             {}
         };
 

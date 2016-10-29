@@ -90,9 +90,9 @@ namespace cds { namespace urcu {
             and then evaluates disposing expression <tt>pFunc( p )</tt>
         */
         template <typename T>
-        static void retire_ptr( T * p, void (* pFunc)(T *) )
+        static void retire_ptr( T * p, void (* pFunc)(T *))
         {
-            retired_ptr rp( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ) );
+            retired_ptr rp( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ));
             retire_ptr( rp );
         }
 

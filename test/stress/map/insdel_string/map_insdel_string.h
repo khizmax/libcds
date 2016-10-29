@@ -205,7 +205,7 @@ namespace map {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                 {
                     inserter& t = static_cast<inserter&>(thr);
@@ -230,14 +230,14 @@ namespace map {
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
                 << std::make_pair( "delete_failed", nDeleteFailed )
-                << std::make_pair( "finish_map_size", testMap.size() );
+                << std::make_pair( "finish_map_size", testMap.size());
 
             check_before_cleanup( testMap );
 
             //testMap.clear();
             for ( auto const& str: s_arrKeys )
                 testMap.erase( str );
-            EXPECT_TRUE( testMap.empty() );
+            EXPECT_TRUE( testMap.empty());
             EXPECT_EQ( testMap.size(), 0u );
 
             additional_check( testMap );

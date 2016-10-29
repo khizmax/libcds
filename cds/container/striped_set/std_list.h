@@ -82,7 +82,7 @@ namespace cds { namespace container {
 
             void operator()( list_type& list, iterator itInsert, iterator itWhat )
             {
-                list.insert( itInsert, std::move( *itWhat ) );
+                list.insert( itInsert, std::move( *itWhat ));
             }
         };
     }   // namespace striped_set
@@ -169,7 +169,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool insert( const Q& val, Func f )
             {
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate());
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
                     value_type newItem( val );
                     it = m_List.insert( it, newItem );
@@ -189,9 +189,9 @@ namespace cds { namespace intrusive { namespace striped_set {
             bool emplace( Args&&... args )
             {
                 value_type val(std::forward<Args>(args)...);
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate());
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
-                    it = m_List.emplace( it, std::move( val ) );
+                    it = m_List.emplace( it, std::move( val ));
 #           if !defined(CDS_STD_LIST_SIZE_CXX11_CONFORM)
                     ++m_nSize;
 #           endif
@@ -203,7 +203,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert )
             {
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate());
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 ) {
                     // insert new
                     if ( !bAllowInsert )
@@ -227,7 +227,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool erase( const Q& key, Func f )
             {
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), key, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), key, find_predicate());
                 if ( it == m_List.end() || key_comparator()( key, *it ) != 0 )
                     return false;
 
@@ -245,7 +245,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             bool erase( Q const& key, Less pred, Func f )
             {
                 iterator it = std::lower_bound( m_List.begin(), m_List.end(), key, pred );
-                if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ) )
+                if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ))
                     return false;
 
                 // key exists
@@ -261,7 +261,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool find( Q& val, Func f )
             {
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, find_predicate());
                 if ( it == m_List.end() || key_comparator()( val, *it ) != 0 )
                     return false;
 
@@ -274,7 +274,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             bool find( Q& val, Less pred, Func f )
             {
                 iterator it = std::lower_bound( m_List.begin(), m_List.end(), val, pred );
-                if ( it == m_List.end() || pred( val, *it ) || pred( *it, val ) )
+                if ( it == m_List.end() || pred( val, *it ) || pred( *it, val ))
                     return false;
 
                 // key exists
@@ -295,7 +295,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
             void move_item( adapted_container& /*from*/, iterator itWhat )
             {
-                iterator it = std::lower_bound( m_List.begin(), m_List.end(), *itWhat, find_predicate() );
+                iterator it = std::lower_bound( m_List.begin(), m_List.end(), *itWhat, find_predicate());
                 assert( it == m_List.end() || key_comparator()( *itWhat, *it ) != 0 );
 
                 copy_item()( m_List, it, itWhat );

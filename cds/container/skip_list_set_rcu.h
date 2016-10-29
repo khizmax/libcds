@@ -278,37 +278,37 @@ namespace cds { namespace container {
         /// Returns a forward iterator addressing the first element in a set
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator begin() const
         {
-            return const_iterator( base_class::begin() );
+            return const_iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator end() const
         {
-            return const_iterator( base_class::end() );
+            return const_iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a set.
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -330,7 +330,7 @@ namespace cds { namespace container {
         bool insert( Q const& val )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -421,7 +421,7 @@ namespace cds { namespace container {
         bool emplace( Args&&... args )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), std::forward<Args>(args)... ));
-            if ( base_class::insert( *sp.get() )) {
+            if ( base_class::insert( *sp.get())) {
                 sp.release();
                 return true;
             }
@@ -726,7 +726,7 @@ namespace cds { namespace container {
         raw_ptr get_with( Q const& val, Less pred )
         {
             CDS_UNUSED( pred );
-            return raw_ptr( base_class::get_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >() ));
+            return raw_ptr( base_class::get_with( val, cds::details::predicate_wrapper< node_type, Less, typename maker::value_accessor >()));
         }
 
         /// Clears the set (non-atomic).
@@ -736,7 +736,7 @@ namespace cds { namespace container {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 

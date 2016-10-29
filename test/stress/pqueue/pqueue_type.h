@@ -92,7 +92,7 @@ namespace pqueue {
             bool pop( value_type& dest )
             {
                 scoped_lock l( m_Lock );
-                if ( !m_PQueue.empty() ) {
+                if ( !m_PQueue.empty()) {
                     dest = m_PQueue.top();
                     m_PQueue.pop();
                     return true;
@@ -104,8 +104,8 @@ namespace pqueue {
             bool pop_with( Q& dest, MoveFunc f )
             {
                 scoped_lock l( m_Lock );
-                if ( !m_PQueue.empty() ) {
-                    f( dest, m_PQueue.top() );
+                if ( !m_PQueue.empty()) {
+                    f( dest, m_PQueue.top());
                     m_PQueue.pop();
                     return true;
                 }
@@ -115,7 +115,7 @@ namespace pqueue {
             void clear()
             {
                 scoped_lock l( m_Lock );
-                while ( !m_PQueue.empty() )
+                while ( !m_PQueue.empty())
                     m_PQueue.pop();
             }
 
@@ -123,8 +123,8 @@ namespace pqueue {
             void clear_with( Func f )
             {
                 scoped_lock l( m_Lock );
-                while ( !m_PQueue.empty() ) {
-                    f( m_PQueue.top() );
+                while ( !m_PQueue.empty()) {
+                    f( m_PQueue.top());
                     m_PQueue.pop();
                 }
             }
@@ -152,7 +152,7 @@ namespace pqueue {
             template <typename T, typename Tree>
             bool operator()( T& dest, Tree& container ) const
             {
-                typename Tree::guarded_ptr gp( container.extract_max() );
+                typename Tree::guarded_ptr gp( container.extract_max());
                 if ( gp )
                     dest = *gp;
                 return !gp.empty();
@@ -165,7 +165,7 @@ namespace pqueue {
             template <typename T, typename Tree>
             bool operator()( T& dest, Tree& container ) const
             {
-                typename Tree::exempt_ptr ep( container.extract_max() );
+                typename Tree::exempt_ptr ep( container.extract_max());
                 if ( ep )
                     dest = *ep;
                 return !ep.empty();
@@ -178,7 +178,7 @@ namespace pqueue {
             template <typename T, typename Tree>
             bool operator()( T& dest, Tree& container ) const
             {
-                typename Tree::guarded_ptr gp( container.extract_min() );
+                typename Tree::guarded_ptr gp( container.extract_min());
                 if ( gp )
                     dest = *gp;
                 return !gp.empty();
@@ -191,7 +191,7 @@ namespace pqueue {
             template <typename T, typename Tree>
             bool operator()( T& dest, Tree& container ) const
             {
-                typename Tree::exempt_ptr ep( container.extract_min() );
+                typename Tree::exempt_ptr ep( container.extract_min());
                 if ( ep )
                     dest = *ep;
                 return !ep.empty();
@@ -248,7 +248,7 @@ namespace pqueue {
             template <typename T, typename Set>
             bool operator()( T& dest, Set& container ) const
             {
-                typename Set::guarded_ptr gp( container.extract_max() );
+                typename Set::guarded_ptr gp( container.extract_max());
                 if ( gp )
                     dest = *gp;
                 return !gp.empty();
@@ -261,7 +261,7 @@ namespace pqueue {
             template <typename T, typename Set>
             bool operator()( T& dest, Set& container ) const
             {
-                typename Set::exempt_ptr ep( container.extract_max() );
+                typename Set::exempt_ptr ep( container.extract_max());
                 if ( ep )
                     dest = *ep;
                 return !ep.empty();
@@ -274,7 +274,7 @@ namespace pqueue {
             template <typename T, typename Set>
             bool operator()( T& dest, Set& container ) const
             {
-                typename Set::guarded_ptr gp( container.extract_min() );
+                typename Set::guarded_ptr gp( container.extract_min());
                 if ( gp )
                     dest = *gp;
                 return !gp.empty();
@@ -287,7 +287,7 @@ namespace pqueue {
             template <typename T, typename Set>
             bool operator()( T& dest, Set& container ) const
             {
-                typename Set::exempt_ptr ep( container.extract_min() );
+                typename Set::exempt_ptr ep( container.extract_min());
                 if ( ep )
                     dest = *ep;
                 return !ep.empty();

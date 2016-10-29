@@ -47,11 +47,11 @@ namespace misc {
         {
             atomics::memory_order mo_clear = convert_to_store_order(order);
 
-            f.clear( convert_to_store_order(order) );
+            f.clear( convert_to_store_order(order));
 
             for ( int i = 0; i < 5; ++i ) {
                 EXPECT_FALSE( atomics::atomic_flag_test_and_set_explicit( &f, order ));
-                EXPECT_TRUE( atomics::atomic_flag_test_and_set_explicit( &f, order ) );
+                EXPECT_TRUE( atomics::atomic_flag_test_and_set_explicit( &f, order ));
                 atomics::atomic_flag_clear_explicit( &f, mo_clear );
                 atomics::atomic_flag_clear_explicit( &f, mo_clear );
             }
@@ -64,7 +64,7 @@ namespace misc {
 
             for ( int i = 0; i < 5; ++i ) {
                 EXPECT_FALSE( atomics::atomic_flag_test_and_set( &f ));
-                EXPECT_TRUE( atomics::atomic_flag_test_and_set( &f ) );
+                EXPECT_TRUE( atomics::atomic_flag_test_and_set( &f ));
                 atomics::atomic_flag_clear(&f);
                 atomics::atomic_flag_clear(&f);
             }
@@ -81,7 +81,7 @@ namespace misc {
         {
             typedef Integral    integral_type;
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
+            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
             atomics::atomic_store( &a, (integral_type) 0 );
             EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( atomics::atomic_load( &a ), integral_type( 0 ));
@@ -102,7 +102,7 @@ namespace misc {
                 EXPECT_TRUE( atomics::atomic_compare_exchange_weak( &a, &expected, n));
                 EXPECT_EQ( expected, prev );
                 EXPECT_NE( expected, n );
-                EXPECT_FALSE( atomics::atomic_compare_exchange_weak( &a, &expected, n) );
+                EXPECT_FALSE( atomics::atomic_compare_exchange_weak( &a, &expected, n));
                 EXPECT_EQ( expected, n );
 
                 prev = n;
@@ -186,7 +186,7 @@ namespace misc {
             const atomics::memory_order oLoad = convert_to_load_order( order );
             const atomics::memory_order oStore = convert_to_store_order( order );
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
+            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
             atomics::atomic_store_explicit( &a, (integral_type) 0, oStore );
             EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
@@ -318,7 +318,7 @@ namespace misc {
         template <class AtomicBool>
         void do_test_atomic_bool(AtomicBool& a)
         {
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
+            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
             atomics::atomic_store( &a, false );
             EXPECT_FALSE( a );
             EXPECT_FALSE( atomics::atomic_load( &a ));
@@ -355,7 +355,7 @@ namespace misc {
             const atomics::memory_order oStore = convert_to_store_order( order );
             const atomics::memory_order oExchange = convert_to_exchange_order( order );
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ) );
+            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
             atomics::atomic_store_explicit( &a, false, oStore );
             EXPECT_FALSE( a == false );
             EXPECT_FALSE( atomics::atomic_load_explicit( &a, oLoad ));
@@ -545,14 +545,14 @@ namespace misc {
             EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), 1 );
 
             p = arr;
-            EXPECT_TRUE( atomics::atomic_compare_exchange_weak( &a, (void **) &p, (void *)(arr + 5) ));
+            EXPECT_TRUE( atomics::atomic_compare_exchange_weak( &a, (void **) &p, (void *)(arr + 5)));
             EXPECT_EQ( p, arr + 0 );
-            EXPECT_FALSE( atomics::atomic_compare_exchange_weak( &a, (void **) &p, (void *)(arr + 3) ));
+            EXPECT_FALSE( atomics::atomic_compare_exchange_weak( &a, (void **) &p, (void *)(arr + 3)));
             EXPECT_EQ( p, arr + 5 );
 
-            EXPECT_TRUE( atomics::atomic_compare_exchange_strong( &a, (void **) &p, (void *)(arr + 3) ));
+            EXPECT_TRUE( atomics::atomic_compare_exchange_strong( &a, (void **) &p, (void *)(arr + 3)));
             EXPECT_EQ( p, arr + 5 );
-            EXPECT_FALSE( atomics::atomic_compare_exchange_strong( &a, (void **) &p, (void *)(arr + 5) ));
+            EXPECT_FALSE( atomics::atomic_compare_exchange_strong( &a, (void **) &p, (void *)(arr + 5)));
             EXPECT_EQ( p, arr + 3 );
 
             EXPECT_EQ( reinterpret_cast<char *>( atomics::atomic_exchange( &a, (void *) arr )), arr + 3 );

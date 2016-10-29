@@ -67,8 +67,8 @@ namespace cds_test {
             }
 
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             // iterators
@@ -92,7 +92,7 @@ namespace cds_test {
             typedef typename Map::rcu_lock   rcu_lock;
 
             // get/extract
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             for ( auto const& i : arrKeys ) {
                 value_type const& val = arrVals.at( i.nKey );
@@ -135,7 +135,7 @@ namespace cds_test {
                             xp = m.extract( val.strVal );
                             break;
                         case 3:
-                            xp = m.extract_with( other_item( i.nKey ), other_less() );
+                            xp = m.extract_with( other_item( i.nKey ), other_less());
                             break;
                         }
                         ASSERT_FALSE( !xp );
@@ -158,7 +158,7 @@ namespace cds_test {
                             xp = m.extract( val.strVal );
                             break;
                         case 3:
-                            xp = m.extract_with( other_item( i.nKey ), other_less() );
+                            xp = m.extract_with( other_item( i.nKey ), other_less());
                             break;
                         }
                         EXPECT_TRUE( !xp );
@@ -194,7 +194,7 @@ namespace cds_test {
                         xp = m.extract( val.strVal );
                         break;
                     case 3:
-                        xp = m.extract_with( other_item( i.nKey ), other_less() );
+                        xp = m.extract_with( other_item( i.nKey ), other_less());
                         break;
                     }
                     EXPECT_TRUE( !xp );
@@ -208,12 +208,12 @@ namespace cds_test {
                     ASSERT_TRUE( !rp );
                     rp = m.get( i );
                     ASSERT_TRUE( !rp );
-                    rp = m.get_with( other_item( i.nKey ), other_less() );
+                    rp = m.get_with( other_item( i.nKey ), other_less());
                     ASSERT_TRUE( !rp );
                 }
             }
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
         }
     };

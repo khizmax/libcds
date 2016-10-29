@@ -217,7 +217,7 @@ namespace cds { namespace container {
             this code
             \code
                 if ( it1 == it2 )
-                    assert( &(*it1) == &(*it2) );
+                    assert( &(*it1) == &(*it2));
             \endcode
             can throw assertion. The point is that the iterator stores the value of element which can be modified later by other thread.
             The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after such changing.
@@ -409,7 +409,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, less_wrapper<Less>() );
+            return base_class::erase_with( key, less_wrapper<Less>());
         }
 
         /// Deletes \p key from the list
@@ -491,7 +491,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::extract_with( key, less_wrapper<Less>() );
+            return base_class::extract_with( key, less_wrapper<Less>());
         }
 
         /// Checks whether the list contains \p key
@@ -515,7 +515,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, less_wrapper<Less>() );
+            return base_class::contains( key, less_wrapper<Less>());
         }
 
         /// Finds the key \p key and performs an action with it
@@ -625,7 +625,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( K const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return base_class::get_with( key, less_wrapper<Less>() );
+            return base_class::get_with( key, less_wrapper<Less>());
         }
 
         /// Checks if the list is empty
@@ -668,7 +668,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert_at( head_type& refHead, K&& key )
         {
-            return base_class::insert_at( refHead, value_type( key_type( std::forward<K>( key )), mapped_type() ));
+            return base_class::insert_at( refHead, value_type( key_type( std::forward<K>( key )), mapped_type()));
         }
 
         template <typename K, typename V>

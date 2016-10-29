@@ -51,7 +51,7 @@ protected:
 
         base_class::test( m );
 
-        ASSERT_TRUE( m.empty() );
+        ASSERT_TRUE( m.empty());
         ASSERT_CONTAINER_SIZE( m, 0 );
 
         typedef typename Map::exempt_ptr exempt_ptr;
@@ -65,7 +65,7 @@ protected:
 
         size_t nCount = 0;
         int nKey = 0;
-        while ( !m.empty() ) {
+        while ( !m.empty()) {
             xp = m.extract_min();
             ASSERT_FALSE( !xp );
             EXPECT_EQ( xp->first.nKey, nKey + 1 );
@@ -77,7 +77,7 @@ protected:
         xp = m.extract_max();
         ASSERT_TRUE( !xp );
         EXPECT_EQ( kkSize, nCount );
-        ASSERT_TRUE( m.empty() );
+        ASSERT_TRUE( m.empty());
         ASSERT_CONTAINER_SIZE( m, 0 );
 
         // get_max
@@ -86,7 +86,7 @@ protected:
 
         nKey = kkSize;
         nCount = 0;
-        while ( !m.empty() ) {
+        while ( !m.empty()) {
             xp = m.extract_max();
             ASSERT_FALSE( !xp );
             EXPECT_EQ( xp->first.nKey, nKey - 1 );
@@ -98,7 +98,7 @@ protected:
         xp = m.extract_max();
         ASSERT_TRUE( !xp );
         EXPECT_EQ( kkSize, nCount );
-        ASSERT_TRUE( m.empty() );
+        ASSERT_TRUE( m.empty());
         ASSERT_CONTAINER_SIZE( m, 0 );
     }
 

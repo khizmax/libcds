@@ -292,7 +292,7 @@ namespace cds { namespace container {
 
                 template <typename Q, typename... Args>
                 node_type( hasher /*h*/, Q&& key, Args&&... args )
-                    : m_Value( std::make_pair( key_type( std::forward<Q>( key )), mapped_type( std::forward<Args>(args)...) ))
+                    : m_Value( std::make_pair( key_type( std::forward<Q>( key )), mapped_type( std::forward<Args>(args)...)))
                 {}
             };
 

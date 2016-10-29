@@ -329,7 +329,7 @@ namespace cds { namespace algo {
             /// Marks publication record for the current thread as empty
             void release_record( publication_record_type * pRec )
             {
-                assert( pRec->is_done() );
+                assert( pRec->is_done());
                 pRec->nRequest.store( req_EmptyRecord, memory_model::memory_order_release );
             }
 
@@ -410,7 +410,7 @@ namespace cds { namespace algo {
             /// Marks \p rec as executed
             /**
                 This function should be called by container if \p batch_combine mode is used.
-                For usual combining (see \p combine() ) this function is excess.
+                For usual combining (see \p combine()) this function is excess.
             */
             void operation_done( publication_record& rec )
             {
@@ -606,7 +606,7 @@ namespace cds { namespace algo {
                 pRec->nState.store( active, memory_model::memory_order_release );
 
                 // Insert record to publication list
-                if ( m_pHead != static_cast<publication_record *>(pRec) ) {
+                if ( m_pHead != static_cast<publication_record *>(pRec)) {
                     publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
                     if ( p != static_cast<publication_record *>( pRec )) {
                         do {
@@ -630,9 +630,9 @@ namespace cds { namespace algo {
             template <class Container>
             void try_combining( Container& owner, publication_record_type* pRec )
             {
-                if ( m_Mutex.try_lock() ) {
+                if ( m_Mutex.try_lock()) {
                     // The thread becomes a combiner
-                    lock_guard l( m_Mutex, std::adopt_lock_t() );
+                    lock_guard l( m_Mutex, std::adopt_lock_t());
 
                     // The record pRec can be excluded from publication list. Re-publish it
                     republish( pRec );
@@ -642,9 +642,9 @@ namespace cds { namespace algo {
                 }
                 else {
                     // There is another combiner, wait while it executes our request
-                    if ( !wait_for_combining( pRec ) ) {
+                    if ( !wait_for_combining( pRec )) {
                         // The thread becomes a combiner
-                        lock_guard l( m_Mutex, std::adopt_lock_t() );
+                        lock_guard l( m_Mutex, std::adopt_lock_t());
 
                         // The record pRec can be excluded from publication list. Re-publish it
                         republish( pRec );
@@ -658,9 +658,9 @@ namespace cds { namespace algo {
             template <class Container>
             void try_batch_combining( Container& owner, publication_record_type * pRec )
             {
-                if ( m_Mutex.try_lock() ) {
+                if ( m_Mutex.try_lock()) {
                     // The thread becomes a combiner
-                    lock_guard l( m_Mutex, std::adopt_lock_t() );
+                    lock_guard l( m_Mutex, std::adopt_lock_t());
 
                     // The record pRec can be excluded from publication list. Re-publish it
                     republish( pRec );
@@ -670,9 +670,9 @@ namespace cds { namespace algo {
                 }
                 else {
                     // There is another combiner, wait while it executes our request
-                    if ( !wait_for_combining( pRec ) ) {
+                    if ( !wait_for_combining( pRec )) {
                         // The thread becomes a combiner
-                        lock_guard l( m_Mutex, std::adopt_lock_t() );
+                        lock_guard l( m_Mutex, std::adopt_lock_t());
 
                         // The record pRec can be excluded from publication list. Re-publish it
                         republish( pRec );
@@ -687,7 +687,7 @@ namespace cds { namespace algo {
             void combining( Container& owner )
             {
                 // The thread is a combiner
-                assert( !m_Mutex.try_lock() );
+                assert( !m_Mutex.try_lock());
 
                 unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
@@ -716,7 +716,7 @@ namespace cds { namespace algo {
                         case active:
                             if ( p->op() >= req_Operation ) {
                                 p->nAge.store( nCurAge, memory_model::memory_order_release );
-                                owner.fc_apply( static_cast<publication_record_type*>(p) );
+                                owner.fc_apply( static_cast<publication_record_type*>(p));
                                 operation_done( *p );
                                 bOpDone = true;
                             }
@@ -743,12 +743,12 @@ namespace cds { namespace algo {
             void batch_combining( Container& owner )
             {
                 // The thread is a combiner
-                assert( !m_Mutex.try_lock() );
+                assert( !m_Mutex.try_lock());
 
                 unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
                 for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass )
-                    owner.fc_process( begin(), end() );
+                    owner.fc_process( begin(), end());
 
                 combining_pass( owner, nCurAge );
                 m_Stat.onCombining();
@@ -771,7 +771,7 @@ namespace cds { namespace algo {
                     if ( m_waitStrategy.wait( *this, *pRec ))
                         m_Stat.onWakeupByNotifying();
 
-                    if ( m_Mutex.try_lock() ) {
+                    if ( m_Mutex.try_lock()) {
                         if ( pRec->op( memory_model::memory_order_acquire ) == req_Response ) {
                             // Operation is done
                             m_Mutex.unlock();

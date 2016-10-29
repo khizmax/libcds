@@ -208,7 +208,7 @@ namespace cds { namespace container {
         /// Returns a forward iterator addressing the first element in a map
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns a forward const iterator addressing the first element in a map
@@ -220,13 +220,13 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a map
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a map.
         iterator end()
         {
-            return iterator( base_class::end() );
+            return iterator( base_class::end());
         }
 
         /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
@@ -238,7 +238,7 @@ namespace cds { namespace container {
         /// Returns a forward const iterator that addresses the location succeeding the last element in a map.
         const_iterator cend() const
         {
-            return const_iterator( base_class::cend() );
+            return const_iterator( base_class::cend());
         }
     //@}
 
@@ -466,7 +466,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr extract( K const& key )
         {
-            return base_class::extract_( key, typename base_class::key_comparator() );
+            return base_class::extract_( key, typename base_class::key_comparator());
         }
 
         /// Extracts the item from the map with comparing functor \p pred
@@ -483,7 +483,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             typedef cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >  wrapped_less;
-            return base_class::extract_( key, cds::opt::details::make_comparator_from_less<wrapped_less>() );
+            return base_class::extract_( key, cds::opt::details::make_comparator_from_less<wrapped_less>());
         }
 
         /// Extracts an item with minimal key from the map
@@ -611,7 +611,7 @@ namespace cds { namespace container {
         bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >() );
+            return base_class::contains( key, cds::details::predicate_wrapper< node_type, Less, typename maker::key_accessor >());
         }
         //@cond
         template <typename K, typename Less>
@@ -654,7 +654,7 @@ namespace cds { namespace container {
         template <typename K>
         guarded_ptr get( K const& key )
         {
-            return base_class::get_with_( key, typename base_class::key_comparator() );
+            return base_class::get_with_( key, typename base_class::key_comparator());
         }
 
         /// Finds the key \p key and return the item found

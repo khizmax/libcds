@@ -150,7 +150,7 @@ namespace {
                 Producer<Queue>& thread = static_cast<Producer<Queue>&>(pool.get( i ));
                 EXPECT_EQ( thread.m_nPushError, 0u ) << " producer thread " << i;
             }
-            EXPECT_TRUE( !q.empty() );
+            EXPECT_TRUE( !q.empty());
 
             std::unique_ptr< uint8_t[] > arr( new uint8_t[s_nQueueSize] );
             memset( arr.get(), 0, sizeof(arr[0]) * s_nQueueSize );

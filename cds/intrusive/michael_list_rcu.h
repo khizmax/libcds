@@ -506,7 +506,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool erase( Q const& key )
         {
-            return erase_at( m_pHead, key, key_comparator() );
+            return erase_at( m_pHead, key, key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -522,7 +522,7 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() );
+            return erase_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Deletes the item from the list
@@ -592,7 +592,7 @@ namespace cds { namespace intrusive {
             rcu_michael_list::exempt_ptr p1;
 
             // The RCU should NOT be locked when extract() is called!
-            assert( !rcu::is_locked() );
+            assert( !rcu::is_locked());
 
             // You can call extract() function
             p1 = theList.extract( 10 );
@@ -610,7 +610,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         exempt_ptr extract( Q const& key )
         {
-            return exempt_ptr( extract_at( m_pHead, key, key_comparator() ));
+            return exempt_ptr( extract_at( m_pHead, key, key_comparator()));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -625,7 +625,7 @@ namespace cds { namespace intrusive {
         exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( extract_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() ));
+            return exempt_ptr( extract_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>()));
         }
 
         /// Find the key \p val
@@ -691,7 +691,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( m_pHead, key, key_comparator() );
+            return find_at( m_pHead, key, key_comparator());
         }
         //@cond
         template <typename Q>
@@ -712,7 +712,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( m_pHead, key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -787,7 +787,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            if( !empty() ) {
+            if( !empty()) {
                 check_deadlock_policy::check();
 
                 marked_node_ptr pHead;
@@ -795,9 +795,9 @@ namespace cds { namespace intrusive {
                     {
                         rcu_lock l;
                         pHead = m_pHead.load(memory_model::memory_order_acquire);
-                        if ( !pHead.ptr() )
+                        if ( !pHead.ptr())
                             break;
-                        marked_node_ptr pNext( pHead->m_pNext.load(memory_model::memory_order_relaxed) );
+                        marked_node_ptr pNext( pHead->m_pNext.load(memory_model::memory_order_relaxed));
                         if ( cds_unlikely( !pHead->m_pNext.compare_exchange_weak( pNext, pNext | 1, memory_model::memory_order_acquire, memory_model::memory_order_relaxed )))
                             continue;
                         if ( cds_unlikely( !m_pHead.compare_exchange_weak( pHead, marked_node_ptr(pNext.ptr()), memory_model::memory_order_release, memory_model::memory_order_relaxed )))
@@ -805,7 +805,7 @@ namespace cds { namespace intrusive {
                     }
 
                     --m_ItemCounter;
-                    dispose_node( pHead.ptr() );
+                    dispose_node( pHead.ptr());
                 }
             }
         }
@@ -846,25 +846,25 @@ namespace cds { namespace intrusive {
         static void dispose_node( node_type * pNode )
         {
             assert( pNode );
-            assert( !gc::is_locked() );
+            assert( !gc::is_locked());
 
-            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ) );
+            gc::template retire_ptr<clear_and_dispose>( node_traits::to_value_ptr( *pNode ));
         }
 
         static void dispose_chain( node_type * pChain )
         {
             if ( pChain ) {
-                assert( !gc::is_locked() );
+                assert( !gc::is_locked());
 
                 auto f = [&pChain]() -> cds::urcu::retired_ptr {
                     node_type * p = pChain;
                     if ( p ) {
                         pChain = p->m_pDelChain;
-                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ) );
+                        return cds::urcu::make_retired_ptr<clear_and_dispose>( node_traits::to_value_ptr( p ));
                     }
-                    return cds::urcu::make_retired_ptr<clear_and_dispose>( static_cast<value_type *>(nullptr) );
+                    return cds::urcu::make_retired_ptr<clear_and_dispose>( static_cast<value_type *>(nullptr));
                 };
-                gc::batch_retire( std::ref( f ) );
+                gc::batch_retire( std::ref( f ));
             }
         }
 
@@ -875,7 +875,7 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr p( pos.pCur );
             pNode->m_pNext.store( p, memory_model::memory_order_release );
-            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) )
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed )) )
                 return true;
 
             pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
@@ -892,22 +892,22 @@ namespace cds { namespace intrusive {
 
         bool unlink_node( position& pos, erase_node_mask nMask )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             // Mark the node (logical deletion)
             marked_node_ptr next( pos.pNext, 0 );
 
-            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed ) ) ) {
+            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed )) ) {
 
                 // Try physical removal - fast path
                 marked_node_ptr cur( pos.pCur );
-                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) ) {
+                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) ) {
                     if ( nMask == erase_mask )
                         link_to_remove_chain( pos, pos.pCur );
                 }
                 else {
                     // Slow path
-                    search( pos.refHead, *node_traits::to_value_ptr( pos.pCur ), pos, key_comparator() );
+                    search( pos.refHead, *node_traits::to_value_ptr( pos.pCur ), pos, key_comparator());
                 }
                 return true;
             }
@@ -928,7 +928,7 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
             // We assume that comparator can correctly distinguish between aux and regular node.
-            return insert_at( refHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( refHead, *node_traits::to_value_ptr( pNode ));
         }
 
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
@@ -953,7 +953,7 @@ namespace cds { namespace intrusive {
                         return false;
                     }
 
-                    if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
+                    if ( link_node( node_traits::to_node_ptr( val ), pos )) {
                         f( val );
                         ++m_ItemCounter;
                         m_Stat.onInsertSuccess();
@@ -1006,7 +1006,7 @@ namespace cds { namespace intrusive {
             for (;;) {
                 {
                     rcu_lock l;
-                    if ( !search( refHead, val, pos, key_comparator() ) || node_traits::to_value_ptr( *pos.pCur ) != &val ) {
+                    if ( !search( refHead, val, pos, key_comparator()) || node_traits::to_value_ptr( *pos.pCur ) != &val ) {
                         m_Stat.onEraseFailed();
                         return false;
                     }
@@ -1033,7 +1033,7 @@ namespace cds { namespace intrusive {
             for (;;) {
                 {
                     rcu_lock l;
-                    if ( !search( pos.refHead, val, pos, cmp ) ) {
+                    if ( !search( pos.refHead, val, pos, cmp )) {
                         m_Stat.onEraseFailed();
                         return false;
                     }
@@ -1047,7 +1047,7 @@ namespace cds { namespace intrusive {
                     }
                 }
                 assert( pDel );
-                f( *node_traits::to_value_ptr( pDel ) );
+                f( *node_traits::to_value_ptr( pDel ));
                 --m_ItemCounter;
                 m_Stat.onEraseSuccess();
                 return true;
@@ -1073,7 +1073,7 @@ namespace cds { namespace intrusive {
         {
             position pos( refHead );
             back_off bkoff;
-            assert( !gc::is_locked() )  ;   // RCU must not be locked!!!
+            assert( !gc::is_locked())  ;   // RCU must not be locked!!!
 
             node_type * pExtracted;
             {
@@ -1108,7 +1108,7 @@ namespace cds { namespace intrusive {
 
             {
                 rcu_lock l;
-                if ( search( refHead, val, pos, cmp ) ) {
+                if ( search( refHead, val, pos, cmp )) {
                     assert( pos.pCur != nullptr );
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
                     m_Stat.onFindSuccess();
@@ -1134,7 +1134,7 @@ namespace cds { namespace intrusive {
         raw_ptr get_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             // RCU should be locked!
-            assert(gc::is_locked() );
+            assert(gc::is_locked());
 
             position pos( refHead );
 
@@ -1155,7 +1155,7 @@ namespace cds { namespace intrusive {
         bool search( atomic_node_ptr& refHead, const Q& val, position& pos, Compare cmp )
         {
             // RCU lock should be locked!!!
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             atomic_node_ptr * pPrev;
             marked_node_ptr pNext;
@@ -1169,7 +1169,7 @@ namespace cds { namespace intrusive {
             pNext = nullptr;
 
             while ( true ) {
-                if ( !pCur.ptr() ) {
+                if ( !pCur.ptr()) {
                     pos.pPrev = pPrev;
                     pos.pCur = nullptr;
                     pos.pNext = nullptr;
@@ -1185,11 +1185,11 @@ namespace cds { namespace intrusive {
                     goto try_again;
                 }
 
-                if ( pNext.bits() ) {
+                if ( pNext.bits()) {
                     // pCur is marked as deleted. Try to unlink it from the list
-                    if ( cds_likely( pPrev->compare_exchange_weak( pCur, marked_node_ptr( pNext.ptr() ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
+                    if ( cds_likely( pPrev->compare_exchange_weak( pCur, marked_node_ptr( pNext.ptr()), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                         if ( pNext.bits() == erase_mask )
-                            link_to_remove_chain( pos, pCur.ptr() );
+                            link_to_remove_chain( pos, pCur.ptr());
                         m_Stat.onHelpingSuccess();
                     }
 
@@ -1198,7 +1198,7 @@ namespace cds { namespace intrusive {
                 }
 
                 assert( pCur.ptr() != nullptr );
-                int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
                 if ( nCmp >= 0 ) {
                     pos.pPrev = pPrev;
                     pos.pCur = pCur.ptr();
@@ -1216,15 +1216,15 @@ namespace cds { namespace intrusive {
         bool insert_at_locked( position& pos, value_type& val )
         {
             // RCU lock should be locked!!!
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             while ( true ) {
-                if ( search( pos.refHead, val, pos, key_comparator() )) {
+                if ( search( pos.refHead, val, pos, key_comparator())) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
 
-                if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
+                if ( link_node( node_traits::to_node_ptr( val ), pos )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -1240,11 +1240,11 @@ namespace cds { namespace intrusive {
         std::pair<iterator, bool> update_at_locked( position& pos, value_type& val, Func func, bool bInsert )
         {
             // RCU should be locked!!!
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             while ( true ) {
-                if ( search( pos.refHead, val, pos, key_comparator() ) ) {
-                    assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur ) ) == 0 );
+                if ( search( pos.refHead, val, pos, key_comparator()) ) {
+                    assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur )) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ), val );
                     m_Stat.onUpdateExisting();
@@ -1256,7 +1256,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( end(), false );
                     }
 
-                    if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
+                    if ( link_node( node_traits::to_node_ptr( val ), pos )) {
                         ++m_ItemCounter;
                         func( true, val , val );
                         m_Stat.onUpdateNew();
@@ -1273,9 +1273,9 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare>
         const_iterator find_at_locked( position& pos, Q const& val, Compare cmp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
-            if ( search( pos.refHead, val, pos, cmp ) ) {
+            if ( search( pos.refHead, val, pos, cmp )) {
                 assert( pos.pCur != nullptr );
                 m_Stat.onFindSuccess();
                 return const_iterator( pos.pCur );

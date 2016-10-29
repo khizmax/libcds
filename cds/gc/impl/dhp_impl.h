@@ -72,7 +72,7 @@ namespace cds { namespace gc {
         )
         : m_bPersistent( bPersistent )
     {
-        if ( !cds::threading::Manager::isThreadAttached() )
+        if ( !cds::threading::Manager::isThreadAttached())
             cds::threading::Manager::attachThread();
     }
 

@@ -94,8 +94,8 @@ namespace map {
             m_arrInsert[i] = i;
             m_arrRemove[i] = i;
         }
-        shuffle( m_arrInsert.begin(), m_arrInsert.end() );
-        shuffle( m_arrRemove.begin(), m_arrRemove.end() );
+        shuffle( m_arrInsert.begin(), m_arrInsert.end());
+        shuffle( m_arrRemove.begin(), m_arrRemove.end());
     }
 
     void Map_DelOdd::TearDownTestCase()
@@ -119,5 +119,5 @@ namespace map {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Map_DelOdd_LF, ::testing::ValuesIn( Map_DelOdd_LF::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Map_DelOdd_LF, ::testing::ValuesIn( Map_DelOdd_LF::get_load_factors()) );
 } // namespace map

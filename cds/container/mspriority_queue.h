@@ -189,7 +189,7 @@ namespace cds { namespace container {
         bool push( value_type const& val )
         {
             scoped_ptr pVal( cxx_allocator().New( val ));
-            if ( base_class::push( *(pVal.get()) )) {
+            if ( base_class::push( *(pVal.get()))) {
                 pVal.release();
                 return true;
             }
@@ -209,7 +209,7 @@ namespace cds { namespace container {
         template <typename Func>
         bool push_with( Func f )
         {
-            scoped_ptr pVal( cxx_allocator().New() );
+            scoped_ptr pVal( cxx_allocator().New());
             f( *pVal );
             if ( base_class::push( *pVal )) {
                 pVal.release();
@@ -229,7 +229,7 @@ namespace cds { namespace container {
         bool emplace( Args&&... args )
         {
             scoped_ptr pVal( cxx_allocator().MoveNew( std::forward<Args>(args)... ));
-            if ( base_class::push( *(pVal.get()) )) {
+            if ( base_class::push( *(pVal.get()))) {
                 pVal.release();
                 return true;
             }

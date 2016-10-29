@@ -197,7 +197,7 @@ namespace map {
 
                 std::vector<size_t>& arrData = fixture.m_arrInsert;
                 for ( size_t i = 0; i < arrData.size(); ++i ) {
-                    if ( rMap.insert( key_type( arrData[i], id() )))
+                    if ( rMap.insert( key_type( arrData[i], id())))
                         ++m_nInsertSuccess;
                     else
                         ++m_nInsertFailed;
@@ -206,7 +206,7 @@ namespace map {
                 ensure_func f;
                 for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                     if ( arrData[i] & 1 ) {
-                        rMap.update( key_type( arrData[i], id() ), f );
+                        rMap.update( key_type( arrData[i], id()), f );
                     }
                 }
 
@@ -562,7 +562,7 @@ namespace map {
 
             cds_test::thread_pool& pool = get_pool();
             pool.add( new insert_thread( pool, testMap ), s_nInsThreadCount );
-            pool.add( new delete_thread( pool, testMap ), s_nDelThreadCount ? s_nDelThreadCount : cds::OS::topology::processor_count() );
+            pool.add( new delete_thread( pool, testMap ), s_nDelThreadCount ? s_nDelThreadCount : cds::OS::topology::processor_count());
 
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
@@ -637,7 +637,7 @@ namespace map {
             size_t nExtractFailed = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case inserter_thread:
                 {
                     insert_thread& inserter = static_cast<insert_thread&>(thr);
@@ -685,7 +685,7 @@ namespace map {
             {
                 for ( size_t n = 0; n < s_nMapSize; n +=2 ) {
                     for ( size_t i = 0; i < s_nInsThreadCount; ++i ) {
-                        EXPECT_TRUE( testMap.contains( key_type( n, i ) ) ) << "key=" << n << "/" << i;
+                        EXPECT_TRUE( testMap.contains( key_type( n, i )) ) << "key=" << n << "/" << i;
                     }
                 }
             }
@@ -694,7 +694,7 @@ namespace map {
 
             check_before_cleanup( testMap );
             testMap.clear();
-            EXPECT_TRUE( testMap.empty() ) << "map.size=" << testMap.size();
+            EXPECT_TRUE( testMap.empty()) << "map.size=" << testMap.size();
 
             additional_check( testMap );
             additional_cleanup( testMap );

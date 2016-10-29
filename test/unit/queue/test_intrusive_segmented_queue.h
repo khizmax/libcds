@@ -99,19 +99,19 @@ namespace cds_test {
             // push/enqueue
             for ( size_t i = 0; i < val.size(); ++i ) {
                 if ( i & 1 ) {
-                    ASSERT_TRUE( q.push( val[i] ) );
+                    ASSERT_TRUE( q.push( val[i] ));
                 }
                 else {
-                    ASSERT_TRUE( q.enqueue( val[i] ) );
+                    ASSERT_TRUE( q.enqueue( val[i] ));
                 }
 
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            EXPECT_TRUE( !q.empty() );
+            EXPECT_TRUE( !q.empty());
 
             // pop/dequeue
             size_t nCount = 0;
-            while ( !q.empty() ) {
+            while ( !q.empty()) {
                 value_type * pVal;
                 if ( nCount & 1 )
                     pVal = q.pop();
@@ -120,21 +120,21 @@ namespace cds_test {
 
                 ASSERT_TRUE( pVal != nullptr );
 
-                int nSegment = int( nCount / q.quasi_factor() );
-                int nMin = nSegment * int( q.quasi_factor() );
-                int nMax = nMin + int( q.quasi_factor() ) - 1;
+                int nSegment = int( nCount / q.quasi_factor());
+                int nMin = nSegment * int( q.quasi_factor());
+                int nMax = nMin + int( q.quasi_factor()) - 1;
                 EXPECT_TRUE( nMin <= pVal->nValue && pVal->nValue <= nMax ) << nMin << " <= " << pVal->nValue << " <= " << nMax;
 
                 ++nCount;
                 EXPECT_CONTAINER_SIZE( q, val.size() - nCount );
             }
             EXPECT_EQ( nCount, val.size());
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
             EXPECT_CONTAINER_SIZE( q, 0u );
 
             // pop from empty queue
             ASSERT_TRUE( q.pop() == nullptr );
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
             EXPECT_CONTAINER_SIZE( q, 0u );
 
             // check that Disposer has not been called
@@ -146,13 +146,13 @@ namespace cds_test {
 
             // clear
             for ( size_t i = 0; i < val.size(); ++i )
-                EXPECT_TRUE( q.push( val[i] ) );
+                EXPECT_TRUE( q.push( val[i] ));
             EXPECT_CONTAINER_SIZE( q, val.size());
-            EXPECT_TRUE( !q.empty() );
+            EXPECT_TRUE( !q.empty());
 
             q.clear();
             EXPECT_CONTAINER_SIZE( q, 0u );
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
 
             // check if Disposer has been called
             Queue::gc::force_dispose();
@@ -163,13 +163,13 @@ namespace cds_test {
 
             // clear_with
             for ( size_t i = 0; i < val.size(); ++i )
-                EXPECT_TRUE( q.push( val[i] ) );
-            EXPECT_CONTAINER_SIZE( q, val.size() );
-            EXPECT_TRUE( !q.empty() );
+                EXPECT_TRUE( q.push( val[i] ));
+            EXPECT_CONTAINER_SIZE( q, val.size());
+            EXPECT_TRUE( !q.empty());
 
-            q.clear_with( Disposer2() );
+            q.clear_with( Disposer2());
             EXPECT_CONTAINER_SIZE( q, 0u );
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
 
             // check if Disposer has been called
             Queue::gc::force_dispose();

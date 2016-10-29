@@ -88,7 +88,7 @@ namespace cds {
             {}
 
             template <typename Predicate>
-            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()))
             {
                 return pr();
             }
@@ -107,9 +107,9 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()))
             {
-                if ( pr() )
+                if ( pr())
                     return true;
                 operator()();
                 return false;
@@ -135,9 +135,9 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()))
             {
-                if ( pr() )
+                if ( pr())
                     return true;
                 operator()();
                 return false;
@@ -166,9 +166,9 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()(Predicate pr) const CDS_NOEXCEPT_(noexcept(std::declval<Predicate>()() ))
+            bool operator()(Predicate pr) const CDS_NOEXCEPT_(noexcept(std::declval<Predicate>()()))
             {
-                if ( pr() )
+                if ( pr())
                     return true;
                 operator()();
                 return false;
@@ -293,11 +293,11 @@ namespace cds {
             }
 
             template <typename Predicate>
-            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()) && noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()() ))
+            bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()) && noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()()))
             {
                 if ( m_nExpCur <= m_nExpMax ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n ) {
-                        if ( m_bkSpin(pr) )
+                        if ( m_bkSpin(pr))
                             return true;
                     }
                     m_nExpCur *= 2;
@@ -307,7 +307,7 @@ namespace cds {
                 return false;
             }
 
-            void reset() CDS_NOEXCEPT_( noexcept( std::declval<spin_backoff>().reset() ) && noexcept( std::declval<yield_backoff>().reset() ))
+            void reset() CDS_NOEXCEPT_( noexcept( std::declval<spin_backoff>().reset()) && noexcept( std::declval<yield_backoff>().reset()))
             {
                 m_nExpCur = m_nExpMin;
                 m_bkSpin.reset();
@@ -403,7 +403,7 @@ namespace cds {
             bool operator()(Predicate pr) const
             {
                 for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
-                    if ( pr() )
+                    if ( pr())
                         return true;
                     std::this_thread::sleep_for( duration_type( 2 ));
                 }

@@ -96,7 +96,7 @@ namespace cds { namespace gc {
             for ( hplist_node * hprec = pHead; hprec; hprec = pNext ) {
                 assert( hprec->m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
                     || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId
-                    || !cds::OS::is_thread_alive( hprec->m_idOwner.load( atomics::memory_order_relaxed ) )
+                    || !cds::OS::is_thread_alive( hprec->m_idOwner.load( atomics::memory_order_relaxed ))
                 );
                 details::retired_vector& vect = hprec->m_arrRetired;
                 details::retired_vector::iterator itRetired = vect.begin();
@@ -136,7 +136,7 @@ namespace cds { namespace gc {
             // First try to reuse a retired (non-active) HP record
             for ( hprec = m_pListHead.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode ) {
                 cds::OS::ThreadId thId = nullThreadId;
-                if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ) )
+                if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ))
                     continue;
                 hprec->m_bFree.store( false, atomics::memory_order_release );
                 return hprec;
@@ -203,7 +203,7 @@ namespace cds { namespace gc {
             }
 
             // Sort plist to simplify search in
-            std::sort( plist.begin(), plist.end() );
+            std::sort( plist.begin(), plist.end());
 
             // Stage 2: Search plist
             details::retired_vector& arrRetired = pRec->m_arrRetired;
@@ -219,7 +219,7 @@ namespace cds { namespace gc {
                 std::vector< void * >::iterator itEnd = plist.end();
                 size_t nDeferredCount = 0;
                 while ( itRetired != itRetiredEnd ) {
-                    if ( std::binary_search( itBegin, itEnd, itRetired->m_p ) ) {
+                    if ( std::binary_search( itBegin, itEnd, itRetired->m_p )) {
                         arrRetired.push( *itRetired );
                         ++nDeferredCount;
                     }
@@ -274,7 +274,7 @@ namespace cds { namespace gc {
             {
                 details::retired_ptr dummyRetired;
                 while ( pNode ) {
-                    if ( !pNode->m_bFree.load( atomics::memory_order_acquire ) ) {
+                    if ( !pNode->m_bFree.load( atomics::memory_order_acquire )) {
                         for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
                             pRec->sync();
                             void * hptr = pNode->m_hzp[i].get();
@@ -318,14 +318,14 @@ namespace cds { namespace gc {
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_HelpScanCallCount )
 
-            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::get_current_thread_id() );
+            assert( static_cast<hplist_node *>(pThis)->m_idOwner.load(atomics::memory_order_relaxed) == cds::OS::get_current_thread_id());
 
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
             const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
             for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = hprec->m_pNextNode ) {
 
                 // If m_bFree == true then hprec->m_arrRetired is empty - we don't need to see it
-                if ( hprec->m_bFree.load(atomics::memory_order_acquire) )
+                if ( hprec->m_bFree.load(atomics::memory_order_acquire))
                     continue;
 
                 // Owns hprec if it is empty.
@@ -396,7 +396,7 @@ namespace cds { namespace gc {
                 ++stat.nHPRecAllocated;
                 stat.nTotalRetiredPtrCount += hprec->m_arrRetired.size();
 
-                if ( hprec->m_bFree.load(atomics::memory_order_relaxed) ) {
+                if ( hprec->m_bFree.load(atomics::memory_order_relaxed)) {
                     // Free HP record
                     stat.nRetiredPtrInFreeHPRecs += hprec->m_arrRetired.size();
                 }

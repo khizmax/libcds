@@ -46,7 +46,7 @@ namespace cds_test {
         config const& operator[]( const std::string& testName ) const
         {
             auto it = m_cfg.find( testName );
-            if ( it != m_cfg.end() )
+            if ( it != m_cfg.end())
                 return it->second;
             return m_emptyCfg;
         }
@@ -56,7 +56,7 @@ namespace cds_test {
     {
         std::ifstream s;
         s.open( fileName );
-        if ( !s.is_open() ) {
+        if ( !s.is_open()) {
             std::cerr << "WARNING: Cannot open test cfg file " << fileName
                 << "\n\tUse default settings"
                 << std::endl;
@@ -68,17 +68,17 @@ namespace cds_test {
         char buf[4096];
 
         config * pMap = nullptr;
-        while ( !s.eof() ) {
-            s.getline( buf, sizeof( buf ) / sizeof( buf[0] ) );
+        while ( !s.eof()) {
+            s.getline( buf, sizeof( buf ) / sizeof( buf[0] ));
             char * pszStr = buf;
             // trim left
-            while ( *pszStr != 0 && (*pszStr == ' ' || *pszStr == '\t') ) ++pszStr;
+            while ( *pszStr != 0 && (*pszStr == ' ' || *pszStr == '\t')) ++pszStr;
             // trim right
             char * pszEnd = strchr( pszStr, 0 );
             if ( pszEnd == pszStr )    // empty srtring
                 continue;
             --pszEnd;
-            while ( pszEnd != pszStr && (*pszEnd == ' ' || *pszEnd == '\t' || *pszEnd == '\n' || *pszEnd == '\r') ) --pszEnd;
+            while ( pszEnd != pszStr && (*pszEnd == ' ' || *pszEnd == '\t' || *pszEnd == '\n' || *pszEnd == '\r')) --pszEnd;
 
             if ( pszStr == pszEnd )    // empty string
                 continue;
@@ -104,7 +104,7 @@ namespace cds_test {
                 continue;
 
             pszEnd = pszEq;
-            while ( pszStr <= --pszEnd && (*pszEnd == ' ' || *pszEnd == '\t' || *pszEnd == '\n' || *pszEnd == '\r') );
+            while ( pszStr <= --pszEnd && (*pszEnd == ' ' || *pszEnd == '\t' || *pszEnd == '\n' || *pszEnd == '\r'));
 
             if ( pszEnd <= pszStr )
                 continue;

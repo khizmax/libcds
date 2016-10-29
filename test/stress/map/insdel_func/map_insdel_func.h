@@ -460,7 +460,7 @@ namespace map {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         inserter& t = static_cast<inserter&>( thr );
@@ -502,7 +502,7 @@ namespace map {
                 << std::make_pair( "update_failed",  nUpdateFailed )
                 << std::make_pair( "update_functor_create", nEnsFuncCreated )
                 << std::make_pair( "update_functor_modify", nEnsFuncModified )
-                << std::make_pair( "finish_map_size", testMap.size() );
+                << std::make_pair( "finish_map_size", testMap.size());
 
             EXPECT_EQ( nDelValueFailed, 0u );
             EXPECT_EQ( nDelValueSuccess, nDeleteSuccess );

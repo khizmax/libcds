@@ -59,7 +59,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -153,9 +153,9 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
-            size_t const nSetSize = std::max( s.head_size() * 2, static_cast<size_t>(100) );
+            size_t const nSetSize = std::max( s.head_size() * 2, static_cast<size_t>(100));
 
             typedef typename Set::value_type value_type;
 
@@ -167,7 +167,7 @@ namespace cds_test {
                 data.push_back( value_type( static_cast<int>( key )));
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
@@ -194,7 +194,7 @@ namespace cds_test {
                     EXPECT_EQ( i.nInsertCount, 0u );
                     ASSERT_TRUE( s.insert( i, []( value_type& v ) { ++v.nInsertCount;} ));
                     EXPECT_EQ( i.nInsertCount, 1u );
-                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nInsertCount;} ) );
+                    ASSERT_FALSE( s.insert( i, []( value_type& v ) { ++v.nInsertCount;} ));
                     EXPECT_EQ( i.nInsertCount, 1u );
                     i.nInsertCount = 0;
                     break;
@@ -205,12 +205,12 @@ namespace cds_test {
                     break;
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
@@ -223,13 +223,13 @@ namespace cds_test {
             }
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[ idx ];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
                 EXPECT_EQ( i.nFindCount, 0u );
-                ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ) );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type& v ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
 
                 value_type v( i );
@@ -237,11 +237,11 @@ namespace cds_test {
                 case 0:
                     ASSERT_FALSE( s.unlink( v ));
                     ASSERT_TRUE( s.unlink( i ));
-                    ASSERT_FALSE( s.unlink( i ) );
+                    ASSERT_FALSE( s.unlink( i ));
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key()));
-                    ASSERT_FALSE( s.erase( i.key() ) );
+                    ASSERT_FALSE( s.erase( i.key()) );
                     break;
                 case 2:
                     EXPECT_EQ( i.nEraseCount, 0u );
@@ -255,7 +255,7 @@ namespace cds_test {
                 ASSERT_FALSE( s.contains( i.nKey ));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type const& ) {} ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle
@@ -269,7 +269,7 @@ namespace cds_test {
                 i.clear_stat();
                 ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // Forward iterator test
@@ -297,8 +297,8 @@ namespace cds_test {
 
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
+            ASSERT_TRUE( s.begin() == s.end());
+            ASSERT_TRUE( s.cbegin() == s.cend());
 
             // Force retiring cycle
             Set::gc::force_dispose();

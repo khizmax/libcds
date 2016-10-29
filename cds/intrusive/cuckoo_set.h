@@ -413,10 +413,10 @@ namespace cds { namespace intrusive {
             {
             public:
                 // placeholder ctor
-                lock_array(): lock_array_type( typename lock_array_type::select_cell_policy(2) ) {}
+                lock_array(): lock_array_type( typename lock_array_type::select_cell_policy(2)) {}
 
                 // real ctor
-                lock_array( size_t nCapacity ): lock_array_type( nCapacity, typename lock_array_type::select_cell_policy(nCapacity) ) {}
+                lock_array( size_t nCapacity ): lock_array_type( nCapacity, typename lock_array_type::select_cell_policy(nCapacity)) {}
             };
 
             class scoped_lock: public std::unique_lock< lock_array_type >
@@ -469,7 +469,7 @@ namespace cds { namespace intrusive {
                     if ( m_bLocked ) {
                         m_guard[0] = &(policy.m_Locks[0].at(nCell));
                         for ( unsigned int i = 1; i < c_nArity; ++i ) {
-                            m_guard[i] = &( policy.m_Locks[i].at( policy.m_Locks[i].lock( arrHash[i] )) );
+                            m_guard[i] = &( policy.m_Locks[i].at( policy.m_Locks[i].lock( arrHash[i] )));
                         }
                     }
                     else {
@@ -703,7 +703,7 @@ namespace cds { namespace intrusive {
 
             lock_array_ptr create_lock_array( size_t nCapacity )
             {
-                return lock_array_ptr( lock_array_allocator().New( nCapacity ), lock_array_disposer() );
+                return lock_array_ptr( lock_array_allocator().New( nCapacity ), lock_array_disposer());
             }
 
             void acquire( size_t const * arrHash, lock_array_ptr * pLockArr, lock_type ** parrLock )
@@ -723,7 +723,7 @@ namespace cds { namespace intrusive {
                     // wait while resizing
                     while ( true ) {
                         who = m_Owner.load( atomics::memory_order_acquire );
-                        if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
+                        if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask))
                             break;
                         bkoff();
                         m_Stat.onCellWaitResizing();
@@ -743,7 +743,7 @@ namespace cds { namespace intrusive {
                         }
 
                         who = m_Owner.load( atomics::memory_order_acquire );
-                        if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks[0] == pLockArr[0] ) {
+                        if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask)) && m_arrLocks[0] == pLockArr[0] ) {
                             m_Stat.onCellLock();
                             return;
                         }
@@ -778,7 +778,7 @@ namespace cds { namespace intrusive {
                 parrLock[0] = &(m_arrLocks[0]->at(nCell));
 
                 for ( unsigned int i = 1; i < c_nArity; ++i ) {
-                    parrLock[i] = &( m_arrLocks[i]->at( m_arrLocks[i]->lock( arrHash[i] & nMask)) );
+                    parrLock[i] = &( m_arrLocks[i]->at( m_arrLocks[i]->lock( arrHash[i] & nMask)));
                 }
 
                 m_Stat.onSecondCellLock();
@@ -1335,7 +1335,7 @@ namespace cds { namespace intrusive {
                 {
                     node_type * pPrev = itPrev.pNode;
                     node_type * pWhat = itWhat.pNode;
-                    assert( (!pPrev && pWhat == pHead) || (pPrev && pPrev->m_pNext == pWhat) );
+                    assert( (!pPrev && pWhat == pHead) || (pPrev && pPrev->m_pNext == pWhat));
 
                     if ( pPrev )
                         pPrev->m_pNext = pWhat->m_pNext;
@@ -1993,7 +1993,7 @@ namespace cds { namespace intrusive {
 
         void allocate_bucket_tables( size_t nSize )
         {
-            assert( cds::beans::is_power2( nSize ) );
+            assert( cds::beans::is_power2( nSize ));
 
             m_nBucketMask = nSize - 1;
             bucket_table_allocator alloc;
@@ -2041,7 +2041,7 @@ namespace cds { namespace intrusive {
                 unsigned int nTable = contains( arrPos, arrHash, val, pred );
                 if ( nTable != c_nUndefTable ) {
                     node_type& node = *arrPos[nTable].itFound;
-                    f( *node_traits::to_value_ptr(node) );
+                    f( *node_traits::to_value_ptr(node));
                     bucket( nTable, arrHash[nTable]).remove( arrPos[nTable].itPrev, arrPos[nTable].itFound );
                     --m_ItemCounter;
                     m_Stat.onEraseSuccess();
@@ -2094,14 +2094,14 @@ namespace cds { namespace intrusive {
                         return true;
                     }
 
-                    pVal = node_traits::to_value_ptr( *refBucket.begin() );
+                    pVal = node_traits::to_value_ptr( *refBucket.begin());
                     copy_hash( arrHash, *pVal );
 
                     scoped_cell_trylock guard2( m_MutexPolicy, arrHash );
-                    if ( !guard2.locked() )
+                    if ( !guard2.locked())
                         continue ;  // try one more time
 
-                    refBucket.remove( typename bucket_entry::iterator(), refBucket.begin() );
+                    refBucket.remove( typename bucket_entry::iterator(), refBucket.begin());
 
                     unsigned int i = (nTable + 1) % c_nArity;
 
@@ -2110,7 +2110,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& bkt = bucket( i, arrHash[i] );
                         if ( bkt.size() < m_nProbesetThreshold ) {
                             position pos;
-                            contains_action::find( bkt, pos, i, arrHash[i], *pVal, key_predicate() ) ; // must return false!
+                            contains_action::find( bkt, pos, i, arrHash[i], *pVal, key_predicate()) ; // must return false!
                             bkt.insert_after( pos.itPrev, node_traits::to_node_ptr( pVal ));
                             m_Stat.onSuccessRelocateRound();
                             return true;
@@ -2124,7 +2124,7 @@ namespace cds { namespace intrusive {
                         bucket_entry& bkt = bucket( i, arrHash[i] );
                         if ( bkt.size() < m_nProbesetSize ) {
                             position pos;
-                            contains_action::find( bkt, pos, i, arrHash[i], *pVal, key_predicate() ) ; // must return false!
+                            contains_action::find( bkt, pos, i, arrHash[i], *pVal, key_predicate()) ; // must return false!
                             bkt.insert_after( pos.itPrev, node_traits::to_node_ptr( pVal ));
                             nTable = i;
                             memcpy( arrGoalHash, arrHash, sizeof(arrHash));
@@ -2154,7 +2154,7 @@ namespace cds { namespace intrusive {
             {
                 scoped_resize_lock guard( m_MutexPolicy );
 
-                if ( nOldCapacity != bucket_count() ) {
+                if ( nOldCapacity != bucket_count()) {
                     m_Stat.onFalseResizeCall();
                     return;
                 }
@@ -2179,7 +2179,7 @@ namespace cds { namespace intrusive {
 
                             value_type& val = *node_traits::to_value_ptr( *it );
                             copy_hash( arrHash, val );
-                            contains( arrPos, arrHash, val, key_predicate() ) ; // must return c_nUndefTable
+                            contains( arrPos, arrHash, val, key_predicate()) ; // must return c_nUndefTable
 
                             for ( unsigned int i = 0; i < c_nArity; ++i ) {
                                 bucket_entry& refBucket = bucket( i, arrHash[i] );
@@ -2195,7 +2195,7 @@ namespace cds { namespace intrusive {
                                 if ( refBucket.size() < m_nProbesetSize ) {
                                     refBucket.insert_after( arrPos[i].itPrev, &*it );
                                     assert( refBucket.size() > 1 );
-                                    copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()) );
+                                    copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()));
                                     m_Stat.onResizeRelocateCall();
                                     relocate( i, arrHash );
                                     break;
@@ -2231,7 +2231,7 @@ namespace cds { namespace intrusive {
             Probe set threshold = probe set size - 1
         */
         CuckooSet()
-            : m_nProbesetSize( calc_probeset_size(0) )
+            : m_nProbesetSize( calc_probeset_size(0))
             , m_nProbesetThreshold( m_nProbesetSize - 1 )
             , m_MutexPolicy( c_nDefaultInitialSize )
         {
@@ -2251,7 +2251,7 @@ namespace cds { namespace intrusive {
             , unsigned int nProbesetSize        ///< probe set size
             , unsigned int nProbesetThreshold = 0   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
         )
-            : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
+            : m_nProbesetSize( calc_probeset_size(nProbesetSize))
             , m_nProbesetThreshold( nProbesetThreshold ? nProbesetThreshold : m_nProbesetSize - 1 )
             , m_MutexPolicy( cds::beans::ceil2(nInitialSize ? nInitialSize : c_nDefaultInitialSize ))
         {
@@ -2268,7 +2268,7 @@ namespace cds { namespace intrusive {
         CuckooSet(
             hash_tuple_type const& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-            : m_nProbesetSize( calc_probeset_size(0) )
+            : m_nProbesetSize( calc_probeset_size(0))
             , m_nProbesetThreshold( m_nProbesetSize -1 )
             , m_Hash( h )
             , m_MutexPolicy( c_nDefaultInitialSize )
@@ -2290,7 +2290,7 @@ namespace cds { namespace intrusive {
             , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
             , hash_tuple_type const& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-            : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
+            : m_nProbesetSize( calc_probeset_size(nProbesetSize))
             , m_nProbesetThreshold( nProbesetThreshold ? nProbesetThreshold : m_nProbesetSize - 1)
             , m_Hash( h )
             , m_MutexPolicy( cds::beans::ceil2(nInitialSize ? nInitialSize : c_nDefaultInitialSize ))
@@ -2308,9 +2308,9 @@ namespace cds { namespace intrusive {
         CuckooSet(
             hash_tuple_type&& h     ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-            : m_nProbesetSize( calc_probeset_size(0) )
+            : m_nProbesetSize( calc_probeset_size(0))
             , m_nProbesetThreshold( m_nProbesetSize / 2 )
-            , m_Hash( std::forward<hash_tuple_type>(h) )
+            , m_Hash( std::forward<hash_tuple_type>(h))
             , m_MutexPolicy( c_nDefaultInitialSize )
         {
             check_common_constraints();
@@ -2330,9 +2330,9 @@ namespace cds { namespace intrusive {
             , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, <tt>nProbesetThreshold = nProbesetSize - 1</tt>
             , hash_tuple_type&& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-            : m_nProbesetSize( calc_probeset_size(nProbesetSize) )
+            : m_nProbesetSize( calc_probeset_size(nProbesetSize))
             , m_nProbesetThreshold( nProbesetThreshold ? nProbesetThreshold : m_nProbesetSize - 1)
-            , m_Hash( std::forward<hash_tuple_type>(h) )
+            , m_Hash( std::forward<hash_tuple_type>(h))
             , m_MutexPolicy( cds::beans::ceil2(nInitialSize ? nInitialSize : c_nDefaultInitialSize ))
         {
             check_common_constraints();
@@ -2389,7 +2389,7 @@ namespace cds { namespace intrusive {
                 {
                     scoped_cell_lock guard( m_MutexPolicy, arrHash );
 
-                    if ( contains( arrPos, arrHash, val, key_predicate() ) != c_nUndefTable ) {
+                    if ( contains( arrPos, arrHash, val, key_predicate()) != c_nUndefTable ) {
                         m_Stat.onInsertFailed();
                         return false;
                     }
@@ -2413,7 +2413,7 @@ namespace cds { namespace intrusive {
                             ++m_ItemCounter;
                             nGoalTable = i;
                             assert( refBucket.size() > 1 );
-                            copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()) );
+                            copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()));
                             goto do_relocate;
                         }
                     }
@@ -2475,7 +2475,7 @@ namespace cds { namespace intrusive {
                 {
                     scoped_cell_lock guard( m_MutexPolicy, arrHash );
 
-                    unsigned int nTable = contains( arrPos, arrHash, val, key_predicate() );
+                    unsigned int nTable = contains( arrPos, arrHash, val, key_predicate());
                     if ( nTable != c_nUndefTable ) {
                         func( false, *node_traits::to_value_ptr( *arrPos[nTable].itFound ), val );
                         m_Stat.onUpdateExist();
@@ -2507,7 +2507,7 @@ namespace cds { namespace intrusive {
                             ++m_ItemCounter;
                             nGoalTable = i;
                             assert( refBucket.size() > 1 );
-                            copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()) );
+                            copy_hash( arrHash, *node_traits::to_value_ptr( *refBucket.begin()));
                             goto do_relocate;
                         }
                     }
@@ -2555,7 +2555,7 @@ namespace cds { namespace intrusive {
             {
                 scoped_cell_lock guard( m_MutexPolicy, arrHash );
 
-                unsigned int nTable = contains( arrPos, arrHash, val, key_predicate() );
+                unsigned int nTable = contains( arrPos, arrHash, val, key_predicate());
                 if ( nTable != c_nUndefTable && node_traits::to_value_ptr(*arrPos[nTable].itFound) == &val ) {
                     bucket( nTable, arrHash[nTable]).remove( arrPos[nTable].itPrev, arrPos[nTable].itFound );
                     --m_ItemCounter;
@@ -2740,7 +2740,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear_and_dispose( disposer() );
+            clear_and_dispose( disposer());
         }
 
         /// Clears the set and calls \p disposer for each item

@@ -95,9 +95,9 @@ namespace cds { namespace urcu { namespace details {
 
         /// Retire pointer \p by the disposer \p pFunc
         template <typename T>
-        static void retire( T * p, void (* pFunc)(T *) )
+        static void retire( T * p, void (* pFunc)(T *))
         {
-            retired_ptr rp( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ) );
+            retired_ptr rp( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ));
             retire( rp );
         }
 

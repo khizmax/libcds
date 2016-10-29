@@ -49,7 +49,7 @@ namespace cds_test {
 
             base_class::test( s );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             typedef typename Set::value_type value_type;
@@ -60,10 +60,10 @@ namespace cds_test {
             data.reserve( nSetSize );
             indices.reserve( nSetSize );
             for ( size_t key = 0; key < nSetSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             typename Set::guarded_ptr gp;
 
@@ -71,7 +71,7 @@ namespace cds_test {
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                gp = s.get( i.key() );
+                gp = s.get( i.key());
                 ASSERT_TRUE( !gp );
 
                 gp = s.extract( i.key());
@@ -81,7 +81,7 @@ namespace cds_test {
             // fill set
             for ( auto& i : data ) {
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
             // get/extract
@@ -89,7 +89,7 @@ namespace cds_test {
                 auto& i = data[idx];
 
                 EXPECT_EQ( i.nFindCount, 0u );
-                gp = s.get( i.key() );
+                gp = s.get( i.key());
                 ASSERT_FALSE( !gp );
                 ++gp->nFindCount;
                 EXPECT_EQ( i.nFindCount, 1u );
@@ -99,15 +99,15 @@ namespace cds_test {
                 ++gp->nEraseCount;
                 EXPECT_EQ( i.nEraseCount, 1u );
 
-                gp = s.extract( i.key() );
+                gp = s.extract( i.key());
                 ASSERT_TRUE( !gp );
 
-                gp = s.get( i.key() );
+                gp = s.get( i.key());
                 ASSERT_TRUE( !gp );
             }
             gp.release();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle
@@ -119,16 +119,16 @@ namespace cds_test {
             // erase_at( iterator )
             for ( auto& i : data ) {
                 i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             for ( auto it = s.begin(); it != s.end(); ++it ) {
-                ASSERT_TRUE( s.erase_at( it ) );
-                ASSERT_FALSE( s.erase_at( it ) );
+                ASSERT_TRUE( s.erase_at( it ));
+                ASSERT_FALSE( s.erase_at( it ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle
@@ -140,16 +140,16 @@ namespace cds_test {
             // erase_at( reverse_iterator )
             for ( auto& i : data ) {
                 i.clear_stat();
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             for ( auto it = s.rbegin(); it != s.rend(); ++it ) {
-                ASSERT_TRUE( s.erase_at( it ) );
-                ASSERT_FALSE( s.erase_at( it ) );
+                ASSERT_TRUE( s.erase_at( it ));
+                ASSERT_FALSE( s.erase_at( it ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle

@@ -457,7 +457,7 @@ namespace cds { namespace container {
 #endif
         upsert( Q&& val, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ) );
+            scoped_node_ptr pNode( alloc_node( val ));
 
             auto bRet = base_class::upsert( *pNode, bAllowInsert );
 
@@ -535,7 +535,7 @@ namespace cds { namespace container {
         >::type
         update( Q const& val, Func func, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ) );
+            scoped_node_ptr pNode( alloc_node( val ));
 
             auto bRet = base_class::update( *pNode,
                 [&func]( node_type& item, node_type* old ) {
@@ -927,7 +927,7 @@ namespace cds { namespace container {
         typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator>::type
         find_iterator_( Q& val )
         {
-            return iterator( base_class::find( val ) );
+            return iterator( base_class::find( val ));
         }
 
         template <typename Q, typename Less, typename Func>
@@ -943,7 +943,7 @@ namespace cds { namespace container {
         find_iterator_with_( Q& val, Less pred )
         {
             CDS_UNUSED( pred );
-            return iterator( base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type() ));
+            return iterator( base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type()));
         }
 
         struct node_disposer {
@@ -959,7 +959,7 @@ namespace cds { namespace container {
             assert( pNode != nullptr );
             scoped_node_ptr p( pNode );
 
-            if ( base_class::insert( *pNode ) ) {
+            if ( base_class::insert( *pNode )) {
                 p.release();
                 return true;
             }

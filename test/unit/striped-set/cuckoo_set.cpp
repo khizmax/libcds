@@ -148,7 +148,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ) );
+        set_type s( std::move( ht ));
         test( s );
     }
 
@@ -164,7 +164,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ) );
+        set_type s( 32, 6, 0, std::move( ht ));
         test( s );
     }
 
@@ -180,7 +180,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ) );
+        set_type s( std::move( ht ));
         test( s );
     }
 
@@ -373,7 +373,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ) );
+        set_type s( std::move( ht ));
         test( s );
     }
 
@@ -390,7 +390,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( 32, 6, 0, std::move( ht ) );
+        set_type s( 32, 6, 0, std::move( ht ));
         test( s );
     }
 
@@ -407,7 +407,7 @@ namespace {
         > set_type;
 
         typename set_type::hash_tuple_type ht;
-        set_type s( std::move( ht ) );
+        set_type s( std::move( ht ));
         test( s );
     }
 

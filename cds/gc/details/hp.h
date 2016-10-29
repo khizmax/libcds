@@ -134,19 +134,19 @@ namespace cds {
                 /// Set vector size. Uses internally
                 void size( size_t nSize )
                 {
-                    assert( nSize <= capacity() );
+                    assert( nSize <= capacity());
                     m_nSize = nSize;
                 }
 
                 /// Pushes retired pointer to the vector
                 void push( retired_ptr const& p )
                 {
-                    assert( m_nSize < capacity() );
+                    assert( m_nSize < capacity());
                     m_arr[ m_nSize ] = p;
                     ++m_nSize;
                 }
 
-                /// Checks if the vector is full (size() == capacity() )
+                /// Checks if the vector is full (size() == capacity())
                 bool isFull() const CDS_NOEXCEPT
                 {
                     return m_nSize >= capacity();
@@ -307,7 +307,7 @@ namespace cds {
                 ~hplist_node()
                 {
                     assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
-                    assert( m_bFree.load(atomics::memory_order_relaxed) );
+                    assert( m_bFree.load(atomics::memory_order_relaxed));
                 }
                 //@endcond
             };
@@ -553,7 +553,7 @@ namespace cds {
         public:
             /// Default constructor
             ThreadGC()
-                : m_HzpManager( GarbageCollector::instance() ),
+                : m_HzpManager( GarbageCollector::instance()),
                 m_pHzpRec( nullptr )
             {}
 
@@ -617,7 +617,7 @@ namespace cds {
 
             /// Places retired pointer \p and its deleter \p pFunc into thread's array of retired pointer for deferred reclamation
             template <typename T>
-            void retirePtr( T * p, void (* pFunc)(T *) )
+            void retirePtr( T * p, void (* pFunc)(T *))
             {
                 retirePtr( details::retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )));
             }
@@ -627,7 +627,7 @@ namespace cds {
             {
                 m_pHzpRec->m_arrRetired.push( p );
 
-                if ( m_pHzpRec->m_arrRetired.isFull() ) {
+                if ( m_pHzpRec->m_arrRetired.isFull()) {
                     // Max of retired pointer count is reached. Do scan
                     scan();
                 }
@@ -657,12 +657,12 @@ namespace cds {
     namespace gc { namespace hp { namespace details {
 
         inline retired_vector::retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr )
-            : m_arr( HzpMgr.getMaxRetiredPtrCount() ),
+            : m_arr( HzpMgr.getMaxRetiredPtrCount()),
             m_nSize(0)
         {}
 
         inline hp_record::hp_record( const cds::gc::hp::GarbageCollector& HzpMgr )
-            : m_hzp( HzpMgr.getHazardPointerCount() )
+            : m_hzp( HzpMgr.getHazardPointerCount())
             , m_arrRetired( HzpMgr )
             , m_nSync( 0 )
         {}

@@ -41,8 +41,8 @@ namespace cds { namespace urcu { namespace details {
     {
         static void check()
         {
-            assert( !RCU::is_locked() );
-            if ( RCU::is_locked() )
+            assert( !RCU::is_locked());
+            if ( RCU::is_locked())
                 throw cds::urcu::rcu_deadlock();
         }
     };
@@ -59,7 +59,7 @@ namespace cds { namespace urcu { namespace details {
     {
         static void check()
         {
-            assert( !RCU::is_locked() );
+            assert( !RCU::is_locked());
         }
     };
 

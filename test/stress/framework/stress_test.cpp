@@ -50,7 +50,7 @@ namespace cds_test {
         std::ifstream s;
         char const* filename = "./dictionary.txt";
         s.open( filename );
-        if ( !s.is_open() ) {
+        if ( !s.is_open()) {
             std::cerr << "WARNING: Cannot open test file " << filename << std::endl;
             return arrString;
         }
@@ -60,9 +60,9 @@ namespace cds_test {
 
         arrString.reserve( std::stoul( line ));
 
-        while ( !s.eof() ) {
+        while ( !s.eof()) {
             std::getline( s, line );
-            if ( !line.empty() )
+            if ( !line.empty())
                 arrString.push_back( std::move( line ));
         }
 

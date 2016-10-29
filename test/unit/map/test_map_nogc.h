@@ -90,31 +90,31 @@ namespace cds_test {
                     break;
                 case 1:
                     it = m.insert( i.nKey );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert( i.nKey ) == m.end());
                     it->second.nVal = it->first.nKey;
                     it->second.strVal = std::to_string( it->first.nKey );
                     break;
                 case 2:
                     it = m.insert( std::to_string( i.nKey ));
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert( std::to_string( i.nKey )) == m.end());
                     it->second.nVal = it->first.nKey;
                     it->second.strVal = std::to_string( it->first.nKey );
                     break;
                 case 3:
                     it = m.insert( i, val );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert( i, val ) == m.end());
                     break;
                 case 4:
                     it = m.insert( i.nKey, val.strVal );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert( i.nKey, val.strVal ) == m.end());
                     break;
                 case 5:
                     it = m.insert( val.strVal, i.nKey );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert( val.strVal, i.nKey ) == m.end());
                     break;
                 case 6:
@@ -122,7 +122,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert_with( i, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ) == m.end());
@@ -132,7 +132,7 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert_with( i.nKey, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ) == m.end());
@@ -142,14 +142,14 @@ namespace cds_test {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
                     } );
-                    ASSERT_FALSE( it == m.end() );
+                    ASSERT_FALSE( it == m.end());
                     ASSERT_TRUE( m.insert_with( val.strVal, []( map_pair& ) {
                         EXPECT_TRUE( false );
                     } ) == m.end());
                     break;
                 case 9:
                     updResult = m.update( i.nKey, false );
-                    ASSERT_TRUE( updResult.first == m.end() );
+                    ASSERT_TRUE( updResult.first == m.end());
                     ASSERT_FALSE( updResult.second );
 
                     updResult = m.update( i.nKey );
@@ -158,14 +158,14 @@ namespace cds_test {
                     updResult.first->second.nVal = updResult.first->first.nKey;
 
                     updResult = m.update( i.nKey, false );
-                    ASSERT_TRUE( updResult.first != m.end() );
+                    ASSERT_TRUE( updResult.first != m.end());
                     ASSERT_FALSE( updResult.second );
                     EXPECT_EQ( updResult.first->first.nKey, updResult.first->second.nVal );
                     updResult.first->second.strVal = std::to_string( updResult.first->second.nVal );
                     break;
                 case 10:
                     updResult = m.update( i, false );
-                    ASSERT_TRUE( updResult.first == m.end() );
+                    ASSERT_TRUE( updResult.first == m.end());
                     ASSERT_FALSE( updResult.second );
 
                     updResult = m.update( i );
@@ -204,14 +204,14 @@ namespace cds_test {
                     break;
                 case 13:
                     it = m.emplace( i, i.nKey );
-                    ASSERT_TRUE( it != m.end() );
+                    ASSERT_TRUE( it != m.end());
                     ASSERT_FALSE( m.emplace( i, i.nKey ) != m.end());
                     break;
                 case 14:
                     {
                         std::string str = val.strVal;
                         it = m.emplace( i, std::move( str ));
-                        ASSERT_TRUE( it != m.end() );
+                        ASSERT_TRUE( it != m.end());
                         ASSERT_TRUE( str.empty());
                         str = val.strVal;
                         ASSERT_FALSE( m.emplace( i, std::move( str )) != m.end());
@@ -222,7 +222,7 @@ namespace cds_test {
                     {
                         std::string str = val.strVal;
                         it = m.emplace( i, i.nKey, std::move( str ));
-                        ASSERT_TRUE( it != m.end() );
+                        ASSERT_TRUE( it != m.end());
                         ASSERT_TRUE( str.empty());
                         str = val.strVal;
                         ASSERT_FALSE( m.emplace( i, i.nKey, std::move( str )) != m.end());
@@ -238,19 +238,19 @@ namespace cds_test {
                 EXPECT_EQ( it->first.nKey, it->second.nVal );
                 EXPECT_EQ( std::to_string( it->first.nKey ), it->second.strVal );
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
-            ASSERT_FALSE( m.begin() == m.end() );
-            ASSERT_FALSE( m.cbegin() == m.cend() );
+            ASSERT_FALSE( m.begin() == m.end());
+            ASSERT_FALSE( m.cbegin() == m.cend());
 
             // clear
 
             m.clear();
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
-            ASSERT_TRUE( m.begin() == m.end() );
-            ASSERT_TRUE( m.cbegin() == m.cend() );
+            ASSERT_TRUE( m.begin() == m.end());
+            ASSERT_TRUE( m.cbegin() == m.cend());
         }
     };
 

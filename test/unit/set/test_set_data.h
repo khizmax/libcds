@@ -61,7 +61,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -96,7 +96,7 @@ namespace cds_test {
 
             template <typename Q>
             explicit int_item( Q const& src )
-                : nKey( src.key() )
+                : nKey( src.key())
                 , nVal( 0 )
             {}
 
@@ -109,17 +109,17 @@ namespace cds_test {
             int_item( int_item&& src )
                 : nKey( src.nKey )
                 , nVal( src.nVal )
-                , strVal( std::move( src.strVal ) )
+                , strVal( std::move( src.strVal ))
             {}
 
             int_item( int k, std::string&& s )
                 : nKey( k )
                 , nVal( k * 2 )
-                , strVal( std::move( s ) )
+                , strVal( std::move( s ))
             {}
 
             explicit int_item( other_item const& s )
-                : nKey( s.key() )
+                : nKey( s.key())
                 , nVal( s.key() * 2 )
             {}
 
@@ -193,7 +193,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( int_item const& v1, int_item const& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -209,7 +209,7 @@ namespace cds_test {
             template <typename T>
             int operator ()( int v1, T const& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }

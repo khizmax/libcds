@@ -72,7 +72,7 @@ namespace set {
                 , nData(0)
                 , nUpdateCall(0)
                 , bInitialized( false )
-                , threadId( cds::OS::get_current_thread_id() )
+                , threadId( cds::OS::get_current_thread_id())
             {}
 
             value( value const& s )
@@ -80,7 +80,7 @@ namespace set {
                 , nData(s.nData)
                 , nUpdateCall(s.nUpdateCall.load(atomics::memory_order_relaxed))
                 , bInitialized( s.bInitialized )
-                , threadId( cds::OS::get_current_thread_id() )
+                , threadId( cds::OS::get_current_thread_id())
                 , m_access()
             {}
 
@@ -455,7 +455,7 @@ namespace set {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         InserterThread& inserter = static_cast<InserterThread&>( thr );
@@ -494,7 +494,7 @@ namespace set {
                 << std::make_pair( "update_created", nUpdateCreated )
                 << std::make_pair( "update_modified", nUpdateModified )
                 << std::make_pair( "update_failed", nUpdateFailed )
-                << std::make_pair( "final_set_size", testSet.size() );
+                << std::make_pair( "final_set_size", testSet.size());
 
 
             EXPECT_EQ( nDelValueFailed, 0u );
@@ -511,7 +511,7 @@ namespace set {
             for ( size_t * p = m_pKeyFirst; p != m_pKeyLast; ++p )
                 testSet.erase( *p );
 
-            EXPECT_TRUE( testSet.empty() );
+            EXPECT_TRUE( testSet.empty());
             EXPECT_EQ( testSet.size(), 0u );
 
             additional_check( testSet );

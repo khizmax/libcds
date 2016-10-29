@@ -243,7 +243,7 @@ namespace cds { namespace gc {
                         value_type * operator()( T * p );
                     };
                 \endcode
-                Actually, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
+                Actually, the result of <tt> f( toGuard.load()) </tt> is assigned to the hazard pointer.
 
                 @warning The guad object should be in linked state, otherwise the result is undefined
             */
@@ -256,7 +256,7 @@ namespace cds { namespace gc {
                 T pRet;
                 do {
                     pRet = pCur;
-                    assign( f( pCur ) );
+                    assign( f( pCur ));
                     pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
@@ -283,7 +283,7 @@ namespace cds { namespace gc {
             /// Copy a value guarded from \p src guard to \p this guard (valid only in linked state)
             void copy( Guard const& src )
             {
-                assign( src.get_native() );
+                assign( src.get_native());
             }
 
             /// Store marked pointer \p p to the guard
@@ -309,7 +309,7 @@ namespace cds { namespace gc {
             template <typename T>
             T * get() const
             {
-                return reinterpret_cast<T *>( get_native() );
+                return reinterpret_cast<T *>( get_native());
             }
 
             /// Get native hazard pointer stored (valid only in linked state)
@@ -392,7 +392,7 @@ namespace cds { namespace gc {
 
                 T pRet;
                 do {
-                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire) );
+                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire));
                 } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
@@ -413,16 +413,16 @@ namespace cds { namespace gc {
                         value_type * operator()( T * p );
                     };
                 \endcode
-                Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
+                Really, the result of <tt> f( toGuard.load()) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire) ));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire)));
                 } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
@@ -443,13 +443,13 @@ namespace cds { namespace gc {
             template <typename T, int BITMASK>
             T * assign( size_t nIndex, cds::details::marked_ptr<T, BITMASK> p )
             {
-                return assign( nIndex, p.ptr() );
+                return assign( nIndex, p.ptr());
             }
 
             /// Copy guarded value from \p src guard to slot at index \p nIndex
             void copy( size_t nIndex, Guard const& src )
             {
-                assign( nIndex, src.get_native() );
+                assign( nIndex, src.get_native());
             }
 
             /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
@@ -468,13 +468,13 @@ namespace cds { namespace gc {
             template <typename T>
             T * get( size_t nIndex ) const
             {
-                return reinterpret_cast<T *>( get_native( nIndex ) );
+                return reinterpret_cast<T *>( get_native( nIndex ));
             }
 
             /// Get native hazard pointer stored
             guarded_pointer get_native( size_t nIndex ) const
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return m_arr[nIndex]->get();
             }
 
@@ -597,7 +597,7 @@ namespace cds { namespace gc {
 
             /// Ctor from \p Guard
             explicit guarded_ptr( Guard&& g ) CDS_NOEXCEPT
-                : m_pGuard( g.release() )
+                : m_pGuard( g.release())
             {}
 
             /// The guarded pointer is not copy-constructible
@@ -622,7 +622,7 @@ namespace cds { namespace gc {
             /// Move-assignment from \p Guard
             guarded_ptr& operator=( Guard&& g ) CDS_NOEXCEPT
             {
-                std::swap( m_pGuard, g.guard_ref() );
+                std::swap( m_pGuard, g.guard_ref());
                 return *this;
             }
 
@@ -632,7 +632,7 @@ namespace cds { namespace gc {
             /// Returns a pointer to guarded value
             value_type * operator ->() const CDS_NOEXCEPT
             {
-                assert( !empty() );
+                assert( !empty());
                 return value_cast()( reinterpret_cast<guarded_type *>(m_pGuard->get()));
             }
 
@@ -646,7 +646,7 @@ namespace cds { namespace gc {
             /// Returns const reference to guarded value
             value_type const& operator *() const CDS_NOEXCEPT
             {
-                assert( !empty() );
+                assert( !empty());
                 return *value_cast()(reinterpret_cast<guarded_type *>(m_pGuard->get()));
             }
 
@@ -792,7 +792,7 @@ namespace cds { namespace gc {
             Deleting the pointer is the function \p pFunc call.
         */
         template <typename T>
-        static void retire( T * p, void (* pFunc)(T *) );   // inline in hp_impl.h
+        static void retire( T * p, void (* pFunc)(T *));   // inline in hp_impl.h
 
         /// Retire pointer \p p with functor of type \p Disposer
         /**
@@ -857,7 +857,7 @@ namespace cds { namespace gc {
             scan_type nScanType     ///< new scan strategy
         )
         {
-            hp::GarbageCollector::instance().setScanType( static_cast<hp::scan_type>(nScanType) );
+            hp::GarbageCollector::instance().setScanType( static_cast<hp::scan_type>(nScanType));
         }
 
         /// Checks if Hazard Pointer GC is constructed and may be used

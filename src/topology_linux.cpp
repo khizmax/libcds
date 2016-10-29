@@ -50,7 +50,7 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
                 std::string line;
 
                 unsigned int nProcCount = 0;
-                while ( !cpuinfo.eof() ) {
+                while ( !cpuinfo.eof()) {
                     std::getline(cpuinfo,line);
                     if (!line.size())
                         continue;

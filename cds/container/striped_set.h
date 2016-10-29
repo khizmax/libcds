@@ -351,7 +351,7 @@ namespace cds { namespace container {
                         struct swap_item {
                             void operator()( std::list<T>& list, std::list<T>::iterator itInsert, std::list<T>::iterator itWhat )
                             {
-                                std::swap( *list.insert( itInsert, T() ), *itWhat );
+                                std::swap( *list.insert( itInsert, T()), *itWhat );
                             }
                         } \endcode
 
@@ -359,7 +359,7 @@ namespace cds { namespace container {
                         struct move_item {
                             void operator()( std::list<T>& list, std::list<T>::iterator itInsert, std::list<T>::iterator itWhat )
                             {
-                                list.insert( itInsert, std::move( *itWhat ) );
+                                list.insert( itInsert, std::move( *itWhat ));
                             }
                         } \endcode
                     </td>
@@ -403,7 +403,7 @@ namespace cds { namespace container {
                         struct swap_item {
                             void operator()( bc::slist<T>& list, bc::slist<T>::iterator itInsert, bc::slist<T>::iterator itWhat )
                             {
-                                std::swap( *list.insert_after( itInsert, T() ), *itWhat );
+                                std::swap( *list.insert_after( itInsert, T()), *itWhat );
                             }
                         } \endcode
 
@@ -411,7 +411,7 @@ namespace cds { namespace container {
                         struct move_item {
                             void operator()( bc::slist<T>& list, bc::slist<T>::iterator itInsert, bc::slist<T>::iterator itWhat )
                             {
-                                list.insert_after( itInsert, std::move( *itWhat ) );
+                                list.insert_after( itInsert, std::move( *itWhat ));
                             }
                         } \endcode
                     </td>
@@ -553,7 +553,7 @@ namespace cds { namespace container {
             ,resizing_policy&& resizingPolicy  ///< Resizing policy
         )
 
-            : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy) )
+            : base_class( nCapacity, std::forward<resizing_policy>(resizingPolicy))
         {}
 
         /// Destructor destroys internal data

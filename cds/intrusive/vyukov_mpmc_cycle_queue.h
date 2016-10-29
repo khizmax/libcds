@@ -228,7 +228,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear( disposer() );
+            clear( disposer());
         }
 
         /// Checks if the queue is empty

@@ -123,7 +123,7 @@ namespace cds { namespace urcu {
         /// Destroys singleton object
         static void Destruct( bool bDetachAll = false )
         {
-            if ( isUsed() ) {
+            if ( isUsed()) {
                 if ( bDetachAll )
                     instance()->m_ThreadList.detach_all();
                 delete instance();

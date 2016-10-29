@@ -198,7 +198,7 @@ namespace cds { namespace intrusive { namespace striped_set {
         lock_array_ptr create_lock_array( size_t nCapacity )
         {
             m_nCapacity.store( nCapacity, atomics::memory_order_relaxed );
-            return lock_array_ptr( lock_array_allocator().New( nCapacity ), lock_array_disposer() );
+            return lock_array_ptr( lock_array_allocator().New( nCapacity ), lock_array_disposer());
         }
 
         lock_type& acquire( size_t nHash )
@@ -211,7 +211,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // wait while resizing
                 while ( true ) {
                     who = m_Owner.load( atomics::memory_order_acquire );
-                    if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
+                    if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask))
                         break;
                     bkoff();
                 }
@@ -226,7 +226,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 lock.lock();
 
                 who = m_Owner.load( atomics::memory_order_acquire );
-                if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks == pLocks )
+                if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask)) && m_arrLocks == pLocks )
                     return lock;
                 lock.unlock();
             }
@@ -242,7 +242,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 // wait while resizing
                 while ( true ) {
                     who = m_Owner.load( atomics::memory_order_acquire );
-                    if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask) )
+                    if ( !( who & 1 ) || (who >> 1) == (me & c_nOwnerMask))
                         break;
                     bkoff();
                 }
@@ -256,7 +256,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 pLocks->lock_all();
 
                 who = m_Owner.load( atomics::memory_order_acquire );
-                if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask) ) && m_arrLocks == pLocks )
+                if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask)) && m_arrLocks == pLocks )
                     return pLocks;
 
                 pLocks->unlock_all();
@@ -281,7 +281,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     for ( size_t i = 0; i < nLockCount; ++i ) {
                         typename lock_array_type::lock_type& lock = pOldLocks->at(i);
                         bkoff.reset();
-                        while ( !lock.try_lock() )
+                        while ( !lock.try_lock())
                             bkoff();
                         lock.unlock();
                     }
@@ -305,7 +305,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
         public:
             scoped_cell_lock( refinable& policy, size_t nHash )
-                : m_guard( policy.acquire( nHash ), std::adopt_lock_t() )
+                : m_guard( policy.acquire( nHash ), std::adopt_lock_t())
             {}
         };
 

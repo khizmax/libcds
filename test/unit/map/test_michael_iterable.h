@@ -86,9 +86,9 @@ namespace cds_test {
                     EXPECT_TRUE( false );
                 } ));
 
-                EXPECT_TRUE( m.find( i ) == m.end() );
-                EXPECT_TRUE( m.find( i.nKey ) == m.end() );
-                EXPECT_TRUE( m.find_with( other_item( i.nKey ), other_less() ) == m.end() );
+                EXPECT_TRUE( m.find( i ) == m.end());
+                EXPECT_TRUE( m.find( i.nKey ) == m.end());
+                EXPECT_TRUE( m.find_with( other_item( i.nKey ), other_less()) == m.end());
 
                 std::pair< bool, bool > updResult;
 
@@ -271,7 +271,7 @@ namespace cds_test {
                         res = m.upsert( i, std::move( str ));
                         EXPECT_TRUE( res.first );
                         EXPECT_FALSE( res.second );
-                        EXPECT_TRUE( str.empty() );
+                        EXPECT_TRUE( str.empty());
                     }
                     break;
                 }
@@ -292,28 +292,28 @@ namespace cds_test {
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                 } ));
 
-                ASSERT_TRUE( m.find( i ) != m.end() );
-                ASSERT_TRUE( m.find( i.nKey ) != m.end() );
-                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less() ) != m.end() );
+                ASSERT_TRUE( m.find( i ) != m.end());
+                ASSERT_TRUE( m.find( i.nKey ) != m.end());
+                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less()) != m.end());
 
                 EXPECT_EQ( m.find( i )->first.nKey, i.nKey );
                 EXPECT_EQ( m.find( i.nKey )->first.nKey, i.nKey );
-                EXPECT_EQ( m.find_with( other_item( i.nKey ), other_less() )->first.nKey, i.nKey );
+                EXPECT_EQ( m.find_with( other_item( i.nKey ), other_less())->first.nKey, i.nKey );
 
             }
-            EXPECT_FALSE( m.empty() );
+            EXPECT_FALSE( m.empty());
             EXPECT_CONTAINER_SIZE( m, kkSize );
-            EXPECT_FALSE( m.begin() == m.end() );
-            EXPECT_FALSE( m.cbegin() == m.cend() );
+            EXPECT_FALSE( m.begin() == m.end());
+            EXPECT_FALSE( m.cbegin() == m.cend());
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 EXPECT_TRUE( m.contains( i.nKey ));
-                EXPECT_TRUE( m.contains( val.strVal ) );
+                EXPECT_TRUE( m.contains( val.strVal ));
                 EXPECT_TRUE( m.contains( i ));
                 EXPECT_TRUE( m.contains( other_item( i.nKey ), other_less()));
                 EXPECT_TRUE( m.find( i, []( map_pair const& v ) {
@@ -399,7 +399,7 @@ namespace cds_test {
                     EXPECT_TRUE( false );
                 } ));
             }
-            EXPECT_TRUE( m.empty() );
+            EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
 
             EXPECT_TRUE( m.begin() == m.end());
@@ -409,12 +409,12 @@ namespace cds_test {
             for ( auto const& i : arrKeys )
                 EXPECT_TRUE( m.insert( i ));
 
-            EXPECT_FALSE( m.empty() );
+            EXPECT_FALSE( m.empty());
             EXPECT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            EXPECT_TRUE( m.empty() );
+            EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0 );
         }
     };

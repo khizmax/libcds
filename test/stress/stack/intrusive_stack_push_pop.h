@@ -107,14 +107,14 @@ namespace cds_test {
             virtual void test()
             {
                 m_nPushError = 0;
-                memset( m_arrPush, 0, sizeof( m_arrPush ) );
+                memset( m_arrPush, 0, sizeof( m_arrPush ));
 
                 size_t i = 0;
                 for ( typename Stack::value_type * p = m_pStart; p < m_pEnd; ++p, ++i ) {
                     p->nProducer = id();
                     size_t no;
                     p->nNo.store( no = i % c_nValArraySize, atomics::memory_order_release );
-                    if ( m_Stack.push( *p ) )
+                    if ( m_Stack.push( *p ))
                         ++m_arrPush[no];
                     else
                         ++m_nPushError;
@@ -161,15 +161,15 @@ namespace cds_test {
                 m_nPopEmpty = 0;
                 m_nPopCount = 0;
                 m_nDirtyPop = 0;
-                memset( m_arrPop, 0, sizeof( m_arrPop ) );
+                memset( m_arrPop, 0, sizeof( m_arrPop ));
 
-                while ( !(s_nWorkingProducers.load( atomics::memory_order_acquire ) == 0 && m_Stack.empty()) ) {
+                while ( !(s_nWorkingProducers.load( atomics::memory_order_acquire ) == 0 && m_Stack.empty())) {
                     typename Stack::value_type * p = m_Stack.pop();
                     if ( p ) {
                         p->nConsumer = id();
                         ++m_nPopCount;
                         size_t no = p->nNo.load( atomics::memory_order_acquire );
-                        if ( no < sizeof( m_arrPop ) / sizeof( m_arrPop[0] ) )
+                        if ( no < sizeof( m_arrPop ) / sizeof( m_arrPop[0] ))
                             ++m_arrPop[no];
                         else
                             ++m_nDirtyPop;
@@ -207,7 +207,7 @@ namespace cds_test {
             size_t nPopEmpty = 0;
             size_t nPopCount = 0;
             size_t arrVal[c_nValArraySize];
-            memset( arrVal, 0, sizeof( arrVal ) );
+            memset( arrVal, 0, sizeof( arrVal ));
             size_t nDirtyPop = 0;
 
             for ( size_t threadNo = 0; threadNo < pool.size(); ++threadNo ) {

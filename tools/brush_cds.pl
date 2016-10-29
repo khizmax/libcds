@@ -82,6 +82,7 @@ sub processFile( $ )
                 $nTabsFound += $_ =~ s/\t/    /g;
                 $_ =~ s/\s+$//;
                 $_ =~ s/\s+;$/;/;
+                $_ =~ s/\)\s+\)/\)\)/g;
                 $str .= $_      ;
                 $str .= "\n"    ;
             }

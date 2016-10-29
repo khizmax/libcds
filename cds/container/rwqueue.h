@@ -245,7 +245,7 @@ namespace cds { namespace container {
         bool enqueue( value_type const& data )
         {
             scoped_node_ptr p( alloc_node( data ));
-            if ( enqueue_node( p.get() )) {
+            if ( enqueue_node( p.get())) {
                 p.release();
                 return true;
             }
@@ -256,7 +256,7 @@ namespace cds { namespace container {
         bool enqueue( value_type&& data )
         {
             scoped_node_ptr p( alloc_node_move( std::move( data )));
-            if ( enqueue_node( p.get() ) ) {
+            if ( enqueue_node( p.get()) ) {
                 p.release();
                 return true;
             }
@@ -276,9 +276,9 @@ namespace cds { namespace container {
         template <typename Func>
         bool enqueue_with( Func f )
         {
-            scoped_node_ptr p( alloc_node() );
+            scoped_node_ptr p( alloc_node());
             f( p->m_value );
-            if ( enqueue_node( p.get() )) {
+            if ( enqueue_node( p.get())) {
                 p.release();
                 return true;
             }
@@ -290,7 +290,7 @@ namespace cds { namespace container {
         bool emplace( Args&&... args )
         {
             scoped_node_ptr p( alloc_node_move( std::forward<Args>(args)... ));
-            if ( enqueue_node( p.get() )) {
+            if ( enqueue_node( p.get())) {
                 p.release();
                 return true;
             }

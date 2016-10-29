@@ -76,7 +76,7 @@ namespace {
         typedef cds::container::SegmentedQueue< gc_type, int, traits > test_queue;
 
         test_queue q( c_QuasiFactor );
-        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ) );
+        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ));
         test( q );
     }
 
@@ -90,7 +90,7 @@ namespace {
         typedef cds::container::SegmentedQueue< gc_type, int, traits > test_queue;
 
         test_queue q( c_QuasiFactor );
-        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ) );
+        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ));
         test( q );
     }
 
@@ -106,7 +106,7 @@ namespace {
         typedef cds::container::SegmentedQueue< gc_type, int, traits > test_queue;
 
         test_queue q( c_QuasiFactor );
-        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ) );
+        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ));
         test( q );
     }
 
@@ -115,7 +115,7 @@ namespace {
         typedef cds::container::SegmentedQueue< gc_type, std::string > test_queue;
 
         test_queue q( c_QuasiFactor );
-        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ) );
+        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ));
         test_string( q );
     }
 
@@ -128,7 +128,7 @@ namespace {
         typedef cds::container::SegmentedQueue< gc_type, std::string, traits > test_queue;
 
         test_queue q( c_QuasiFactor );
-        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ) );
+        ASSERT_EQ( q.quasi_factor(), cds::beans::ceil2( c_QuasiFactor ));
         test_string( q );
     }
 

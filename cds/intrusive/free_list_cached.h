@@ -49,7 +49,7 @@ namespace cds { namespace intrusive {
         to put that item into the cache if its corresponding slot is empty. The slot is calculated by
         current thread id:
         \code
-        int slot = std::hash<std::thread::id>()( std::this_thread::get_id() ) & (CacheSize - 1);
+        int slot = std::hash<std::thread::id>()( std::this_thread::get_id()) & (CacheSize - 1);
         \endcode
 
         When getting the free-list checks the corresponding cache slot. If it is not empty, its
@@ -133,7 +133,7 @@ namespace cds { namespace intrusive {
         /// Checks whether the free list is empty
         bool empty() const
         {
-            if ( !m_freeList.empty() )
+            if ( !m_freeList.empty())
                 return false;
 
             for ( auto& cell : m_cache ) {
@@ -175,7 +175,7 @@ namespace cds { namespace intrusive {
         //@cond
         size_t get_hash()
         {
-            return std::hash<std::thread::id>()( std::this_thread::get_id() ) & (c_cache_size - 1);
+            return std::hash<std::thread::id>()( std::this_thread::get_id()) & (c_cache_size - 1);
         }
         //@endcond
     private:

@@ -48,14 +48,14 @@ namespace cds_test {
         static void shuffle( RandomIt first, RandomIt last )
         {
             static std::random_device random_dev;
-            static std::mt19937       random_gen( random_dev() );
+            static std::mt19937       random_gen( random_dev());
 
             std::shuffle( first, last, random_gen );
         }
 
         static inline unsigned int rand( unsigned int nMax )
         {
-            double rnd = double( std::rand() ) / double( RAND_MAX );
+            double rnd = double( std::rand()) / double( RAND_MAX );
             unsigned int n = (unsigned int)(rnd * nMax);
             return n < nMax ? n : (n - 1);
         }

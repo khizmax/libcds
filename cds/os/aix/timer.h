@@ -58,7 +58,7 @@ namespace cds { namespace OS {
             typedef timebasestruct_t    native_timer_type;
             typedef long long            native_duration_type;
 
-            Timer() : m_tmStart( current() ) {}
+            Timer() : m_tmStart( current()) {}
 
             static native_timer_type    current()
             {
@@ -68,7 +68,7 @@ namespace cds { namespace OS {
             }
             static void current( native_timer_type& tmr )
             {
-                read_real_time( &tmr, sizeof(tmr) );
+                read_real_time( &tmr, sizeof(tmr));
                 time_base_to_time( &tmr, sizeof(tmr ));
             }
 
@@ -88,12 +88,12 @@ namespace cds { namespace OS {
 
             double duration()
             {
-                return duration( native_duration() );
+                return duration( native_duration());
             }
 
             native_duration_type    native_duration()
             {
-                return native_duration( m_tmStart, current() );
+                return native_duration( m_tmStart, current());
             }
 
             static native_duration_type    native_duration( native_timer_type const & nStart, native_timer_type const & nEnd )
@@ -104,7 +104,7 @@ namespace cds { namespace OS {
             static unsigned long long random_seed()
             {
                 native_timer_type tmr;
-                read_real_time( &tmr, sizeof(tmr) );
+                read_real_time( &tmr, sizeof(tmr));
                 return ( ((unsigned long long)(tmr.tb_hight)) << 32 ) + tmr.tb_low;
             }
         };

@@ -124,12 +124,12 @@ namespace {
                 arr.reserve( s_nQueueSize );
                 for ( size_t i = 0; i < s_nQueueSize; ++i )
                     arr.push_back( i );
-                shuffle( arr.begin(), arr.end() );
+                shuffle( arr.begin(), arr.end());
 
                 size_t nPushError = 0;
                 typedef typename PQueue::value_type value_type;
                 for ( auto it = arr.begin(); it != arr.end(); ++it ) {
-                    if ( !q.push( value_type( *it ) ))
+                    if ( !q.push( value_type( *it )))
                         ++nPushError;
                 }
                 s_nQueueSize -= nPushError;
@@ -158,11 +158,11 @@ namespace {
                     nTotalErrorEq += cons.m_nPopErrorEq;
                     nTotalFailed  += cons.m_nPopFailed;
 
-                    if ( !cons.m_arrFailedPops.empty() ) {
+                    if ( !cons.m_arrFailedPops.empty()) {
                         std::cerr << "Priority violations, thread " << i;
                         for ( size_t k = 0; k < cons.m_arrFailedPops.size(); ++k ) {
                             std::cerr << "\n    " << "prev_key=" << cons.m_arrFailedPops[k].prev_key << " popped_key=" << cons.m_arrFailedPops[k].popped_key;
-                            if ( cons.m_arrFailedPops[k].next_key != static_cast<size_t>(-1) )
+                            if ( cons.m_arrFailedPops[k].next_key != static_cast<size_t>(-1))
                                 std::cerr << " next_key=" << cons.m_arrFailedPops[k].next_key;
                             else
                                 std::cerr << " next_key unspecified";
@@ -218,7 +218,7 @@ namespace {
     { \
         typedef pqueue::Types<pqueue::simple_value>::pqueue_t pqueue_type; \
         std::unique_ptr< pqueue_type > pq( new pqueue_type ); \
-        test( *pq.get() ); \
+        test( *pq.get()); \
     }
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_less )
     //CDSSTRESS_MSPriorityQueue( pqueue_pop, MSPriorityQueue_static_less_stat )

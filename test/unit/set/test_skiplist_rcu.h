@@ -51,7 +51,7 @@ protected:
 
         base_class::test( s );
 
-        ASSERT_TRUE( s.empty() );
+        ASSERT_TRUE( s.empty());
         ASSERT_CONTAINER_SIZE( s, 0 );
 
         typedef typename Set::value_type value_type;
@@ -62,15 +62,15 @@ protected:
         data.reserve( nSetSize );
         indices.reserve( nSetSize );
         for ( size_t key = 0; key < nSetSize; ++key ) {
-            data.push_back( value_type( static_cast<int>(key) ) );
+            data.push_back( value_type( static_cast<int>(key)) );
             indices.push_back( key );
         }
-        shuffle( indices.begin(), indices.end() );
+        shuffle( indices.begin(), indices.end());
 
         for ( auto i : indices ) {
-            ASSERT_TRUE( s.insert( data[i] ) );
+            ASSERT_TRUE( s.insert( data[i] ));
         }
-        ASSERT_FALSE( s.empty() );
+        ASSERT_FALSE( s.empty());
         ASSERT_CONTAINER_SIZE( s, nSetSize );
 
         typedef typename Set::exempt_ptr exempt_ptr;
@@ -79,39 +79,39 @@ protected:
         // extract_min
         size_t nCount = 0;
         int nKey = -1;
-        while ( !s.empty() ) {
+        while ( !s.empty()) {
             xp = s.extract_min();
             ASSERT_FALSE( !xp );
-            EXPECT_EQ( nKey + 1, xp->key() );
+            EXPECT_EQ( nKey + 1, xp->key());
             ++nCount;
             nKey = xp->key();
         }
         xp.release();
         EXPECT_EQ( nCount, nSetSize );
 
-        ASSERT_TRUE( s.empty() );
+        ASSERT_TRUE( s.empty());
         ASSERT_CONTAINER_SIZE( s, 0 );
 
         // extract_max
         for ( auto i : indices ) {
-            ASSERT_TRUE( s.insert( data[i] ) );
+            ASSERT_TRUE( s.insert( data[i] ));
         }
-        ASSERT_FALSE( s.empty() );
+        ASSERT_FALSE( s.empty());
         ASSERT_CONTAINER_SIZE( s, nSetSize );
 
         nCount = 0;
         nKey = nSetSize;
-        while ( !s.empty() ) {
+        while ( !s.empty()) {
             xp = s.extract_max();
             ASSERT_FALSE( !xp );
-            EXPECT_EQ( nKey - 1, xp->key() );
+            EXPECT_EQ( nKey - 1, xp->key());
             ++nCount;
             nKey = xp->key();
         }
         xp.release();
         EXPECT_EQ( nCount, nSetSize );
 
-        ASSERT_TRUE( s.empty() );
+        ASSERT_TRUE( s.empty());
         ASSERT_CONTAINER_SIZE( s, 0 );
     }
 

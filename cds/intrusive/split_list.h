@@ -926,14 +926,14 @@ namespace cds { namespace intrusive {
 #endif
         find( Q& key )
         {
-            return find_iterator_( key, key_comparator() );
+            return find_iterator_( key, key_comparator());
         }
         //@cond
         template <typename Q>
         typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
         find( Q const& key )
         {
-            return find_iterator_( key, key_comparator() );
+            return find_iterator_( key, key_comparator());
         }
         //@endcond
 
@@ -979,7 +979,7 @@ namespace cds { namespace intrusive {
         find_with( Q& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -987,7 +987,7 @@ namespace cds { namespace intrusive {
         find_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
         //@endcond
 
@@ -1172,9 +1172,9 @@ namespace cds { namespace intrusive {
                 if ( pBucket )
                     return pBucket;
 
-                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
+                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ));
                 if ( pBucket ) {
-                    if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
+                    if ( m_List.insert_aux_node( pParentBucket, pBucket )) {
                         m_Buckets.bucket( nBucket, pBucket );
                         m_Stat.onNewBucket();
                         return pBucket;
@@ -1209,7 +1209,7 @@ namespace cds { namespace intrusive {
             if ( pHead == nullptr )
                 pHead = init_bucket( nBucket );
 
-            assert( pHead->is_dummy() );
+            assert( pHead->is_dummy());
 
             return pHead;
         }
@@ -1228,7 +1228,7 @@ namespace cds { namespace intrusive {
             assert( pNode != nullptr );
 
             // insert_aux_node cannot return false for empty list
-            CDS_VERIFY( m_List.insert_aux_node( pNode ) );
+            CDS_VERIFY( m_List.insert_aux_node( pNode ));
 
             m_Buckets.bucket( 0, pNode );
         }
@@ -1246,10 +1246,10 @@ namespace cds { namespace intrusive {
 
             size_t sz = m_nBucketCountLog2.load( memory_model::memory_order_relaxed );
             const size_t nBucketCount = static_cast<size_t>(1) << sz;
-            if ( nBucketCount < m_Buckets.capacity() ) {
+            if ( nBucketCount < m_Buckets.capacity()) {
                 // we may grow the bucket table
                 const size_t nLoadFactor = m_Buckets.load_factor();
-                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ) )
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
                     return; // someone already have updated m_nBucketCountLog2, so stop here
 
                 m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),
@@ -1264,7 +1264,7 @@ namespace cds { namespace intrusive {
         bool find_( Q& val, Compare cmp, Func f )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1278,18 +1278,18 @@ namespace cds { namespace intrusive {
         bool find_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp ) );
+            return m_Stat.onFind( m_List.find_at( pHead, sv, cmp ));
         }
 
         template <typename Q, typename Compare>
         iterator find_iterator_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1300,36 +1300,36 @@ namespace cds { namespace intrusive {
         guarded_ptr get_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
             guarded_ptr gp = m_List.get_at( pHead, sv, cmp );
-            m_Stat.onFind( !gp.empty() );
+            m_Stat.onFind( !gp.empty());
             return gp;
         }
 
         template <typename Q>
         guarded_ptr get_( Q const& key )
         {
-            return get_( key, key_comparator() );
+            return get_( key, key_comparator());
         }
 
         template <typename Q, typename Less>
         guarded_ptr get_with_( Q const& key, Less )
         {
-            return get_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+            return get_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
 
         template <typename Q, typename Compare, typename Func>
         bool erase_( Q const& val, Compare cmp, Func f )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            if ( m_List.erase_at( pHead, sv, cmp, f ) ) {
+            if ( m_List.erase_at( pHead, sv, cmp, f )) {
                 --m_ItemCounter;
                 m_Stat.onEraseSuccess();
                 return true;
@@ -1342,11 +1342,11 @@ namespace cds { namespace intrusive {
         bool erase_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            if ( m_List.erase_at( pHead, sv, cmp ) ) {
+            if ( m_List.erase_at( pHead, sv, cmp )) {
                 --m_ItemCounter;
                 m_Stat.onEraseSuccess();
                 return true;
@@ -1359,7 +1359,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ) );
+            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1376,13 +1376,13 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract_( Q const& key )
         {
-            return extract_( key, key_comparator() );
+            return extract_( key, key_comparator());
         }
 
         template <typename Q, typename Less>
         guarded_ptr extract_with_( Q const& key, Less )
         {
-            return extract_( key, typename ordered_list_adapter::template make_compare_from_less<Less>() );
+            return extract_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
         }
         //@endcond
 

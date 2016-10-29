@@ -64,7 +64,7 @@ namespace cds { namespace container {
 
             void operator()( set_type& set, iterator itWhat )
             {
-                set.insert( std::move( *itWhat ) );
+                set.insert( std::move( *itWhat ));
             }
         };
 
@@ -115,9 +115,9 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool insert( const Q& val, Func f )
             {
-                std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
+                std::pair<iterator, bool> res = m_Set.insert( value_type(val));
                 if ( res.second )
-                    f( const_cast<value_type&>(*res.first) );
+                    f( const_cast<value_type&>(*res.first));
                 return res.second;
             }
 
@@ -132,13 +132,13 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> update( const Q& val, Func func, bool bAllowInsert )
             {
                 if ( bAllowInsert ) {
-                    std::pair<iterator, bool> res = m_Set.insert( value_type(val) );
+                    std::pair<iterator, bool> res = m_Set.insert( value_type(val));
                     func( res.second, const_cast<value_type&>(*res.first), val );
                     return std::make_pair( true, res.second );
                 }
                 else {
                     auto it = m_Set.find( value_type(val));
-                    if ( it == m_Set.end() )
+                    if ( it == m_Set.end())
                         return std::make_pair( false, false );
 
                     func( false, const_cast<value_type&>(*it), val );
@@ -149,10 +149,10 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool erase( const Q& key, Func f )
             {
-                const_iterator it = m_Set.find( value_type(key) );
-                if ( it == m_Set.end() )
+                const_iterator it = m_Set.find( value_type(key));
+                if ( it == m_Set.end())
                     return false;
-                f( const_cast<value_type&>(*it) );
+                f( const_cast<value_type&>(*it));
                 m_Set.erase( it );
                 return true;
             }
@@ -160,8 +160,8 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool find( Q& val, Func f )
             {
-                iterator it = m_Set.find( value_type(val) );
-                if ( it == m_Set.end() )
+                iterator it = m_Set.find( value_type(val));
+                if ( it == m_Set.end())
                     return false;
                 f( const_cast<value_type&>(*it), val );
                 return true;
@@ -180,7 +180,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
             void move_item( adapted_container& /*from*/, iterator itWhat )
             {
-                assert( m_Set.find( *itWhat ) == m_Set.end() );
+                assert( m_Set.find( *itWhat ) == m_Set.end());
                 copy_item()( m_Set, itWhat );
             }
 

@@ -336,7 +336,7 @@ namespace cds { namespace intrusive {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            const_iterator it( const_cast<node_type *>(&m_Head) );
+            const_iterator it( const_cast<node_type *>(&m_Head));
             ++it;   // skip dummy head
             return it;
         }
@@ -349,7 +349,7 @@ namespace cds { namespace intrusive {
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
-            return const_iterator( const_cast<node_type *>(&m_Tail) );
+            return const_iterator( const_cast<node_type *>(&m_Tail));
         }
 
     public:
@@ -509,7 +509,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * contains( Q const& key )
         {
-            return find_at( &m_Head, key, key_comparator() );
+            return find_at( &m_Head, key, key_comparator());
         }
         //@cond
         template <typename Q>
@@ -530,7 +530,7 @@ namespace cds { namespace intrusive {
         typename std::enable_if<Sort, value_type *>::type contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>() );
+            return find_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>());
         }
         //@cond
         template <typename Q, typename Less, bool Sort = c_bSort>
@@ -586,7 +586,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear( disposer() );
+            clear( disposer());
         }
 
         /// Checks if the list is empty
@@ -631,7 +631,7 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
             // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( pHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( pHead, *node_traits::to_value_ptr( pNode ));
         }
 
         bool insert_at( node_type * pHead, value_type& val )
@@ -644,7 +644,7 @@ namespace cds { namespace intrusive {
                 {
                     auto_lock_position alp( pos );
                     if ( validate( pos.pPred, pos.pCur )) {
-                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) ) {
+                        if ( pos.pCur != &m_Tail && equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred )) {
                             // failed: key already in list
                             m_Stat.onInsertFailed();
                             return false;
@@ -709,7 +709,7 @@ namespace cds { namespace intrusive {
 
             ++m_ItemCounter;
             m_Stat.onUpdateNew();
-            return std::make_pair( iterator( node_traits::to_node_ptr( val ) ), true );
+            return std::make_pair( iterator( node_traits::to_node_ptr( val )), true );
         }
 
         template <typename Func>
@@ -727,7 +727,7 @@ namespace cds { namespace intrusive {
             search( pHead, val, pos, pred );
             if ( pos.pCur != &m_Tail ) {
                 std::unique_lock< typename node_type::lock_type> al( pos.pCur->m_Lock );
-                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ) )
+                if ( equal( *node_traits::to_value_ptr( *pos.pCur ), val, pred ))
                 {
                     f( *node_traits::to_value_ptr( *pos.pCur ), val );
                     m_Stat.onFindSuccess();
@@ -743,7 +743,7 @@ namespace cds { namespace intrusive {
         value_type * find_at( node_type * pHead, Q& val, Pred pred)
         {
             iterator it = find_at_( pHead, val, pred );
-            if ( it != end() )
+            if ( it != end())
                 return &*it;
             return nullptr;
         }
@@ -777,7 +777,7 @@ namespace cds { namespace intrusive {
             node_type * pCur = pHead;
             node_type * pPrev = pHead;
 
-            while ( pCur != pTail && ( pCur == pHead || !equal( *node_traits::to_value_ptr( *pCur ), key, eq ) )) {
+            while ( pCur != pTail && ( pCur == pHead || !equal( *node_traits::to_value_ptr( *pCur ), key, eq ))) {
                 pPrev = pCur;
                 pCur = pCur->m_pNext.load(memory_model::memory_order_acquire);
             }
@@ -838,7 +838,7 @@ namespace cds { namespace intrusive {
                 if ( pred( *node_traits::to_value_ptr( pHead ))) {
                     assert( pPred != nullptr );
                     pPred->m_pNext.store( p, memory_model::memory_order_relaxed );
-                    dispose_node( pHead, disposer() );
+                    dispose_node( pHead, disposer());
                 }
                 else
                     pPred = pHead;

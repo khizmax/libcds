@@ -53,12 +53,12 @@ namespace cds { namespace container {
                 pair_type               m_Data;
 
                 node_type( key_type const& key )
-                    : m_Data( key, value_type() )
+                    : m_Data( key, value_type())
                 {}
 
                 template <typename Q>
                 node_type( Q const& key )
-                    : m_Data( key_type(key), value_type() )
+                    : m_Data( key_type(key), value_type())
                 {}
 
                 template <typename Q, typename R>

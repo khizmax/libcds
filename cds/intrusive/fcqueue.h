@@ -187,7 +187,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( op_enq, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onEnqueue();
             return true;
@@ -213,7 +213,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( op_deq, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
 
             m_FlatCombining.internal_statistics().onDequeue( pRec->bEmpty );
@@ -240,7 +240,7 @@ namespace cds { namespace intrusive {
             else
                 m_FlatCombining.combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -289,10 +289,10 @@ namespace cds { namespace intrusive {
             // All TSan warnings are false positive
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_enq:
                 assert( pRec->pVal );
-                m_Queue.push_back( *(pRec->pVal ) );
+                m_Queue.push_back( *(pRec->pVal ));
                 break;
             case op_deq:
                 pRec->bEmpty = m_Queue.empty();
@@ -305,7 +305,7 @@ namespace cds { namespace intrusive {
                 m_Queue.clear();
                 break;
             case op_clear_and_dispose:
-                m_Queue.clear_and_dispose( disposer() );
+                m_Queue.clear_and_dispose( disposer());
                 break;
             default:
                 assert(false);
@@ -323,10 +323,10 @@ namespace cds { namespace intrusive {
 
             typedef typename fc_kernel::iterator fc_iterator;
             for ( fc_iterator it = itBegin, itPrev = itEnd; it != itEnd; ++it ) {
-                switch ( it->op() ) {
+                switch ( it->op()) {
                 case op_enq:
                 case op_deq:
-                    if ( m_Queue.empty() ) {
+                    if ( m_Queue.empty()) {
                         if ( itPrev != itEnd && collide( *itPrev, *it ))
                             itPrev = itEnd;
                         else
@@ -343,9 +343,9 @@ namespace cds { namespace intrusive {
         //@cond
         bool collide( fc_record& rec1, fc_record& rec2 )
         {
-            assert( m_Queue.empty() );
+            assert( m_Queue.empty());
 
-            switch ( rec1.op() ) {
+            switch ( rec1.op()) {
                 case op_enq:
                     if ( rec2.op() == op_deq ) {
                         assert(rec1.pVal);

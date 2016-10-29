@@ -265,7 +265,7 @@ namespace cds { namespace container {
             this code
             \code
                 if ( it1 == it2 )
-                    assert( &(*it1) == &(*it2) );
+                    assert( &(*it1) == &(*it2));
             \endcode
             can throw assertion. The point is that the iterator stores the value of element which can be modified later by other thread.
             The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after such changing.
@@ -285,7 +285,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( base_class::begin() );
+            return iterator( base_class::begin());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -304,13 +304,13 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( base_class::cbegin() );
+            return const_iterator( base_class::cbegin());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
@@ -552,7 +552,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            return extract_at( head(), key, key_comparator() );
+            return extract_at( head(), key, key_comparator());
         }
 
         /// Extracts the item from the list with comparing functor \p pred
@@ -567,7 +567,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks whether the list contains \p key
@@ -578,7 +578,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool contains( Q const& key ) const
         {
-            return find_at( head(), key, key_comparator() );
+            return find_at( head(), key, key_comparator());
         }
 
         /// Checks whether the list contains \p key using \p pred predicate for searching
@@ -591,7 +591,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Finds \p key and perform an action with it
@@ -700,7 +700,7 @@ namespace cds { namespace container {
         template <typename Q>
         guarded_ptr get( Q const& key ) const
         {
-            return get_at( head(), key, key_comparator() );
+            return get_at( head(), key, key_comparator());
         }
 
         /// Finds \p key and return the item found
@@ -716,7 +716,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks if the list is empty

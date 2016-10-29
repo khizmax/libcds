@@ -403,7 +403,7 @@ namespace set {
                 Set& rSet = m_Set;
 
                 Set_Iteration& fixture = pool().template fixture<Set_Iteration>();
-                while ( !fixture.all_modifiers_done() ) {
+                while ( !fixture.all_modifiers_done()) {
                     ++m_nPassCount;
                     typename Set::iterator it;
                     typename Set::iterator itEnd;
@@ -453,12 +453,12 @@ namespace set {
                 Set& rSet = m_Set;
 
                 Set_Iteration& fixture = pool().template fixture<Set_Iteration>();
-                while ( !fixture.all_modifiers_done() ) {
+                while ( !fixture.all_modifiers_done()) {
                     ++m_nPassCount;
                     typename Set::rcu_lock l;
                     for ( auto it = rSet.begin(); it != rSet.end(); ++it ) {
 #if CDS_BUILD_BITS == 64
-                        it->val.hash = CityHash64( it->key.c_str(), it->key.length() );
+                        it->val.hash = CityHash64( it->key.c_str(), it->key.length());
 #else
                         it->val.hash = std::hash<std::string>()(it->key);
 #endif
@@ -500,7 +500,7 @@ namespace set {
             size_t nIteratorVisitCount = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         InserterThread& inserter = static_cast<InserterThread&>( thr );
@@ -534,10 +534,10 @@ namespace set {
                 << std::make_pair( "delete_failed", nDeleteFailed )
                 << std::make_pair( "iterator_pass_count", nIteratorPassCount )
                 << std::make_pair( "iterator_visit_count", nIteratorVisitCount )
-                << std::make_pair( "final_set_size", testSet.size() );
+                << std::make_pair( "final_set_size", testSet.size());
 
             testSet.clear();
-            EXPECT_TRUE( testSet.empty() );
+            EXPECT_TRUE( testSet.empty());
 
             additional_check( testSet );
             print_stat( propout(), testSet );
@@ -583,7 +583,7 @@ namespace set {
             size_t nIteratorVisitCount = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case insert_thread:
                     {
                         InserterThread& inserter = static_cast<InserterThread&>(thr);
@@ -626,10 +626,10 @@ namespace set {
                 << std::make_pair( "extract_failed", nExtractFailed )
                 << std::make_pair( "iterator_pass_count", nIteratorPassCount )
                 << std::make_pair( "iterator_visit_count", nIteratorVisitCount )
-                << std::make_pair( "final_set_size", testSet.size() );
+                << std::make_pair( "final_set_size", testSet.size());
 
             testSet.clear();
-            EXPECT_TRUE( testSet.empty() );
+            EXPECT_TRUE( testSet.empty());
 
             additional_check( testSet );
             print_stat( propout(), testSet );

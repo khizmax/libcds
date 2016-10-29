@@ -167,7 +167,7 @@ namespace {
                 const size_t nTotalWriters = s_nProducerThreadCount;
                 value_type v;
                 while ( true ) {
-                    if ( m_Queue.pop( v ) ) {
+                    if ( m_Queue.pop( v )) {
                         ++m_nPopped;
                         if ( v.nWriterNo < nTotalWriters )
                             m_WriterData[ v.nWriterNo ].push_back( v.nNo );
@@ -178,7 +178,7 @@ namespace {
                         ++m_nPopEmpty;
 
                         if ( s_nProducerDone.load() >= nTotalWriters ) {
-                            if ( m_Queue.empty() )
+                            if ( m_Queue.empty())
                                 break;
                         }
                     }
@@ -238,7 +238,7 @@ namespace {
             EXPECT_EQ( nTotalPops, nPoppedItems );
 
             EXPECT_EQ( nTotalPops + nPostTestPops, s_nQueueSize ) << "nTotalPops=" << nTotalPops << ", nPostTestPops=" << nPostTestPops;
-            EXPECT_TRUE( q.empty() );
+            EXPECT_TRUE( q.empty());
 
             // Test consistency of popped sequence
             for ( size_t nWriter = 0; nWriter < s_nProducerThreadCount; ++nWriter ) {
@@ -259,7 +259,7 @@ namespace {
                         arrData.push_back( *it );
                 }
 
-                std::sort( arrData.begin(), arrData.end() );
+                std::sort( arrData.begin(), arrData.end());
                 for ( size_t i=1; i < arrData.size(); ++i ) {
                     EXPECT_EQ( arrData[i - 1] + 1, arrData[i] ) << "producer=" << nWriter;
                 }

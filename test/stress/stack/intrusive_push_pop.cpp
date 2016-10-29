@@ -89,9 +89,9 @@ namespace {
         {
             EXPECT_EQ( s.m_PushCount.get() + s.m_ActivePushCollision.get() + s.m_PassivePushCollision.get(), s_nStackSize );
             EXPECT_EQ( s.m_PopCount.get() + s.m_ActivePopCollision.get() + s.m_PassivePopCollision.get(), s_nStackSize );
-            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get() );
-            EXPECT_EQ( s.m_ActivePopCollision.get(), s.m_PassivePushCollision.get() );
-            EXPECT_EQ( s.m_ActivePushCollision.get(), s.m_PassivePopCollision.get() );
+            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get());
+            EXPECT_EQ( s.m_ActivePopCollision.get(), s.m_PassivePushCollision.get());
+            EXPECT_EQ( s.m_ActivePushCollision.get(), s.m_PassivePopCollision.get());
         }
 
         template <typename Stack>
@@ -101,7 +101,7 @@ namespace {
             {
                 Stack stack( s_nEliminationSize );
                 do_test( stack, arrValue );
-                check_elimination_stat( stack.statistics() );
+                check_elimination_stat( stack.statistics());
             }
             Stack::gc::force_dispose();
         }

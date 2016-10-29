@@ -73,14 +73,14 @@ namespace map {
         bool insert( const Key& key, const Value& val )
         {
             scoped_lock al( m_lock );
-            return base_class::insert( typename base_class::value_type( key, val ) ).second;
+            return base_class::insert( typename base_class::value_type( key, val )).second;
         }
 
         template <typename T, typename Func>
         bool insert( const Key& key, const T& val, Func func )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value() ) );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()) );
             if ( pRet.second ) {
                 func( pRet.first->second, val );
                 return true;
@@ -92,7 +92,7 @@ namespace map {
         std::pair<bool, bool> update( const T& key, Func func, bool /*bAllowInsert*/ = true )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value() ) );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()) );
             if ( pRet.second ) {
                 func( true, *pRet.first );
                 return std::make_pair( true, true );
@@ -114,8 +114,8 @@ namespace map {
         {
             scoped_lock al( m_lock );
             typename base_class::iterator it = base_class::find( key );
-            if ( it != base_class::end() ) {
-                func( (*it) );
+            if ( it != base_class::end()) {
+                func( (*it));
                 base_class::erase( it );
                 return true;
             }
@@ -180,7 +180,7 @@ namespace map {
         bool insert( const Key& key, const T& val, Func func )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value() ));
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type(key, Value()));
             if ( pRet.second ) {
                 func( pRet.first->second, val );
                 return true;
@@ -192,7 +192,7 @@ namespace map {
         std::pair<bool, bool> update( const T& key, Func func, bool /*bAllowInsert*/ = true )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value() ));
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()));
             if ( pRet.second ) {
                 func( true, *pRet.first );
                 return std::make_pair( true, true );
@@ -214,7 +214,7 @@ namespace map {
         {
             scoped_lock al( m_lock );
             typename base_class::iterator it = base_class::find( key );
-            if ( it != base_class::end() ) {
+            if ( it != base_class::end()) {
                 func( *it );
                 return base_class::erase( key ) != 0;
             }

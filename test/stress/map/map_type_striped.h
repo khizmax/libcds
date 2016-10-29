@@ -80,7 +80,7 @@ namespace map {
         public:
             template <class Config>
             StripedHashMap_seq( Config const& cfg )
-                : base_class( cfg.s_nMapSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
+                : base_class( cfg.s_nMapSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )))
             {}
 
             empty_stat statistics() const
@@ -113,7 +113,7 @@ namespace map {
         public:
             template <class Config>
             StripedHashMap_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )))
             {}
 
             empty_stat statistics() const
@@ -229,7 +229,7 @@ namespace map {
         public:
             template <class Config>
             RefinableHashMap_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )))
             {}
 
             empty_stat statistics() const

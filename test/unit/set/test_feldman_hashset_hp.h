@@ -46,7 +46,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             base_class::test( s );
@@ -59,15 +59,15 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // iterator test
@@ -100,7 +100,7 @@ namespace cds_test {
 
                 gp = s.get( i.key());
                 ASSERT_FALSE( !gp );
-                EXPECT_EQ( gp->key(), i.key() );
+                EXPECT_EQ( gp->key(), i.key());
                 EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 2 ));
                 gp->nFindCount *= 2;
 
@@ -112,33 +112,33 @@ namespace cds_test {
                 auto& i = data[idx];
 
                 ASSERT_TRUE( !gp );
-                gp = s.extract( i.key() );
+                gp = s.extract( i.key());
                 ASSERT_FALSE( !gp );
-                EXPECT_EQ( gp->key(), i.key() );
+                EXPECT_EQ( gp->key(), i.key());
                 EXPECT_EQ( gp->nFindCount, static_cast<size_t>( i.key() * 4 ));
 
-                gp = s.extract( i.key() );
+                gp = s.extract( i.key());
                 ASSERT_TRUE( !gp );
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // erase_at()
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             for ( auto it = s.begin(); it != s.end(); ++it ) {
                 int key = it->key();
                 ASSERT_TRUE( s.erase_at( it ));
                 EXPECT_EQ( it->key(), key );
-                ASSERT_FALSE( s.erase_at( it ) );
+                ASSERT_FALSE( s.erase_at( it ));
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
         }
 

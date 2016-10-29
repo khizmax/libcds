@@ -302,7 +302,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( head() );
+            return iterator( head());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -321,12 +321,12 @@ namespace cds { namespace container {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( head() );
+            return const_iterator( head());
         }
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( head() );
+            return const_iterator( head());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
@@ -539,7 +539,7 @@ namespace cds { namespace container {
         template <typename K>
         bool erase( K const& key )
         {
-            return erase_at( head(), key, intrusive_key_comparator() );
+            return erase_at( head(), key, intrusive_key_comparator());
         }
 
         /// Deletes the item from the list using \p pred predicate for searching
@@ -553,7 +553,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Deletes \p key from the list
@@ -618,7 +618,7 @@ namespace cds { namespace container {
             rcu_michael_list::exempt_ptr p;
 
             // The RCU should NOT be locked when extract() is called!
-            assert( !rcu::is_locked() );
+            assert( !rcu::is_locked());
 
             // extract() call
             p = theList.extract( 10 );
@@ -635,7 +635,7 @@ namespace cds { namespace container {
         template <typename K>
         exempt_ptr extract( K const& key )
         {
-            return exempt_ptr( extract_at( head(), key, intrusive_key_comparator() ));
+            return exempt_ptr( extract_at( head(), key, intrusive_key_comparator()));
         }
 
         /// Extracts an item from the list using \p pred predicate for searching
@@ -649,7 +649,7 @@ namespace cds { namespace container {
         exempt_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type() ));
+            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type()));
         }
 
         /// Checks whether the list contains \p key
@@ -662,7 +662,7 @@ namespace cds { namespace container {
         template <typename Q>
         bool contains( Q const& key )
         {
-            return find_at( head(), key, intrusive_key_comparator() );
+            return find_at( head(), key, intrusive_key_comparator());
         }
         //@cond
         template <typename Q>
@@ -685,7 +685,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
         //@cond
         template <typename Q, typename Less>
@@ -784,7 +784,7 @@ namespace cds { namespace container {
         raw_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, typename maker::template less_wrapper<Less>::type() );
+            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
         }
 
         /// Checks if the list is empty

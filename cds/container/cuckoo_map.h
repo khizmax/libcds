@@ -56,17 +56,17 @@ namespace cds { namespace container {
 
                 template <typename K>
                 node_type( K const& key )
-                    : m_val( std::make_pair( key_type(key), mapped_type() ))
+                    : m_val( std::make_pair( key_type(key), mapped_type()))
                 {}
 
                 template <typename K, typename Q>
                 node_type( K const& key, Q const& v )
-                    : m_val( std::make_pair( key_type(key), mapped_type(v) ))
+                    : m_val( std::make_pair( key_type(key), mapped_type(v)))
                 {}
 
                 template <typename K, typename... Args>
                 node_type( K&& key, Args&&... args )
-                    : m_val( std::forward<K>(key), std::move( mapped_type(std::forward<Args>(args)...)) )
+                    : m_val( std::forward<K>(key), std::move( mapped_type(std::forward<Args>(args)...)))
                 {}
             };
 
@@ -401,7 +401,7 @@ namespace cds { namespace container {
         CuckooMap(
             hash_tuple_type&& h     ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-        : base_class( std::forward<hash_tuple_type>(h) )
+        : base_class( std::forward<hash_tuple_type>(h))
         {}
 
         /// Constructs a map with given probe set properties and hash functor tuple (move semantics)
@@ -415,7 +415,7 @@ namespace cds { namespace container {
             , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, nProbesetThreshold = nProbesetSize - 1
             , hash_tuple_type&& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-        : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, std::forward<hash_tuple_type>(h) )
+        : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, std::forward<hash_tuple_type>(h))
         {}
 
         /// Destructor clears the map
@@ -629,7 +629,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::erase_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
+            node_type * pNode = base_class::erase_with( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
             if ( pNode ) {
                 f( pNode->m_val );
                 free_node( pNode );
@@ -705,7 +705,7 @@ namespace cds { namespace container {
         bool contains( K const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
         }
         //@cond
         template <typename K, typename Predicate>
@@ -719,7 +719,7 @@ namespace cds { namespace container {
         /// Clears the map
         void clear()
         {
-            base_class::clear_and_dispose( node_disposer() );
+            base_class::clear_and_dispose( node_disposer());
         }
 
         /// Checks if the map is empty

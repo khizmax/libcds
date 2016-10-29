@@ -241,7 +241,7 @@ namespace cds { namespace gc {
                         value_type * operator()( T * p );
                     };
                 \endcode
-                Really, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
+                Really, the result of <tt> f( toGuard.load()) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
             T protect( atomics::atomic<T> const& toGuard, Func f )
@@ -250,7 +250,7 @@ namespace cds { namespace gc {
                 T pRet;
                 do {
                     pRet = pCur;
-                    assign( f( pCur ) );
+                    assign( f( pCur ));
                     pCur = toGuard.load(atomics::memory_order_acquire);
                 } while ( pRet != pCur );
                 return pCur;
@@ -287,13 +287,13 @@ namespace cds { namespace gc {
             template <typename T, int BITMASK>
             T* assign( cds::details::marked_ptr<T, BITMASK> p )
             {
-                return assign( p.ptr() );
+                return assign( p.ptr());
             }
 
             /// Copy from \p src guard to \p this guard
             void copy( Guard const& src )
             {
-                assign( src.get_native() );
+                assign( src.get_native());
             }
 
             /// Clears value of the guard
@@ -307,7 +307,7 @@ namespace cds { namespace gc {
             template <typename T>
             T * get() const
             {
-                return reinterpret_cast<T *>( get_native() );
+                return reinterpret_cast<T *>( get_native());
             }
 
             /// Gets native guarded pointer stored
@@ -390,7 +390,7 @@ namespace cds { namespace gc {
             {
                 T pRet;
                 do {
-                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire) );
+                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire));
                 } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
 
                 return pRet;
@@ -411,14 +411,14 @@ namespace cds { namespace gc {
                         value_type * operator()( T * p );
                     };
                 \endcode
-                Actually, the result of <tt> f( toGuard.load() ) </tt> is assigned to the hazard pointer.
+                Actually, the result of <tt> f( toGuard.load()) </tt> is assigned to the hazard pointer.
             */
             template <typename T, class Func>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
             {
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire) ));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire)));
                 } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
 
                 return pRet;
@@ -447,13 +447,13 @@ namespace cds { namespace gc {
             template <typename T, int Bitmask>
             T * assign( size_t nIndex, cds::details::marked_ptr<T, Bitmask> p )
             {
-                return assign( nIndex, p.ptr() );
+                return assign( nIndex, p.ptr());
             }
 
             /// Copy guarded value from \p src guard to slot at index \p nIndex
             void copy( size_t nIndex, Guard const& src )
             {
-                assign( nIndex, src.get_native() );
+                assign( nIndex, src.get_native());
             }
 
             /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
@@ -465,7 +465,7 @@ namespace cds { namespace gc {
             /// Clear value of the slot \p nIndex
             void clear( size_t nIndex )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 assert( m_arr[nIndex] != nullptr );
 
                 m_arr[nIndex]->pPost.store( nullptr, atomics::memory_order_release );
@@ -475,13 +475,13 @@ namespace cds { namespace gc {
             template <typename T>
             T * get( size_t nIndex ) const
             {
-                return reinterpret_cast<T *>( get_native( nIndex ) );
+                return reinterpret_cast<T *>( get_native( nIndex ));
             }
 
             /// Get native guarded pointer stored
             guarded_pointer get_native( size_t nIndex ) const
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 assert( m_arr[nIndex] != nullptr );
 
                 return m_arr[nIndex]->pPost.load( atomics::memory_order_acquire );
@@ -490,7 +490,7 @@ namespace cds { namespace gc {
             //@cond
             dhp::details::guard_data* release( size_t nIndex ) CDS_NOEXCEPT
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 dhp::details::guard_data* ret = m_arr[ nIndex ];
                 m_arr[nIndex] = nullptr;
@@ -609,7 +609,7 @@ namespace cds { namespace gc {
 
             /// Ctor from \p Guard
             explicit guarded_ptr( Guard&& g ) CDS_NOEXCEPT
-                : m_guard( g.release() )
+                : m_guard( g.release())
             {}
 
             /// The guarded pointer is not copy-constructible
@@ -634,7 +634,7 @@ namespace cds { namespace gc {
             /// Move-assignment from \p Guard
             guarded_ptr& operator=( Guard&& g ) CDS_NOEXCEPT
             {
-                std::swap( m_guard, g.guard_ref() );
+                std::swap( m_guard, g.guard_ref());
                 return *this;
             }
 
@@ -644,7 +644,7 @@ namespace cds { namespace gc {
             /// Returns a pointer to guarded value
             value_type * operator ->() const CDS_NOEXCEPT
             {
-                assert( !empty() );
+                assert( !empty());
                 return value_cast()( reinterpret_cast<guarded_type *>(m_guard->get()));
             }
 
@@ -658,7 +658,7 @@ namespace cds { namespace gc {
             /// Returns const reference to guarded value
             value_type const& operator *() const CDS_NOEXCEPT
             {
-                assert( !empty() );
+                assert( !empty());
                 return *value_cast()(reinterpret_cast<guarded_type *>(m_guard->get()));
             }
 
@@ -781,7 +781,7 @@ namespace cds { namespace gc {
             Deleting the pointer is the function \p pFunc call.
         */
         template <typename T>
-        static void retire( T * p, void (* pFunc)(T *) )
+        static void retire( T * p, void (* pFunc)(T *))
         {
             dhp::GarbageCollector::instance().retirePtr( p, pFunc );
         }

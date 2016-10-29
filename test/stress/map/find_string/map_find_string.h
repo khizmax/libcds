@@ -121,7 +121,7 @@ namespace map {
                     if ( id() & 1 ) {
                         auto itEnd = s_Data.cend();
                         for ( auto it = s_Data.cbegin(); it != itEnd; ++it ) {
-                            auto bFound = rMap.contains( *(it->pKey) );
+                            auto bFound = rMap.contains( *(it->pKey));
                             if ( it->bExists ) {
                                 if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;
@@ -139,7 +139,7 @@ namespace map {
                     else {
                         auto itEnd = s_Data.crend();
                         for ( auto it = s_Data.crbegin(); it != itEnd; ++it ) {
-                            auto bFound = rMap.contains( *(it->pKey) );
+                            auto bFound = rMap.contains( *(it->pKey));
                             if ( it->bExists ) {
                                 if ( check_result(bFound, rMap))
                                     ++m_KeyExists.nSuccess;

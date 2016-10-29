@@ -42,7 +42,7 @@ namespace {
             atomics::memory_order mo_clear = convert_to_store_order(order);
             for ( int i = 0; i < 5; ++i ) {
                 EXPECT_TRUE( !f.test_and_set( order ));
-                EXPECT_TRUE( f.test_and_set( order ) );
+                EXPECT_TRUE( f.test_and_set( order ));
                 f.clear( mo_clear );
             }
         }
@@ -54,7 +54,7 @@ namespace {
 
             for ( int i = 0; i < 5; ++i ) {
                 EXPECT_TRUE( !f.test_and_set());
-                EXPECT_TRUE( f.test_and_set() );
+                EXPECT_TRUE( f.test_and_set());
                 f.clear();
             }
 
@@ -71,7 +71,7 @@ namespace {
         {
             typedef Integral    integral_type;
 
-            EXPECT_TRUE( a.is_lock_free() );
+            EXPECT_TRUE( a.is_lock_free());
             a.store( (integral_type) 0 );
             EXPECT_EQ( a, static_cast<integral_type>( 0 ));
             EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
@@ -218,7 +218,7 @@ namespace {
             const atomics::memory_order oLoad = convert_to_load_order( order );
             const atomics::memory_order oStore = convert_to_store_order( order );
 
-            EXPECT_TRUE( a.is_lock_free() );
+            EXPECT_TRUE( a.is_lock_free());
             a.store((integral_type) 0, oStore );
             EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
@@ -355,7 +355,7 @@ namespace {
         template <class AtomicBool>
         void do_test_atomic_bool( AtomicBool& a )
         {
-            EXPECT_TRUE( a.is_lock_free() );
+            EXPECT_TRUE( a.is_lock_free());
             a.store( false );
             EXPECT_FALSE( a );
             EXPECT_FALSE( a.load());
@@ -370,7 +370,7 @@ namespace {
             EXPECT_FALSE( expected );
             EXPECT_FALSE( a.compare_exchange_weak( expected, false));
             EXPECT_TRUE( expected );
-            EXPECT_TRUE( a.load() );
+            EXPECT_TRUE( a.load());
 
             a.store( false );
 
@@ -392,7 +392,7 @@ namespace {
             const atomics::memory_order oStore = convert_to_store_order( order );
             const atomics::memory_order oExchange = convert_to_exchange_order( order );
 
-            EXPECT_TRUE( a.is_lock_free() );
+            EXPECT_TRUE( a.is_lock_free());
             a.store( false, oStore );
             EXPECT_FALSE( a );
             EXPECT_FALSE( a.load( oLoad ));
@@ -484,14 +484,14 @@ namespace {
             EXPECT_EQ( *reinterpret_cast<char *>(a.load()), 1 );
 
             p = arr;
-            EXPECT_TRUE( a.compare_exchange_weak( p, (void *)(arr + 5) ));
+            EXPECT_TRUE( a.compare_exchange_weak( p, (void *)(arr + 5)));
             EXPECT_EQ( p, arr + 0 );
-            EXPECT_FALSE( a.compare_exchange_weak( p, (void *)(arr + 3) ));
+            EXPECT_FALSE( a.compare_exchange_weak( p, (void *)(arr + 3)));
             EXPECT_EQ( p, arr + 5 );
 
-            EXPECT_TRUE( a.compare_exchange_strong( p, (void *)(arr + 3) ));
+            EXPECT_TRUE( a.compare_exchange_strong( p, (void *)(arr + 3)));
             EXPECT_EQ( p, arr + 5 );
-            EXPECT_FALSE( a.compare_exchange_strong( p, (void *)(arr + 5) ));
+            EXPECT_FALSE( a.compare_exchange_strong( p, (void *)(arr + 5)));
             EXPECT_EQ( p, arr + 3 );
 
             EXPECT_EQ( reinterpret_cast<char *>( a.exchange( (void *) arr )), arr + 3 );

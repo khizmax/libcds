@@ -61,7 +61,7 @@ namespace {
                 }
             }
 
-            if ( args.empty() ) {
+            if ( args.empty()) {
                 if ( nFCCompactFactor && nFCCombinePassCount )
                     args.push_back( { nFCCompactFactor, nFCCombinePassCount } );
                 else

@@ -183,7 +183,7 @@ namespace cds { namespace container {
 
             m_FlatCombining.combine( op_push, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPush();
             return true;
@@ -202,7 +202,7 @@ namespace cds { namespace container {
 
             m_FlatCombining.combine( op_push_move, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPushMove();
             return true;
@@ -222,7 +222,7 @@ namespace cds { namespace container {
 
             m_FlatCombining.combine( op_pop, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
             m_FlatCombining.internal_statistics().onPop( pRec->bEmpty );
             return !pRec->bEmpty;
@@ -235,7 +235,7 @@ namespace cds { namespace container {
 
            m_FlatCombining.combine( op_clear, pRec, *this );
 
-            assert( pRec->is_done() );
+            assert( pRec->is_done());
             m_FlatCombining.release_record( pRec );
         }
 
@@ -282,14 +282,14 @@ namespace cds { namespace container {
             // this function is called under FC mutex, so switch TSan off
             CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
 
-            switch ( pRec->op() ) {
+            switch ( pRec->op()) {
             case op_push:
                 assert( pRec->pValPush );
-                m_PQueue.push( *(pRec->pValPush) );
+                m_PQueue.push( *(pRec->pValPush));
                 break;
             case op_push_move:
                 assert( pRec->pValPush );
-                m_PQueue.push( std::move( *(pRec->pValPush )) );
+                m_PQueue.push( std::move( *(pRec->pValPush )));
                 break;
             case op_pop:
                 assert( pRec->pValPop );
@@ -300,7 +300,7 @@ namespace cds { namespace container {
                 }
                 break;
             case op_clear:
-                while ( !m_PQueue.empty() )
+                while ( !m_PQueue.empty())
                     m_PQueue.pop();
                 break;
             default:

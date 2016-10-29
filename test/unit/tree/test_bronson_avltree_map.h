@@ -269,19 +269,19 @@ namespace {
                     EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
                 } ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             ASSERT_TRUE( m.check_consistency());
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 ASSERT_TRUE( m.contains( i.nKey ));
-                ASSERT_TRUE( m.contains( val.strVal ) );
+                ASSERT_TRUE( m.contains( val.strVal ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE( m.contains( other_item( i.nKey ), other_less()));
                 ASSERT_TRUE( m.find( i, []( key_type const& key, value_type& val ) {
@@ -367,37 +367,37 @@ namespace {
                     EXPECT_TRUE( false );
                 } ));
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // clear
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i ));
 
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
 
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i, arrVals[ i.nKey ] ));
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             typedef typename Map::exempt_ptr exempt_ptr;
 
             // extract
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             exempt_ptr xp;
             for ( auto const& i : arrKeys ) {
                 value_type const& val = arrVals.at( i.nKey );
 
-                ASSERT_TRUE( m.contains( i.nKey ) );
+                ASSERT_TRUE( m.contains( i.nKey ));
 
                 switch ( i.nKey % 4 ) {
                 case 0:
@@ -410,13 +410,13 @@ namespace {
                     xp = m.extract( val.strVal );
                     break;
                 case 3:
-                    xp = m.extract_with( other_item( i.nKey ), other_less() );
+                    xp = m.extract_with( other_item( i.nKey ), other_less());
                     break;
                 }
                 ASSERT_FALSE( !xp );
                 EXPECT_EQ( xp->nVal, i.nKey );
 
-                ASSERT_FALSE( m.contains( i.nKey ) );
+                ASSERT_FALSE( m.contains( i.nKey ));
 
                 switch ( i.nKey % 4 ) {
                 case 0:
@@ -429,23 +429,23 @@ namespace {
                     xp = m.extract( val.strVal );
                     break;
                 case 3:
-                    xp = m.extract_with( other_item( i.nKey ), other_less() );
+                    xp = m.extract_with( other_item( i.nKey ), other_less());
                     break;
                 }
                 EXPECT_TRUE( !xp );
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
 
             // extract_min
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i, arrVals[ i.nKey ] ));
 
             size_t nCount = 0;
             int nKey = -1;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 switch ( nCount % 3 ) {
                 case 0:
                     xp = m.extract_min();
@@ -471,17 +471,17 @@ namespace {
             xp = m.extract_min();
             ASSERT_TRUE( !xp );
             EXPECT_EQ( kkSize, nCount );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // extract_max
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i, arrVals[ i.nKey ] ));
 
             nKey = kkSize;
             nCount = 0;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 switch ( nCount % 3 ) {
                 case 0:
                     xp = m.extract_max();
@@ -508,7 +508,7 @@ namespace {
             xp = m.extract_max();
             ASSERT_TRUE( !xp );
             EXPECT_EQ( kkSize, nCount );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
         }

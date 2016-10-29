@@ -100,7 +100,7 @@ namespace map {
         s_arrKeys.reserve( s_nMapSize );
         std::vector<std::string> dict = load_dictionary();
         for ( size_t i = 0; i < s_nMapSize; ++i )
-            s_arrKeys.push_back( std::move( dict.at(i) ));
+            s_arrKeys.push_back( std::move( dict.at(i)));
     }
 
     void Map_InsDel_string::TearDownTestCase()
@@ -141,11 +141,11 @@ namespace map {
         size_t nDiffHash = 0;
         hasher h;
         for ( size_t i = 0; i < dict.size(); ++i ) {
-            hash_type hash = h( dict.at( i ) );
-            if ( mapHash.insert( std::make_pair( hash, i ) ).second ) {
+            hash_type hash = h( dict.at( i ));
+            if ( mapHash.insert( std::make_pair( hash, i )).second ) {
                 if ( ++nDiffHash >= nSize )
                     break;
-                s_arrKeys.push_back( std::move( dict.at( i ) ));
+                s_arrKeys.push_back( std::move( dict.at( i )));
             }
         }
         s_nMapSize = dict.size();

@@ -56,7 +56,7 @@ namespace cds { namespace memory { namespace michael {
                 assert( reinterpret_cast<char *>(pEndBlock) - (pArea + nAllocSize) >= trailer_size );
 
                 trailer_type trailer = s_BoundCheckerTrailer;
-                memcpy( pArea + nAllocSize, &trailer, sizeof(trailer) );
+                memcpy( pArea + nAllocSize, &trailer, sizeof(trailer));
 
                 // the next assignment is correct because pBlock is at least sizeof(size_t)-byte aligned
                 assert( (reinterpret_cast<uintptr_t>(pEndBlock) & (sizeof(size_t) - 1)) == 0 );
@@ -70,7 +70,7 @@ namespace cds { namespace memory { namespace michael {
 
                 assert( nAllocSize < nBlockSize );
                 return nAllocSize < nBlockSize
-                    && memcmp( reinterpret_cast<char *>(pStartArea) + nAllocSize, &trailer, sizeof(trailer) ) == 0;
+                    && memcmp( reinterpret_cast<char *>(pStartArea) + nAllocSize, &trailer, sizeof(trailer)) == 0;
             }
         };
     }
@@ -91,7 +91,7 @@ namespace cds { namespace memory { namespace michael {
         void check_bounds( void * pStartArea, void * pEndBlock, size_t nBlockSize )
         {
             // Bound checking assertion
-            assert( base_class::check_bounds( pStartArea, pEndBlock, nBlockSize ) );
+            assert( base_class::check_bounds( pStartArea, pEndBlock, nBlockSize ));
         }
 
     //@endcond
@@ -126,7 +126,7 @@ namespace cds { namespace memory { namespace michael {
     public:
         void check_bounds( void * pStartArea, void * pEndBlock, size_t nBlockSize )
         {
-            if ( !base_class::check_bounds( pStartArea, pEndBlock, nBlockSize ) ) {
+            if ( !base_class::check_bounds( pStartArea, pEndBlock, nBlockSize )) {
                 throw bound_checker_exception();
             }
         }

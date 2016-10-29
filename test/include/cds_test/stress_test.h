@@ -45,7 +45,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             auto it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return std::string( pszDefVal ); // param not found -> returns default value
             return it->second;
         }
@@ -54,7 +54,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return atoi( it->second.c_str());
         }
@@ -63,7 +63,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return static_cast<unsigned int>( strtoul( it->second.c_str(), NULL, 10 ));
         }
@@ -72,7 +72,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return strtol( it->second.c_str(), NULL, 10 );
         }
@@ -81,7 +81,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return strtoul( it->second.c_str(), NULL, 10 );
         }
@@ -90,7 +90,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return static_cast<size_t>( strtoul( it->second.c_str(), NULL, 10 ));
         }
@@ -99,7 +99,7 @@ namespace cds_test {
         {
             std::string strParamName( pszParamName );
             cfg_map::const_iterator it = m_Cfg.find( strParamName );
-            if ( it == m_Cfg.end() )
+            if ( it == m_Cfg.end())
                 return defVal; // param not found -> returns default value
             return !( it->second.empty()
                    || it->second == "0"
@@ -131,7 +131,7 @@ namespace cds_test {
     {
         std::stringstream ss;
         ss << prop.second;
-        ::testing::Test::RecordProperty( prop.first.c_str(), ss.str().c_str() );
+        ::testing::Test::RecordProperty( prop.first.c_str(), ss.str().c_str());
         return s;
     }
 
@@ -139,7 +139,7 @@ namespace cds_test {
     {
         std::stringstream ss;
         ss << prop.second.count();
-        ::testing::Test::RecordProperty( prop.first, ss.str().c_str() );
+        ::testing::Test::RecordProperty( prop.first, ss.str().c_str());
         return s;
     }
 

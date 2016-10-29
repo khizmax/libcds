@@ -137,7 +137,7 @@ namespace cds { namespace container {
             void wait_until_shrink_completed( atomics::memory_order order ) const
             {
                 BackOff bkoff;
-                while ( is_shrinking( order ) )
+                while ( is_shrinking( order ))
                     bkoff();
             }
 
@@ -185,14 +185,14 @@ namespace cds { namespace container {
             template <typename Q>
             node( Q&& key )
                 : base_class()
-                , m_key( std::forward<Q>( key ) )
+                , m_key( std::forward<Q>( key ))
                 , m_pNextRemoved( nullptr )
             {}
 
             template <typename Q>
             node( Q&& key, int nHeight, version_type version, node * pParent, node * pLeft, node * pRight )
                 : base_class( nHeight, version, pParent, pLeft, pRight )
-                , m_key( std::forward<Q>( key ) )
+                , m_key( std::forward<Q>( key ))
                 , m_pNextRemoved( nullptr )
             {}
             //@endcond

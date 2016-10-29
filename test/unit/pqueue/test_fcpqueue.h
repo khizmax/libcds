@@ -45,15 +45,15 @@ namespace cds_test {
             value_type * pFirst = arr.begin();
             value_type * pLast = arr.end();
 
-            ASSERT_TRUE( pq.empty() );
+            ASSERT_TRUE( pq.empty());
             ASSERT_TRUE( pq.size() == 0 );
 
             size_t nSize = 0;
 
             // Push test
             for ( value_type * p = pFirst; p < pLast; ++p ) {
-                ASSERT_TRUE( pq.push( *p ) );
-                ASSERT_TRUE( !pq.empty() );
+                ASSERT_TRUE( pq.push( *p ));
+                ASSERT_TRUE( !pq.empty());
                 ASSERT_EQ( pq.size(), ++nSize );
             }
 
@@ -63,15 +63,15 @@ namespace cds_test {
             key_type nPrev = PQueueTest::c_nMinValue + key_type( PQueueTest::c_nCapacity ) - 1;
             value_type kv( 0 );
 
-            ASSERT_TRUE( pq.pop( kv ) );
+            ASSERT_TRUE( pq.pop( kv ));
             EXPECT_EQ( kv.k, nPrev );
 
             ASSERT_EQ( pq.size(), static_cast<size_t>( PQueueTest::c_nCapacity - 1 ));
-            ASSERT_TRUE( !pq.empty() );
+            ASSERT_TRUE( !pq.empty());
 
             nSize = pq.size();
             while ( pq.size() > 1 ) {
-                ASSERT_TRUE( pq.pop( kv ) );
+                ASSERT_TRUE( pq.pop( kv ));
                 EXPECT_EQ( kv.k, nPrev - 1 );
                 nPrev = kv.k;
 
@@ -79,13 +79,13 @@ namespace cds_test {
                 ASSERT_EQ( pq.size(), nSize );
             }
 
-            ASSERT_TRUE( !pq.empty() );
+            ASSERT_TRUE( !pq.empty());
             ASSERT_EQ( pq.size(), 1u );
 
-            ASSERT_TRUE( pq.pop( kv ) );
+            ASSERT_TRUE( pq.pop( kv ));
             EXPECT_EQ( kv.k, PQueueTest::c_nMinValue );
 
-            ASSERT_TRUE( pq.empty() );
+            ASSERT_TRUE( pq.empty());
             ASSERT_EQ( pq.size(), 0u );
 
             // pop from empty pqueue
@@ -95,13 +95,13 @@ namespace cds_test {
 
             // Clear test
             for ( value_type * p = pFirst; p < pLast; ++p )
-                ASSERT_TRUE( pq.push( *p ) );
+                ASSERT_TRUE( pq.push( *p ));
 
-            ASSERT_TRUE( !pq.empty() );
+            ASSERT_TRUE( !pq.empty());
             ASSERT_EQ( pq.size(), static_cast<size_t>( PQueueTest::c_nCapacity ));
 
             pq.clear();
-            ASSERT_TRUE( pq.empty() );
+            ASSERT_TRUE( pq.empty());
             ASSERT_EQ( pq.size(), 0u );
         }
     };

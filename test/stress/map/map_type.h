@@ -64,7 +64,7 @@ namespace map {
     struct cmp {
         int operator ()(Key const& k1, Key const& k2) const
         {
-            if ( less<Key>( k1, k2 ) )
+            if ( less<Key>( k1, k2 ))
                 return -1;
             return less<Key>( k2, k1 ) ? 1 : 0;
         }

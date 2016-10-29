@@ -64,7 +64,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -146,7 +146,7 @@ namespace cds_test {
             template <typename Item>
             size_t operator()( const Item& i ) const
             {
-                return (*this)( i.key() );
+                return (*this)( i.key());
             }
         };
 
@@ -205,7 +205,7 @@ namespace cds_test {
         struct cmp {
             int operator ()(const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -221,7 +221,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()(const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -264,7 +264,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -278,7 +278,7 @@ namespace cds_test {
                 data.push_back( value_type( static_cast<int>( key )));
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
@@ -330,14 +330,14 @@ namespace cds_test {
 
                 ASSERT_TRUE( s.contains( i.nKey ) == &i );
                 ASSERT_TRUE( s.contains( i ) == &i );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_less()) == &i );
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()) == &i );
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_less(), []( value_type& v, other_item const& ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 2u );
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
@@ -364,8 +364,8 @@ namespace cds_test {
 
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
-            ASSERT_TRUE( s.begin() == s.end() );
-            ASSERT_TRUE( s.cbegin() == s.cend() );
+            ASSERT_TRUE( s.begin() == s.end());
+            ASSERT_TRUE( s.cbegin() == s.cend());
         }
     };
 

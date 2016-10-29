@@ -274,7 +274,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator(m_pHead.load(memory_model::memory_order_relaxed) );
+            return iterator(m_pHead.load(memory_model::memory_order_relaxed));
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a list
@@ -293,12 +293,12 @@ namespace cds { namespace intrusive {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator(m_pHead.load(memory_model::memory_order_relaxed) );
+            return const_iterator(m_pHead.load(memory_model::memory_order_relaxed));
         }
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator(m_pHead.load(memory_model::memory_order_relaxed) );
+            return const_iterator(m_pHead.load(memory_model::memory_order_relaxed));
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
@@ -446,7 +446,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         value_type * contains( Q const& key )
         {
-            return find_at( m_pHead, key, key_comparator() );
+            return find_at( m_pHead, key, key_comparator());
         }
         //@cond
         template <typename Q>
@@ -504,7 +504,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear( disposer() );
+            clear( disposer());
         }
 
         /// Checks if the list is empty
@@ -548,7 +548,7 @@ namespace cds { namespace intrusive {
             // Hack: convert node_type to value_type.
             // In principle, auxiliary node can be non-reducible to value_type
             // We assume that comparator can correctly distinguish aux and regular node.
-            return insert_at( refHead, *node_traits::to_value_ptr( pNode ) );
+            return insert_at( refHead, *node_traits::to_value_ptr( pNode ));
         }
 
         bool insert_at( atomic_node_ptr& refHead, value_type& val )
@@ -561,7 +561,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
+                if ( link_node( node_traits::to_node_ptr( val ), pos )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -584,8 +584,8 @@ namespace cds { namespace intrusive {
             position pos;
 
             while ( true ) {
-                if ( search( refHead, val, key_comparator(), pos ) ) {
-                    assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur ) ) == 0 );
+                if ( search( refHead, val, key_comparator(), pos )) {
+                    assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur )) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ) , val );
                     m_Stat.onUpdateExisting();
@@ -597,7 +597,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( end(), false );
                     }
 
-                    if ( link_node( node_traits::to_node_ptr( val ), pos ) ) {
+                    if ( link_node( node_traits::to_node_ptr( val ), pos )) {
                         ++m_ItemCounter;
                         func( true, val , val );
                         m_Stat.onUpdateNew();
@@ -621,7 +621,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if ( search( refHead, val, cmp, pos ) ) {
+            if ( search( refHead, val, cmp, pos )) {
                 assert( pos.pCur != nullptr );
                 f( *node_traits::to_value_ptr( *pos.pCur ), val );
                 m_Stat.onFindSuccess();
@@ -636,7 +636,7 @@ namespace cds { namespace intrusive {
         value_type * find_at( atomic_node_ptr& refHead, Q const& val, Compare cmp )
         {
             iterator it = find_at_( refHead, val, cmp );
-            if ( it != end() ) {
+            if ( it != end()) {
                 m_Stat.onFindSuccess();
                 return &*it;
             }
@@ -650,7 +650,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if ( search( refHead, val, cmp, pos ) ) {
+            if ( search( refHead, val, cmp, pos )) {
                 assert( pos.pCur != nullptr );
                 m_Stat.onFindSuccess();
                 return iterator( pos.pCur );

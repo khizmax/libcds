@@ -362,7 +362,7 @@ namespace cds {
                     // First, try to reuse a retired (non-active) HP record
                     for ( pRec = m_pHead.load( atomics::memory_order_acquire ); pRec; pRec = pRec->m_list.m_pNext ) {
                         cds::OS::ThreadId thId = nullThreadId;
-                        if ( !pRec->m_list.m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ) )
+                        if ( !pRec->m_list.m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ))
                             continue;
                         return pRec;
                     }
@@ -417,7 +417,7 @@ namespace cds {
 
                         assert( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
                             || p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId
-                            || !cds::OS::is_thread_alive( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ) )
+                            || !cds::OS::is_thread_alive( p->m_list.m_idOwner.load( atomics::memory_order_relaxed ))
                             );
 
                         al.Delete( p );

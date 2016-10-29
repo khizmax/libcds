@@ -109,9 +109,9 @@ namespace cds { namespace threading {
             /// This method must be called in end of thread execution
             static void detachThread()
             {
-                assert( _threadData() );
+                assert( _threadData());
 
-                if ( _threadData()->fini() )
+                if ( _threadData()->fini())
                     destroy_thread_data();
             }
 

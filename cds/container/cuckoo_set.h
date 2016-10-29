@@ -474,7 +474,7 @@ namespace cds { namespace container {
         CuckooSet(
             hash_tuple_type&& h     ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-        : base_class( std::forward<hash_tuple_type>(h) )
+        : base_class( std::forward<hash_tuple_type>(h))
         {}
 
         /// Constructs the set object with given probe set properties and hash functor tuple (move semantics)
@@ -488,7 +488,7 @@ namespace cds { namespace container {
             , unsigned int nProbesetThreshold   ///< probe set threshold, <tt>nProbesetThreshold < nProbesetSize</tt>. If 0, nProbesetThreshold = nProbesetSize - 1
             , hash_tuple_type&& h    ///< hash functor tuple of type <tt>std::tuple<H1, H2, ... Hn></tt> where <tt> n == \ref c_nArity </tt>
         )
-        : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, std::forward<hash_tuple_type>(h) )
+        : base_class( nInitialSize, nProbesetSize, nProbesetThreshold, std::forward<hash_tuple_type>(h))
         {}
 
         /// Destructor clears the set
@@ -638,7 +638,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::erase_with( key, typename maker::template predicate_wrapper<Predicate, bool>() );
+            node_type * pNode = base_class::erase_with( key, typename maker::template predicate_wrapper<Predicate, bool>());
             if ( pNode ) {
                 free_node( pNode );
                 return true;
@@ -685,7 +685,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
-            node_type * pNode = base_class::erase_with( key, typename maker::template predicate_wrapper<Predicate, bool>() );
+            node_type * pNode = base_class::erase_with( key, typename maker::template predicate_wrapper<Predicate, bool>());
             if ( pNode ) {
                 f( pNode->m_val );
                 free_node( pNode );
@@ -799,7 +799,7 @@ namespace cds { namespace container {
         */
         void clear()
         {
-            return base_class::clear_and_dispose( node_disposer() );
+            return base_class::clear_and_dispose( node_disposer());
         }
 
         /// Checks if the set is empty

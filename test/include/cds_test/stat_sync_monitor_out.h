@@ -52,7 +52,7 @@ namespace cds_test {
         return o;
     }
 
-#   define CDSSTRESS_POOLMONITOR_STAT_OUT( s, field ) CDSSTRESS_STAT_OUT_( "pool_monitor." #field, s.field.get() )
+#   define CDSSTRESS_POOLMONITOR_STAT_OUT( s, field ) CDSSTRESS_STAT_OUT_( "pool_monitor." #field, s.field.get())
 
     static inline property_stream& operator <<( property_stream& o, cds::sync::pool_monitor_traits::stat<> const& s )
     {

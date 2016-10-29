@@ -89,7 +89,7 @@ namespace set {
         public:
             template <class Config>
             StripedHashSet_seq( Config const& cfg )
-                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )))
             {}
 
             empty_stat statistics() const
@@ -130,7 +130,7 @@ namespace set {
         public:
             template <class Config>
             StripedHashSet_seq_rational( Config const& cfg ) // LoadFactor = 1 / nDenominator
-                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( 1, cfg.s_nLoadFactor )))
             {}
 
             empty_stat statistics() const
@@ -172,7 +172,7 @@ namespace set {
         public:
             template <class Config>
             StripedHashSet_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )))
             {}
 
             empty_stat statistics() const
@@ -369,7 +369,7 @@ namespace set {
         public:
             template <class Config>
             RefinableHashSet_seq( Config const& cfg )
-                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )) )
+                : base_class( cfg.s_nSetSize / cfg.s_nLoadFactor / 16, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nLoadFactor )))
             {}
 
             empty_stat statistics() const
@@ -442,7 +442,7 @@ namespace set {
         public:
             template <class Config>
             RefinableHashSet_ord( Config const& cfg )
-                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )) )
+                : base_class( 0, *(new(&m_placeHolder) resizing_policy_t( cfg.s_nMaxLoadFactor * 1024 )))
             {}
 
             empty_stat statistics() const

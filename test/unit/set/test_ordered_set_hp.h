@@ -48,7 +48,7 @@ namespace cds_test {
 
             base_class::test( s );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             typedef typename Set::value_type value_type;
@@ -59,15 +59,15 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             for ( auto i : indices ) {
                 ASSERT_TRUE( s.insert( data[i] ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             typedef typename Set::guarded_ptr guarded_ptr;
@@ -76,7 +76,7 @@ namespace cds_test {
             // extract_min
             size_t nCount = 0;
             int nKey = -1;
-            while ( !s.empty() ) {
+            while ( !s.empty()) {
                 gp = s.extract_min();
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( nKey + 1, gp->key());
@@ -86,19 +86,19 @@ namespace cds_test {
             gp.release();
             EXPECT_EQ( nCount, nSetSize );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // extract_max
             for ( auto i : indices ) {
-                ASSERT_TRUE( s.insert( data[i] ) );
+                ASSERT_TRUE( s.insert( data[i] ));
             }
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             nCount = 0;
             nKey = nSetSize;
-            while ( !s.empty() ) {
+            while ( !s.empty()) {
                 gp = s.extract_max();
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( nKey - 1, gp->key());
@@ -108,7 +108,7 @@ namespace cds_test {
             gp.release();
             EXPECT_EQ( nCount, nSetSize );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
         }
     };

@@ -53,12 +53,12 @@ namespace cds { namespace container {
                 value_type   m_Data;
 
                 node_type( key_type const& key )
-                    : m_Data( key, mapped_type() )
+                    : m_Data( key, mapped_type())
                 {}
 
                 template <typename Q>
                 node_type( Q const& key )
-                    : m_Data( key_type( key ), mapped_type() )
+                    : m_Data( key_type( key ), mapped_type())
                 {}
 
                 template <typename Q, typename R>
@@ -72,7 +72,7 @@ namespace cds { namespace container {
 
                 template <typename R>
                 node_type( key_type const& key, R const& value )
-                    : m_Data( key, mapped_type( value ) )
+                    : m_Data( key, mapped_type( value ))
                 {}
 
                 template <typename Q>
@@ -87,7 +87,7 @@ namespace cds { namespace container {
 
                 template <typename Ky, typename... Args>
                 node_type( Ky&& key, Args&&... args )
-                    : m_Data( key_type( std::forward<Ky>( key )), std::move( mapped_type( std::forward<Args>( args )... ) ) )
+                    : m_Data( key_type( std::forward<Ky>( key )), std::move( mapped_type( std::forward<Args>( args )... )) )
                 {}
             };
 

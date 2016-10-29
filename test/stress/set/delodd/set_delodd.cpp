@@ -89,7 +89,7 @@ namespace set {
         m_arrData.resize( s_nSetSize );
         for ( size_t i = 0; i < s_nSetSize; ++i )
             m_arrData[i] = i;
-        shuffle( m_arrData.begin(), m_arrData.end() );
+        shuffle( m_arrData.begin(), m_arrData.end());
     }
 
     void Set_DelOdd::TearDownTestCase()
@@ -112,5 +112,5 @@ namespace set {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors()) );
 } // namespace set

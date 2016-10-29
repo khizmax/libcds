@@ -107,8 +107,8 @@ namespace cds { namespace intrusive {
             /// Access to element of next pointer array
             atomic_marked_ptr& next( unsigned int nLevel )
             {
-                assert( nLevel < height() );
-                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
+                assert( nLevel < height());
+                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr));
 
 #           ifdef CDS_THREAD_SANITIZER_ENABLED
                 // TSan false positive: m_arrNext is read-only array
@@ -124,7 +124,7 @@ namespace cds { namespace intrusive {
             /// Access to element of next pointer array (const version)
             atomic_marked_ptr const& next( unsigned int nLevel ) const
             {
-                assert( nLevel < height() );
+                assert( nLevel < height());
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
 #           ifdef CDS_THREAD_SANITIZER_ENABLED
@@ -686,7 +686,7 @@ namespace cds { namespace intrusive {
                 static node_type * make_tower( node_type * pNode, unsigned int nHeight )
                 {
                     if ( nHeight > 1 )
-                        pNode->make_tower( nHeight, tower_allocator().NewArray( nHeight - 1, nullptr ) );
+                        pNode->make_tower( nHeight, tower_allocator().NewArray( nHeight - 1, nullptr ));
                     return pNode;
                 }
 

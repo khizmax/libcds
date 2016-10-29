@@ -282,7 +282,7 @@ namespace cds { namespace container {
                 }
                 else if (dif < 0) {
                     // Queue full?
-                    if ( pos - m_posDequeue.load( memory_model::memory_order_relaxed ) == capacity() )
+                    if ( pos - m_posDequeue.load( memory_model::memory_order_relaxed ) == capacity())
                         return false;   // queue full
                     bkoff();
                     pos = m_posEnqueue.load( memory_model::memory_order_relaxed );
@@ -483,7 +483,7 @@ namespace cds { namespace container {
         void clear()
         {
             value_type v;
-            while ( pop(v) );
+            while ( pop(v));
         }
 
         /// Returns queue's item count

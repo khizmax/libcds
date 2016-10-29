@@ -67,7 +67,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
 
             void copy_stat( stat const& s )
@@ -107,7 +107,7 @@ namespace cds_test {
 
             template <typename Q>
             explicit int_item( Q const& src )
-                : nKey( src.key() )
+                : nKey( src.key())
                 , nVal( 0 )
             {}
 
@@ -122,17 +122,17 @@ namespace cds_test {
                 : stat( src )
                 , nKey( src.nKey )
                 , nVal( src.nVal )
-                , strVal( std::move( src.strVal ) )
+                , strVal( std::move( src.strVal ))
             {}
 
             int_item( int k, std::string&& s )
                 : nKey( k )
                 , nVal( k * 2 )
-                , strVal( std::move( s ) )
+                , strVal( std::move( s ))
             {}
 
             explicit int_item( other_item const& s )
-                : nKey( s.key() )
+                : nKey( s.key())
                 , nVal( s.key() * 2 )
             {}
 
@@ -236,7 +236,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( int_item const& v1, int_item const& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -252,7 +252,7 @@ namespace cds_test {
             template <typename T>
             int operator ()( int v1, T const& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -287,7 +287,7 @@ namespace cds_test {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
             size_t const nSetSize = kSize;
 
@@ -299,18 +299,18 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             // insert/find
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
-                ASSERT_FALSE( s.contains( i ) );
-                ASSERT_FALSE( s.contains( other_item( i.key() ), other_predicate()));
+                ASSERT_FALSE( s.contains( i.nKey ));
+                ASSERT_FALSE( s.contains( i ));
+                ASSERT_FALSE( s.contains( other_item( i.key()), other_predicate()));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
@@ -332,14 +332,14 @@ namespace cds_test {
                     updResult = s.update( i, []( bool bNew, value_type& val, value_type const& arg)
                         {
                             EXPECT_FALSE( bNew );
-                            EXPECT_EQ( val.key(), arg.key() );
+                            EXPECT_EQ( val.key(), arg.key());
                         }, false );
                     EXPECT_TRUE( updResult.first );
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    ASSERT_TRUE( s.insert( i.key() ));
-                    ASSERT_FALSE( s.insert( i.key() ));
+                    ASSERT_TRUE( s.insert( i.key()));
+                    ASSERT_FALSE( s.insert( i.key()));
                     updResult = s.update( i.key(), []( bool bNew, value_type& val, int arg)
                         {
                             EXPECT_FALSE( bNew );
@@ -370,7 +370,7 @@ namespace cds_test {
                     updResult = s.update( i, []( bool bNew, value_type& v, value_type const& arg )
                         {
                             EXPECT_TRUE( bNew );
-                            EXPECT_EQ( v.key(), arg.key() );
+                            EXPECT_EQ( v.key(), arg.key());
                             ++v.nUpdateNewCount;
                         });
                     EXPECT_TRUE( updResult.first );
@@ -379,7 +379,7 @@ namespace cds_test {
                     updResult = s.update( i, []( bool bNew, value_type& v, value_type const& arg )
                         {
                             EXPECT_FALSE( bNew );
-                            EXPECT_EQ( v.key(), arg.key() );
+                            EXPECT_EQ( v.key(), arg.key());
                             ++v.nUpdateNewCount;
                         }, false );
                     EXPECT_TRUE( updResult.first );
@@ -412,7 +412,7 @@ namespace cds_test {
 
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
-                            EXPECT_EQ( v.key(), arg.key() );
+                            EXPECT_EQ( v.key(), arg.key());
                             EXPECT_EQ( v.nUpdateNewCount, 2u );
                         }));
                     break;
@@ -420,7 +420,7 @@ namespace cds_test {
                     ASSERT_TRUE( s.emplace( i.key()));
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
-                            EXPECT_EQ( v.key(), arg.key() );
+                            EXPECT_EQ( v.key(), arg.key());
                             EXPECT_EQ( v.nVal, arg.nVal );
                         }));
                     break;
@@ -430,35 +430,35 @@ namespace cds_test {
                     EXPECT_TRUE( str.empty());
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                         {
-                            EXPECT_EQ( v.key(), arg.key() );
+                            EXPECT_EQ( v.key(), arg.key());
                             EXPECT_EQ( v.nVal, arg.nVal );
                             EXPECT_EQ( v.strVal, std::string( "Hello!" ));
-                        } ) );
+                        } ));
                     break;
                 default:
                     // forgot anything?..
                     ASSERT_TRUE( false );
                 }
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate() ) );
-                ASSERT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ) );
-                ASSERT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ) );
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type&, other_item const& ) {} ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()) );
+                ASSERT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ));
+                ASSERT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ));
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             // erase
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
             for ( auto idx : indices ) {
                 auto& i = data[idx];
 
-                ASSERT_TRUE( s.contains( i.nKey ) );
-                ASSERT_TRUE( s.contains( i ) );
-                ASSERT_TRUE( s.contains( other_item( i.key() ), other_predicate() ) );
+                ASSERT_TRUE( s.contains( i.nKey ));
+                ASSERT_TRUE( s.contains( i ));
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()) );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int )
                     {
                         v.nFindCount = 1;
@@ -467,7 +467,7 @@ namespace cds_test {
                     {
                         EXPECT_EQ( ++v.nFindCount, 2u );
                     }));
-                ASSERT_TRUE( s.find_with( other_item( i.key() ), other_predicate(), []( value_type& v, other_item const& )
+                ASSERT_TRUE( s.find_with( other_item( i.key()), other_predicate(), []( value_type& v, other_item const& )
                     {
                         EXPECT_EQ( ++v.nFindCount, 3u );
                     }));
@@ -484,7 +484,7 @@ namespace cds_test {
                     break;
                 case 2:
                     ASSERT_TRUE( s.erase_with( other_item( i.key()), other_predicate()));
-                    ASSERT_FALSE( s.erase_with( other_item( i.key() ), other_predicate() ) );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_predicate()) );
                     break;
                 case 3:
                     ASSERT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )
@@ -530,28 +530,28 @@ namespace cds_test {
                     break;
                 }
 
-                ASSERT_FALSE( s.contains( i.nKey ) );
-                ASSERT_FALSE( s.contains( i ) );
-                ASSERT_FALSE( s.contains( other_item( i.key() ), other_predicate()));
+                ASSERT_FALSE( s.contains( i.nKey ));
+                ASSERT_FALSE( s.contains( i ));
+                ASSERT_FALSE( s.contains( other_item( i.key()), other_predicate()));
                 ASSERT_FALSE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_FALSE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_FALSE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
 
 
             // clear
             for ( auto& i : data ) {
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
-            ASSERT_FALSE( s.empty() );
+            ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSetSize );
 
             s.clear();
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );
         }
     };

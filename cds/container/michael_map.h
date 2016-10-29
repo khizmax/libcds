@@ -64,7 +64,7 @@ namespace cds { namespace container {
         \p key_type and an argument of template type \p K must meet the following requirements:
         - \p key_type should be constructible from value of type \p K;
         - the hash functor should be able to calculate correct hash value from argument \p key of type \p K:
-            <tt> hash( key_type(key) ) == hash( key ) </tt>
+            <tt> hash( key_type(key)) == hash( key ) </tt>
         - values of type \p key_type and \p K should be comparable
 
         There are the specializations:
@@ -349,7 +349,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( bucket_begin()->begin(), bucket_begin(), bucket_end() );
+            return iterator( bucket_begin()->begin(), bucket_begin(), bucket_end());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a map
@@ -360,7 +360,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end() );
+            return iterator( bucket_end()[-1].end(), bucket_end() - 1, bucket_end());
         }
 
         /// Returns a forward const iterator addressing the first element in a map
@@ -402,7 +402,7 @@ namespace cds { namespace container {
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
             )
             : m_nHashBitmask( michael_map::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
-            , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
+            , m_Buckets( bucket_table_allocator().allocate( bucket_count()) )
         {
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 construct_bucket<bucket_stat>( it );
@@ -415,7 +415,7 @@ namespace cds { namespace container {
 
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node with key and default value
@@ -768,7 +768,7 @@ namespace cds { namespace container {
         {
             auto& b = bucket( key );
             auto it = b.find( key );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
             return iterator( it, &b, bucket_end());
         }
@@ -807,9 +807,9 @@ namespace cds { namespace container {
         {
             auto& b = bucket( key );
             auto it = b.find_with( key, pred );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
 
         /// Checks whether the map contains \p key
@@ -954,11 +954,11 @@ namespace cds { namespace container {
 
         const_iterator get_const_begin() const
         {
-            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end() );
+            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end());
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( (bucket_end() - 1)->cend(), bucket_end() - 1, bucket_end() );
+            return const_iterator( (bucket_end() - 1)->cend(), bucket_end() - 1, bucket_end());
         }
 
         template <typename Stat>

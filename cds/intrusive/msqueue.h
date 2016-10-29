@@ -456,13 +456,13 @@ namespace cds { namespace intrusive {
                 void operator()( value_type * p ) const
                 {
                     assert( p != nullptr );
-                    MSQueue::clear_links( node_traits::to_node_ptr( p ) );
+                    MSQueue::clear_links( node_traits::to_node_ptr( p ));
                     disposer()(p);
                 }
             };
 
             if ( p != &m_Dummy )
-                gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ) );
+                gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ));
         }
         //@endcond
 
@@ -485,7 +485,7 @@ namespace cds { namespace intrusive {
             node_type * pHead = m_pHead.load(memory_model::memory_order_relaxed);
 
             assert( pHead != nullptr );
-            assert( pHead == m_pTail.load(memory_model::memory_order_relaxed) );
+            assert( pHead == m_pTail.load(memory_model::memory_order_relaxed));
 
             m_pHead.store( nullptr, memory_model::memory_order_relaxed );
             m_pTail.store( nullptr, memory_model::memory_order_relaxed );
@@ -596,7 +596,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            while ( dequeue() );
+            while ( dequeue());
         }
 
         /// Returns queue's item count

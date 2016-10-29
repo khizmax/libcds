@@ -268,19 +268,19 @@ namespace cds_test {
                     EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                 } ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             ASSERT_TRUE( m.check_consistency());
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 ASSERT_TRUE( m.contains( i.nKey ));
-                ASSERT_TRUE( m.contains( val.strVal ) );
+                ASSERT_TRUE( m.contains( val.strVal ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE( m.contains( other_item( i.nKey ), other_less()));
                 ASSERT_TRUE( m.find( i, []( map_pair const& v ) {
@@ -366,19 +366,19 @@ namespace cds_test {
                     EXPECT_TRUE( false );
                 } ));
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // clear
             for ( auto const& i : arrKeys )
                 ASSERT_TRUE( m.insert( i ));
 
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
         }
     };

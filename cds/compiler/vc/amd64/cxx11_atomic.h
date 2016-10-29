@@ -206,7 +206,7 @@ namespace cds { namespace cxx11_atomic {
             return expected == prev;
 #       else
             // VC 2008
-            unsigned int *  pnDest = (unsigned int *)( ((unsigned __int64) pDest) & ~(unsigned __int64(3)) );
+            unsigned int *  pnDest = (unsigned int *)( ((unsigned __int64) pDest) & ~(unsigned __int64(3)));
             unsigned int    nOffset = ((unsigned __int64) pDest) & 3;
             unsigned int    nExpected;
             unsigned int    nDesired;
@@ -545,7 +545,7 @@ namespace cds { namespace cxx11_atomic {
         static inline T * exchange_ptr( T * volatile * pDest, T * v, memory_order /*order*/ ) CDS_NOEXCEPT
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal size of operand" );
-            return (T *) _InterlockedExchangePointer( (void * volatile *) pDest, reinterpret_cast<void *>(v) );
+            return (T *) _InterlockedExchangePointer( (void * volatile *) pDest, reinterpret_cast<void *>(v));
         }
 
         template <typename T>

@@ -71,14 +71,14 @@ namespace cds { namespace opt {
         do {
             int i = gen;
             //...
-        } while ( gen.next() );
+        } while ( gen.next());
 
         // Get other permutation
         gen.reset();
         do {
             int i = gen;
             //...
-        } while ( gen.next() );
+        } while ( gen.next());
         \endcode
 
         The following \p Generator defined:
@@ -126,7 +126,7 @@ namespace cds { namespace opt {
             random_permutation( size_t nLength )
                 : m_nCur(0)
                 , m_nStart(0)
-                , m_nMod( integer_type(nLength) )
+                , m_nMod( integer_type(nLength))
             {
                 reset();
             }
@@ -146,7 +146,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                m_nCur = m_nStart = integer_type( std::rand() ) % m_nMod;
+                m_nCur = m_nStart = integer_type( std::rand()) % m_nMod;
             }
         };
 
@@ -204,7 +204,7 @@ namespace cds { namespace opt {
             /// Resets the generator to produce new sequence
             void reset()
             {
-                m_nCur = m_nStart = integer_type( std::rand() ) & m_nMask;
+                m_nCur = m_nStart = integer_type( std::rand()) & m_nMask;
             }
         };
 

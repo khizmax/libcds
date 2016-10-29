@@ -68,8 +68,8 @@ namespace cds_test {
             }
 
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             // iterators
@@ -139,13 +139,13 @@ namespace cds_test {
                 gp = m.get( i );
                 ASSERT_TRUE( !gp );
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // erase_at( iterator )
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             nCount = 0;
@@ -155,55 +155,55 @@ namespace cds_test {
                 ++nCount;
             }
             EXPECT_EQ( nCount, kkSize );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // erase_at( reverse_iterator )
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             nCount = 0;
             for ( auto it = m.rbegin(); it != m.rend(); ++it ) {
                 EXPECT_EQ( it->second.nVal, 0 );
-                ASSERT_TRUE( m.erase_at( it ) );
+                ASSERT_TRUE( m.erase_at( it ));
                 ++nCount;
             }
             EXPECT_EQ( nCount, kkSize );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // erase_at( const_reverse_iterator )
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             nCount = 0;
             for ( auto it = m.crbegin(); it != m.crend(); ++it ) {
                 EXPECT_EQ( it->second.nVal, 0 );
-                ASSERT_TRUE( m.erase_at( it ) );
+                ASSERT_TRUE( m.erase_at( it ));
                 ++nCount;
             }
             EXPECT_EQ( nCount, kkSize );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // erase_at( const_iterator )
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             nCount = 0;
             for ( auto it = m.cbegin(); it != m.cend(); ++it ) {
                 EXPECT_EQ( it->second.nVal, 0 );
-                ASSERT_TRUE( m.erase_at( it ) );
+                ASSERT_TRUE( m.erase_at( it ));
                 ++nCount;
             }
             EXPECT_EQ( nCount, kkSize );
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
         }
     };

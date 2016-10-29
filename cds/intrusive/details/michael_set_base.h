@@ -134,11 +134,11 @@ namespace cds { namespace intrusive {
                 void next()
                 {
                     if ( m_pCurBucket < m_pEndBucket ) {
-                        if ( ++m_itList != m_pCurBucket->end() )
+                        if ( ++m_itList != m_pCurBucket->end())
                             return;
                         while ( ++m_pCurBucket < m_pEndBucket ) {
                             m_itList = m_pCurBucket->begin();
-                            if ( m_itList != m_pCurBucket->end() )
+                            if ( m_itList != m_pCurBucket->end())
                                 return;
                         }
                     }
@@ -162,7 +162,7 @@ namespace cds { namespace intrusive {
                     , m_itList( it )
                     , m_pEndBucket( pLast )
                 {
-                    if ( it == pFirst->end() )
+                    if ( it == pFirst->end())
                         next();
                 }
 

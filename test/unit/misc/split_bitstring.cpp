@@ -55,34 +55,34 @@ namespace {
             size_t res;
 
             // Trivial case
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut(sizeof(src) * 8);
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ(splitter.safe_cut(sizeof(src) * 8), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             splitter.reset();
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut(sizeof(src) * 8);
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut(sizeof(src) * 8), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < sizeof(size_t) * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 ASSERT_EQ( splitter.cut( 4 ), i );
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_FALSE( splitter );
 
             // by one bit
@@ -90,11 +90,11 @@ namespace {
                 splitter.reset();
                 res = 0;
                 for ( size_t i = 0; i < sizeof(size_t) * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
                     res = res + (splitter.cut( 1 ) << i);
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( res, src );
             }
@@ -106,13 +106,13 @@ namespace {
                     res = 0;
                     size_t shift = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
                         res = res + ( splitter.safe_cut( bits ) << shift );
                         shift += bits;
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
                     EXPECT_EQ( res, src );
                 }
@@ -128,34 +128,34 @@ namespace {
             size_t res;
 
             // Trivial case
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut(sizeof(src) * 8);
             ASSERT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ(splitter.safe_cut(sizeof(src) * 8), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             splitter.reset();
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut(sizeof(src) * 8);
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ(splitter.safe_cut(sizeof(src) * 8), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < sizeof(size_t) * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 EXPECT_EQ( splitter.cut( 4 ), 0x0F - i );
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             // by one bit
@@ -163,11 +163,11 @@ namespace {
                 splitter.reset();
                 res = 0;
                 for ( size_t i = 0; i < sizeof(size_t) * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
                     res = (res << 1) + splitter.cut( 1 );
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( res, src );
             }
@@ -178,12 +178,12 @@ namespace {
                     splitter.reset();
                     res = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
                         res = (res << bits) + splitter.safe_cut( bits );
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
                     EXPECT_EQ( res, src );
                 }
@@ -204,11 +204,11 @@ namespace {
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < sizeof(size_t) * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 EXPECT_EQ( static_cast<size_t>(splitter.cut( 4 )), i );
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             // by one bit
@@ -216,11 +216,11 @@ namespace {
                 splitter.reset();
                 res = 0;
                 for ( size_t i = 0; i < sizeof(size_t) * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
                     res = res + ( static_cast<uint64_t>(splitter.cut( 1 )) << i);
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( res, src );
             }
@@ -232,13 +232,13 @@ namespace {
                     res = 0;
                     size_t shift = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
                         res = res + ( static_cast<uint64_t>(splitter.safe_cut( bits )) << shift );
                         shift += bits;
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
                     EXPECT_EQ( res, src );
                 }
@@ -259,11 +259,11 @@ namespace {
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < sizeof(size_t) * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 EXPECT_EQ( splitter.cut( 4 ), 0x0F - i );
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             // by one bit
@@ -271,11 +271,11 @@ namespace {
                 splitter.reset();
                 res = 0;
                 for ( size_t i = 0; i < sizeof(size_t) * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
                     res = (res << 1) + splitter.cut( 1 );
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( res, src );
             }
@@ -286,12 +286,12 @@ namespace {
                     splitter.reset();
                     res = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
                         res = (res << bits) + splitter.safe_cut( bits );
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
                     EXPECT_EQ( res, src );
                 }
@@ -301,7 +301,7 @@ namespace {
 
     TEST_F( Split_bitstrig, cut_uint )
     {
-        if ( is_big_endian() )
+        if ( is_big_endian())
             cut_uint_be();
         else
             cut_uint_le();
@@ -309,7 +309,7 @@ namespace {
 
     TEST_F( Split_bitstrig, cut_uint16 )
     {
-        if ( is_big_endian() )
+        if ( is_big_endian())
             cut_small_be<uint16_t>();
         else
             cut_small_le<uint16_t>();

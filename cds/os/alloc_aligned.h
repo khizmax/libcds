@@ -174,8 +174,8 @@ namespace cds {
             */
             pointer allocate( size_type nAlign, size_type nCount )
             {
-                assert( cds::beans::is_power2( nAlign ) );
-                pointer p = reinterpret_cast<T *>( cds::OS::aligned_malloc( sizeof(T) * nCount, nAlign ) );
+                assert( cds::beans::is_power2( nAlign ));
+                pointer p = reinterpret_cast<T *>( cds::OS::aligned_malloc( sizeof(T) * nCount, nAlign ));
                 if ( !p )
                     throw std::bad_alloc();
                 assert( cds::details::is_aligned( p, nAlign ));
@@ -191,7 +191,7 @@ namespace cds {
             */
             pointer allocate(size_type nAlign, size_type nCount, const void *)
             {
-                return ( allocate( nAlign, nCount ) );
+                return ( allocate( nAlign, nCount ));
             }
 
             /// construct object at \p ptr with value \p val

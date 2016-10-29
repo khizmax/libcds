@@ -62,7 +62,7 @@ namespace cds_test {
 
             stat& operator =( const stat& s )
             {
-                memcpy( this, &s, sizeof( s ) );
+                memcpy( this, &s, sizeof( s ));
                 return *this;
             }
         };
@@ -194,7 +194,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -210,7 +210,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()( const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -272,7 +272,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // insert / find
@@ -302,8 +302,8 @@ namespace cds_test {
                 EXPECT_TRUE( l.find_with( other_item( i.nKey ), other_less(), []( value_type& item, other_item const& ) { ++item.s.nFindCall; } ));
                 EXPECT_EQ( i.s.nFindCall, 3 );
 
-                EXPECT_FALSE( l.insert( i ) );
-                ASSERT_FALSE( l.empty() );
+                EXPECT_FALSE( l.insert( i ));
+                ASSERT_FALSE( l.empty());
             }
             ASSERT_CONTAINER_SIZE( l, nSize );
 
@@ -319,13 +319,13 @@ namespace cds_test {
                 EXPECT_TRUE( l.find_with( other_item( i.nKey ), other_less(), []( value_type& item, other_item const& ) { ++item.s.nFindCall; } ));
                 EXPECT_EQ( i.s.nFindCall, 6 );
             }
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             ASSERT_CONTAINER_SIZE( l, nSize );
 
             // update existing test
             for ( auto& i : arr ) {
                 EXPECT_EQ( i.s.nUpdateExistsCall, 0 );
-                std::pair<bool, bool> ret = l.update( i, update_functor() );
+                std::pair<bool, bool> ret = l.update( i, update_functor());
                 EXPECT_TRUE( ret.first );
                 EXPECT_FALSE( ret.second );
                 EXPECT_EQ( i.s.nUpdateExistsCall, 1 );
@@ -346,11 +346,11 @@ namespace cds_test {
                 if ( i.nKey & 1 )
                     EXPECT_TRUE( l.erase( i.nKey ));
                 else
-                    EXPECT_TRUE( l.erase_with( other_item( i.nKey ), other_less() ));
+                    EXPECT_TRUE( l.erase_with( other_item( i.nKey ), other_less()));
 
                 EXPECT_FALSE( l.contains( i ));
             }
-            EXPECT_TRUE( l.empty() );
+            EXPECT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // Apply retired pointer to clean links
@@ -370,7 +370,7 @@ namespace cds_test {
                 EXPECT_TRUE( ret.second );
                 EXPECT_EQ( i.s.nUpdateNewCall, 1 );
             }
-            EXPECT_FALSE( l.empty() );
+            EXPECT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             for ( auto const& i : arr ) {
@@ -386,7 +386,7 @@ namespace cds_test {
                 EXPECT_EQ( i.s.nEraseCall, 1 );
                 EXPECT_FALSE( l.contains( i.nKey ));
             }
-            EXPECT_TRUE( l.empty() );
+            EXPECT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // Apply retired pointer to clean links
@@ -399,12 +399,12 @@ namespace cds_test {
             for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i ));
 
-            EXPECT_FALSE( l.empty() );
+            EXPECT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             l.clear();
 
-            EXPECT_TRUE( l.empty() );
+            EXPECT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // Apply retired pointer to clean links
@@ -416,24 +416,24 @@ namespace cds_test {
 
             // unlink test
             for ( auto& i : arr )
-                EXPECT_TRUE( l.insert( i ) );
+                EXPECT_TRUE( l.insert( i ));
             for ( auto& i : arr ) {
                 value_type val( i );
                 EXPECT_TRUE( l.contains( val ));
                 EXPECT_FALSE( l.unlink( val ));
-                EXPECT_TRUE( l.contains( val ) );
+                EXPECT_TRUE( l.contains( val ));
                 EXPECT_TRUE( l.unlink( i ));
                 EXPECT_FALSE( l.unlink( i ));
-                EXPECT_FALSE( l.contains( i ) );
+                EXPECT_FALSE( l.contains( i ));
             }
-            EXPECT_TRUE( l.empty() );
+            EXPECT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // Apply retired pointer to clean links
             List::gc::force_dispose();
             for ( auto const& i : arr ) {
                 EXPECT_EQ( i.s.nDisposeCount, 4 );
-                EXPECT_FALSE( l.contains( i ) );
+                EXPECT_FALSE( l.contains( i ));
             }
 
             // Iterators on empty list
@@ -472,11 +472,11 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             for ( auto& i : arr )
-                EXPECT_TRUE( l.insert( i ) );
+                EXPECT_TRUE( l.insert( i ));
 
             int key = 0;
             for ( auto it = l.begin(); it != l.end(); ++it ) {
@@ -496,7 +496,7 @@ namespace cds_test {
             List::gc::force_dispose();
             for ( auto const& i : arr ) {
                 EXPECT_EQ( i.s.nDisposeCount, 1 );
-                EXPECT_FALSE( l.contains( i ) );
+                EXPECT_FALSE( l.contains( i ));
             }
         }
     };

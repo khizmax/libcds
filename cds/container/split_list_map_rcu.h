@@ -299,7 +299,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K const& key )
         {
-            return base_class::emplace( key_type( key ), mapped_type() );
+            return base_class::emplace( key_type( key ), mapped_type());
         }
 
         /// Inserts new node
@@ -357,7 +357,7 @@ namespace cds { namespace container {
         bool insert_with( K const& key, Func func )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key_type( key ), mapped_type() ), func );
+            return base_class::insert( std::make_pair( key_type( key ), mapped_type()), func );
         }
 
         /// For key \p key inserts data of type \p mapped_type created in-place from \p args
@@ -409,9 +409,9 @@ namespace cds { namespace container {
         std::pair<bool, bool> update( K const& key, Func func, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            typedef decltype( std::make_pair( key_type( key ), mapped_type() )) arg_pair_type;
+            typedef decltype( std::make_pair( key_type( key ), mapped_type())) arg_pair_type;
 
-            return base_class::update( std::make_pair( key_type( key ), mapped_type() ),
+            return base_class::update( std::make_pair( key_type( key ), mapped_type()),
                 [&func]( bool bNew, value_type& item, arg_pair_type const& /*val*/ ) {
                     func( bNew, item );
                 },
@@ -450,7 +450,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
         /// Deletes \p key from the map
@@ -619,7 +619,7 @@ namespace cds { namespace container {
         bool contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
         //@cond
         template <typename K, typename Less>

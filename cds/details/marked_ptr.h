@@ -162,7 +162,7 @@ namespace cds {
             marked_ptr& operator &=( int nBits ) CDS_NOEXCEPT
             {
                 assert( (nBits & pointer_bitmask) == 0 );
-                m_ptr = to_ptr( to_int() & (pointer_bitmask | nBits) );
+                m_ptr = to_ptr( to_int() & (pointer_bitmask | nBits));
                 return *this;
             }
 
@@ -365,7 +365,7 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
         {}
 
         CDS_CONSTEXPR explicit atomic(marked_ptr val) CDS_NOEXCEPT
-            : m_atomic( val.all() )
+            : m_atomic( val.all())
         {}
         CDS_CONSTEXPR explicit atomic(T * p) CDS_NOEXCEPT
             : m_atomic( p )

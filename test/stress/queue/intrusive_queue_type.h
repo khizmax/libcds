@@ -82,7 +82,7 @@ namespace queue {
             value_type * pop()
             {
                 lock_guard l( m_Lock );
-                if ( m_List.empty() )
+                if ( m_List.empty())
                     return nullptr;
                 value_type& v = m_List.front();
                 m_List.pop_front();

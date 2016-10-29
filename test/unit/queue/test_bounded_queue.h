@@ -46,7 +46,7 @@ namespace cds_test {
 
             const size_t nSize = q.capacity();
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // enqueue/dequeue
@@ -55,16 +55,16 @@ namespace cds_test {
                 ASSERT_TRUE( q.enqueue( it ));
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
-                ASSERT_TRUE( q.dequeue( it ) );
+                ASSERT_TRUE( q.dequeue( it ));
                 ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // push/pop
@@ -73,16 +73,16 @@ namespace cds_test {
                 ASSERT_TRUE( q.push( it ));
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
-                ASSERT_TRUE( q.pop( it ) );
+                ASSERT_TRUE( q.pop( it ));
                 ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // push/pop with lambda
@@ -97,7 +97,7 @@ namespace cds_test {
                 ASSERT_EQ( it, -1 );
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -110,39 +110,39 @@ namespace cds_test {
                 ASSERT_EQ( it, static_cast<value_type>( i ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.push( static_cast<value_type>(i) ) );
+                ASSERT_TRUE( q.push( static_cast<value_type>(i)) );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             // push in full queue
             ASSERT_FALSE( q.push( static_cast<int>(nSize * 2 )));
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
             it = static_cast<int>( nSize * 2 );
             ASSERT_FALSE( q.enqueue( it ));
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             // clear
             q.clear();
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0u );
 
             // pop from empty queue
             it = static_cast<int>(nSize * 2);
-            ASSERT_FALSE( q.pop( it ) );
+            ASSERT_FALSE( q.pop( it ));
             ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0u );
 
-            ASSERT_FALSE( q.dequeue( it ) );
+            ASSERT_FALSE( q.dequeue( it ));
             ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0u );
         }
 
@@ -160,13 +160,13 @@ namespace cds_test {
                 ASSERT_TRUE( q.emplace( str[i].c_str()));
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             {
                 std::string s;
                 auto f = [&s]( std::string& src ) {
-                    ASSERT_FALSE( src.empty() );
+                    ASSERT_FALSE( src.empty());
                     s = std::move( src );
                     ASSERT_NE( s, src );
                 };
@@ -180,7 +180,7 @@ namespace cds_test {
                     ASSERT_EQ( s, str[i] );
                 }
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
 
@@ -192,19 +192,19 @@ namespace cds_test {
                     ASSERT_TRUE( q.enqueue( std::move( s )));
                 else
                     ASSERT_TRUE( q.push( std::move( s )));
-                ASSERT_TRUE( s.empty() );
+                ASSERT_TRUE( s.empty());
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 std::string s;
-                ASSERT_TRUE( q.pop( s ) );
+                ASSERT_TRUE( q.pop( s ));
                 ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
                 ASSERT_EQ( s, str[i] );
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
         }
 

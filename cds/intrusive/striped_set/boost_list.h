@@ -81,7 +81,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                     iterator itEnd = m_List.end();
                     iterator it;
                     for ( it = m_List.begin(); it != itEnd; ++it ) {
-                        if ( !pred( *it, key ) )
+                        if ( !pred( *it, key ))
                             break;
                     }
                     return it;
@@ -102,7 +102,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Func>
                 bool insert( value_type& val, Func f )
                 {
-                    iterator it = find_key( val, find_predicate() );
+                    iterator it = find_key( val, find_predicate());
                     if ( it == m_List.end() || key_comparator()(val, *it) != 0 ) {
                         m_List.insert( it, val );
                         f( val );
@@ -117,7 +117,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Func>
                 std::pair<bool, bool> update( value_type& val, Func f, bool bAllowInsert )
                 {
-                    iterator it = find_key( val, find_predicate() );
+                    iterator it = find_key( val, find_predicate());
                     if ( it == m_List.end() || key_comparator()(val, *it) != 0 ) {
                         // insert new
                         if ( !bAllowInsert )
@@ -136,7 +136,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
                 bool unlink( value_type& val )
                 {
-                    iterator it = find_key( val, find_predicate() );
+                    iterator it = find_key( val, find_predicate());
                     if ( it == m_List.end() || &(*it) != &val )
                         return false;
 
@@ -147,7 +147,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 template <typename Q, typename Func>
                 value_type * erase( Q const& key, Func f )
                 {
-                    iterator it = find_key( key, find_predicate() );
+                    iterator it = find_key( key, find_predicate());
                     if ( it == m_List.end() || key_comparator()(key, *it) != 0 )
                         return nullptr;
 
@@ -163,7 +163,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 value_type * erase( Q const& key, Less pred, Func f )
                 {
                     iterator it = find_key( key, pred );
-                    if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ) )
+                    if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ))
                         return nullptr;
 
                     // key exists
@@ -184,7 +184,7 @@ namespace cds { namespace intrusive { namespace striped_set {
                 bool find( Q& key, Less pred, Func f )
                 {
                     iterator it = find_key( key, pred );
-                    if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ) )
+                    if ( it == m_List.end() || pred( key, *it ) || pred( *it, key ))
                         return false;
 
                     // key exists

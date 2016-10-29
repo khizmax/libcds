@@ -49,7 +49,7 @@ namespace {
 
             base_class::test( m );
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             typedef typename Map::value_type map_pair;
@@ -69,7 +69,7 @@ namespace {
             }
 
             m.clear();
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             // get_max

@@ -92,7 +92,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -108,7 +108,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()( const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -152,7 +152,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // insert/find
@@ -169,39 +169,39 @@ namespace cds_test {
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, it->nKey * 2 );
                         it = l.contains( i.nKey );
-                        EXPECT_FALSE( it == l.end() );
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, it->nKey * 2 );
                         it = l.insert( i.nKey );
-                        EXPECT_TRUE( it == l.end() );
+                        EXPECT_TRUE( it == l.end());
                         break;
                     }
                     case 1:
                     {
                         auto it = l.insert( i );
-                        EXPECT_FALSE( it == l.end() );
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nVal );
                         it = l.contains( i );
-                        EXPECT_FALSE( it == l.end() );
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nVal );
                         it = l.insert( i );
-                        EXPECT_TRUE( it == l.end() );
+                        EXPECT_TRUE( it == l.end());
                         break;
                     }
                     case 2:
                     {
                         auto it = l.emplace( i.nKey, i.nKey * 100 );
-                        EXPECT_FALSE( it == l.end() );
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nKey * 100 );
                         it = l.contains( other_item( i.nKey ), other_less());
-                        EXPECT_FALSE( it == l.end() );
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nKey * 100 );
                         it = l.emplace( i.nKey, i.nKey * 50 );
-                        EXPECT_TRUE( it == l.end() );
+                        EXPECT_TRUE( it == l.end());
                         break;
                     }
                     case 3:
@@ -211,26 +211,26 @@ namespace cds_test {
                         EXPECT_FALSE( pair.second );
 
                         pair = l.update( i.nKey );
-                        EXPECT_FALSE( pair.first == l.end() );
+                        EXPECT_FALSE( pair.first == l.end());
                         EXPECT_TRUE( pair.second );
                         pair.first->nVal = i.nKey * 3;
                         EXPECT_EQ( pair.first->nKey, i.nKey );
 
-                        auto it = l.contains( other_item( i.nKey ), other_less() );
-                        EXPECT_FALSE( it == l.end() );
+                        auto it = l.contains( other_item( i.nKey ), other_less());
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_TRUE( it == pair.first );
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nKey * 3 );
 
                         pair = l.update( i.nKey, false );
-                        EXPECT_FALSE( pair.first == l.end() );
+                        EXPECT_FALSE( pair.first == l.end());
                         EXPECT_TRUE( pair.first == it );
                         EXPECT_FALSE( pair.second );
                         EXPECT_EQ( pair.first->nKey, i.nKey );
                         pair.first->nVal = i.nKey * 5;
 
-                        it = l.contains( other_item( i.nKey ), other_less() );
-                        EXPECT_FALSE( it == l.end() );
+                        it = l.contains( other_item( i.nKey ), other_less());
+                        EXPECT_FALSE( it == l.end());
                         EXPECT_TRUE( it == pair.first );
                         EXPECT_EQ( it->nKey, i.nKey );
                         EXPECT_EQ( it->nVal, i.nKey * 5 );
@@ -242,15 +242,15 @@ namespace cds_test {
                 EXPECT_TRUE( l.contains( i.nKey ) != l.end());
                 EXPECT_TRUE( l.contains( other_item( i.nKey ), other_less()) != l.end());
 
-                EXPECT_FALSE( l.empty() );
+                EXPECT_FALSE( l.empty());
             }
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             l.clear();
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // empty list iterator test
@@ -280,7 +280,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             for ( auto& i : arr )
@@ -325,7 +325,7 @@ namespace cds_test {
             EXPECT_EQ( static_cast<size_t>(key), nSize );
 
             l.clear();
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
         }
     };

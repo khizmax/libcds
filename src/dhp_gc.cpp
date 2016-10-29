@@ -249,7 +249,7 @@ namespace cds { namespace gc { namespace dhp {
             details::retired_ptr_node * pBusyLast = &dummy;
             size_t nBusyCount = 0;
 
-            for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire) )
+            for ( details::guard_data * pGuard = m_GuardPool.begin(); pGuard; pGuard = pGuard->pGlobalNext.load(atomics::memory_order_acquire))
             {
                 // get guarded pointer
                 details::guard_data::guarded_ptr valGuarded = pGuard->pPost.load(atomics::memory_order_acquire);

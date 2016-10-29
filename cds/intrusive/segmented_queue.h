@@ -324,7 +324,7 @@ namespace cds { namespace intrusive {
 
             ~segment_list()
             {
-                m_List.clear_and_dispose( gc_segment_disposer() );
+                m_List.clear_and_dispose( gc_segment_disposer());
             }
 
             segment * head( typename gc::Guard& guard )
@@ -343,7 +343,7 @@ namespace cds { namespace intrusive {
                 // The lock should be held
                 cell const * pLastCell = s.cells + quasi_factor();
                 for ( cell const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
-                    if ( !pCell->data.load( memory_model::memory_order_relaxed ).all() )
+                    if ( !pCell->data.load( memory_model::memory_order_relaxed ).all())
                         return false;
                 }
                 return true;
@@ -353,7 +353,7 @@ namespace cds { namespace intrusive {
                 // The lock should be held
                 cell const * pLastCell = s.cells + quasi_factor();
                 for ( cell const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
-                    if ( !pCell->data.load( memory_model::memory_order_relaxed ).bits() )
+                    if ( !pCell->data.load( memory_model::memory_order_relaxed ).bits())
                         return false;
                 }
                 return true;
@@ -371,17 +371,17 @@ namespace cds { namespace intrusive {
                 if ( !m_List.empty() && ( pTail != &m_List.back() || get_version(pTail) != m_List.back().version )) {
                     m_pTail.store( &m_List.back(), memory_model::memory_order_relaxed );
 
-                    return guard.assign( &m_List.back() );
+                    return guard.assign( &m_List.back());
                 }
 
 #           ifdef _DEBUG
-                assert( m_List.empty() || populated( m_List.back() ));
+                assert( m_List.empty() || populated( m_List.back()));
 #           endif
 
                 segment * pNew = allocate_segment();
                 m_Stat.onSegmentCreated();
 
-                if ( m_List.empty() )
+                if ( m_List.empty())
                     m_pHead.store( pNew, memory_model::memory_order_release );
                 m_List.push_back( *pNew );
                 m_pTail.store( pNew, memory_model::memory_order_release );
@@ -397,7 +397,7 @@ namespace cds { namespace intrusive {
                 {
                     scoped_lock l( m_Lock );
 
-                    if ( m_List.empty() ) {
+                    if ( m_List.empty()) {
                         m_pTail.store( nullptr, memory_model::memory_order_relaxed );
                         m_pHead.store( nullptr, memory_model::memory_order_relaxed );
                         return guard.assign( nullptr );
@@ -405,7 +405,7 @@ namespace cds { namespace intrusive {
 
                     if ( pHead != &m_List.front() || get_version(pHead) != m_List.front().version ) {
                         m_pHead.store( &m_List.front(), memory_model::memory_order_relaxed );
-                        return guard.assign( &m_List.front() );
+                        return guard.assign( &m_List.front());
                     }
 
 #           ifdef _DEBUG
@@ -413,12 +413,12 @@ namespace cds { namespace intrusive {
 #           endif
 
                     m_List.pop_front();
-                    if ( m_List.empty() ) {
+                    if ( m_List.empty()) {
                         pRet = guard.assign( nullptr );
                         m_pTail.store( nullptr, memory_model::memory_order_relaxed );
                     }
                     else
-                        pRet = guard.assign( &m_List.front() );
+                        pRet = guard.assign( &m_List.front());
                     m_pHead.store( pRet, memory_model::memory_order_release );
                 }
 
@@ -443,7 +443,7 @@ namespace cds { namespace intrusive {
 
             segment * allocate_segment()
             {
-                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor, quasi_factor() );
+                return segment_allocator().NewBlock( sizeof(segment) + sizeof(cell) * m_nQuasiFactor, quasi_factor());
             }
 
             static void free_segment( segment * pSegment )
@@ -497,7 +497,7 @@ namespace cds { namespace intrusive {
                 assert( pTailSegment );
             }
 
-            permutation_generator gen( quasi_factor() );
+            permutation_generator gen( quasi_factor());
 
             // First, increment item counter.
             // We sure that the item will be enqueued
@@ -510,7 +510,7 @@ namespace cds { namespace intrusive {
                 do {
                     typename permutation_generator::integer_type i = gen;
                     CDS_DEBUG_ONLY( ++nLoopCount );
-                    if ( pTailSegment->cells[i].data.load(memory_model::memory_order_relaxed).all() ) {
+                    if ( pTailSegment->cells[i].data.load(memory_model::memory_order_relaxed).all()) {
                         // Cell is not empty, go next
                         m_Stat.onPushPopulated();
                     }
@@ -524,10 +524,10 @@ namespace cds { namespace intrusive {
                             m_Stat.onPush();
                             return true;
                         }
-                        assert( nullCell.ptr() );
+                        assert( nullCell.ptr());
                         m_Stat.onPushContended();
                     }
-                } while ( gen.next() );
+                } while ( gen.next());
 
                 assert( nLoopCount == quasi_factor());
 
@@ -608,7 +608,7 @@ namespace cds { namespace intrusive {
         */
         void clear()
         {
-            clear_with( disposer() );
+            clear_with( disposer());
         }
 
         /// Clear the queue
@@ -620,9 +620,9 @@ namespace cds { namespace intrusive {
         void clear_with( Disposer )
         {
             typename gc::Guard itemGuard;
-            while ( do_dequeue( itemGuard ) ) {
-                assert( itemGuard.template get<value_type>() );
-                gc::template retire<Disposer>( itemGuard.template get<value_type>() );
+            while ( do_dequeue( itemGuard )) {
+                assert( itemGuard.template get<value_type>());
+                gc::template retire<Disposer>( itemGuard.template get<value_type>());
                 itemGuard.clear();
             }
         }
@@ -655,7 +655,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard segmentGuard;
             segment * pHeadSegment = m_SegmentList.head( segmentGuard );
 
-            permutation_generator gen( quasi_factor() );
+            permutation_generator gen( quasi_factor());
             while ( true ) {
                 if ( !pHeadSegment ) {
                     // Queue is empty
@@ -674,15 +674,15 @@ namespace cds { namespace intrusive {
                     // In segmented queue the cell cannot be reused
                     // So no loop is needed here to protect the cell
                     item = pHeadSegment->cells[i].data.load( memory_model::memory_order_relaxed );
-                    itemGuard.assign( item.ptr() );
+                    itemGuard.assign( item.ptr());
 
                     // Check if this cell is empty, which means an element
                     // can be enqueued to this cell in the future
-                    if ( !item.ptr() )
+                    if ( !item.ptr())
                         bHadNullValue = true;
                     else {
                         // If the item is not deleted yet
-                        if ( !item.bits() ) {
+                        if ( !item.bits()) {
                             // Try to mark the cell as deleted
                             if ( pHeadSegment->cells[i].data.compare_exchange_strong( item, item | 1,
                                 memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
@@ -692,13 +692,13 @@ namespace cds { namespace intrusive {
 
                                 return true;
                             }
-                            assert( item.bits() );
+                            assert( item.bits());
                             m_Stat.onPopContended();
                         }
                     }
-                } while ( gen.next() );
+                } while ( gen.next());
 
-                assert( nLoopCount == quasi_factor() );
+                assert( nLoopCount == quasi_factor());
 
                 // scanning the entire segment without finding a candidate to dequeue
                 // If there was an empty cell, the queue is considered empty

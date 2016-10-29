@@ -91,13 +91,13 @@ namespace {
 
             virtual void test()
             {
-                memset( m_arrPush, 0, sizeof( m_arrPush ) );
+                memset( m_arrPush, 0, sizeof( m_arrPush ));
 
                 value_type v;
                 v.nThread = id();
                 for ( size_t i = 0; i < m_nItemCount; ++i ) {
                     v.nNo = i % c_nValArraySize;
-                    if ( m_stack.push( v ) )
+                    if ( m_stack.push( v ))
                         ++m_arrPush[v.nNo];
                     else
                         ++m_nPushError;
@@ -142,13 +142,13 @@ namespace {
 
             virtual void test()
             {
-                memset( m_arrPop, 0, sizeof( m_arrPop ) );
+                memset( m_arrPop, 0, sizeof( m_arrPop ));
 
                 value_type v;
-                while ( !( s_nWorkingProducers.load( atomics::memory_order_acquire ) == 0 && m_stack.empty()) ) {
-                    if ( m_stack.pop( v ) ) {
+                while ( !( s_nWorkingProducers.load( atomics::memory_order_acquire ) == 0 && m_stack.empty())) {
+                    if ( m_stack.pop( v )) {
                         ++m_nPopCount;
-                        if ( v.nNo < sizeof( m_arrPop ) / sizeof( m_arrPop[0] ) )
+                        if ( v.nNo < sizeof( m_arrPop ) / sizeof( m_arrPop[0] ))
                             ++m_arrPop[v.nNo];
                         else
                             ++m_nDirtyPop;
@@ -214,7 +214,7 @@ namespace {
         void test_elimination( Stack& stack )
         {
             test( stack );
-            check_elimination_stat( stack.statistics() );
+            check_elimination_stat( stack.statistics());
         }
 
         void check_elimination_stat( cds::container::treiber_stack::empty_stat const& )
@@ -224,9 +224,9 @@ namespace {
         {
             EXPECT_EQ( s.m_PushCount.get() + s.m_ActivePushCollision.get() + s.m_PassivePushCollision.get(), s_nStackSize );
             EXPECT_EQ( s.m_PopCount.get() + s.m_ActivePopCollision.get() + s.m_PassivePopCollision.get(), s_nStackSize );
-            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get() );
-            EXPECT_EQ( s.m_ActivePopCollision.get(), s.m_PassivePushCollision.get() );
-            EXPECT_EQ( s.m_ActivePushCollision.get(), s.m_PassivePopCollision.get() );
+            EXPECT_EQ( s.m_PushCount.get(), s.m_PopCount.get());
+            EXPECT_EQ( s.m_ActivePopCollision.get(), s.m_PassivePushCollision.get());
+            EXPECT_EQ( s.m_ActivePushCollision.get(), s.m_PassivePopCollision.get());
         }
 
         template< class Stack>
@@ -238,7 +238,7 @@ namespace {
             size_t nPopEmpty = 0;
             size_t nPopCount = 0;
             size_t arrVal[c_nValArraySize];
-            memset( arrVal, 0, sizeof( arrVal ) );
+            memset( arrVal, 0, sizeof( arrVal ));
             size_t nDirtyPop = 0;
 
             for ( size_t threadNo = 0; threadNo < pool.size(); ++threadNo ) {

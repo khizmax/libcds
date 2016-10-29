@@ -518,7 +518,7 @@ namespace cds { namespace cxx11_atomic {
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal operand size" );
             return (T *) _InterlockedExchange( (long volatile *) pDest, (uintptr_t) v );
-            //return (T *) _InterlockedExchangePointer( (void * volatile *) pDest, reinterpret_cast<void *>(v) );
+            //return (T *) _InterlockedExchangePointer( (void * volatile *) pDest, reinterpret_cast<void *>(v));
         }
 
         template <typename T>

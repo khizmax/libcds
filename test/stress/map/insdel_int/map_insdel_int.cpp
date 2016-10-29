@@ -94,7 +94,7 @@ namespace map {
         s_arrKeys.reserve( s_nMapSize );
         for ( size_t i = 0; i < s_nMapSize; ++i )
             s_arrKeys.push_back( i );
-        shuffle( s_arrKeys.begin(), s_arrKeys.end() );
+        shuffle( s_arrKeys.begin(), s_arrKeys.end());
     }
 
     void Map_InsDel_int::TearDownTestCase()

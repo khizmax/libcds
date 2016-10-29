@@ -82,10 +82,10 @@ namespace cds {
         \code
         class Manager {
         public:
-            // Initialize manager (called by cds::Initialize() )
+            // Initialize manager (called by cds::Initialize())
             static void init();
 
-            // Terminate manager (called by cds::Terminate() )
+            // Terminate manager (called by cds::Terminate())
             static void fini();
 
             // Checks whether current thread is attached to \p libcds feature or not.
@@ -179,12 +179,12 @@ namespace cds {
                 , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, atomics::memory_order_relaxed) % s_nProcCount )
                 , m_nAttachCount(0)
             {
-                if (cds::gc::HP::isUsed() )
+                if (cds::gc::HP::isUsed())
                     m_hpManager = new (m_hpManagerPlaceholder) cds::gc::HP::thread_gc_impl;
                 else
                     m_hpManager = nullptr;
 
-                if ( cds::gc::DHP::isUsed() )
+                if ( cds::gc::DHP::isUsed())
                     m_dhpManager = new (m_dhpManagerPlaceholder) cds::gc::DHP::thread_gc_impl;
                 else
                     m_dhpManager = nullptr;
@@ -216,21 +216,21 @@ namespace cds {
             void init()
             {
                 if ( m_nAttachCount++ == 0 ) {
-                    if ( cds::gc::HP::isUsed() )
+                    if ( cds::gc::HP::isUsed())
                         m_hpManager->init();
-                    if ( cds::gc::DHP::isUsed() )
+                    if ( cds::gc::DHP::isUsed())
                         m_dhpManager->init();
 
-                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed() )
+                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed())
                         m_pGPIRCU = cds::urcu::details::singleton<cds::urcu::general_instant_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed() )
+                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed())
                         m_pGPBRCU = cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed() )
+                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed())
                         m_pGPTRCU = cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::attach_thread();
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed() )
+                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed())
                         m_pSHBRCU = cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed() )
+                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed())
                         m_pSHTRCU = cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::attach_thread();
 #endif
                 }
@@ -239,29 +239,29 @@ namespace cds {
             bool fini()
             {
                 if ( --m_nAttachCount == 0 ) {
-                    if ( cds::gc::DHP::isUsed() )
+                    if ( cds::gc::DHP::isUsed())
                         m_dhpManager->fini();
-                    if ( cds::gc::HP::isUsed() )
+                    if ( cds::gc::HP::isUsed())
                         m_hpManager->fini();
 
-                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed() ) {
+                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed()) {
                         cds::urcu::details::singleton<cds::urcu::general_instant_tag>::detach_thread( m_pGPIRCU );
                         m_pGPIRCU = nullptr;
                     }
-                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed() ) {
+                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed()) {
                         cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::detach_thread( m_pGPBRCU );
                         m_pGPBRCU = nullptr;
                     }
-                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed() ) {
+                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed()) {
                         cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::detach_thread( m_pGPTRCU );
                         m_pGPTRCU = nullptr;
                     }
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed() ) {
+                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed()) {
                         cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::detach_thread( m_pSHBRCU );
                         m_pSHBRCU = nullptr;
                     }
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed() ) {
+                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed()) {
                         cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::detach_thread( m_pSHTRCU );
                         m_pSHTRCU = nullptr;
                     }

@@ -231,7 +231,7 @@ namespace cds { namespace container {
 
             void clean()
             {
-                assert( !gc::is_locked() );
+                assert( !gc::is_locked());
 
                 // TODO: use RCU::batch_retire
 
@@ -675,7 +675,7 @@ namespace cds { namespace container {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 
@@ -685,7 +685,7 @@ namespace cds { namespace container {
         */
         void clear()
         {
-            while ( extract_min() );
+            while ( extract_min());
         }
 
         /// Clears the tree (not thread safe)
@@ -962,7 +962,7 @@ namespace cds { namespace container {
         template <typename Q, typename Compare, typename Func>
         find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, version_type nVersion ) const
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             assert( pNode );
 
             struct stack_record
@@ -997,12 +997,12 @@ namespace cds { namespace container {
 
                     int nCmp = cmp( key, pChild->m_key );
                     if ( nCmp == 0 ) {
-                        if ( pChild->is_valued( memory_model::memory_order_acquire ) ) {
+                        if ( pChild->is_valued( memory_model::memory_order_acquire )) {
                             // key found
                             node_scoped_lock l( m_Monitor, *pChild );
                             if ( child(pNode, nDir, memory_model::memory_order_acquire) == pChild ) {
                                 if ( pChild->is_valued( memory_model::memory_order_relaxed )) {
-                                    if ( f( pChild ) ) {
+                                    if ( f( pChild )) {
                                         m_stat.onFindSuccess();
                                         return find_result::found;
                                     }
@@ -1059,7 +1059,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         int try_update_root( K const& key, Compare cmp, int nFlags, Func funcUpdate, rcu_disposer& disp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             while ( true ) {
                 int result;
@@ -1114,7 +1114,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         bool try_remove_root( K const& key, Compare cmp, Func func, rcu_disposer& disp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             while ( true ) {
                 int result;
@@ -1149,7 +1149,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         int try_update( K const& key, Compare cmp, int nFlags, Func funcUpdate, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             assert( nVersion != node_type::unlinked );
 
             struct stack_record
@@ -1237,7 +1237,7 @@ namespace cds { namespace container {
         template <typename K, typename Compare, typename Func>
         int try_remove( K const& key, Compare cmp, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             assert( nVersion != node_type::unlinked );
 
             struct stack_record
@@ -1317,7 +1317,7 @@ namespace cds { namespace container {
         template <typename Func>
         int try_extract_minmax( int nDir, Func func, node_type * pParent, node_type * pNode, version_type nVersion, rcu_disposer& disp )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
             assert( nVersion != node_type::unlinked );
 
             struct stack_record
@@ -1468,7 +1468,7 @@ namespace cds { namespace container {
                     return update_flags::retry;
                 }
 
-                if ( pNode->is_valued( memory_model::memory_order_relaxed ) && !(nFlags & update_flags::allow_update) ) {
+                if ( pNode->is_valued( memory_model::memory_order_relaxed ) && !(nFlags & update_flags::allow_update)) {
                     m_stat.onInsertFailed();
                     return update_flags::failed;
                 }
@@ -1505,7 +1505,7 @@ namespace cds { namespace container {
             assert( pParent != nullptr );
             assert( pNode != nullptr );
 
-            if ( !pNode->is_valued( memory_model::memory_order_acquire ) )
+            if ( !pNode->is_valued( memory_model::memory_order_acquire ))
                 return update_flags::failed;
 
             if ( child( pNode, left_child, memory_model::memory_order_acquire ) == nullptr
@@ -1574,7 +1574,7 @@ namespace cds { namespace container {
         bool try_unlink_locked( node_type * pParent, node_type * pNode, rcu_disposer& disp )
         {
             // pParent and pNode must be locked
-            assert( !pParent->is_unlinked(memory_model::memory_order_relaxed) );
+            assert( !pParent->is_unlinked(memory_model::memory_order_relaxed));
 
             node_type * pParentLeft = child( pParent, left_child, memory_model::memory_order_relaxed );
             node_type * pParentRight = child( pParent, right_child, memory_model::memory_order_relaxed );
@@ -1666,7 +1666,7 @@ namespace cds { namespace container {
         {
             while ( pNode && parent( pNode, memory_model::memory_order_acquire )) {
                 int nCond = estimate_node_condition( pNode );
-                if ( nCond == nothing_required || pNode->is_unlinked( memory_model::memory_order_acquire ) )
+                if ( nCond == nothing_required || pNode->is_unlinked( memory_model::memory_order_acquire ))
                     return;
 
                 if ( nCond != unlink_required && nCond != rebalance_required )
@@ -1904,7 +1904,7 @@ namespace cds { namespace container {
             }
 
             // pLeft might also have routing node damage (if pLeft.left was null)
-            if ( hLL == 0 && !pLeft->is_valued(memory_model::memory_order_acquire) ) {
+            if ( hLL == 0 && !pLeft->is_valued(memory_model::memory_order_acquire)) {
                 m_stat.onDamageAfterRightRotation();
                 return pLeft;
             }
@@ -1956,7 +1956,7 @@ namespace cds { namespace container {
                 return pNode;
             }
 
-            if ( (pRLeft == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed) ) {
+            if ( (pRLeft == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed)) {
                 m_stat.onRemoveAfterLeftRotation();
                 return pNode;
             }
@@ -1967,7 +1967,7 @@ namespace cds { namespace container {
                 return pRight;
             }
 
-            if ( hRR == 0 && !pRight->is_valued(memory_model::memory_order_acquire) ) {
+            if ( hRR == 0 && !pRight->is_valued(memory_model::memory_order_acquire)) {
                 m_stat.onDamageAfterLeftRotation();
                 return pRight;
             }
@@ -2114,7 +2114,7 @@ namespace cds { namespace container {
                 return pNode;
             }
 
-            if ( (pRLL == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed) ) {
+            if ( (pRLL == nullptr || hL == 0) && !pNode->is_valued(memory_model::memory_order_relaxed)) {
                 m_stat.onRemoveAfterLRRotation();
                 return pNode;
             }

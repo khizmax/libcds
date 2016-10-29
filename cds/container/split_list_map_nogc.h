@@ -213,7 +213,7 @@ namespace cds { namespace container {
         iterator insert( K const& key )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::emplace( key_type( key ), mapped_type() );
+            return base_class::emplace( key_type( key ), mapped_type());
         }
 
         /// Inserts new node
@@ -265,8 +265,8 @@ namespace cds { namespace container {
         iterator insert_with( const K& key, Func func )
         {
             iterator it = insert( key );
-            if ( it != end() )
-                func( (*it) );
+            if ( it != end())
+                func( (*it));
             return it;
         }
 
@@ -297,7 +297,7 @@ namespace cds { namespace container {
         std::pair<iterator, bool> update( K const& key, bool bAllowInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key_type( key ), mapped_type() ), bAllowInsert );
+            return base_class::update( std::make_pair( key_type( key ), mapped_type()), bAllowInsert );
         }
         //@cond
         template <typename K>
@@ -337,7 +337,7 @@ namespace cds { namespace container {
         iterator contains( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::contains( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
         //@cond
         template <typename K, typename Less>

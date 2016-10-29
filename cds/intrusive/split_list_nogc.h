@@ -190,7 +190,7 @@ namespace cds { namespace intrusive {
         */
         SplitListSet()
             : m_nBucketCountLog2(1)
-            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()) )
+            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()))
         {
             init();
         }
@@ -202,7 +202,7 @@ namespace cds { namespace intrusive {
             )
             : m_Buckets( nItemCount, nLoadFactor )
             , m_nBucketCountLog2(1)
-            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()) )
+            , m_nMaxItemCount( max_item_count(2, m_Buckets.load_factor()))
         {
             init();
         }
@@ -281,7 +281,7 @@ namespace cds { namespace intrusive {
         value_type * contains( Q const& key )
         {
             iterator it = find_( key );
-            if ( it == end() )
+            if ( it == end())
                 return nullptr;
             return &*it;
         }
@@ -304,7 +304,7 @@ namespace cds { namespace intrusive {
         value_type * contains( Q const& key, Less pred )
         {
             iterator it = find_with_( key, pred );
-            if ( it == end() )
+            if ( it == end())
                 return nullptr;
             return &*it;
         }
@@ -458,7 +458,7 @@ namespace cds { namespace intrusive {
         */
         iterator begin()
         {
-            return iterator( m_List.begin(), m_List.end() );
+            return iterator( m_List.begin(), m_List.end());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a split-list
@@ -470,31 +470,31 @@ namespace cds { namespace intrusive {
         */
         iterator end()
         {
-            return iterator( m_List.end(), m_List.end() );
+            return iterator( m_List.end(), m_List.end());
         }
 
         /// Returns a forward const iterator addressing the first element in a split-list
         const_iterator begin() const
         {
-            return const_iterator( m_List.begin(), m_List.end() );
+            return const_iterator( m_List.begin(), m_List.end());
         }
 
         /// Returns a forward const iterator addressing the first element in a split-list
         const_iterator cbegin() const
         {
-            return const_iterator( m_List.cbegin(), m_List.cend() );
+            return const_iterator( m_List.cbegin(), m_List.cend());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a split-list
         const_iterator end() const
         {
-            return const_iterator( m_List.end(), m_List.end() );
+            return const_iterator( m_List.end(), m_List.end());
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a split-list
         const_iterator cend() const
         {
-            return const_iterator( m_List.cend(), m_List.cend() );
+            return const_iterator( m_List.cend(), m_List.cend());
         }
     //@}
 
@@ -509,10 +509,10 @@ namespace cds { namespace intrusive {
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
             list_iterator it = m_List.insert_at_( pHead, val );
-            if ( it != m_List.end() ) {
+            if ( it != m_List.end()) {
                 inc_item_count();
                 m_Stat.onInsertSuccess();
-                return iterator( it, m_List.end() );
+                return iterator( it, m_List.end());
             }
             m_Stat.onInsertFailed();
             return end();
@@ -528,7 +528,7 @@ namespace cds { namespace intrusive {
             node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
 
             std::pair<list_iterator, bool> ret = m_List.update_at_( pHead, val, func, bAllowInsert );
-            if ( ret.first != m_List.end() ) {
+            if ( ret.first != m_List.end()) {
                 if ( ret.second ) {
                     inc_item_count();
                     m_Stat.onUpdateNew();
@@ -549,9 +549,9 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            auto it = m_List.find_at_( pHead, sv, typename ordered_list_adapter::template make_compare_from_less<Less>() );
-            m_Stat.onFind( it != m_List.end() );
-            return iterator( it, m_List.end() );
+            auto it = m_List.find_at_( pHead, sv, typename ordered_list_adapter::template make_compare_from_less<Less>());
+            m_Stat.onFind( it != m_List.end());
+            return iterator( it, m_List.end());
         }
 
         template <typename Q>
@@ -562,9 +562,9 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            auto it = m_List.find_at_( pHead, sv, key_comparator() );
-            m_Stat.onFind( it != m_List.end() );
-            return iterator( it, m_List.end() );
+            auto it = m_List.find_at_( pHead, sv, key_comparator());
+            m_Stat.onFind( it != m_List.end());
+            return iterator( it, m_List.end());
         }
 
         template <typename Q, typename Compare, typename Func>
@@ -628,13 +628,13 @@ namespace cds { namespace intrusive {
             aux_node_type * pBucket = m_Buckets.bucket( nBucket );
 
             back_off bkoff;
-            for ( ;; pBucket = m_Buckets.bucket( nBucket ) ) {
+            for ( ;; pBucket = m_Buckets.bucket( nBucket )) {
                 if ( pBucket )
                     return pBucket;
 
-                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ) );
+                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ));
                 if ( pBucket ) {
-                    if ( m_List.insert_aux_node( pParentBucket, pBucket ) ) {
+                    if ( m_List.insert_aux_node( pParentBucket, pBucket )) {
                         m_Buckets.bucket( nBucket, pBucket );
                         m_Stat.onNewBucket();
                         return pBucket;
@@ -653,7 +653,7 @@ namespace cds { namespace intrusive {
             }
 
             // Another thread set the bucket. Wait while it done
-            for ( pBucket = m_Buckets.bucket( nBucket ); pBucket == nullptr; pBucket = m_Buckets.bucket( nBucket ) ) {
+            for ( pBucket = m_Buckets.bucket( nBucket ); pBucket == nullptr; pBucket = m_Buckets.bucket( nBucket )) {
                 bkoff();
                 m_Stat.onBusyWaitBucketInit();
             }
@@ -669,7 +669,7 @@ namespace cds { namespace intrusive {
             if ( pHead == nullptr )
                 pHead = init_bucket( nBucket );
 
-            assert( pHead->is_dummy() );
+            assert( pHead->is_dummy());
 
             return pHead;
         }
@@ -680,7 +680,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
 
             // insert_aux_node cannot return false for empty list
-            CDS_VERIFY( m_List.insert_aux_node( pNode ) );
+            CDS_VERIFY( m_List.insert_aux_node( pNode ));
 
             m_Buckets.bucket( 0, pNode );
         }
@@ -698,10 +698,10 @@ namespace cds { namespace intrusive {
 
             size_t sz = m_nBucketCountLog2.load( memory_model::memory_order_relaxed );
             const size_t nBucketCount = static_cast<size_t>(1) << sz;
-            if ( nBucketCount < m_Buckets.capacity() ) {
+            if ( nBucketCount < m_Buckets.capacity()) {
                 // we may grow the bucket table
                 const size_t nLoadFactor = m_Buckets.load_factor();
-                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ) )
+                if ( nMaxCount < max_item_count( nBucketCount, nLoadFactor ))
                     return; // someone already have updated m_nBucketCountLog2, so stop here
 
                 m_nMaxItemCount.compare_exchange_strong( nMaxCount, max_item_count( nBucketCount << 1, nLoadFactor ),

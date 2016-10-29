@@ -73,7 +73,7 @@ namespace set {
         bool contains( const Key& key )
         {
             scoped_lock al( m_lock );
-            return base_class::find( value_type(key) ) != base_class::end();
+            return base_class::find( value_type(key)) != base_class::end();
         }
 
         template <typename Key>
@@ -115,15 +115,15 @@ namespace set {
         bool erase( const Key& key )
         {
             scoped_lock al( m_lock );
-            return base_class::erase( value_type(key) ) != 0;
+            return base_class::erase( value_type(key)) != 0;
         }
 
         template <typename T, typename Func>
         bool erase( const T& key, Func func )
         {
             scoped_lock al( m_lock );
-            typename base_class::iterator it = base_class::find( value_type(key) );
-            if ( it != base_class::end() ) {
+            typename base_class::iterator it = base_class::find( value_type(key));
+            if ( it != base_class::end()) {
                 func( *it );
                 return base_class::erase( it ) != base_class::end();
             }
@@ -201,15 +201,15 @@ namespace set {
         bool erase( const Key& key )
         {
             scoped_lock al( m_lock );
-            return base_class::erase( value_type(key) ) != 0;
+            return base_class::erase( value_type(key)) != 0;
         }
 
         template <typename T, typename Func>
         bool erase( const T& key, Func func )
         {
             scoped_lock al( m_lock );
-            typename base_class::iterator it = base_class::find( value_type(key) );
-            if ( it != base_class::end() ) {
+            typename base_class::iterator it = base_class::find( value_type(key));
+            if ( it != base_class::end()) {
                 func( *it );
 
                 base_class::erase( it );

@@ -55,7 +55,7 @@ namespace cds_test {
 
             base_class::test( s );
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             typedef typename Set::value_type value_type;
@@ -65,10 +65,10 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key) ) );
+                data.push_back( value_type( static_cast<int>(key)) );
                 indices.push_back( key );
             }
-            shuffle( indices.begin(), indices.end() );
+            shuffle( indices.begin(), indices.end());
 
             typename Set::exempt_ptr xp;
             typename Set::raw_ptr rp;
@@ -82,7 +82,7 @@ namespace cds_test {
                     rcu_lock l;
                     rp = s.get( i );
                     ASSERT_TRUE( !rp );
-                    rp = s.get( i.key() );
+                    rp = s.get( i.key());
                     ASSERT_TRUE( !rp );
                     rp = s.get_with( other_item( i.key()), other_less());
                     ASSERT_TRUE( !rp );
@@ -93,17 +93,17 @@ namespace cds_test {
 
                     xp = s.extract( i );
                     ASSERT_TRUE( !xp );
-                    xp = s.extract( i.key() );
+                    xp = s.extract( i.key());
                     ASSERT_TRUE( !xp );
-                    xp = s.extract_with( other_item( i.key() ), other_less() );
+                    xp = s.extract_with( other_item( i.key()), other_less());
                     ASSERT_TRUE( !xp );
                 }
                 else {
                     xp = s.extract( i );
                     ASSERT_TRUE( !xp );
-                    xp = s.extract( i.key() );
+                    xp = s.extract( i.key());
                     ASSERT_TRUE( !xp );
-                    xp = s.extract_with( other_item( i.key() ), other_less() );
+                    xp = s.extract_with( other_item( i.key()), other_less());
                     ASSERT_TRUE( !xp );
                 }
             }
@@ -111,7 +111,7 @@ namespace cds_test {
             // fill set
             for ( auto& i : data ) {
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
             // get/extract
@@ -126,7 +126,7 @@ namespace cds_test {
                     ++rp->nFindCount;
                     EXPECT_EQ( i.nFindCount, 1u );
 
-                    rp = s.get( i.key() );
+                    rp = s.get( i.key());
                     ASSERT_FALSE( !rp );
                     ++rp->nFindCount;
                     EXPECT_EQ( i.nFindCount, 2u );
@@ -150,7 +150,7 @@ namespace cds_test {
                             xp = s.extract( i );
                             break;
                         case 2:
-                            xp = s.extract_with( other_item( i.key() ), other_less() );
+                            xp = s.extract_with( other_item( i.key()), other_less());
                             break;
                         }
                         ASSERT_FALSE( !xp );
@@ -164,9 +164,9 @@ namespace cds_test {
 
                         xp = s.extract( i );
                         ASSERT_TRUE( !xp );
-                        xp = s.extract( i.key() );
+                        xp = s.extract( i.key());
                         ASSERT_TRUE( !xp );
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
+                        xp = s.extract_with( other_item( i.key()), other_less());
                         ASSERT_TRUE( !xp );
                     }
                 }
@@ -180,7 +180,7 @@ namespace cds_test {
                         xp = s.extract( i );
                         break;
                     case 2:
-                        xp = s.extract_with( other_item( i.key() ), other_less() );
+                        xp = s.extract_with( other_item( i.key()), other_less());
                         break;
                     }
                     ASSERT_FALSE( !xp );
@@ -189,14 +189,14 @@ namespace cds_test {
 
                     xp = s.extract( i );
                     ASSERT_TRUE( !xp );
-                    xp = s.extract( i.key() );
+                    xp = s.extract( i.key());
                     ASSERT_TRUE( !xp );
-                    xp = s.extract_with( other_item( i.key() ), other_less() );
+                    xp = s.extract_with( other_item( i.key()), other_less());
                     ASSERT_TRUE( !xp );
                 }
             }
 
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle

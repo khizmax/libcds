@@ -56,7 +56,7 @@ namespace queue {
         bool dequeue( T& data )
         {
             std::unique_lock<Lock> a(m_Locker);
-            if ( base_class::empty() )
+            if ( base_class::empty())
                 return false;
 
             data = base_class::front();

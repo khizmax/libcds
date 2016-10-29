@@ -62,7 +62,7 @@ namespace cds { namespace container {
 
             void operator()( map_type& map, iterator itWhat )
             {
-                pair_type pair( itWhat->first, typename pair_type::second_type() );
+                pair_type pair( itWhat->first, typename pair_type::second_type());
                 std::pair<iterator, bool> res = map.insert( pair );
                 assert( res.second );
                 std::swap( res.first->second, itWhat->second );
@@ -79,7 +79,7 @@ namespace cds { namespace container {
 
             void operator()( map_type& map, iterator itWhat )
             {
-                map.insert( std::move( *itWhat ) );
+                map.insert( std::move( *itWhat ));
             }
         };
     }   // namespace striped_set
@@ -132,9 +132,9 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename Q, typename Func>
             bool insert( const Q& key, Func f )
             {
-                std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type() ));
+                std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type()));
                 if ( res.second )
-                    f( const_cast<value_type&>(*res.first) );
+                    f( const_cast<value_type&>(*res.first));
                 return res.second;
             }
 
@@ -149,13 +149,13 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
             {
                 if ( bAllowInsert ) {
-                    std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type() ) );
+                    std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type()) );
                     func( res.second, const_cast<value_type&>(*res.first));
                     return std::make_pair( true, res.second );
                 }
                 else {
                     auto it = m_Map.find( key_type( key ));
-                    if ( it == end() )
+                    if ( it == end())
                         return std::make_pair( false, false );
                     func( false, *it );
                     return std::make_pair( true, false );
@@ -166,9 +166,9 @@ namespace cds { namespace intrusive { namespace striped_set {
             bool erase( const Q& key, Func f )
             {
                 iterator it = m_Map.find( key_type( key ));
-                if ( it == m_Map.end() )
+                if ( it == m_Map.end())
                     return false;
-                f( const_cast<value_type&>(*it) );
+                f( const_cast<value_type&>(*it));
                 m_Map.erase( it );
                 return true;
             }
@@ -177,7 +177,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             bool find( Q& key, Func f )
             {
                 iterator it = m_Map.find( key_type( key ));
-                if ( it == m_Map.end() )
+                if ( it == m_Map.end())
                     return false;
                 f( const_cast<value_type&>(*it), key );
                 return true;
@@ -195,7 +195,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
             void move_item( adapted_container& /*from*/, iterator itWhat )
             {
-                assert( m_Map.find( itWhat->first ) == m_Map.end() );
+                assert( m_Map.find( itWhat->first ) == m_Map.end());
                 copy_item()( m_Map, itWhat );
             }
 

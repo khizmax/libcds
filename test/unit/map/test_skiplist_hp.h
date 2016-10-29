@@ -59,8 +59,8 @@ namespace cds_test {
             shuffle( arrKeys.begin(), arrKeys.end());
 
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             // extract_min
@@ -69,33 +69,33 @@ namespace cds_test {
 
             int nKey = -1;
             size_t nCount = 0;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 gp = m.extract_min();
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->first.nKey, nKey + 1 );
                 nKey = gp->first.nKey;
                 ++nCount;
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
             EXPECT_EQ( nCount, kkSize );
 
             // extract_max
             for ( auto const& i : arrKeys )
-                ASSERT_TRUE( m.insert( i ) );
-            ASSERT_FALSE( m.empty() );
+                ASSERT_TRUE( m.insert( i ));
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             nKey = kkSize;
             nCount = 0;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 gp = m.extract_max();
                 ASSERT_FALSE( !gp );
                 EXPECT_EQ( gp->first.nKey, nKey - 1 );
                 nKey = gp->first.nKey;
                 ++nCount;
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
             EXPECT_EQ( nCount, kkSize );
         }

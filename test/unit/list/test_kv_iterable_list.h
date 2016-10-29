@@ -171,7 +171,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // insert/find
@@ -182,7 +182,7 @@ namespace cds_test {
                 EXPECT_FALSE( l.find( i.key, []( list_value_type& ) {} ));
                 EXPECT_FALSE( l.find( key_type( i.key ), []( list_value_type& ) {} ));
                 EXPECT_FALSE( l.find_with( other_key( i.key ), other_less(), []( list_value_type& ) {} ));
-                EXPECT_TRUE( l.find( i.key ) == l.end() );
+                EXPECT_TRUE( l.find( i.key ) == l.end());
                 EXPECT_TRUE( l.find_with( other_key( i.key ), other_less()) == l.end());
 
                 switch ( i.key % 6 ) {
@@ -275,7 +275,7 @@ namespace cds_test {
                             ret = l.upsert( i.key, i.val );
                             EXPECT_TRUE( ret.first );
                             EXPECT_TRUE( ret.second );
-                            EXPECT_TRUE( l.contains( i.key ) );
+                            EXPECT_TRUE( l.contains( i.key ));
 
                             ret = l.upsert( i.key, i.key * 12 );
                             EXPECT_TRUE( ret.first );
@@ -309,17 +309,17 @@ namespace cds_test {
                 EXPECT_TRUE( pair.first );
                 EXPECT_FALSE( pair.second );
 
-                EXPECT_FALSE( l.find( i.key ) == l.end() );
+                EXPECT_FALSE( l.find( i.key ) == l.end());
                 EXPECT_EQ( l.find( i.key )->first.nKey, i.key );
                 EXPECT_EQ( l.find( i.key )->second.val, i.key * 3 );
-                EXPECT_FALSE( l.find_with( other_key( i.key ), other_less() ) == l.end() );
+                EXPECT_FALSE( l.find_with( other_key( i.key ), other_less()) == l.end());
                 EXPECT_EQ( l.find_with( other_key( i.key ), other_less())->first.nKey, i.key );
                 EXPECT_EQ( l.find_with( other_key( i.key ), other_less())->second.val, i.key * 3 );
 
-                EXPECT_FALSE( l.empty() );
+                EXPECT_FALSE( l.empty());
             }
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             // erase
@@ -352,19 +352,19 @@ namespace cds_test {
                 EXPECT_FALSE( l.find_with( other_key( i.key ), other_less(), []( list_value_type& ) {} ));
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // clear test
             for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i.key, i.val ));
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             l.clear();
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // empty list iterator test
@@ -397,7 +397,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             for ( auto& i : arr )
@@ -405,8 +405,8 @@ namespace cds_test {
 
             int key = 0;
             for ( auto& it : l ) {
-                EXPECT_EQ( key, it.first.key() );
-                EXPECT_EQ( it.second.val, it.first.key() );
+                EXPECT_EQ( key, it.first.key());
+                EXPECT_EQ( it.second.val, it.first.key());
                 it.second.val = it.first.key() * 10;
                 ++key;
             }
@@ -414,7 +414,7 @@ namespace cds_test {
 
             key = 0;
             for ( auto it = l.cbegin(); it != l.cend(); ++it ) {
-                EXPECT_EQ( key, it->first.key() );
+                EXPECT_EQ( key, it->first.key());
                 EXPECT_EQ( it->first.key() * 10, it->second.val );
                 ++key;
             }
@@ -422,7 +422,7 @@ namespace cds_test {
 
             key = 0;
             for ( auto it = l.begin(); it != l.end(); ++it ) {
-                EXPECT_EQ( key, it->first.key() );
+                EXPECT_EQ( key, it->first.key());
                 EXPECT_EQ( it->first.key() * 10, it->second.val );
                 it->second.val = it->first.key() * 2;
                 ++key;
@@ -439,7 +439,7 @@ namespace cds_test {
             EXPECT_EQ( static_cast<size_t>(key), nSize );
 
             l.clear();
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
         }
     };

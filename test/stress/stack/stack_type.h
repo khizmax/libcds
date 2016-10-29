@@ -123,7 +123,7 @@ namespace stack {
             bool pop( T& v )
             {
                 unique_lock l( m_Lock );
-                if ( !m_Impl.empty() ) {
+                if ( !m_Impl.empty()) {
                     v = m_Impl.top();
                     m_Impl.pop();
                     return true;

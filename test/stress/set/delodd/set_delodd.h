@@ -193,7 +193,7 @@ namespace set {
 
                 std::vector<size_t>& arrData = fixture.m_arrData;
                 for ( size_t i = 0; i < arrData.size(); ++i ) {
-                    if ( rSet.insert( key_type( arrData[i], id() )))
+                    if ( rSet.insert( key_type( arrData[i], id())))
                         ++m_nInsertSuccess;
                     else
                         ++m_nInsertFailed;
@@ -202,7 +202,7 @@ namespace set {
                 update_functor f;
                 for ( size_t i = arrData.size() - 1; i > 0; --i ) {
                     if ( arrData[i] & 1 )
-                        rSet.update( key_type( arrData[i], id() ), f, true );
+                        rSet.update( key_type( arrData[i], id()), f, true );
                 }
 
                 fixture.m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_release );
@@ -311,7 +311,7 @@ namespace set {
             struct eraser {
                 static bool erase( SetType& s, size_t key, size_t /*thread*/)
                 {
-                    return s.erase_with( key, key_less() );
+                    return s.erase_with( key, key_less());
                 }
             };
 
@@ -641,7 +641,7 @@ namespace set {
             size_t nExtractFailed = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case inserter_thread:
                     {
                         insert_thread& inserter = static_cast<insert_thread&>( thr );
@@ -695,7 +695,7 @@ namespace set {
             check_before_clear( testSet );
 
             testSet.clear();
-            EXPECT_TRUE( testSet.empty() ) << "set.size=" << testSet.size();
+            EXPECT_TRUE( testSet.empty()) << "set.size=" << testSet.size();
 
             additional_check( testSet );
             print_stat( propout(), testSet );

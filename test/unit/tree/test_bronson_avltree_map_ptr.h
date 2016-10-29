@@ -191,19 +191,19 @@ namespace {
                     EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
                 } ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             ASSERT_TRUE( m.check_consistency());
 
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
 
             // erase/find
             for ( auto const& i : arrKeys ) {
-                value_type const& val( arrVals.at( i.nKey ) );
+                value_type const& val( arrVals.at( i.nKey ));
 
                 ASSERT_TRUE( m.contains( i.nKey ));
-                ASSERT_TRUE( m.contains( val.strVal ) );
+                ASSERT_TRUE( m.contains( val.strVal ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE( m.contains( other_item( i.nKey ), other_less()));
                 ASSERT_TRUE( m.find( i, []( key_type const& key, mapped_type& val ) {
@@ -289,7 +289,7 @@ namespace {
                     EXPECT_TRUE( false );
                 } ));
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             Map::gc::force_dispose();
@@ -299,16 +299,16 @@ namespace {
 
             // clear
             for ( auto const& i : arrKeys ) {
-                value_type& val( arrVals.at( i.nKey ) );
+                value_type& val( arrVals.at( i.nKey ));
                 ASSERT_TRUE( m.insert( i, &val ));
             }
 
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             m.clear();
 
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
             Map::gc::force_dispose();
@@ -316,7 +316,7 @@ namespace {
                 EXPECT_EQ( item.nDisposeCount, 2u );
             }
 
-            ASSERT_TRUE( m.check_consistency() );
+            ASSERT_TRUE( m.check_consistency());
 
 
             // RCU-specific test related to exempt_ptr
@@ -325,16 +325,16 @@ namespace {
 
             // extract
             for ( auto const& i : arrKeys ) {
-                value_type& val( arrVals.at( i.nKey ) );
-                ASSERT_TRUE( m.insert( i, &val ) );
+                value_type& val( arrVals.at( i.nKey ));
+                ASSERT_TRUE( m.insert( i, &val ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
 
             for ( auto const& i : arrKeys ) {
                 value_type const& val = arrVals.at( i.nKey );
 
-                EXPECT_TRUE( m.contains( i.nKey ) );
+                EXPECT_TRUE( m.contains( i.nKey ));
 
                 switch ( i.nKey % 4 ) {
                 case 0:
@@ -347,15 +347,15 @@ namespace {
                     xp = m.extract( val.strVal );
                     break;
                 case 3:
-                    xp = m.extract_with( other_item( i.nKey ), other_less() );
+                    xp = m.extract_with( other_item( i.nKey ), other_less());
                     break;
                 }
                 ASSERT_FALSE( !xp );
                 EXPECT_EQ( xp->nVal, i.nKey );
 
-                EXPECT_FALSE( m.contains( i.nKey ) );
+                EXPECT_FALSE( m.contains( i.nKey ));
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
             xp.release();
 
@@ -365,18 +365,18 @@ namespace {
             }
 
             // extract_min
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
             for ( auto const& i : arrKeys ) {
-                value_type& val( arrVals.at( i.nKey ) );
-                ASSERT_TRUE( m.insert( i, &val ) );
+                value_type& val( arrVals.at( i.nKey ));
+                ASSERT_TRUE( m.insert( i, &val ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
-            ASSERT_TRUE( m.check_consistency() );
+            ASSERT_TRUE( m.check_consistency());
 
             int nPrevKey = -1;
             size_t nCount = 0;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 switch ( nCount % 3 ) {
                 case 0:
                     xp = m.extract_min();
@@ -400,7 +400,7 @@ namespace {
                 nPrevKey = xp->nVal;
                 ++nCount;
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
             EXPECT_EQ( nCount, kkSize );
             xp.release();
@@ -411,18 +411,18 @@ namespace {
             }
 
             // extract_max
-            shuffle( arrKeys.begin(), arrKeys.end() );
+            shuffle( arrKeys.begin(), arrKeys.end());
             for ( auto const& i : arrKeys ) {
-                value_type& val( arrVals.at( i.nKey ) );
-                ASSERT_TRUE( m.insert( i, &val ) );
+                value_type& val( arrVals.at( i.nKey ));
+                ASSERT_TRUE( m.insert( i, &val ));
             }
-            ASSERT_FALSE( m.empty() );
+            ASSERT_FALSE( m.empty());
             ASSERT_CONTAINER_SIZE( m, kkSize );
-            ASSERT_TRUE( m.check_consistency() );
+            ASSERT_TRUE( m.check_consistency());
 
             nPrevKey = static_cast<int>(kkSize);
             nCount = 0;
-            while ( !m.empty() ) {
+            while ( !m.empty()) {
                 switch ( nCount % 3 ) {
                 case 0:
                     xp = m.extract_max();
@@ -446,7 +446,7 @@ namespace {
                 nPrevKey = xp->nVal;
                 ++nCount;
             }
-            ASSERT_TRUE( m.empty() );
+            ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
             EXPECT_EQ( nCount, kkSize );
             xp.release();
@@ -477,7 +477,7 @@ namespace {
             }
 
             // checking empty map
-            ASSERT_TRUE( m.check_consistency() );
+            ASSERT_TRUE( m.check_consistency());
         }
     };
 

@@ -126,7 +126,7 @@ namespace cds { namespace urcu {
         /// Returns singleton instance
         static general_threaded * instance()
         {
-            return static_cast<general_threaded *>( base_class::instance() );
+            return static_cast<general_threaded *>( base_class::instance());
         }
         /// Checks if the singleton is created and ready to use
         static bool isUsed()
@@ -152,7 +152,7 @@ namespace cds { namespace urcu {
         bool push_buffer( epoch_retired_ptr&& p )
         {
             bool bPushed = m_Buffer.push( p );
-            if ( !bPushed || m_Buffer.size() >= capacity() ) {
+            if ( !bPushed || m_Buffer.size() >= capacity()) {
                 synchronize();
                 if ( !bPushed )
                     p.free();
@@ -176,7 +176,7 @@ namespace cds { namespace urcu {
         static void Construct( size_t nBufferCapacity = 256 )
         {
             if ( !singleton_ptr::s_pRCU ) {
-                std::unique_ptr< general_threaded, scoped_disposer > pRCU( new general_threaded( nBufferCapacity ) );
+                std::unique_ptr< general_threaded, scoped_disposer > pRCU( new general_threaded( nBufferCapacity ));
                 pRCU->m_DisposerThread.start();
 
                 singleton_ptr::s_pRCU = pRCU.release();
@@ -186,7 +186,7 @@ namespace cds { namespace urcu {
         /// Destroys singleton object and terminates internal reclamation thread
         static void Destruct( bool bDetachAll = false )
         {
-            if ( isUsed() ) {
+            if ( isUsed()) {
                 general_threaded * pThis = instance();
                 if ( bDetachAll )
                     pThis->m_ThreadList.detach_all();

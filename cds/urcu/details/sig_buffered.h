@@ -107,7 +107,7 @@ namespace cds { namespace urcu {
         /// Returns singleton instance
         static signal_buffered * instance()
         {
-            return static_cast<signal_buffered *>( base_class::instance() );
+            return static_cast<signal_buffered *>( base_class::instance());
         }
         /// Checks if the singleton is created and ready to use
         static bool isUsed()
@@ -126,7 +126,7 @@ namespace cds { namespace urcu {
 
         ~signal_buffered()
         {
-            clear_buffer( std::numeric_limits< uint64_t >::max() );
+            clear_buffer( std::numeric_limits< uint64_t >::max());
         }
 
         void clear_buffer( uint64_t nEpoch )
@@ -137,7 +137,7 @@ namespace cds { namespace urcu {
                     p.free();
                 }
                 else {
-                    push_buffer( std::move(p) );
+                    push_buffer( std::move(p));
                     break;
                 }
             }
@@ -146,7 +146,7 @@ namespace cds { namespace urcu {
         bool push_buffer( epoch_retired_ptr&& ep )
         {
             bool bPushed = m_Buffer.push( ep );
-            if ( !bPushed || m_Buffer.size() >= capacity() ) {
+            if ( !bPushed || m_Buffer.size() >= capacity()) {
                 synchronize();
                 if ( !bPushed ) {
                     ep.free();
@@ -173,7 +173,7 @@ namespace cds { namespace urcu {
         /// Destroys singleton object
         static void Destruct( bool bDetachAll = false )
         {
-            if ( isUsed() ) {
+            if ( isUsed()) {
                 instance()->clear_buffer( std::numeric_limits< uint64_t >::max());
                 if ( bDetachAll )
                     instance()->m_ThreadList.detach_all();

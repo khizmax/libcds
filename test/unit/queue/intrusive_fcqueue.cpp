@@ -85,18 +85,18 @@ namespace {
             for ( size_t i = 0; i < nSize; ++i )
                 arr[i].nVal = static_cast<int>(i);
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // pop from empty queue
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             pv = q.dequeue();
             ASSERT_TRUE( pv == nullptr );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // push/pop test
@@ -105,21 +105,21 @@ namespace {
                     q.push( arr[i] );
                 else
                     q.enqueue( arr[i] );
-                ASSERT_FALSE( q.empty() );
+                ASSERT_FALSE( q.empty());
                 ASSERT_EQ( q.size(), i + 1 );
             }
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_FALSE( q.empty() );
+                ASSERT_FALSE( q.empty());
                 ASSERT_EQ( q.size(), nSize - i );
                 if ( i & 1 )
                     pv = q.pop();
                 else
                     pv = q.dequeue();
                 ASSERT_FALSE( pv == nullptr );
-                ASSERT_EQ( pv->nVal, static_cast<int>(i) );
+                ASSERT_EQ( pv->nVal, static_cast<int>(i));
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // pop() doesn't call disposer
@@ -131,11 +131,11 @@ namespace {
             for ( size_t i = 0; i < nSize; ++i )
                 q.push( arr[i] );
 
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );
 
             q.clear( true );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -147,7 +147,7 @@ namespace {
                 q.push( arr[i] );
 
             q.clear();
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {

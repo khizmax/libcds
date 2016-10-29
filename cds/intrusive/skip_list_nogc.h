@@ -93,8 +93,8 @@ namespace cds { namespace intrusive {
             /// Access to element of next pointer array
             atomic_ptr& next( unsigned int nLevel )
             {
-                assert( nLevel < height() );
-                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr) );
+                assert( nLevel < height());
+                assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr));
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
             }
@@ -102,7 +102,7 @@ namespace cds { namespace intrusive {
             /// Access to element of next pointer array (const version)
             atomic_ptr const& next( unsigned int nLevel ) const
             {
-                assert( nLevel < height() );
+                assert( nLevel < height());
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
@@ -165,7 +165,7 @@ namespace cds { namespace intrusive {
 
         public: // for internal use only!!!
             iterator( node_type& refHead )
-                : m_pNode( refHead[0].load( atomics::memory_order_relaxed ) )
+                : m_pNode( refHead[0].load( atomics::memory_order_relaxed ))
             {}
 
             static iterator from_node( node_type * pNode )
@@ -536,7 +536,7 @@ namespace cds { namespace intrusive {
             {
                 node_type * p = pos.pSucc[0];
                 pNode->next( 0 ).store( pos.pSucc[ 0 ], memory_model::memory_order_release );
-                if ( !pos.pPrev[0]->next(0).compare_exchange_strong( p, pNode, memory_model::memory_order_release, memory_model::memory_order_relaxed ) ) {
+                if ( !pos.pPrev[0]->next(0).compare_exchange_strong( p, pNode, memory_model::memory_order_release, memory_model::memory_order_relaxed )) {
                     return false;
                 }
                 f( val );
@@ -549,7 +549,7 @@ namespace cds { namespace intrusive {
 
                     if ( pNode->next( nLevel ).compare_exchange_strong( p, q, memory_model::memory_order_release, memory_model::memory_order_relaxed )) {
                         p = q;
-                        if ( pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( q, pNode, memory_model::memory_order_release, memory_model::memory_order_relaxed ) )
+                        if ( pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( q, pNode, memory_model::memory_order_release, memory_model::memory_order_relaxed ))
                             break;
                     }
 
@@ -581,7 +581,7 @@ namespace cds { namespace intrusive {
         void increase_height( unsigned int nHeight )
         {
             unsigned int nCur = m_nHeight.load( memory_model::memory_order_relaxed );
-            while ( nCur < nHeight && !m_nHeight.compare_exchange_weak( nCur, nHeight, memory_model::memory_order_acquire, atomics::memory_order_relaxed ) );
+            while ( nCur < nHeight && !m_nHeight.compare_exchange_weak( nCur, nHeight, memory_model::memory_order_acquire, atomics::memory_order_relaxed ));
         }
         //@endcond
 
@@ -624,18 +624,18 @@ namespace cds { namespace intrusive {
         /// Returns a forward iterator addressing the first element in a set
         iterator begin()
         {
-            return iterator( *m_Head.head() );
+            return iterator( *m_Head.head());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator begin() const
         {
-            return const_iterator( *m_Head.head() );
+            return const_iterator( *m_Head.head());
         }
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( *m_Head.head() );
+            return const_iterator( *m_Head.head());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.

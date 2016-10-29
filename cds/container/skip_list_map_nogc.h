@@ -196,7 +196,7 @@ namespace cds { namespace container {
         iterator insert( K const& key )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::insert( std::make_pair( key_type( key ), mapped_type() ) );
+            return base_class::insert( std::make_pair( key_type( key ), mapped_type()) );
         }
 
         /// Inserts new node
@@ -248,8 +248,8 @@ namespace cds { namespace container {
         iterator insert_with( K const& key, Func func )
         {
             iterator it = insert( key );
-            if ( it != end() )
-                func( (*it) );
+            if ( it != end())
+                func( (*it));
             return it;
         }
 
@@ -278,7 +278,7 @@ namespace cds { namespace container {
         std::pair<iterator, bool> update( K const& key, bool bInsert = true )
         {
             //TODO: pass arguments by reference (make_pair makes copy)
-            return base_class::update( std::make_pair( key_type( key ), mapped_type() ), bInsert );
+            return base_class::update( std::make_pair( key_type( key ), mapped_type()), bInsert );
         }
         //@cond
         template <typename K>

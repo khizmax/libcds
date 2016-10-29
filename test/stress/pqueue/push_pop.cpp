@@ -86,7 +86,7 @@ namespace {
                 m_arr.reserve( nEnd - nStart );
                 for ( size_t i = nStart; i < nEnd; ++i )
                     m_arr.push_back( i );
-                shuffle( m_arr.begin(), m_arr.end() );
+                shuffle( m_arr.begin(), m_arr.end());
             }
 
         public:
@@ -121,7 +121,7 @@ namespace {
             virtual void test()
             {
                 typename PQueue::value_type val;
-                while ( s_nProducerCount.load( atomics::memory_order_relaxed ) != 0 || !m_Queue.empty() ) {
+                while ( s_nProducerCount.load( atomics::memory_order_relaxed ) != 0 || !m_Queue.empty()) {
                     if ( m_Queue.pop( val ))
                         ++m_nPopSuccess;
                     else
@@ -192,7 +192,7 @@ namespace {
             EXPECT_EQ( nTotalPopped, s_nQueueSize );
             EXPECT_EQ( nPushFailed, 0u );
 
-            //check_statistics( testQueue.statistics() );
+            //check_statistics( testQueue.statistics());
             propout() << q.statistics();
         }
 
@@ -233,7 +233,7 @@ namespace {
     { \
         typedef pqueue::Types<pqueue::simple_value>::pqueue_t pqueue_type; \
         std::unique_ptr< pqueue_type > pq( new pqueue_type ); \
-        test( *pq.get() ); \
+        test( *pq.get()); \
     }
     //CDSSTRESS_MSPriorityQueue( pqueue_push_pop, MSPriorityQueue_static_less )
     //CDSSTRESS_MSPriorityQueue( pqueue_push_pop, MSPriorityQueue_static_less_stat )

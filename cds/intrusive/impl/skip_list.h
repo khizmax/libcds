@@ -65,7 +65,7 @@ namespace cds { namespace intrusive {
         protected:
             static value_type * gc_protect( marked_ptr p )
             {
-                return node_traits::to_value_ptr( p.ptr() );
+                return node_traits::to_value_ptr( p.ptr());
             }
 
             void next()
@@ -75,7 +75,7 @@ namespace cds { namespace intrusive {
                 back_off bkoff;
 
                 for (;;) {
-                    if ( m_pNode->next( m_pNode->height() - 1 ).load( atomics::memory_order_acquire ).bits() ) {
+                    if ( m_pNode->next( m_pNode->height() - 1 ).load( atomics::memory_order_acquire ).bits()) {
                         // Current node is marked as deleted. So, its next pointer can point to anything
                         // In this case we interrupt our iteration and returns end() iterator.
                         *this = iterator();
@@ -84,12 +84,12 @@ namespace cds { namespace intrusive {
 
                     marked_ptr p = m_guard.protect( (*m_pNode)[0], gc_protect );
                     node_type * pp = p.ptr();
-                    if ( p.bits() ) {
+                    if ( p.bits()) {
                         // p is marked as deleted. Spin waiting for physical removal
                         bkoff();
                         continue;
                     }
-                    else if ( pp && pp->next( pp->height() - 1 ).load( atomics::memory_order_relaxed ).bits() ) {
+                    else if ( pp && pp->next( pp->height() - 1 ).load( atomics::memory_order_relaxed ).bits()) {
                         // p is marked as deleted. Spin waiting for physical removal
                         bkoff();
                         continue;
@@ -108,7 +108,7 @@ namespace cds { namespace intrusive {
 
                 for (;;) {
                     marked_ptr p = m_guard.protect( refHead[0], gc_protect );
-                    if ( !p.ptr() ) {
+                    if ( !p.ptr()) {
                         // empty skip-list
                         m_guard.clear();
                         break;
@@ -116,7 +116,7 @@ namespace cds { namespace intrusive {
 
                     node_type * pp = p.ptr();
                     // Logically deleted node is marked from highest level
-                    if ( !pp->next( pp->height() - 1 ).load( atomics::memory_order_acquire ).bits() ) {
+                    if ( !pp->next( pp->height() - 1 ).load( atomics::memory_order_acquire ).bits()) {
                         m_pNode = pp;
                         break;
                     }
@@ -133,7 +133,7 @@ namespace cds { namespace intrusive {
             iterator( iterator const& s)
                 : m_pNode( s.m_pNode )
             {
-                m_guard.assign( node_traits::to_value_ptr(m_pNode) );
+                m_guard.assign( node_traits::to_value_ptr(m_pNode));
             }
 
             value_type * operator ->() const
@@ -446,13 +446,13 @@ namespace cds { namespace intrusive {
 
         static value_type * gc_protect( marked_node_ptr p )
         {
-            return node_traits::to_value_ptr( p.ptr() );
+            return node_traits::to_value_ptr( p.ptr());
         }
 
         static void dispose_node( value_type * pVal )
         {
             assert( pVal != nullptr );
-            typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal) );
+            typename node_builder::node_disposer()( node_traits::to_node_ptr(pVal));
             disposer()( pVal );
         }
 
@@ -475,7 +475,7 @@ namespace cds { namespace intrusive {
                 pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
                 while ( true ) {
                     pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
                     }
@@ -488,17 +488,17 @@ namespace cds { namespace intrusive {
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
-                        marked_node_ptr p( pCur.ptr() );
-                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
+                        marked_node_ptr p( pCur.ptr());
+                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
                             memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-                                gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                                gc::retire( node_traits::to_value_ptr( pCur.ptr()), dispose_node );
                                 m_Stat.onEraseWhileFind();
                             }
                         }
@@ -551,22 +551,22 @@ namespace cds { namespace intrusive {
                 // head cannot be deleted
                 assert( pCur.bits() == 0 );
 
-                if ( pCur.ptr() ) {
+                if ( pCur.ptr()) {
 
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
-                        marked_node_ptr p( pCur.ptr() );
-                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
+                        marked_node_ptr p( pCur.ptr());
+                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
                             memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-                                gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                                gc::retire( node_traits::to_value_ptr( pCur.ptr()), dispose_node );
                                 m_Stat.onEraseWhileFind();
                             }
                         }
@@ -599,7 +599,7 @@ namespace cds { namespace intrusive {
                 pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
                 while ( true ) {
                     pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
                     }
@@ -612,24 +612,24 @@ namespace cds { namespace intrusive {
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
-                        marked_node_ptr p( pCur.ptr() );
-                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
+                        marked_node_ptr p( pCur.ptr());
+                        if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
                             memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                         {
                             if ( nLevel == 0 ) {
-                                gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                                gc::retire( node_traits::to_value_ptr( pCur.ptr()), dispose_node );
                                 m_Stat.onEraseWhileFind();
                             }
                         }
                         goto retry;
                     }
                     else {
-                        if ( !pSucc.ptr() )
+                        if ( !pSucc.ptr())
                             break;
 
                         pPred = pCur.ptr();
@@ -672,7 +672,7 @@ namespace cds { namespace intrusive {
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, q, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
                         // pNode has been marked as removed while we are inserting it
                         // Stop inserting
-                        assert( p.bits() );
+                        assert( p.bits());
                         m_Stat.onLogicDeleteWhileInsert();
                         return true;
                     }
@@ -712,7 +712,7 @@ namespace cds { namespace intrusive {
             }
 
             while ( true ) {
-                marked_node_ptr p( pDel->next(0).load(memory_model::memory_order_relaxed).ptr() );
+                marked_node_ptr p( pDel->next(0).load(memory_model::memory_order_relaxed).ptr());
                 if ( pDel->next(0).compare_exchange_strong( p, p | 1, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                 {
                     f( *node_traits::to_value_ptr( pDel ));
@@ -723,7 +723,7 @@ namespace cds { namespace intrusive {
                     for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
                         pSucc = pDel->next(nLevel).load(memory_model::memory_order_relaxed);
                         if ( !pos.pPrev[nLevel]->next(nLevel).compare_exchange_strong( p, marked_node_ptr(pSucc.ptr()),
-                            memory_model::memory_order_acquire, atomics::memory_order_relaxed) )
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed))
                         {
                             // Make slow erase
                             find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
@@ -738,7 +738,7 @@ namespace cds { namespace intrusive {
                     return true;
                 }
                 else {
-                    if ( p.bits() ) {
+                    if ( p.bits()) {
                         // Another thread is deleting pDel right now
                         return false;
                     }
@@ -769,7 +769,7 @@ namespace cds { namespace intrusive {
                     continue;
 
                 while ( pCur != pNull ) {
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         unsigned int nAttempt = 0;
                         while ( pCur.bits() && nAttempt++ < 16 ) {
                             bkoff();
@@ -777,15 +777,15 @@ namespace cds { namespace intrusive {
                         }
                         bkoff.reset();
 
-                        if ( pCur.bits() ) {
+                        if ( pCur.bits()) {
                             // Maybe, we are on deleted node sequence
                             // Abort searching, try slow-path
                             return find_fastpath_abort;
                         }
                     }
 
-                    if ( pCur.ptr() ) {
-                        int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                    if ( pCur.ptr()) {
+                        int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
                         if ( nCmp < 0 ) {
                             guards.copy( 0, 1 );
                             pPred = pCur.ptr();
@@ -793,7 +793,7 @@ namespace cds { namespace intrusive {
                         }
                         else if ( nCmp == 0 ) {
                             // found
-                            f( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                            f( *node_traits::to_value_ptr( pCur.ptr()), val );
                             return find_fastpath_found;
                         }
                         else // pCur > val - go down
@@ -856,14 +856,14 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if ( !find_position( val, pos, cmp, false ) ) {
+            if ( !find_position( val, pos, cmp, false )) {
                 m_Stat.onEraseFailed();
                 return false;
             }
 
             node_type * pDel = pos.pCur;
             typename gc::Guard gDel;
-            gDel.assign( node_traits::to_value_ptr(pDel) );
+            gDel.assign( node_traits::to_value_ptr(pDel));
             assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
 
             unsigned int nHeight = pDel->height();
@@ -885,7 +885,7 @@ namespace cds { namespace intrusive {
 
             guarded_ptr gp;
             for (;;) {
-                if ( !find_position( val, pos, cmp, false ) ) {
+                if ( !find_position( val, pos, cmp, false )) {
                     m_Stat.onExtractFailed();
                     return guarded_ptr();
                 }
@@ -911,7 +911,7 @@ namespace cds { namespace intrusive {
 
             guarded_ptr gp;
             for (;;) {
-                if ( !find_min_position( pos ) ) {
+                if ( !find_min_position( pos )) {
                     // The list is empty
                     m_Stat.onExtractMinFailed();
                     return guarded_ptr();
@@ -920,7 +920,7 @@ namespace cds { namespace intrusive {
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gp.reset( node_traits::to_value_ptr(pDel) );
+                gp.reset( node_traits::to_value_ptr(pDel));
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
@@ -939,7 +939,7 @@ namespace cds { namespace intrusive {
 
             guarded_ptr gp;
             for (;;) {
-                if ( !find_max_position( pos ) ) {
+                if ( !find_max_position( pos )) {
                     // The list is empty
                     m_Stat.onExtractMaxFailed();
                     return guarded_ptr();
@@ -948,7 +948,7 @@ namespace cds { namespace intrusive {
                 node_type * pDel = pos.pCur;
 
                 unsigned int nHeight = pDel->height();
-                gp.reset( node_traits::to_value_ptr(pDel) );
+                gp.reset( node_traits::to_value_ptr(pDel));
 
                 if ( try_remove_at( pDel, pos, [](value_type const&) {} )) {
                     --m_ItemCounter;
@@ -1046,18 +1046,18 @@ namespace cds { namespace intrusive {
         /// Returns a forward iterator addressing the first element in a set
         iterator begin()
         {
-            return iterator( *m_Head.head() );
+            return iterator( *m_Head.head());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator begin() const
         {
-            return const_iterator( *m_Head.head() );
+            return const_iterator( *m_Head.head());
         }
         /// Returns a forward const iterator addressing the first element in a set
         const_iterator cbegin() const
         {
-            return const_iterator( *m_Head.head() );
+            return const_iterator( *m_Head.head());
         }
 
         /// Returns a forward iterator that addresses the location succeeding the last element in a set.
@@ -1257,7 +1257,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if ( !find_position( val, pos, key_comparator(), false ) ) {
+            if ( !find_position( val, pos, key_comparator(), false )) {
                 m_Stat.onUnlinkFailed();
                 return false;
             }
@@ -1267,7 +1267,7 @@ namespace cds { namespace intrusive {
 
             unsigned int nHeight = pDel->height();
             typename gc::Guard gDel;
-            gDel.assign( node_traits::to_value_ptr(pDel) );
+            gDel.assign( node_traits::to_value_ptr(pDel));
 
             if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos, [](value_type const&) {} )) {
                 --m_ItemCounter;
@@ -1311,7 +1311,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr extract( Q const& key )
         {
-            return extract_( key, key_comparator() );
+            return extract_( key, key_comparator());
         }
 
         /// Extracts the item from the set with comparing functor \p pred
@@ -1327,7 +1327,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_( key, cds::opt::details::make_comparator_from_less<Less>() );
+            return extract_( key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Extracts an item with minimal key from the list
@@ -1601,7 +1601,7 @@ namespace cds { namespace intrusive {
         template <typename Q>
         guarded_ptr get( Q const& key )
         {
-            return get_with_( key, key_comparator() );
+            return get_with_( key, key_comparator());
         }
 
         /// Finds \p key and return the item found
@@ -1617,7 +1617,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_with_( key, cds::opt::details::make_comparator_from_less<Less>() );
+            return get_with_( key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         /// Returns item count in the set
@@ -1645,7 +1645,7 @@ namespace cds { namespace intrusive {
             this sequence
             \code
             set.clear();
-            assert( set.empty() );
+            assert( set.empty());
             \endcode
             the assertion could be raised.
 

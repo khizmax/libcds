@@ -175,7 +175,7 @@ namespace {
         };
 
         atomics::atomic<tagged_ptr> tp;
-        if ( tp.is_lock_free() ) {
+        if ( tp.is_lock_free()) {
             cds::intrusive::TaggedFreeList fl;
             test( fl );
         }

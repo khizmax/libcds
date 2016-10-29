@@ -92,7 +92,7 @@ namespace cds_test {
         struct cmp {
             int operator ()( const T& v1, const T& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }
@@ -108,7 +108,7 @@ namespace cds_test {
             template <typename Q>
             int operator ()( const Q& v1, const T& v2 ) const
             {
-                if ( v1 < v2.key() )
+                if ( v1 < v2.key())
                     return -1;
                 return v1 > v2.key() ? 1 : 0;
             }
@@ -152,7 +152,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             // insert/find
@@ -240,10 +240,10 @@ namespace cds_test {
                 EXPECT_TRUE( pair.first );
                 EXPECT_FALSE( pair.second );
 
-                EXPECT_FALSE( l.empty() );
+                EXPECT_FALSE( l.empty());
             }
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             // erase
@@ -276,19 +276,19 @@ namespace cds_test {
                 EXPECT_FALSE( l.find_with( other_item( i.nKey ), other_less(), []( value_type&, other_item const& ) {} ));
             }
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // clear test
             for ( auto& i : arr )
                 EXPECT_TRUE( l.insert( i ));
 
-            ASSERT_FALSE( l.empty() );
+            ASSERT_FALSE( l.empty());
             EXPECT_CONTAINER_SIZE( l, nSize );
 
             l.clear();
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             // empty list iterator test
@@ -318,7 +318,7 @@ namespace cds_test {
             }
             shuffle( arr, arr + nSize );
 
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             ASSERT_CONTAINER_SIZE( l, 0 );
 
             for ( auto& i : arr )
@@ -363,7 +363,7 @@ namespace cds_test {
             EXPECT_EQ( static_cast<size_t>(key), nSize );
 
             l.clear();
-            ASSERT_TRUE( l.empty() );
+            ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
         }
     };

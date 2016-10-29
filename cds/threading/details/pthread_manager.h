@@ -90,7 +90,7 @@ namespace cds { namespace threading {
 
                 static ThreadData *    get()
                 {
-                    return reinterpret_cast<ThreadData *>( pthread_getspecific( m_key ) );
+                    return reinterpret_cast<ThreadData *>( pthread_getspecific( m_key ));
                 }
 
                 static void alloc()
@@ -204,7 +204,7 @@ namespace cds { namespace threading {
                 assert( pData );
 
                 if ( pData ) {
-                    if ( pData->fini() )
+                    if ( pData->fini())
                         _threadData( do_detachThread );
                 }
                 else

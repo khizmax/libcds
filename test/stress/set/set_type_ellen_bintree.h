@@ -286,10 +286,10 @@ namespace set {
         {
             EXPECT_EQ( stat.m_nInternalNodeCreated, stat.m_nInternalNodeDeleted );
             EXPECT_EQ( stat.m_nUpdateDescCreated, stat.m_nUpdateDescDeleted );
-            //EXPECT_EQ( ellen_bintree_pool::internal_node_counter::m_nAlloc.get(), ellen_bintree_pool::internal_node_counter::m_nFree.get() );
+            //EXPECT_EQ( ellen_bintree_pool::internal_node_counter::m_nAlloc.get(), ellen_bintree_pool::internal_node_counter::m_nFree.get());
             EXPECT_EQ( ellen_bintree_pool::internal_node_counter::m_nAlloc.get(), stat.m_nInternalNodeCreated );
             // true if RCU is not threaded
-            //EXPECT_EQ( stat.m_nInternalNodeDeleted, ellen_bintree_pool::internal_node_counter::m_nFree.get() );
+            //EXPECT_EQ( stat.m_nInternalNodeDeleted, ellen_bintree_pool::internal_node_counter::m_nFree.get());
         }
     }   // namespace ellen_bintree_check
 
@@ -320,7 +320,7 @@ namespace set {
     template <typename GC, typename Key, typename T, typename Traits>
     static inline void check_before_clear( cds::container::EllenBinTreeSet<GC, Key, T, Traits>& s )
     {
-        EXPECT_TRUE( s.check_consistency() );
+        EXPECT_TRUE( s.check_consistency());
     }
 } // namespace set
 

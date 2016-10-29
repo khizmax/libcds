@@ -172,7 +172,7 @@ namespace cds { namespace container {
         */
         iterator begin()
         {
-            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[0].begin(), m_Buckets, m_Buckets + bucket_count());
         }
 
         /// Returns an iterator that addresses the location succeeding the last element in a set
@@ -183,7 +183,7 @@ namespace cds { namespace container {
         */
         iterator end()
         {
-            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return iterator( m_Buckets[bucket_count() - 1].end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
 
         /// Returns a forward const iterator addressing the first element in a set
@@ -225,7 +225,7 @@ namespace cds { namespace container {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
-          , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()) )
         {
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 construct_bucket<bucket_stat>( it );
@@ -237,7 +237,7 @@ namespace cds { namespace container {
             clear();
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node
@@ -253,9 +253,9 @@ namespace cds { namespace container {
             internal_bucket_type& refBucket = bucket( val );
             bucket_iterator it = refBucket.insert( val );
 
-            if ( it != refBucket.end() ) {
+            if ( it != refBucket.end()) {
                 ++m_ItemCounter;
-                return iterator( it, &refBucket, m_Buckets + bucket_count() );
+                return iterator( it, &refBucket, m_Buckets + bucket_count());
             }
 
             return end();
@@ -271,9 +271,9 @@ namespace cds { namespace container {
             typename internal_bucket_type::node_type * pNode = internal_bucket_type::alloc_node( std::forward<Args>( args )... );
             internal_bucket_type& refBucket = bucket( internal_bucket_type::node_to_value( *pNode ));
             bucket_iterator it = refBucket.insert_node( pNode );
-            if ( it != refBucket.end() ) {
+            if ( it != refBucket.end()) {
                 ++m_ItemCounter;
-                return iterator( it, &refBucket, m_Buckets + bucket_count() );
+                return iterator( it, &refBucket, m_Buckets + bucket_count());
             }
 
             return end();
@@ -300,10 +300,10 @@ namespace cds { namespace container {
             internal_bucket_type& refBucket = bucket( val );
             std::pair<bucket_iterator, bool> ret = refBucket.update( val, bAllowInsert );
 
-            if ( ret.first != refBucket.end() ) {
+            if ( ret.first != refBucket.end()) {
                 if ( ret.second )
                     ++m_ItemCounter;
-                return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count() ), ret.second );
+                return std::make_pair( iterator( ret.first, &refBucket, m_Buckets + bucket_count()), ret.second );
             }
             return std::make_pair( end(), ret.second );
         }
@@ -330,8 +330,8 @@ namespace cds { namespace container {
         {
             internal_bucket_type& refBucket = bucket( key );
             bucket_iterator it = refBucket.contains( key );
-            if ( it != refBucket.end() )
-                return iterator( it, &refBucket, m_Buckets + bucket_count() );
+            if ( it != refBucket.end())
+                return iterator( it, &refBucket, m_Buckets + bucket_count());
 
             return end();
         }
@@ -355,8 +355,8 @@ namespace cds { namespace container {
         {
             internal_bucket_type& refBucket = bucket( key );
             bucket_iterator it = refBucket.contains( key, pred );
-            if ( it != refBucket.end() )
-                return iterator( it, &refBucket, m_Buckets + bucket_count() );
+            if ( it != refBucket.end())
+                return iterator( it, &refBucket, m_Buckets + bucket_count());
 
             return end();
         }
@@ -443,11 +443,11 @@ namespace cds { namespace container {
 
         const_iterator get_const_begin() const
         {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[0]).begin(), m_Buckets, m_Buckets + bucket_count());
         }
         const_iterator get_const_end() const
         {
-            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count() );
+            return const_iterator( const_cast<internal_bucket_type const&>(m_Buckets[bucket_count() - 1]).end(), m_Buckets + bucket_count() - 1, m_Buckets + bucket_count());
         }
         //@endcond
     };

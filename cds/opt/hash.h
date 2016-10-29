@@ -107,7 +107,7 @@ namespace cds { namespace opt {
                 : hash_tuple( t )
             {}
             hash_list( hash_tuple_type&& t)
-                : hash_tuple( std::forward<hash_tuple_type>(t) )
+                : hash_tuple( std::forward<hash_tuple_type>(t))
             {}
 
             template <size_t I, typename T>
@@ -172,7 +172,7 @@ namespace cds { namespace opt {
                 : m_wrappedList( t )
             {}
             hash_list_wrapper( hash_tuple_type&& t)
-                : m_wrappedList( std::forward<hash_tuple_type>(t) )
+                : m_wrappedList( std::forward<hash_tuple_type>(t))
             {}
 
             void operator()( size_t * dest, wrapped_type const& what ) const

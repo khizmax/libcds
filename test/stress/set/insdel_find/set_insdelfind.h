@@ -108,7 +108,7 @@ namespace set {
                 size_t const nNormalize = size_t(-1) / ( fixture.s_nSetSize * 2);
 
                 size_t nRand = 0;
-                while ( !time_elapsed() ) {
+                while ( !time_elapsed()) {
                     nRand = cds::bitop::RandXorShift(nRand);
                     size_t n = nRand / nNormalize;
                     switch ( pAct[i] ) {
@@ -152,7 +152,7 @@ namespace set {
                     pInitArr[i] = i * 2 + 1;
                 shuffle( pInitArr, pEnd );
                 for ( size_t * p = pInitArr; p < pEnd; ++p )
-                    testSet.insert( typename Set::value_type( *p, *p ) );
+                    testSet.insert( typename Set::value_type( *p, *p ));
                 delete [] pInitArr;
             }
 
@@ -196,7 +196,7 @@ namespace set {
             {
                 ASSERT_TRUE( std::chrono::duration_cast<std::chrono::seconds>(duration).count() > 0 );
                 size_t nTotalOps = nInsertSuccess + nInsertFailed + nDeleteSuccess + nDeleteFailed + nFindSuccess + nFindFailed;
-                propout() << std::make_pair( "avg_speed", nTotalOps / std::chrono::duration_cast<std::chrono::seconds>(duration).count() );
+                propout() << std::make_pair( "avg_speed", nTotalOps / std::chrono::duration_cast<std::chrono::seconds>(duration).count());
             }
 
 

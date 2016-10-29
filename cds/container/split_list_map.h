@@ -305,7 +305,7 @@ namespace cds { namespace container {
         template <typename K>
         bool insert( K&& key )
         {
-            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type() );
+            return base_class::emplace( key_type( std::forward<K>( key )), mapped_type());
         }
 
         /// Inserts new node
@@ -424,7 +424,7 @@ namespace cds { namespace container {
 #endif
         update( K&& key, Func func, bool bAllowInsert = true )
         {
-            typedef decltype( std::make_pair( key_type( std::forward<K>( key )), mapped_type() )) arg_pair_type;
+            typedef decltype( std::make_pair( key_type( std::forward<K>( key )), mapped_type())) arg_pair_type;
 
             return base_class::update( std::make_pair( key_type( key ), mapped_type()),
                 [&func]( bool bNew, value_type& item, arg_pair_type const& /*val*/ ) {
@@ -667,7 +667,7 @@ namespace cds { namespace container {
         find_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>() );
+            return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
         /// Checks whether the map contains \p key

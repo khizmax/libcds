@@ -332,7 +332,7 @@ namespace cds { namespace container {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
-          , m_Buckets( bucket_table_allocator().allocate( bucket_count() ) )
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()) )
         {
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 construct_bucket<bucket_stat>( it );
@@ -345,7 +345,7 @@ namespace cds { namespace container {
 
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 it->~internal_bucket_type();
-            bucket_table_allocator().deallocate( m_Buckets, bucket_count() );
+            bucket_table_allocator().deallocate( m_Buckets, bucket_count());
         }
 
         /// Inserts new node
@@ -676,7 +676,7 @@ namespace cds { namespace container {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
             return iterator( it, &b, bucket_end());
         }
@@ -687,9 +687,9 @@ namespace cds { namespace container {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@endcond
 
@@ -732,9 +732,9 @@ namespace cds { namespace container {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@cond
         template <typename Q, typename Less>
@@ -743,9 +743,9 @@ namespace cds { namespace container {
         {
             internal_bucket_type& b = bucket( key );
             typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end() )
+            if ( it == b.end())
                 return end();
-            return iterator( it, &b, bucket_end() );
+            return iterator( it, &b, bucket_end());
         }
         //@endcond
 
@@ -907,11 +907,11 @@ namespace cds { namespace container {
 
         const_iterator get_const_begin() const
         {
-            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end() );
+            return const_iterator( bucket_begin()->cbegin(), bucket_begin(), bucket_end());
         }
         const_iterator get_const_end() const
         {
-            return const_iterator(( bucket_end() -1 )->cend(), bucket_end() - 1, bucket_end() );
+            return const_iterator(( bucket_end() -1 )->cend(), bucket_end() - 1, bucket_end());
         }
 
         template <typename Stat>
