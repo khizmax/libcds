@@ -106,6 +106,7 @@ namespace cds { namespace intrusive {
         };
 
         //@cond
+        // for IterableList
         template <>
         struct node<void>: public hash_node
         {
@@ -1040,7 +1041,10 @@ namespace cds { namespace intrusive {
                     aux_node()
                     {
                         typedef typename native_ordered_list::node_type list_node_type;
-                        list_node_type::data.store( typename list_node_type::marked_data_ptr( static_cast<value_type*>( static_cast<hash_node *>( this ))), atomics::memory_order_release );
+                        list_node_type::data.store( typename list_node_type::marked_data_ptr(
+                            static_cast<value_type*>( static_cast<hash_node *>( this ))),
+                            atomics::memory_order_release
+                        );
                     }
                 };
 
