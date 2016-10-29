@@ -34,5 +34,6 @@
 namespace set {
 
     CDSSTRESS_SplitListSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
+    CDSSTRESS_SplitListIterableSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
 
 } // namespace set

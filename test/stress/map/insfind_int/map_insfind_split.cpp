@@ -34,6 +34,7 @@
 namespace map {
 
     CDSSTRESS_SplitListMap( Map_InsFind_int_LF, run_test, size_t, size_t )
+    CDSSTRESS_SplitListIterableMap( Map_InsFind_int_LF, run_test, size_t, size_t )
     CDSSTRESS_SplitListMap_nogc( Map_InsFind_int_LF, run_test, size_t, size_t )
 
 } // namespace map

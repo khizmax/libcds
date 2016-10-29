@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -25,7 +25,7 @@
     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef CDSUNIT_MAP_TYPE_SPLIT_LIST_H
@@ -42,6 +42,9 @@
 #include <cds/container/lazy_kvlist_dhp.h>
 #include <cds/container/lazy_kvlist_rcu.h>
 #include <cds/container/lazy_kvlist_nogc.h>
+
+#include <cds/container/iterable_kvlist_hp.h>
+#include <cds/container/iterable_kvlist_dhp.h>
 
 #include <cds/container/split_list_map.h>
 #include <cds/container/split_list_map_rcu.h>
@@ -204,30 +207,6 @@ namespace map {
         typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_SHT_st_cmp;
 #endif
 
-        struct traits_SplitList_Michael_st_cmp_seqcst: public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_HP_st_cmp_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_DHP_st_cmp_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Michael_st_cmp_seqcst> SplitList_Michael_NOGC_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_RCU_GPI_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_RCU_GPB_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_RCU_GPT_st_cmp_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_RCU_SHB_st_cmp_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_st_cmp_seqcst > SplitList_Michael_RCU_SHT_st_cmp_seqcst;
-#endif
-
         //HP + less
         struct traits_SplitList_Michael_dyn_less: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
@@ -250,29 +229,6 @@ namespace map {
         typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_SHT_dyn_less;
 #endif
 
-
-        struct traits_SplitList_Michael_dyn_less_seqcst: public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_HP_dyn_less_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_DHP_dyn_less_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Michael_dyn_less_seqcst> SplitList_Michael_NOGC_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPI_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPB_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_GPT_dyn_less_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_SHB_dyn_less_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_dyn_less_seqcst > SplitList_Michael_RCU_SHT_dyn_less_seqcst;
-#endif
 
         struct traits_SplitList_Michael_st_less: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
@@ -309,31 +265,6 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHB_st_less_stat;
         typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHT_st_less_stat;
-#endif
-
-
-        class traits_SplitList_Michael_st_less_seqcst: public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::michael_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::michael_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_HP_st_less_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_DHP_st_less_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Michael_st_less_seqcst> SplitList_Michael_NOGC_st_less_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPI_st_less_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPB_st_less_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_GPT_st_less_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_SHB_st_less_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Michael_st_less_seqcst > SplitList_Michael_RCU_SHT_st_less_seqcst;
 #endif
 
 
@@ -425,32 +356,6 @@ namespace map {
 #endif
 
 
-        struct SplitList_Lazy_st_cmp_seqcst :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_HP_st_cmp_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_DHP_st_cmp_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_NOGC_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_RCU_GPI_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_RCU_GPB_st_cmp_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_RCU_GPT_st_cmp_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_RCU_SHB_st_cmp_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_st_cmp_seqcst> SplitList_Lazy_RCU_SHT_st_cmp_seqcst;
-#endif
-
-
         struct SplitList_Lazy_dyn_less :
             public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
@@ -471,30 +376,6 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHB_dyn_less;
         typedef SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHT_dyn_less;
-#endif
-
-        struct SplitList_Lazy_dyn_less_seqcst:
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
-                ,co::hash< hash >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_HP_dyn_less_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_DHP_dyn_less_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, SplitList_Lazy_dyn_less_seqcst> SplitList_Lazy_NOGC_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPI_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPB_dyn_less_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_GPT_dyn_less_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_SHB_dyn_less_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_dyn_less_seqcst > SplitList_Lazy_RCU_SHT_dyn_less_seqcst;
 #endif
 
         struct SplitList_Lazy_st_less :
@@ -535,30 +416,164 @@ namespace map {
         typedef SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHT_st_less_stat;
 #endif
 
-        struct SplitList_Lazy_st_less_seqcst :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::lazy_list_tag>
+
+        // ***************************************************************************
+        // SplitListMap based on IterableList
+        struct traits_SplitList_Iterable_dyn_cmp: public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,co::hash< hash >
-                ,cc::split_list::dynamic_bucket_table< false >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::iterable_list::make_traits<
+                        co::compare< compare >
+                    >::type
+                >
+            >::type
+        {};
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_HP_dyn_cmp;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_DHP_dyn_cmp;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_NOGC_dyn_cmp;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_RCU_GPI_dyn_cmp;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_RCU_GPB_dyn_cmp;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_RCU_GPT_dyn_cmp;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_RCU_SHB_dyn_cmp;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_RCU_SHT_dyn_cmp;
+#endif
+#endif
+
+        struct traits_SplitList_Iterable_dyn_cmp_stat : public traits_SplitList_Iterable_dyn_cmp
+        {
+            typedef cc::split_list::stat<> stat;
+        };
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_HP_dyn_cmp_stat;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_DHP_dyn_cmp_stat;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat> SplitList_Iterable_NOGC_dyn_cmp_stat;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_RCU_GPI_dyn_cmp_stat;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_RCU_GPB_dyn_cmp_stat;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_RCU_GPT_dyn_cmp_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_RCU_SHB_dyn_cmp_stat;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_RCU_SHT_dyn_cmp_stat;
+#endif
+#endif
+
+        struct traits_SplitList_Iterable_dyn_cmp_seqcst: public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::iterable_list_tag>
+                ,co::hash< hash >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,cc::split_list::ordered_list_traits<
-                    typename cc::lazy_list::make_traits<
-                        co::less< less >
+                    typename cc::iterable_list::make_traits<
+                        co::compare< compare >
                         ,co::memory_model< co::v::sequential_consistent >
                     >::type
                 >
             >::type
         {};
-        typedef SplitListMap< cds::gc::HP, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_HP_st_less_seqcst;
-        typedef SplitListMap< cds::gc::DHP, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_DHP_st_less_seqcst;
-        typedef SplitListMap< cds::gc::nogc, Key, Value, SplitList_Lazy_st_less_seqcst> SplitList_Lazy_NOGC_st_less_seqcst;
-        typedef SplitListMap< rcu_gpi, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPI_st_less_seqcst;
-        typedef SplitListMap< rcu_gpb, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPB_st_less_seqcst;
-        typedef SplitListMap< rcu_gpt, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_GPT_st_less_seqcst;
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_HP_dyn_cmp_seqcst;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_DHP_dyn_cmp_seqcst;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst> SplitList_Iterable_NOGC_dyn_cmp_seqcst;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_RCU_GPI_dyn_cmp_seqcst;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_RCU_GPB_dyn_cmp_seqcst;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_RCU_GPT_dyn_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_SHB_st_less_seqcst;
-        typedef SplitListMap< rcu_sht, Key, Value, SplitList_Lazy_st_less_seqcst > SplitList_Lazy_RCU_SHT_st_less_seqcst;
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_RCU_SHB_dyn_cmp_seqcst;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_RCU_SHT_dyn_cmp_seqcst;
 #endif
+#endif
+
+        struct traits_SplitList_Iterable_st_cmp: public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::iterable_list_tag>
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::iterable_list::make_traits<
+                        co::compare< compare >
+                    >::type
+                >
+            >::type
+        {};
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_HP_st_cmp;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_DHP_st_cmp;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_st_cmp> SplitList_Iterable_NOGC_st_cmp;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_RCU_GPI_st_cmp;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_RCU_GPB_st_cmp;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_RCU_GPT_st_cmp;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_RCU_SHB_st_cmp;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_RCU_SHT_st_cmp;
+#endif
+#endif
+
+        //HP + less
+        struct traits_SplitList_Iterable_dyn_less: public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::iterable_list_tag>
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::iterable_list::make_traits<
+                        co::less< less >
+                    >::type
+                >
+            >::type
+        {};
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_HP_dyn_less;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_DHP_dyn_less;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_dyn_less> SplitList_Iterable_NOGC_dyn_less;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_RCU_GPI_dyn_less;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_RCU_GPB_dyn_less;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_RCU_GPT_dyn_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_RCU_SHB_dyn_less;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_RCU_SHT_dyn_less;
+#endif
+#endif
+
+
+        struct traits_SplitList_Iterable_st_less: public cc::split_list::make_traits<
+                cc::split_list::ordered_list<cc::iterable_list_tag>
+                ,cc::split_list::dynamic_bucket_table< false >
+                ,co::hash< hash >
+                ,cc::split_list::ordered_list_traits<
+                    typename cc::iterable_list::make_traits<
+                        co::less< less >
+                    >::type
+                >
+            >::type
+        {};
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_HP_st_less;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_DHP_st_less;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_st_less> SplitList_Iterable_NOGC_st_less;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_RCU_GPI_st_less;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_RCU_GPB_st_less;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_RCU_GPT_st_less;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_RCU_SHB_st_less;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_st_less > SplitList_Iterable_RCU_SHT_st_less;
+#endif
+#endif
+
+        struct traits_SplitList_Iterable_st_less_stat : traits_SplitList_Iterable_st_less
+        {
+            typedef cc::split_list::stat<> stat;
+        };
+        typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_HP_st_less_stat;
+        typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_DHP_st_less_stat;
+#if 0
+        typedef SplitListMap< cds::gc::nogc, Key, Value, traits_SplitList_Iterable_st_less_stat> SplitList_Iterable_NOGC_st_less_stat;
+        typedef SplitListMap< rcu_gpi, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_RCU_GPI_st_less_stat;
+        typedef SplitListMap< rcu_gpb, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_RCU_GPB_st_less_stat;
+        typedef SplitListMap< rcu_gpt, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_RCU_GPT_st_less_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SplitListMap< rcu_shb, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_RCU_SHB_st_less_stat;
+        typedef SplitListMap< rcu_sht, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_RCU_SHT_st_less_stat;
+#endif
+#endif
+
     };
 
     template <typename GC, typename K, typename T, typename Traits >
@@ -587,41 +602,45 @@ namespace map {
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_dyn_cmp_seqcst,  key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_st_cmp,          key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_st_cmp,          key_type, value_type, 1 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_st_cmp_seqcst,   key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_st_cmp_seqcst,   key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_dyn_less,        key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_dyn_less,        key_type, value_type, 0 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_dyn_less_seqcst, key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_dyn_less_seqcst, key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_st_less,         key_type, value_type, 0 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_st_less,         key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_st_less_stat,    key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_st_less_stat,    key_type, value_type, 0 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHB_st_less_seqcst,  key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_SHT_st_less_seqcst,  key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_dyn_cmp,            key_type, value_type, 0 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_dyn_cmp,            key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_dyn_cmp_stat,       key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_dyn_cmp_stat,       key_type, value_type, 0 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_dyn_cmp_seqcst,     key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_dyn_cmp_seqcst,     key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_st_cmp,             key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_st_cmp,             key_type, value_type, 1 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_st_cmp_seqcst,      key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_st_cmp_seqcst,      key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_dyn_less,           key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_dyn_less,           key_type, value_type, 0 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_dyn_less_seqcst,    key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_dyn_less_seqcst,    key_type, value_type, 2 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_st_less,            key_type, value_type, 0 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_st_less,            key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_st_less_stat,       key_type, value_type, 1 ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_st_less_stat,       key_type, value_type, 0 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHB_st_less_seqcst,     key_type, value_type, 2 ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_SHT_st_less_seqcst,     key_type, value_type, 2 ) \
 
+#   define CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
+/*
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_dyn_cmp,         key_type, value_type, 0 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_dyn_cmp,         key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_dyn_cmp_stat,    key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_dyn_cmp_stat,    key_type, value_type, 0 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_dyn_cmp_seqcst,  key_type, value_type, 2 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_dyn_cmp_seqcst,  key_type, value_type, 2 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_st_cmp,          key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_st_cmp,          key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_dyn_less,        key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_dyn_less,        key_type, value_type, 0 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_st_less,         key_type, value_type, 0 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_st_less,         key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHB_st_less_stat,    key_type, value_type, 1 ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_SHT_st_less_stat,    key_type, value_type, 0 ) \
+*/
 #else
 #   define CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #define CDSSTRESS_SplitListMap( fixture, test_case, key_type, value_type ) \
@@ -645,21 +664,11 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_cmp,          key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_cmp,          key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_cmp,          key_type, value_type, 1 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_cmp_seqcst,        key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_cmp_seqcst,       key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_cmp_seqcst,   key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_cmp_seqcst,   key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_cmp_seqcst,   key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_less,             key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_less,            key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_less,        key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_less,        key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_less,        key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_less_seqcst,      key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_less_seqcst,     key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_less_seqcst, key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_less_seqcst, key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_less_seqcst, key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less,              key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less,             key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_less,         key_type, value_type, 1 ) \
@@ -670,11 +679,6 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_less_stat,    key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_less_stat,    key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_less_stat,    key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less_seqcst,       key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less_seqcst,      key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_less_seqcst,  key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_less_seqcst,  key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_less_seqcst,  key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp,                 key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp,                key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_cmp,            key_type, value_type, 0 ) \
@@ -695,21 +699,11 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_cmp,             key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_cmp,             key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_cmp,             key_type, value_type, 1 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_cmp_seqcst,           key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_cmp_seqcst,          key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_cmp_seqcst,      key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_cmp_seqcst,      key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_cmp_seqcst,      key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_less,                key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_less,               key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_less,           key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_less,           key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_less,           key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_less_seqcst,         key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_less_seqcst,        key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_less_seqcst,    key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_less_seqcst,    key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_less_seqcst,    key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less,                 key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less,                key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less,            key_type, value_type, 1 ) \
@@ -720,33 +714,59 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less_stat,       key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less_stat,       key_type, value_type, 1 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less_seqcst,          key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less_seqcst,         key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less_seqcst,     key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less_seqcst,     key_type, value_type, 2 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less_seqcst,     key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type )
+
+#define CDSSTRESS_SplitListIterableMap( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp,              key_type, value_type, 0 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp,             key_type, value_type, 1 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_dyn_cmp,         key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_dyn_cmp,         key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_dyn_cmp,         key_type, value_type, 0 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp_stat,         key_type, value_type, 1 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp_stat,        key_type, value_type, 0 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_dyn_cmp_stat,    key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_dyn_cmp_stat,    key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_dyn_cmp_stat,    key_type, value_type, 1 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp_seqcst,       key_type, value_type, 2 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp_seqcst,      key_type, value_type, 2 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_dyn_cmp_seqcst,  key_type, value_type, 2 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_dyn_cmp_seqcst,  key_type, value_type, 2 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_dyn_cmp_seqcst,  key_type, value_type, 2 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_st_cmp,               key_type, value_type, 1 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_st_cmp,              key_type, value_type, 0 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_st_cmp,          key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_st_cmp,          key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_st_cmp,          key_type, value_type, 1 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_dyn_less,             key_type, value_type, 0 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_dyn_less,            key_type, value_type, 1 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_dyn_less,        key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_dyn_less,        key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_dyn_less,        key_type, value_type, 0 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_st_less,              key_type, value_type, 1 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_st_less,             key_type, value_type, 0 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_st_less,         key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_st_less,         key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_st_less,         key_type, value_type, 1 )*/ \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_st_less_stat,         key_type, value_type, 0 ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_st_less_stat,        key_type, value_type, 1 ) \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPI_st_less_stat,    key_type, value_type, 0 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPB_st_less_stat,    key_type, value_type, 1 )*/ \
+    /*CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_RCU_GPT_st_less_stat,    key_type, value_type, 0 )*/ \
+    CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
+
 
 #define CDSSTRESS_SplitListMap_nogc( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_dyn_cmp,            key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_dyn_cmp_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_dyn_cmp_seqcst,     key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_st_cmp,             key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_st_cmp_seqcst,      key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_dyn_less,           key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_dyn_less_seqcst,    key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_st_less,            key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_st_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_NOGC_st_less_seqcst,     key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_dyn_cmp,               key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_dyn_cmp_stat,          key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_dyn_cmp_seqcst,        key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_st_cmp,                key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_st_cmp_seqcst,         key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_dyn_less,              key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_dyn_less_seqcst,       key_type, value_type, 2 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_st_less,               key_type, value_type, 0 ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_st_less_stat,          key_type, value_type, 0 ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_NOGC_st_less_seqcst,        key_type, value_type, 2 ) \
 
 #endif // ifndef CDSUNIT_MAP_TYPE_SPLIT_LIST_H

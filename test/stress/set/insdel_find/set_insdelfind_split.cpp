@@ -34,5 +34,6 @@
 namespace set {
 
     CDSSTRESS_SplitListSet( Set_InsDelFind_LF, run_test, size_t, size_t )
+    CDSSTRESS_SplitListIterableSet( Set_InsDelFind_LF, run_test, size_t, size_t )
 
 } // namespace set

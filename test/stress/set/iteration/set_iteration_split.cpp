@@ -5,7 +5,7 @@
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-
+    
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -28,12 +28,11 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "map_insdelfind.h"
-#include "map_type_split_list.h"
+#include "set_iteration.h"
+#include "set_type_split_list.h"
 
-namespace map {
+namespace set {
 
-    CDSSTRESS_SplitListMap( Map_InsDelFind_LF, run_test, size_t, size_t )
-    CDSSTRESS_SplitListIterableMap( Map_InsDelFind_LF, run_test, size_t, size_t )
+    CDSSTRESS_SplitListIterableSet( Set_Iteration_LF, run_test_extract, std::string, Set_Iteration::value_type )
 
-} // namespace map
+} // namespace set
