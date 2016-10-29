@@ -80,7 +80,7 @@ namespace map {
         bool insert( const Key& key, const T& val, Func func )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()) );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()));
             if ( pRet.second ) {
                 func( pRet.first->second, val );
                 return true;
@@ -92,7 +92,7 @@ namespace map {
         std::pair<bool, bool> update( const T& key, Func func, bool /*bAllowInsert*/ = true )
         {
             scoped_lock al( m_lock );
-            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()) );
+            std::pair<typename base_class::iterator, bool> pRet = base_class::insert( typename base_class::value_type( key, Value()));
             if ( pRet.second ) {
                 func( true, *pRet.first );
                 return std::make_pair( true, true );

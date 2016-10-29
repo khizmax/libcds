@@ -87,7 +87,7 @@ namespace cds { namespace container {
 
                 template <typename Ky, typename... Args>
                 node_type( Ky&& key, Args&&... args )
-                    : m_Data( key_type( std::forward<Ky>( key )), std::move( mapped_type( std::forward<Args>( args )... )) )
+                    : m_Data( key_type( std::forward<Ky>( key )), std::move( mapped_type( std::forward<Args>( args )... )))
                 {}
             };
 

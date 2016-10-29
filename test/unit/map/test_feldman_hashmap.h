@@ -104,8 +104,8 @@ namespace cds_test {
                     } ));
                     break;
                 case 2:
-                    ASSERT_TRUE( m.insert( std::to_string( i.nKey )) );
-                    ASSERT_FALSE( m.insert( std::to_string( i.nKey )) );
+                    ASSERT_TRUE( m.insert( std::to_string( i.nKey )));
+                    ASSERT_FALSE( m.insert( std::to_string( i.nKey )));
                     ASSERT_TRUE( m.find( i.nKey, []( map_pair& v ) {
                         v.second.nVal = v.first.nKey;
                         v.second.strVal = std::to_string( v.first.nKey );
@@ -234,20 +234,20 @@ namespace cds_test {
                 case 14:
                 {
                     std::string str = val.strVal;
-                    ASSERT_TRUE( m.emplace( i, std::move( str )) );
+                    ASSERT_TRUE( m.emplace( i, std::move( str )));
                     ASSERT_TRUE( str.empty());
                     str = val.strVal;
-                    ASSERT_FALSE( m.emplace( i, std::move( str )) );
+                    ASSERT_FALSE( m.emplace( i, std::move( str )));
                     ASSERT_TRUE( str.empty());
                 }
                 break;
                 case 15:
                 {
                     std::string str = val.strVal;
-                    ASSERT_TRUE( m.emplace( i, i.nKey, std::move( str )) );
+                    ASSERT_TRUE( m.emplace( i, i.nKey, std::move( str )));
                     ASSERT_TRUE( str.empty());
                     str = val.strVal;
-                    ASSERT_FALSE( m.emplace( i, i.nKey, std::move( str )) );
+                    ASSERT_FALSE( m.emplace( i, i.nKey, std::move( str )));
                     ASSERT_TRUE( str.empty());
                 }
                 break;

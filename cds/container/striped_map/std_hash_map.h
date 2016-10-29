@@ -149,7 +149,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             std::pair<bool, bool> update( const Q& key, Func func, bool bAllowInsert )
             {
                 if ( bAllowInsert ) {
-                    std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type()) );
+                    std::pair<iterator, bool> res = m_Map.insert( value_type( key_type( key ), mapped_type()));
                     func( res.second, const_cast<value_type&>(*res.first));
                     return std::make_pair( true, res.second );
                 }

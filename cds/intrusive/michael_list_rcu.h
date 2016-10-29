@@ -875,7 +875,7 @@ namespace cds { namespace intrusive {
 
             marked_node_ptr p( pos.pCur );
             pNode->m_pNext.store( p, memory_model::memory_order_release );
-            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed )) )
+            if ( cds_likely( pos.pPrev->compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed )))
                 return true;
 
             pNode->m_pNext.store( marked_node_ptr(), memory_model::memory_order_relaxed );
@@ -897,11 +897,11 @@ namespace cds { namespace intrusive {
             // Mark the node (logical deletion)
             marked_node_ptr next( pos.pNext, 0 );
 
-            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed )) ) {
+            if ( cds_likely( pos.pCur->m_pNext.compare_exchange_strong( next, next | nMask, memory_model::memory_order_release, atomics::memory_order_relaxed ))) {
 
                 // Try physical removal - fast path
                 marked_node_ptr cur( pos.pCur );
-                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) ) {
+                if ( cds_likely( pos.pPrev->compare_exchange_strong( cur, marked_node_ptr( pos.pNext ), memory_model::memory_order_acquire, atomics::memory_order_relaxed ))) {
                     if ( nMask == erase_mask )
                         link_to_remove_chain( pos, pos.pCur );
                 }
@@ -1243,7 +1243,7 @@ namespace cds { namespace intrusive {
             assert( gc::is_locked());
 
             while ( true ) {
-                if ( search( pos.refHead, val, pos, key_comparator()) ) {
+                if ( search( pos.refHead, val, pos, key_comparator())) {
                     assert( key_comparator()( val, *node_traits::to_value_ptr( *pos.pCur )) == 0 );
 
                     func( false, *node_traits::to_value_ptr( *pos.pCur ), val );

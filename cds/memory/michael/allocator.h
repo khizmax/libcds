@@ -352,7 +352,7 @@ namespace michael {
         /// Push superblock descriptor to free-list
         void push( T * pDesc )
         {
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)));
             auto_lock al(m_access);
             base_class::push_back( *pDesc );
         }
@@ -365,7 +365,7 @@ namespace michael {
                 return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)));
             return &rDesc;
         }
 
@@ -407,7 +407,7 @@ namespace michael {
         void    push( T * pDesc )
         {
             auto_lock al( m_access );
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)));
             base_class::push_back( *pDesc );
         }
 
@@ -419,7 +419,7 @@ namespace michael {
                 return nullptr;
             T& rDesc = base_class::front();
             base_class::pop_front();
-            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)) );
+            assert( base_class::node_algorithms::inited( static_cast<item_hook *>(&rDesc)));
             return &rDesc;
         }
 
@@ -429,7 +429,7 @@ namespace michael {
             assert(pDesc != nullptr);
             auto_lock al( m_access );
             // !inited(pDesc) is equal to "pDesc is being linked to partial list"
-            if ( !base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc)) ) {
+            if ( !base_class::node_algorithms::inited( static_cast<item_hook *>(pDesc))) {
                 base_class::erase( base_class::iterator_to( *pDesc ));
                 return true;
             }
@@ -1146,7 +1146,7 @@ namespace michael {
                 } while ( !pPartial.compare_exchange_weak( pDesc, nullptr, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
                 //assert( pDesc == nullptr || free_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_free_list_hook *>(pDesc)));
-                //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)) );
+                //assert( pDesc == nullptr || partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)));
                 return pDesc;
             }
 
@@ -1154,7 +1154,7 @@ namespace michael {
             void add_partial( superblock_desc * pDesc )
             {
                 assert( pPartial != pDesc );
-                //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)) );
+                //assert( partial_desc_list<superblock_desc>::node_algorithms::inited( static_cast<sb_partial_list_hook *>(pDesc)));
 
                 superblock_desc * pCur = nullptr;
                 if ( !pPartial.compare_exchange_strong(pCur, pDesc, atomics::memory_order_acq_rel, atomics::memory_order_relaxed))

@@ -847,7 +847,7 @@ namespace cds { namespace intrusive {
             insert_position pos;
 
             while ( true ) {
-                if ( inserting_search( pHead, *pNode->data.load(memory_model::memory_order_relaxed).ptr(), pos, key_comparator()) ) {
+                if ( inserting_search( pHead, *pNode->data.load(memory_model::memory_order_relaxed).ptr(), pos, key_comparator())) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -891,7 +891,7 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( inserting_search( pHead, val, pos, key_comparator()) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator())) {
                     m_Stat.onInsertFailed();
                     return false;
                 }
@@ -916,7 +916,7 @@ namespace cds { namespace intrusive {
             guard.assign( &val );
 
             while ( true ) {
-                if ( inserting_search( pHead, val, pos, key_comparator()) ) {
+                if ( inserting_search( pHead, val, pos, key_comparator())) {
                     // try to replace pCur->data with val
                     assert( pos.pFound != nullptr );
                     assert( key_comparator()(*pos.pFound, val) == 0 );

@@ -369,7 +369,7 @@ namespace cds { namespace container {
         iterator contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type()) );
+            return node_to_iterator( find_at( head(), key, typename maker::template less_wrapper<Less>::type()));
         }
         //@cond
         template <typename Q, typename Less>

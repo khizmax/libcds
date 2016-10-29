@@ -57,7 +57,7 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key)) );
+                data.push_back( value_type( static_cast<int>(key)));
                 indices.push_back( key );
             }
             shuffle( indices.begin(), indices.end());
@@ -254,7 +254,7 @@ namespace cds_test {
 
                 EXPECT_TRUE( s.contains( i.nKey ));
                 EXPECT_TRUE( s.contains( i ));
-                EXPECT_TRUE( s.contains( other_item( i.key()), other_less()) );
+                EXPECT_TRUE( s.contains( other_item( i.key()), other_less()));
                 EXPECT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ));
                 EXPECT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ));
                 EXPECT_TRUE( s.find_with( other_item( i.key()), other_less(), []( value_type&, other_item const& ) {} ));
@@ -278,7 +278,7 @@ namespace cds_test {
 
                 EXPECT_TRUE( s.contains( i.nKey ));
                 EXPECT_TRUE( s.contains( i ));
-                EXPECT_TRUE( s.contains( other_item( i.key()), other_less()) );
+                EXPECT_TRUE( s.contains( other_item( i.key()), other_less()));
                 EXPECT_TRUE( s.find( i.nKey, []( value_type& v, int )
                     {
                         v.nFindCount = 1;
@@ -312,7 +312,7 @@ namespace cds_test {
                     break;
                 case 2:
                     EXPECT_TRUE( s.erase_with( other_item( i.key()), other_less()));
-                    EXPECT_FALSE( s.erase_with( other_item( i.key()), other_less()) );
+                    EXPECT_FALSE( s.erase_with( other_item( i.key()), other_less()));
                     break;
                 case 3:
                     EXPECT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )

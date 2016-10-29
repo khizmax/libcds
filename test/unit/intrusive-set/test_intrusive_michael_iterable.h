@@ -312,7 +312,7 @@ namespace cds_test {
 
                 ASSERT_TRUE( s.contains( i.nKey ));
                 ASSERT_TRUE( s.contains( i ));
-                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()) );
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_less()));
                 EXPECT_EQ( i.nFindCount, 0u );
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int ) { ++v.nFindCount; } ));
                 EXPECT_EQ( i.nFindCount, 1u );
@@ -333,7 +333,7 @@ namespace cds_test {
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key()));
-                    ASSERT_FALSE( s.erase( i.key()) );
+                    ASSERT_FALSE( s.erase( i.key()));
                     break;
                 case 2:
                     ASSERT_TRUE( s.erase( v ));
@@ -341,7 +341,7 @@ namespace cds_test {
                     break;
                 case 3:
                     ASSERT_TRUE( s.erase_with( other_item( i.key()), other_less()));
-                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_less()) );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_less()));
                     break;
                 case 4:
                     EXPECT_EQ( i.nEraseCount, 0u );

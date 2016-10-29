@@ -74,7 +74,7 @@ namespace {
                     ASSERT_TRUE( pq.emplace( p->k, p->v ));
                     break;
                 case 2:
-                    ASSERT_TRUE( pq.emplace( std::make_pair( p->k, p->v )) );
+                    ASSERT_TRUE( pq.emplace( std::make_pair( p->k, p->v )));
                     break;
                 default:
                     ASSERT_TRUE( pq.push( *p ));

@@ -144,7 +144,7 @@ namespace {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key)) );
+                data.push_back( value_type( static_cast<int>(key)));
                 indices.push_back( key );
             }
             shuffle( indices.begin(), indices.end());
@@ -183,8 +183,8 @@ namespace {
                     EXPECT_FALSE( updResult.second );
                     break;
                 case 1:
-                    ASSERT_TRUE( s.insert( i.key()) );
-                    ASSERT_FALSE( s.insert( i.key()) );
+                    ASSERT_TRUE( s.insert( i.key()));
+                    ASSERT_FALSE( s.insert( i.key()));
                     updResult = s.update( i.key(), []( bool bNew, value_type& val, int arg )
                     {
                         EXPECT_FALSE( bNew );
@@ -262,7 +262,7 @@ namespace {
                     } ));
                     break;
                 case 6:
-                    ASSERT_TRUE( s.emplace( i.key()) );
+                    ASSERT_TRUE( s.emplace( i.key()));
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                     {
                         EXPECT_EQ( v.key(), arg.key());
@@ -271,7 +271,7 @@ namespace {
                     break;
                 case 7:
                     str = "Hello!";
-                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )) );
+                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )));
                     EXPECT_TRUE( str.empty());
                     ASSERT_TRUE( s.find( i, []( value_type const& v, value_type const& arg )
                     {
@@ -319,8 +319,8 @@ namespace {
                 int nKey = i.key() - 1;
                 switch ( idx % 6 ) {
                 case 0:
-                    ASSERT_TRUE( s.erase( i.key()) );
-                    ASSERT_FALSE( s.erase( i.key()) );
+                    ASSERT_TRUE( s.erase( i.key()));
+                    ASSERT_FALSE( s.erase( i.key()));
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i ));

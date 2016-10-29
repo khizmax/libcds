@@ -851,7 +851,7 @@ namespace cds { namespace intrusive {
                 assert( pLeaf->is_leaf());
 
                 pGrandParent->m_pLeft.store( pParent->m_pRight.load( memory_model::memory_order_relaxed ), memory_model::memory_order_relaxed );
-                free_leaf_node( node_traits::to_value_ptr( static_cast<leaf_node *>( pLeaf )) );
+                free_leaf_node( node_traits::to_value_ptr( static_cast<leaf_node *>( pLeaf )));
                 free_internal_node( pParent );
             }
         }
@@ -1555,7 +1555,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_( Q const& val ) const
         {
             search_result    res;
-            if ( search( res, val, node_compare()) ) {
+            if ( search( res, val, node_compare())) {
                 assert( res.pLeaf );
                 m_Stat.onFindSuccess();
                 return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));
@@ -1578,7 +1578,7 @@ namespace cds { namespace intrusive {
             > compare_functor;
 
             search_result    res;
-            if ( search( res, val, compare_functor()) ) {
+            if ( search( res, val, compare_functor())) {
                 assert( res.pLeaf );
                 m_Stat.onFindSuccess();
                 return guarded_ptr( res.guards.release( search_result::Guard_Leaf ));

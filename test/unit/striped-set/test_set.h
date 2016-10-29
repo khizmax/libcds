@@ -299,7 +299,7 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key)) );
+                data.push_back( value_type( static_cast<int>(key)));
                 indices.push_back( key );
             }
             shuffle( indices.begin(), indices.end());
@@ -442,7 +442,7 @@ namespace cds_test {
 
                 ASSERT_TRUE( s.contains( i.nKey ));
                 ASSERT_TRUE( s.contains( i ));
-                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()) );
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()));
                 ASSERT_TRUE( s.find( i.nKey, []( value_type&, int ) {} ));
                 ASSERT_TRUE( s.find( i, []( value_type&, value_type const& ) {} ));
                 ASSERT_TRUE( s.find_with( other_item( i.key()), other_predicate(), []( value_type&, other_item const& ) {} ));
@@ -458,7 +458,7 @@ namespace cds_test {
 
                 ASSERT_TRUE( s.contains( i.nKey ));
                 ASSERT_TRUE( s.contains( i ));
-                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()) );
+                ASSERT_TRUE( s.contains( other_item( i.key()), other_predicate()));
                 ASSERT_TRUE( s.find( i.nKey, []( value_type& v, int )
                     {
                         v.nFindCount = 1;
@@ -484,7 +484,7 @@ namespace cds_test {
                     break;
                 case 2:
                     ASSERT_TRUE( s.erase_with( other_item( i.key()), other_predicate()));
-                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_predicate()) );
+                    ASSERT_FALSE( s.erase_with( other_item( i.key()), other_predicate()));
                     break;
                 case 3:
                     ASSERT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )

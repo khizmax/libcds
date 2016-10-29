@@ -65,7 +65,7 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key)) );
+                data.push_back( value_type( static_cast<int>(key)));
                 indices.push_back( key );
             }
             shuffle( indices.begin(), indices.end());

@@ -378,7 +378,7 @@ namespace cds { namespace container {
                             {
                                 std::swap(
                                     map.insert(
-                                        std::map::value_type( itWhat->first, T()) ).first->second
+                                        std::map::value_type( itWhat->first, T())).first->second
                                         , itWhat->second
                                 ));
                             }

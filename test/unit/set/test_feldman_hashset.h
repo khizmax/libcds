@@ -210,7 +210,7 @@ namespace cds_test {
             data.reserve( kSize );
             indices.reserve( kSize );
             for ( size_t key = 0; key < kSize; ++key ) {
-                data.push_back( value_type( static_cast<int>(key)) );
+                data.push_back( value_type( static_cast<int>(key)));
                 indices.push_back( key );
             }
             shuffle( indices.begin(), indices.end());
@@ -322,12 +322,12 @@ namespace cds_test {
                         } ));
                         break;
                 case 6:
-                    ASSERT_TRUE( s.emplace( i.key()) );
-                    ASSERT_TRUE( s.contains( i.key()) );
+                    ASSERT_TRUE( s.emplace( i.key()));
+                    ASSERT_TRUE( s.contains( i.key()));
                     break;
                 case 7:
                     str = "Hello!";
-                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )) );
+                    ASSERT_TRUE( s.emplace( i.key(), std::move( str )));
                     EXPECT_TRUE( str.empty());
                     ASSERT_TRUE( s.find( i.key(), []( value_type const& v )
                     {
@@ -360,8 +360,8 @@ namespace cds_test {
                 int nKey = i.key() - 1;
                 switch ( idx % 2 ) {
                 case 0:
-                    ASSERT_TRUE( s.erase( i.key()) );
-                    ASSERT_FALSE( s.erase( i.key()) );
+                    ASSERT_TRUE( s.erase( i.key()));
+                    ASSERT_FALSE( s.erase( i.key()));
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key(), [&nKey]( value_type const& v )

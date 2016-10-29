@@ -93,7 +93,7 @@ namespace cds { namespace intrusive { namespace striped_set {
 
             public:
                 adapted_container()
-                    : m_Set( typename container_type::bucket_traits( m_Buckets.buffer(), m_Buckets.capacity()) )
+                    : m_Set( typename container_type::bucket_traits( m_Buckets.buffer(), m_Buckets.capacity()))
                 {}
 
                 container_type& base_container()

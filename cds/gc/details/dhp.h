@@ -670,7 +670,7 @@ namespace cds { namespace gc {
             template <typename T>
             void retirePtr( T * p, void (* pFunc)(T *))
             {
-                retirePtr( retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )) );
+                retirePtr( retired_ptr( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc )));
             }
 
             /// Places retired pointer \p into thread's array of retired pointer for deferred reclamation

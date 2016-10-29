@@ -685,7 +685,7 @@ namespace map {
             {
                 for ( size_t n = 0; n < s_nMapSize; n +=2 ) {
                     for ( size_t i = 0; i < s_nInsThreadCount; ++i ) {
-                        EXPECT_TRUE( testMap.contains( key_type( n, i )) ) << "key=" << n << "/" << i;
+                        EXPECT_TRUE( testMap.contains( key_type( n, i ))) << "key=" << n << "/" << i;
                     }
                 }
             }

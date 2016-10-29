@@ -145,7 +145,7 @@ namespace cds {
                 Returns \p true if locking is succeeded
                 otherwise (if the spin is already locked) returns \p false
             */
-            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()()) )
+            bool try_lock( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()()))
             {
                 backoff_strategy backoff;
                 while ( nTryCount-- ) {
@@ -340,7 +340,7 @@ namespace cds {
             /// Unlock the spin-lock. Return \p true if the current thread is owner of spin-lock \p false otherwise
             bool unlock() CDS_NOEXCEPT
             {
-                if ( is_taken( OS::get_current_thread_id()) ) {
+                if ( is_taken( OS::get_current_thread_id())) {
                     integral_type n = m_spin.load( atomics::memory_order_relaxed );
                     if ( n > 1 )
                         m_spin.store( n - 1, atomics::memory_order_relaxed );
@@ -356,7 +356,7 @@ namespace cds {
             /// Change the owner of locked spin-lock. May be called by thread that is owner of the spin-lock
             bool change_owner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
             {
-                if ( is_taken( OS::get_current_thread_id()) ) {
+                if ( is_taken( OS::get_current_thread_id())) {
                     assert( newOwnerId != OS::c_NullThreadId );
                     m_OwnerId = newOwnerId;
                     return true;

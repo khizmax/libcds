@@ -114,7 +114,7 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( q, 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.push( static_cast<value_type>(i)) );
+                ASSERT_TRUE( q.push( static_cast<value_type>(i)));
             }
             ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );

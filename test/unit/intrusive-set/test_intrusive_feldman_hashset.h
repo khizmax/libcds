@@ -241,7 +241,7 @@ namespace cds_test {
                     break;
                 case 1:
                     ASSERT_TRUE( s.erase( i.key()));
-                    ASSERT_FALSE( s.erase( i.key()) );
+                    ASSERT_FALSE( s.erase( i.key()));
                     break;
                 case 2:
                     EXPECT_EQ( i.nEraseCount, 0u );

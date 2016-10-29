@@ -302,7 +302,7 @@ namespace cds { namespace container {
             size_t nMaxItemCount,   ///< estimation of max item count in the hash set
             size_t nLoadFactor      ///< load factor: estimation of max number of items in the bucket
         ) : m_nHashBitmask( michael_set::details::init_hash_bitmask( nMaxItemCount, nLoadFactor ))
-          , m_Buckets( bucket_table_allocator().allocate( bucket_count()) )
+          , m_Buckets( bucket_table_allocator().allocate( bucket_count()))
         {
             for ( auto it = m_Buckets, itEnd = m_Buckets + bucket_count(); it != itEnd; ++it )
                 construct_bucket<bucket_stat>( it );

@@ -256,7 +256,7 @@ namespace cds { namespace container {
         bool enqueue( value_type&& data )
         {
             scoped_node_ptr p( alloc_node_move( std::move( data )));
-            if ( enqueue_node( p.get()) ) {
+            if ( enqueue_node( p.get())) {
                 p.release();
                 return true;
             }

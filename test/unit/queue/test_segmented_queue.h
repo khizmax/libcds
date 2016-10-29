@@ -140,7 +140,7 @@ namespace cds_test {
 
             // clear
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.push( static_cast<value_type>(i)) );
+                ASSERT_TRUE( q.push( static_cast<value_type>(i)));
             }
             ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
