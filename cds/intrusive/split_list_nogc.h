@@ -411,6 +411,12 @@ namespace cds { namespace intrusive {
             return m_Stat;
         }
 
+        /// Returns internal statistics for \p OrderedList
+        typename OrderedList::stat const& list_statistics() const
+        {
+            return m_List.statistics();
+        }
+
     protected:
         //@cond
         template <bool IsConst>

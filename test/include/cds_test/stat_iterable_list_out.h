@@ -49,6 +49,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nReuseNode )
             << CDSSTRESS_STAT_OUT( s, m_nNodeMarkFailed )
             << CDSSTRESS_STAT_OUT( s, m_nNodeSeqBreak )
+            << CDSSTRESS_STAT_OUT( s, m_nNullPrevABA )
             << CDSSTRESS_STAT_OUT( s, m_nNewNodeCreated )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateNew )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateExisting )

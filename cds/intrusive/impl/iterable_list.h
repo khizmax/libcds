@@ -147,7 +147,7 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 3; ///< Count of hazard pointer required for the algorithm
+        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
 
         //@cond
         // Rebind traits (split-list support)
@@ -852,7 +852,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_aux_node( pNode, pos )) {
+                if ( link_aux_node( pNode, pos, pHead )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -872,7 +872,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_data( &val, pos )) {
+                if ( link_data( &val, pos, pHead )) {
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
                     return true;
@@ -896,7 +896,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                if ( link_data( &val, pos )) {
+                if ( link_data( &val, pos, pHead )) {
                     f( val );
                     ++m_ItemCounter;
                     m_Stat.onInsertSuccess();
@@ -939,7 +939,7 @@ namespace cds { namespace intrusive {
                         return std::make_pair( false, false );
                     }
 
-                    if ( link_data( &val, pos )) {
+                    if ( link_data( &val, pos, pHead )) {
                         func( val, static_cast<value_type*>( nullptr ));
                         ++m_ItemCounter;
                         m_Stat.onUpdateNew();
@@ -1247,7 +1247,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        bool link_data( value_type * pVal, insert_position& pos )
+        bool link_data( value_type* pVal, insert_position& pos, node_type* pHead )
         {
             assert( pos.pPrev != nullptr );
             assert( pos.pCur != nullptr );
@@ -1266,6 +1266,7 @@ namespace cds { namespace intrusive {
             marked_data_ptr valPrev( pos.pPrevVal );
             if ( !pos.pPrev->data.compare_exchange_strong( valPrev, valPrev | 1, memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
                 m_Stat.onNodeMarkFailed();
                 return false;
             }
@@ -1275,12 +1276,26 @@ namespace cds { namespace intrusive {
                 // sequence pPrev - pCur is broken
                 pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
                 pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
                 m_Stat.onNodeSeqBreak();
                 return false;
             }
 
-            if ( pos.pPrev != pos.pHead && pos.pPrevVal == nullptr )
-            {
+            if ( pos.pPrevVal == nullptr ) {
+                // Check ABA-problem for prev
+                // There is a possibility that the current thread was preempted
+                // on entry of this function. Other threads can link data to prev
+                // and then remove it. As a result, the order of items may be changed
+                if ( find_prev( pHead, *pVal ) != pos.pPrev ) {
+                    pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+                    pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
+                    m_Stat.onNullPrevABA();
+                    return false;
+                }
+            }
+
+            if ( pos.pPrev != pos.pHead && pos.pPrevVal == nullptr ) {
                 // reuse pPrev
 
                 // Set pos.pPrev data if it is null
@@ -1319,7 +1334,7 @@ namespace cds { namespace intrusive {
         }
 
         // split-list support
-        bool link_aux_node( node_type * pNode, insert_position& pos )
+        bool link_aux_node( node_type * pNode, insert_position& pos, node_type* pHead )
         {
             assert( pos.pPrev != nullptr );
             assert( pos.pCur != nullptr );
@@ -1351,6 +1366,20 @@ namespace cds { namespace intrusive {
                 return false;
             }
 
+            if ( pos.pPrevVal == nullptr ) {
+                // Check ABA-problem for prev
+                // There is a possibility that the current thread was preempted
+                // on entry of this function. Other threads can insert (link) an item to prev
+                // and then remove it. As a result, the order of items may be changed
+                if ( find_prev( pHead, *pNode->data.load( memory_model::memory_order_relaxed ).ptr()) != pos.pPrev ) {
+                    pos.pPrev->data.store( valPrev, memory_model::memory_order_relaxed );
+                    pos.pCur->data.store( valCur, memory_model::memory_order_relaxed );
+
+                    m_Stat.onNullPrevABA();
+                    return false;
+                }
+            }
+
             // insert new node between pos.pPrev and pos.pCur
             pNode->next.store( pos.pCur, memory_model::memory_order_relaxed );
 
@@ -1374,6 +1403,34 @@ namespace cds { namespace intrusive {
                 return true;
             }
             return false;
+        }
+
+        template <typename Q>
+        node_type* find_prev( node_type const* pHead, Q const& val ) const
+        {
+            node_type*  pPrev = const_cast<node_type*>(pHead);
+            typename gc::Guard guard;
+            key_comparator cmp;
+
+            while ( true ) {
+                node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
+
+                if ( pCur == pCur->next.load( memory_model::memory_order_acquire ) ) {
+                    // end-of-list
+                    return pPrev;
+                }
+
+                value_type * pVal = guard.protect( pCur->data,
+                    []( marked_data_ptr p ) -> value_type*
+                {
+                    return p.ptr();
+                } ).ptr();
+
+                if ( pVal && cmp( *pVal, val ) >= 0 )
+                    return pPrev;
+
+                pPrev = pCur;
+            }
         }
         //@endcond
     };

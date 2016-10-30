@@ -51,6 +51,9 @@
 #include <cds/container/split_list_map_nogc.h>
 
 #include <cds_test/stat_splitlist_out.h>
+#include <cds_test/stat_michael_list_out.h>
+#include <cds_test/stat_lazy_list_out.h>
+#include <cds_test/stat_iterable_list_out.h>
 
 namespace map {
 
@@ -579,7 +582,8 @@ namespace map {
     template <typename GC, typename K, typename T, typename Traits >
     static inline void print_stat( cds_test::property_stream& o, SplitListMap< GC, K, T, Traits > const& m )
     {
-        o << m.statistics();
+        o << m.statistics()
+          << m.list_statistics();
     }
 
 }   // namespace map

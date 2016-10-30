@@ -707,6 +707,12 @@ namespace cds { namespace container {
         {
             return base_class::statistics();
         }
+
+        /// Returns internal statistics for \p ordered_list
+        typename ordered_list::stat const& list_statistics() const
+        {
+            return base_class::list_statistics();
+        }
     };
 
 }} // namespace cds::container

@@ -52,8 +52,8 @@ namespace cds { namespace container { namespace details {
             value_type  m_Value;
 
             template <typename Q>
-            explicit node_type( Q const& v )
-                : m_Value(v)
+            explicit node_type( Q&& v )
+                : m_Value( std::forward<Q>( v ))
             {}
             template <typename Q, typename... Args>
             explicit node_type( Q&& q, Args&&... args )

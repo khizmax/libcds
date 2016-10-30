@@ -46,6 +46,9 @@
 #include <cds/container/split_list_set_rcu.h>
 
 #include <cds_test/stat_splitlist_out.h>
+#include <cds_test/stat_michael_list_out.h>
+#include <cds_test/stat_lazy_list_out.h>
+#include <cds_test/stat_iterable_list_out.h>
 
 namespace set {
 
@@ -108,6 +111,7 @@ namespace set {
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::compare< compare >
+                        ,co::stat< cc::michael_list::stat<>>
                     >::type
                 >
             >::type
@@ -220,6 +224,7 @@ namespace set {
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::less< less >
+                        ,co::stat< cc::michael_list::stat<>>
                     >::type
                 >
             >::type
@@ -408,6 +413,7 @@ namespace set {
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::compare< compare >
+                        ,co::stat< cc::iterable_list::stat<>>
                     >::type
                 >
             >::type
@@ -530,6 +536,7 @@ namespace set {
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::less< less >
+                        ,co::stat< cc::iterable_list::stat<>>
                     >::type
                 >
             >::type
@@ -551,7 +558,8 @@ namespace set {
     template <typename GC, typename T, typename Traits>
     static inline void print_stat( cds_test::property_stream& o, SplitListSet<GC, T, Traits> const& s )
     {
-        o << s.statistics();
+        o << s.statistics()
+          << s.list_statistics();
     }
 
 } // namespace set

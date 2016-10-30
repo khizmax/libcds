@@ -638,10 +638,11 @@ namespace cds { namespace intrusive {
                 if ( segment.load( memory_model::memory_order_relaxed ) == nullptr ) {
                     table_entry* pNewSegment = allocate_segment();
                     table_entry * pNull = nullptr;
-                    if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                    if ( !segment.compare_exchange_strong( pNull, pNewSegment, memory_model::memory_order_release, atomics::memory_order_relaxed ))
                         destroy_segment( pNewSegment );
-                    }
                 }
+
+                assert( segment.load( atomics::memory_order_relaxed )[nBucket & (m_metrics.nSegmentSize - 1)].load( atomics::memory_order_relaxed ) == nullptr );
                 segment.load(memory_model::memory_order_acquire)[ nBucket & (m_metrics.nSegmentSize - 1) ].store( pNode, memory_model::memory_order_release );
             }
 
@@ -962,10 +963,21 @@ namespace cds { namespace intrusive {
                         return base_class()(q.val, v);
                     }
 
-                    template <typename Q1, typename Q2>
-                    int operator()( Q1 const& v1, Q2 const& v2 ) const
+                    int operator()( value_type const& lhs, value_type const& rhs ) const
                     {
-                        return base_class()(v1, v2);
+                        splitlist_node_type const * n1 = static_cast<splitlist_node_type const *>(native_node_traits::to_node_ptr( lhs ));
+                        splitlist_node_type const * n2 = static_cast<splitlist_node_type const *>(native_node_traits::to_node_ptr( rhs ));
+                        if ( n1->m_nHash != n2->m_nHash )
+                            return n1->m_nHash < n2->m_nHash ? -1 : 1;
+
+                        if ( n1->is_dummy() ) {
+                            assert( n2->is_dummy() );
+                            return 0;
+                        }
+
+                        assert( !n1->is_dummy() && !n2->is_dummy() );
+
+                        return native_key_comparator()( lhs, rhs );
                     }
                 };
 
@@ -1027,9 +1039,8 @@ namespace cds { namespace intrusive {
                 {
                     void operator()( value_type * v )
                     {
-                        hash_node* p = static_cast<hash_node*>( v );
-                        if ( !p->is_dummy())
-                            native_disposer()(v);
+                        if ( !static_cast<hash_node*>( v )->is_dummy())
+                            native_disposer()( v );
                     }
                 };
 
@@ -1041,6 +1052,7 @@ namespace cds { namespace intrusive {
                     aux_node()
                     {
                         typedef typename native_ordered_list::node_type list_node_type;
+
                         list_node_type::data.store( typename list_node_type::marked_data_ptr(
                             static_cast<value_type*>( static_cast<hash_node *>( this ))),
                             atomics::memory_order_release
@@ -1098,10 +1110,21 @@ namespace cds { namespace intrusive {
                         return base_class()(q.val, v);
                     }
 
-                    template <typename Q1, typename Q2>
-                    int operator()( Q1 const& v1, Q2 const& v2 ) const
+                    int operator()( value_type const& lhs, value_type const& rhs ) const
                     {
-                        return base_class()(v1, v2);
+                        hash_node const& n1 = static_cast<hash_node const&>( lhs );
+                        hash_node const& n2 = static_cast<hash_node const&>( rhs );
+                        if ( n1.m_nHash != n2.m_nHash )
+                            return n1.m_nHash < n2.m_nHash ? -1 : 1;
+
+                        if ( n1.is_dummy() ) {
+                            assert( n2.is_dummy() );
+                            return 0;
+                        }
+
+                        assert( !n1.is_dummy() && !n2.is_dummy() );
+
+                        return base_class()( lhs, rhs );
                     }
                 };
 

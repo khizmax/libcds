@@ -81,6 +81,7 @@ namespace cds { namespace intrusive {
             event_counter   m_nReuseNode;       ///< Number of reusing empty node when inserting/updating
             event_counter   m_nNodeMarkFailed;  ///< Number of unsuccessful marking attempts when we try to insert new data
             event_counter   m_nNodeSeqBreak;    ///< Number of breaking sequence events of \p prev -> \p next node when we try to insert new data
+            event_counter   m_nNullPrevABA;     ///< Number of ABA-problem for \p nullptr prev node
             event_counter   m_nNewNodeCreated;  ///< Number of new node created when we try to insert new data
             event_counter   m_nUpdateNew;       ///< Number of new item inserted for \p update()
             event_counter   m_nUpdateExisting;  ///< Number of existing item updates
@@ -102,6 +103,7 @@ namespace cds { namespace intrusive {
             void onReuseNode()          { ++m_nReuseNode;       }
             void onNodeMarkFailed()     { ++m_nNodeMarkFailed;  }
             void onNodeSeqBreak()       { ++m_nNodeSeqBreak;    }
+            void onNullPrevABA()        { ++m_nNullPrevABA;     }
             void onNewNodeCreated()     { ++m_nNewNodeCreated;  }
             void onUpdateNew()          { ++m_nUpdateNew;       }
             void onUpdateExisting()     { ++m_nUpdateExisting;  }
@@ -127,6 +129,7 @@ namespace cds { namespace intrusive {
             void onReuseNode()                  const {}
             void onNodeMarkFailed()             const {}
             void onNodeSeqBreak()               const {}
+            void onNullPrevABA()                const {}
             void onNewNodeCreated()             const {}
             void onUpdateNew()                  const {}
             void onUpdateExisting()             const {}
@@ -158,6 +161,7 @@ namespace cds { namespace intrusive {
             void onReuseNode()       { m_stat.onReuseNode();     }
             void onNodeMarkFailed()  { m_stat.onNodeMarkFailed();}
             void onNodeSeqBreak()    { m_stat.onNodeSeqBreak();  }
+            void onNullPrevABA()     { m_stat.onNullPrevABA();   }
             void onNewNodeCreated()  { m_stat.onNewNodeCreated();}
             void onUpdateNew()       { m_stat.onUpdateNew();     }
             void onUpdateExisting()  { m_stat.onUpdateExisting();}

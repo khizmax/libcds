@@ -389,9 +389,9 @@ namespace cds { namespace container {
             Returns \p true if \p val is inserted into the set, \p false otherwise.
         */
         template <typename Q>
-        bool insert( Q const& val )
+        bool insert( Q&& val )
         {
-            return insert_node( alloc_node( val ));
+            return insert_node( alloc_node( std::forward<Q>( val )));
         }
 
         /// Inserts new node
@@ -414,9 +414,9 @@ namespace cds { namespace container {
             synchronization.
         */
         template <typename Q, typename Func>
-        bool insert( Q const& val, Func f )
+        bool insert( Q&& val, Func f )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
 
             if ( base_class::insert( *pNode, [&f](node_type& node) { f( node.m_Value ) ; } )) {
                 pNode.release();
@@ -457,7 +457,7 @@ namespace cds { namespace container {
 #endif
         upsert( Q&& val, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
 
             auto bRet = base_class::upsert( *pNode, bAllowInsert );
 
@@ -514,9 +514,9 @@ namespace cds { namespace container {
             std::pair<bool, bool>
         >::type
 #endif
-        update( Q const& val, Func func, bool bAllowInsert = true )
+        update( Q&& val, Func func, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
 
             auto bRet = base_class::update( *pNode,
                 [&func, &val]( bool bNew, node_type& item,  node_type const& /*val*/ ) {
@@ -533,9 +533,9 @@ namespace cds { namespace container {
             std::is_same<Q, Q>::value && is_iterable_list<ordered_list>::value,
             std::pair<bool, bool>
         >::type
-        update( Q const& val, Func func, bool bAllowInsert = true )
+        update( Q&& val, Func func, bool bAllowInsert = true )
         {
-            scoped_node_ptr pNode( alloc_node( val ));
+            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
 
             auto bRet = base_class::update( *pNode,
                 [&func]( node_type& item, node_type* old ) {
@@ -899,12 +899,6 @@ namespace cds { namespace container {
         //@cond
         using base_class::extract_;
         using base_class::get_;
-
-        template <typename Q>
-        static node_type * alloc_node( Q const& v )
-        {
-            return cxx_node_allocator().New( v );
-        }
 
         template <typename... Args>
         static node_type * alloc_node( Args&&... args )
