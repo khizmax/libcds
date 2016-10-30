@@ -34,8 +34,20 @@
 
 namespace cds_test {
 
-    struct property_stream
-    {};
+    static std::string s_stat_prefix( "stat" );
+
+    /*static*/ std::string const& property_stream::stat_prefix()
+    {
+        return s_stat_prefix;
+    }
+
+    /*static*/ void property_stream::set_stat_prefix( char const* prefix )
+    {
+        if ( prefix && prefix[0] )
+            s_stat_prefix = prefix;
+        else
+            s_stat_prefix = "stat";
+    }
 
     /*static*/ property_stream& stress_fixture::propout()
     {

@@ -266,6 +266,10 @@ namespace set {
         struct traits_SplitList_Lazy_dyn_cmp_stat : public traits_SplitList_Lazy_dyn_cmp
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::lazy_list::make_traits<
+                co::compare< compare >
+                , co::stat< cc::lazy_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_HP_dyn_cmp_stat;
         typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_DHP_dyn_cmp_stat;
@@ -368,6 +372,10 @@ namespace set {
         struct traits_SplitList_Lazy_st_less_stat : public traits_SplitList_Lazy_st_less
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::lazy_list::make_traits<
+                co::less< less >
+                , co::stat< cc::lazy_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListSet< cds::gc::HP, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_HP_st_less_stat;
         typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_DHP_st_less_stat;
@@ -559,7 +567,9 @@ namespace set {
     static inline void print_stat( cds_test::property_stream& o, SplitListSet<GC, T, Traits> const& s )
     {
         o << s.statistics()
-          << s.list_statistics();
+          << cds_test::stat_prefix( "list_stat" )
+          << s.list_statistics()
+          << cds_test::stat_prefix( "" );
     }
 
 } // namespace set

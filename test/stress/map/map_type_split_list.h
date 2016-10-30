@@ -153,6 +153,10 @@ namespace map {
         struct traits_SplitList_Michael_dyn_cmp_stat : public traits_SplitList_Michael_dyn_cmp
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::michael_list::make_traits<
+                co::compare< compare >
+                ,co::stat< cc::michael_list::stat<> >
+            >::type ordered_list_traits;
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_HP_dyn_cmp_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_DHP_dyn_cmp_stat;
@@ -258,6 +262,11 @@ namespace map {
         struct traits_SplitList_Michael_st_less_stat : traits_SplitList_Michael_st_less
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::michael_list::make_traits<
+                co::less< less >
+                , co::stat< cc::michael_list::stat<> >
+            >::type ordered_list_traits;
+
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Michael_st_less_stat > SplitList_Michael_HP_st_less_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Michael_st_less_stat > SplitList_Michael_DHP_st_less_stat;
@@ -299,6 +308,10 @@ namespace map {
         struct SplitList_Lazy_dyn_cmp_stat : public SplitList_Lazy_dyn_cmp
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::lazy_list::make_traits<
+                co::compare< compare >
+                , co::stat< cc::lazy_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_HP_dyn_cmp_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_DHP_dyn_cmp_stat;
@@ -407,6 +420,10 @@ namespace map {
         struct SplitList_Lazy_st_less_stat : public SplitList_Lazy_st_less
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::lazy_list::make_traits<
+                co::less< less >
+                , co::stat< cc::lazy_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, SplitList_Lazy_st_less_stat > SplitList_Lazy_HP_st_less_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, SplitList_Lazy_st_less_stat > SplitList_Lazy_DHP_st_less_stat;
@@ -448,6 +465,10 @@ namespace map {
         struct traits_SplitList_Iterable_dyn_cmp_stat : public traits_SplitList_Iterable_dyn_cmp
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::iterable_list::make_traits<
+                co::compare< compare >
+                , co::stat< cc::iterable_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_HP_dyn_cmp_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_DHP_dyn_cmp_stat;
@@ -563,6 +584,10 @@ namespace map {
         struct traits_SplitList_Iterable_st_less_stat : traits_SplitList_Iterable_st_less
         {
             typedef cc::split_list::stat<> stat;
+            typedef typename cc::iterable_list::make_traits<
+                co::less< less >
+                , co::stat< cc::iterable_list::stat<>>
+            >::type ordered_list_traits;
         };
         typedef SplitListMap< cds::gc::HP, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_HP_st_less_stat;
         typedef SplitListMap< cds::gc::DHP, Key, Value, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_DHP_st_less_stat;
@@ -583,7 +608,9 @@ namespace map {
     static inline void print_stat( cds_test::property_stream& o, SplitListMap< GC, K, T, Traits > const& m )
     {
         o << m.statistics()
-          << m.list_statistics();
+          << cds_test::stat_prefix( "list_stat" )
+          << m.list_statistics()
+          << cds_test::stat_prefix( "" );
     }
 
 }   // namespace map

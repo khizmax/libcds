@@ -115,10 +115,34 @@ namespace cds_test {
         friend class config_file;
     };
 
-    struct property_stream;
+    class property_stream
+    {
+    public:
+        static std::string const& stat_prefix();
+        static void set_stat_prefix( char const* prefix );
+    };
+
+    struct stat_prefix
+    {
+        char const* prefix_;
+
+        stat_prefix()
+            : prefix_( nullptr )
+        {}
+
+        stat_prefix( char const* prefix )
+            : prefix_( prefix )
+        {}
+    };
+
+    static inline property_stream& operator<<( property_stream& s, stat_prefix&& prefix )
+    {
+        s.set_stat_prefix( prefix.prefix_ );
+        return s;
+    }
 
     template <typename T>
-    static inline property_stream& operator <<( property_stream& s, std::pair<char const *, T > prop )
+    static inline property_stream& operator <<( property_stream& s, std::pair<char const*, T > prop )
     {
         std::stringstream ss;
         ss << prop.second;
@@ -135,7 +159,7 @@ namespace cds_test {
         return s;
     }
 
-    static inline property_stream& operator <<( property_stream& s, std::pair<char const *, std::chrono::milliseconds > prop )
+    static inline property_stream& operator <<( property_stream& s, std::pair<char const*, std::chrono::milliseconds > prop )
     {
         std::stringstream ss;
         ss << prop.second.count();
@@ -144,7 +168,7 @@ namespace cds_test {
     }
 
 #define CDSSTRESS_STAT_OUT_( name, val ) std::make_pair( name, val )
-#define CDSSTRESS_STAT_OUT( s, field ) CDSSTRESS_STAT_OUT_( "stat." #field, s.field.get())
+#define CDSSTRESS_STAT_OUT( s, field ) CDSSTRESS_STAT_OUT_( property_stream::stat_prefix() + "." #field, s.field.get())
 
     class stress_fixture : public fixture
     {
