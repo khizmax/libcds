@@ -35,7 +35,7 @@ namespace cds {
     /// Bounded container
     /**
         If a container has upper limit of item then it should be based on bounded_container class.
-        Example of those containers: cyclic queue (cds::container::TsigasCycleQueue)
+        Example of those containers: cyclic queue (\p cds::container::VyukovMPMCCycleQueue)
     */
     struct bounded_container {};
 }    // namespace cds

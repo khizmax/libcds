@@ -34,7 +34,6 @@
 #include <cds/intrusive/msqueue.h>
 #include <cds/intrusive/moir_queue.h>
 #include <cds/intrusive/optimistic_queue.h>
-#include <cds/intrusive/tsigas_cycle_queue.h>
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
 #include <cds/intrusive/basket_queue.h>
 #include <cds/intrusive/fcqueue.h>
@@ -243,62 +242,6 @@ namespace queue {
             >::type
         {};
         typedef cds::intrusive::OptimisticQueue< cds::gc::DHP, T, traits_OptimisticQueue_DHP_stat > OptimisticQueue_DHP_stat;
-
-        // TsigasCycleQueue
-        class TsigasCycleQueue_dyn
-            : public cds::intrusive::TsigasCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                >::type
-            >
-        {
-            typedef cds::intrusive::TsigasCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                >::type
-            > base_class;
-        public:
-            TsigasCycleQueue_dyn()
-                : base_class( 1024 * 64 )
-            {}
-
-            TsigasCycleQueue_dyn( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
-
-        class TsigasCycleQueue_dyn_ic
-            : public cds::intrusive::TsigasCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            >
-        {
-            typedef cds::intrusive::TsigasCycleQueue< T,
-                typename cds::intrusive::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            > base_class;
-        public:
-            TsigasCycleQueue_dyn_ic()
-                : base_class( 1024 * 64 )
-            {}
-            TsigasCycleQueue_dyn_ic( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
 
         // VyukovMPMCCycleQueue
         struct traits_VyukovMPMCCycleQueue_dyn : public cds::intrusive::vyukov_queue::traits

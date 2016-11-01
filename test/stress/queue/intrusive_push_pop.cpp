@@ -437,8 +437,6 @@ namespace {
         test( q, arrValue, 0, 0 ); \
     }
 
-    CDSSTRESS_QUEUE_F( TsigasCycleQueue_dyn )
-    CDSSTRESS_QUEUE_F( TsigasCycleQueue_dyn_ic )
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn )
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn_ic )
 #undef CDSSTRESS_QUEUE_F

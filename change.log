@@ -21,6 +21,7 @@
       and uninitialized (cds::opt::v::uninitialized_dynamic_buffer, cds::opt::v::uninitialized_static_buffer)
       ones. The old cds::opt::v::dynamic_buffer and cds::opt::v::static_buffer classes
       are removed.
+    - Removed: TsigasCysleQueue (due undecidable ABA-problem)
     - Fixed: use-after-free bug in VyukovMPMCCycleQueue internal buffer.
       To prevent this bug the queue uses an uninitialized buffer now.
     - Fixed: rare priority inversion bug in MSPriorityQueue

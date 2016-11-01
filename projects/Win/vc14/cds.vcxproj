@@ -713,7 +713,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\split_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\split_list_nogc.h" />
     <ClInclude Include="..\..\..\cds\intrusive\treiber_stack.h" />
-    <ClInclude Include="..\..\..\cds\intrusive\tsigas_cycle_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\vyukov_mpmc_cycle_queue.h" />
     <ClInclude Include="..\..\..\cds\container\fcdeque.h" />
     <ClInclude Include="..\..\..\cds\container\fcpriority_queue.h" />
@@ -741,7 +740,6 @@
     <ClInclude Include="..\..\..\cds\container\split_list_set.h" />
     <ClInclude Include="..\..\..\cds\container\split_list_set_nogc.h" />
     <ClInclude Include="..\..\..\cds\container\treiber_stack.h" />
-    <ClInclude Include="..\..\..\cds\container\tsigas_cycle_queue.h" />
     <ClInclude Include="..\..\..\cds\container\vyukov_mpmc_cycle_queue.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_lazy_kvlist.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_lazy_list.h" />

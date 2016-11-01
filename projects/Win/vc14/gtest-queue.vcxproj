@@ -42,7 +42,6 @@
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_optqueue_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_segmented_queue_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_segmented_queue_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\queue\intrusive_tsigas_queue.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_vyukov_queue.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\moirqueue_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\moirqueue_hp.cpp" />
@@ -55,7 +54,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\queue\segmented_queue_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\queue\tsigas_queue.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\vyukov_mpmc_queue.cpp" />
   </ItemGroup>
   <ItemGroup>

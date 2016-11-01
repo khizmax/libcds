@@ -35,7 +35,6 @@
 #include <cds/container/moir_queue.h>
 #include <cds/container/rwqueue.h>
 #include <cds/container/optimistic_queue.h>
-#include <cds/container/tsigas_cycle_queue.h>
 #include <cds/container/vyukov_mpmc_cycle_queue.h>
 #include <cds/container/basket_queue.h>
 #include <cds/container/fcqueue.h>
@@ -212,92 +211,6 @@ namespace queue {
         typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_stat > OptimisticQueue_HP_stat;
         typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_stat > OptimisticQueue_DHP_stat;
 
-
-        // TsigasCycleQueue
-
-        class TsigasCycleQueue_dyn
-            : public cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                >::type
-            >
-        {
-            typedef cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                >::type
-            > base_class;
-        public:
-            TsigasCycleQueue_dyn()
-                : base_class( 1024 * 64 )
-            {}
-
-            TsigasCycleQueue_dyn( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
-
-        class TsigasCycleQueue_dyn_michaelAlloc
-            : public cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    ,cds::opt::allocator< memory::MichaelAllocator<int> >
-                >::type
-            >
-        {
-            typedef cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                   cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    , cds::opt::allocator< memory::MichaelAllocator<int> >
-                >::type
-            > base_class;
-        public:
-            TsigasCycleQueue_dyn_michaelAlloc()
-                : base_class( 1024 * 64 )
-            {}
-
-            TsigasCycleQueue_dyn_michaelAlloc( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
-
-        class TsigasCycleQueue_dyn_ic
-            : public cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            >
-        {
-            typedef cds::container::TsigasCycleQueue< Value,
-                typename cds::container::tsigas_queue::make_traits<
-                    cds::opt::buffer< cds::opt::v::initialized_dynamic_buffer< int > >
-                    ,cds::opt::item_counter< cds::atomicity::item_counter >
-                >::type
-            > base_class;
-        public:
-            TsigasCycleQueue_dyn_ic()
-                : base_class( 1024 * 64 )
-            {}
-            TsigasCycleQueue_dyn_ic( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
 
         // VyukovMPMCCycleQueue
         struct traits_VyukovMPMCCycleQueue_dyn : public cds::container::vyukov_queue::traits
@@ -800,11 +713,6 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex_padding,  1 ) \
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex_stat,     0 )
 
-
-#define CDSSTRESS_TsigasQueue( test_fixture ) \
-    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn,              0 ) \
-    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn_michaelAlloc, 0 ) \
-    CDSSTRESS_Queue_F( test_fixture, TsigasCycleQueue_dyn_ic,           1 )
 
 #define CDSSTRESS_VyukovQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn,              0 ) \

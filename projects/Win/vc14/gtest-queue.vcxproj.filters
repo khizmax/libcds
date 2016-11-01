@@ -53,9 +53,6 @@
     <ClCompile Include="..\..\..\test\unit\queue\vyukov_mpmc_queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\queue\tsigas_queue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_msqueue_hp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\queue\intrusive_vyukov_queue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\queue\intrusive_tsigas_queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

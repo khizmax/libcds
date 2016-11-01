@@ -155,7 +155,6 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_TsigasQueue( bounded_queue_fulness )
     CDSSTRESS_VyukovQueue( bounded_queue_fulness )
 
 #undef CDSSTRESS_Queue_F

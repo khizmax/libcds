@@ -188,7 +188,6 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_TsigasQueue( queue_push )
     CDSSTRESS_VyukovQueue( queue_push )
 
 #undef CDSSTRESS_Queue_F

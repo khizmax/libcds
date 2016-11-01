@@ -505,9 +505,6 @@
     <ClInclude Include="..\..\..\cds\intrusive\treiber_stack.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\tsigas_cycle_queue.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\vyukov_mpmc_cycle_queue.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -587,9 +584,6 @@
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\treiber_stack.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\tsigas_cycle_queue.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\vyukov_mpmc_cycle_queue.h">

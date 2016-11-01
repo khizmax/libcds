@@ -252,7 +252,6 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_TsigasQueue( queue_random )
     CDSSTRESS_VyukovQueue( queue_random )
 
 #undef CDSSTRESS_Queue_F
