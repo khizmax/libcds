@@ -97,6 +97,45 @@ namespace cds { namespace beans {
     {
         return is_power2(n) ? log2floor(n) : 0;
     }
+
+#if CDS_BUILD_BITS == 32
+    //@cond
+    // 64bit specializations
+
+    static inline uint64_t log2floor( uint64_t n )
+    {
+        return n ? cds::bitop::MSBnz( n ) : 0;
+    }
+
+    static inline uint64_t log2ceil( uint64_t n )
+    {
+        uint64_t i = log2floor( n );
+        return (uint64_t( 1 ) << i) < n ? i + 1 : i;
+    }
+
+    static inline uint64_t floor2( uint64_t n )
+    {
+        return uint64_t( 1 ) << log2floor( n );
+    }
+
+    static inline uint64_t ceil2( uint64_t n )
+    {
+        return uint64_t( 1 ) << log2ceil( n );
+    }
+
+    CDS_CONSTEXPR static inline bool is_power2( uint64_t n ) CDS_NOEXCEPT
+    {
+        return (n & (n - 1)) == 0 && n;
+    }
+
+    static inline uint64_t log2( uint64_t n )
+    {
+        return is_power2( n ) ? log2floor( n ) : 0;
+    }
+
+    //@endcond
+#endif
+
 }}   // namespace cds::beans
 
 #endif  // #ifndef CDSLIB_INT_ALGO_H

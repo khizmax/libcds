@@ -83,15 +83,15 @@ namespace {
 
     TEST_F( bitop, floor_pow2 )
     {
-        EXPECT_EQ( cds::beans::floor2( 0 ), 1u );
-        EXPECT_EQ( cds::beans::floor2( 1 ), 1u );
-        EXPECT_EQ( cds::beans::floor2( 2 ), 2u );
-        EXPECT_EQ( cds::beans::floor2( 3 ), 2u );
-        EXPECT_EQ( cds::beans::floor2( 4 ), 4u );
-        EXPECT_EQ( cds::beans::floor2( 5 ), 4u );
-        EXPECT_EQ( cds::beans::floor2( 7 ), 4u );
-        EXPECT_EQ( cds::beans::floor2( 8 ), 8u );
-        EXPECT_EQ( cds::beans::floor2( 9 ), 8u );
+        EXPECT_EQ( cds::beans::floor2( 0u ), 1u );
+        EXPECT_EQ( cds::beans::floor2( 1u ), 1u );
+        EXPECT_EQ( cds::beans::floor2( 2u ), 2u );
+        EXPECT_EQ( cds::beans::floor2( 3u ), 2u );
+        EXPECT_EQ( cds::beans::floor2( 4u ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 5u ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 7u ), 4u );
+        EXPECT_EQ( cds::beans::floor2( 8u ), 8u );
+        EXPECT_EQ( cds::beans::floor2( 9u ), 8u );
 
         for ( uint32_t n = 2; n; n <<= 1 )
         {
@@ -109,15 +109,15 @@ namespace {
 
     TEST_F( bitop, ceil_pow2 )
     {
-        EXPECT_EQ( cds::beans::ceil2( 0 ), 1u );
-        EXPECT_EQ( cds::beans::ceil2( 1 ), 1u );
-        EXPECT_EQ( cds::beans::ceil2( 2 ), 2u );
-        EXPECT_EQ( cds::beans::ceil2( 3 ), 4u );
-        EXPECT_EQ( cds::beans::ceil2( 4 ), 4u );
-        EXPECT_EQ( cds::beans::ceil2( 5 ), 8u );
-        EXPECT_EQ( cds::beans::ceil2( 7 ), 8u );
-        EXPECT_EQ( cds::beans::ceil2( 8 ), 8u );
-        EXPECT_EQ( cds::beans::ceil2( 9 ), 16u );
+        EXPECT_EQ( cds::beans::ceil2( 0u ), 1u );
+        EXPECT_EQ( cds::beans::ceil2( 1u ), 1u );
+        EXPECT_EQ( cds::beans::ceil2( 2u ), 2u );
+        EXPECT_EQ( cds::beans::ceil2( 3u ), 4u );
+        EXPECT_EQ( cds::beans::ceil2( 4u ), 4u );
+        EXPECT_EQ( cds::beans::ceil2( 5u ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 7u ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 8u ), 8u );
+        EXPECT_EQ( cds::beans::ceil2( 9u ), 16u );
 
         for ( uint32_t n = 4; n < (uint32_t(1) << 31); n <<= 1 )
         {

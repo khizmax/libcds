@@ -203,7 +203,7 @@ namespace {
 
             // Cut each hex digit
             splitter.reset();
-            for ( size_t i = 0; i < sizeof(size_t) * 2; ++i ) {
+            for ( size_t i = 0; i < sizeof(src) * 2; ++i ) {
                 ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 EXPECT_EQ( static_cast<size_t>(splitter.cut( 4 )), i );
@@ -215,7 +215,7 @@ namespace {
             {
                 splitter.reset();
                 res = 0;
-                for ( size_t i = 0; i < sizeof(size_t) * 8; ++i ) {
+                for ( size_t i = 0; i < sizeof(src) * 8; ++i ) {
                     ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
                     res = res + ( static_cast<uint64_t>(splitter.cut( 1 )) << i);
