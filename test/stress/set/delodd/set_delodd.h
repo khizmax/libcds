@@ -51,6 +51,8 @@ namespace set {
         {}
     };
 
+    static_assert(sizeof( key_thread ) % 8 == 0, "Key type size mismatch");
+
     typedef set_type_base<key_thread, size_t>::key_val     key_value_pair;
 
     template <>

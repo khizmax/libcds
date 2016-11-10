@@ -29,13 +29,13 @@
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_bronsonavltree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_feldman_hashset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_skip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_split.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_feldman_hashmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

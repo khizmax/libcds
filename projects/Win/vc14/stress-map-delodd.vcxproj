@@ -39,7 +39,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_ellentree.cpp" />
-    <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_feldman_hashset.cpp" />
+    <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_feldman_hashmap.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_michael.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_skip.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\delodd\map_delodd_split.cpp">
