@@ -354,10 +354,9 @@ namespace cds { namespace intrusive {
             /// Hash type deduced from \p hash_accessor return type
             typedef typename std::decay<
                 typename std::remove_reference<
-                decltype(hash_accessor()(std::declval<value_type>()))
+                    decltype(hash_accessor()(std::declval<value_type>()))
                 >::type
             >::type hash_type;
-            //typedef typename std::result_of< hash_accessor( std::declval<value_type>()) >::type hash_type;
             static_assert(!std::is_pointer<hash_type>::value, "hash_accessor should return a reference to hash value");
 
             typedef typename cds::opt::details::make_comparator_from<
