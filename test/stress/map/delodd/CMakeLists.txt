@@ -6,7 +6,7 @@ set(CDSSTRESS_MAP_DELODD_SOURCES
     map_delodd_bronsonavltree.cpp
     map_delodd_cuckoo.cpp
     map_delodd_ellentree.cpp
-    map_delodd_feldman_hashset.cpp
+    map_delodd_feldman_hashmap.cpp
     map_delodd_michael.cpp
     map_delodd_skip.cpp
     map_delodd_split.cpp
