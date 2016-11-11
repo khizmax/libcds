@@ -61,6 +61,22 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        // Hash size option
+        /**
+            @copydetails traits::hash_size
+        */
+        template <size_t Size>
+        struct hash_size {
+            //@cond
+            template <typename Base> struct pack: public Base
+            {
+                enum: size_t {
+                    hash_size = Size
+                };
+            };
+            //@endcond
+        };
+
         /// \p FeldmanHashSet internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
         struct stat {
@@ -163,6 +179,26 @@ namespace cds { namespace intrusive {
             */
             typedef cds::opt::none hash_accessor;
 
+            /// The size of hash value in bytes
+            /**
+                By default, the size of hash value is <tt>sizeof( hash_type )</tt>.
+                Sometimes it is not correct, for example, for that 6-byte struct \p static_assert will be thrown:
+                \code
+                struct key_type {
+                    uint32_t    key1;
+                    uint16_t    subkey;
+                };
+
+                static_assert( sizeof( key_type ) == 6, "Key type size mismatch" );
+                \endcode
+                For that case you can specify \p hash_size explicitly.
+
+                Value \p 0 means <tt>sizeof( hash_type )</tt>.
+            */
+            enum : size_t {
+                hash_size = 0
+            };
+
             /// Disposer for removing data nodes
             typedef cds::intrusive::opt::v::empty_disposer disposer;
 
@@ -192,7 +228,7 @@ namespace cds { namespace intrusive {
 
             /// Array node allocator
             /**
-                Allocator for array nodes. That allocator is used for creating \p headNode and \p arrayNode when the set grows.
+                Allocator for array nodes. The allocator is used for creating \p headNode and \p arrayNode when the set grows.
                 Default is \ref CDS_DEFAULT_ALLOCATOR
             */
             typedef CDS_DEFAULT_ALLOCATOR node_allocator;
@@ -226,6 +262,8 @@ namespace cds { namespace intrusive {
             Supported \p Options are:
             - \p feldman_hashset::hash_accessor - mandatory option, hash accessor functor.
                 @copydetails traits::hash_accessor
+            - \p feldman_hashset::hash_size - the size of hash value in bytes.
+                @copydetails traits::hash_size
             - \p opt::node_allocator - array node allocator.
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
@@ -300,8 +338,8 @@ namespace cds { namespace intrusive {
 
         //@cond
         namespace details {
-            template <typename HashType >
-            using hash_splitter = cds::algo::split_bitstring< HashType >;
+            template <typename HashType, size_t HashSize >
+            using hash_splitter = cds::algo::split_bitstring< HashType, HashSize >;
 
             struct metrics {
                 size_t  head_node_size;     // power-of-two
@@ -365,7 +403,10 @@ namespace cds { namespace intrusive {
                 feldman_hashset::bitwise_compare< hash_type >
             >::type hash_comparator;
 
-            typedef feldman_hashset::details::hash_splitter< hash_type > hash_splitter;
+            /// The size of hash_type in bytes, see \p traits::hash_size for explanation
+            static CDS_CONSTEXPR size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : traits::hash_size;
+
+            typedef feldman_hashset::details::hash_splitter< hash_type, c_hash_size > hash_splitter;
 
             enum node_flags {
                 flag_array_converting = 1,   ///< the cell is converting from data node to an array node
@@ -422,7 +463,7 @@ namespace cds { namespace intrusive {
 
         public:
             multilevel_array(size_t head_bits, size_t array_bits )
-                : m_Metrics(feldman_hashset::details::metrics::make(head_bits, array_bits, sizeof(hash_type)))
+                : m_Metrics(feldman_hashset::details::metrics::make( head_bits, array_bits, c_hash_size ))
                 , m_Head( alloc_head_node())
             {}
 

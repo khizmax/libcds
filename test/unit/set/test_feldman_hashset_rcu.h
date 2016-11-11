@@ -280,10 +280,30 @@ namespace {
         this->test( s );
     }
 
+    TYPED_TEST_P( FeldmanHashSet, explicit_hash_size )
+    {
+        typedef typename TestFixture::rcu_type rcu_type;
+        typedef typename TestFixture::int_item2 int_item;
+        typedef typename TestFixture::get_hash2 get_hash2;
+
+        struct set_traits: public cc::feldman_hashset::traits
+        {
+            enum: size_t {
+                hash_size = sizeof( std::declval<int_item2>().nKey )
+            };
+            typedef get_hash2 hash_accessor;
+            typedef cc::feldman_hashset::stat<> stat;
+        };
+        typedef cc::FeldmanHashSet< rcu_type, int_item2, set_traits > set_type;
+
+        set_type s( 8, 4 );
+        this->test( s );
+    }
+
     // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
     // "No test named <test_name> can be found in this test case"
     REGISTER_TYPED_TEST_CASE_P( FeldmanHashSet,
-        defaulted, compare, less, cmpmix, item_counting, backoff, stat
+        defaulted, compare, less, cmpmix, item_counting, backoff, stat, explicit_hash_size
         );
 } // namespace
 

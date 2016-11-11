@@ -43,19 +43,25 @@ namespace cds { namespace algo {
 
         The splitter stores a const reference to bit-string, not a copy.
         The maximum count of bits that can be cut in a single call is <tt> sizeof(UInt) * 8 </tt>
+
+        Template parameters:
+        - \p BitString - a fixed-sized type that interprets as bit string
+        - \p BitStringSize - the siZe of \p BitString in bytes, default is <tt>sizeof( BitString )</tt>
+        - \p UInt - an unsigned integer, return type of \p cut()
     */
-    template <typename BitString, typename UInt = typename std::conditional< sizeof(BitString) % sizeof(size_t) == 0, size_t, unsigned >::type >
+    template <typename BitString, size_t BitStringSize = sizeof( BitString ), typename UInt = typename std::conditional< BitStringSize % sizeof(size_t) == 0, size_t, unsigned >::type >
     class split_bitstring
     {
     public:
         typedef BitString bitstring;    ///< Bit-string type
         typedef UInt      uint_type;    ///< Bit-string portion type
+        static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize; ///< size of \p BitString in bytes
 
         //@cond
-        static CDS_CONSTEXPR size_t const c_nHashSize   = (sizeof(bitstring) + sizeof(uint_type) - 1) / sizeof(uint_type);
+        static CDS_CONSTEXPR size_t const c_nHashSize   = (c_bitstring_size + sizeof(uint_type) - 1) / sizeof(uint_type);
         static CDS_CONSTEXPR size_t const c_nBitPerByte = 8;
-        static CDS_CONSTEXPR size_t const c_nBitPerHash = sizeof(bitstring) * c_nBitPerByte;
-        static CDS_CONSTEXPR size_t const c_nBitPerInt  = sizeof(uint_type) * c_nBitPerByte;
+        static CDS_CONSTEXPR size_t const c_nBitPerHash = c_bitstring_size * c_nBitPerByte;
+        static CDS_CONSTEXPR size_t const c_nBitPerInt  = sizeof( uint_type ) * c_nBitPerByte;
         //@endcond
 
     public:

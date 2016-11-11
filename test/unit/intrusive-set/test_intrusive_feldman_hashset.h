@@ -47,8 +47,8 @@ namespace cds_test {
     public:
         struct stat
         {
-            unsigned int nDisposeCount  ;   // count of disposer calling
-            unsigned int nFindCount     ;   // count of find-functor calling
+            unsigned int nDisposeCount;   // count of disposer calling
+            unsigned int nFindCount;   // count of find-functor calling
             unsigned int nInsertCount;
             mutable unsigned int nEraseCount;
 
@@ -59,7 +59,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ));
+                memset( this, 0, sizeof( *this ) );
             }
         };
 
@@ -76,9 +76,9 @@ namespace cds_test {
                 , nVal( key )
             {}
 
-            int_item(int key, int val)
+            int_item( int key, int val )
                 : nKey( key )
-                , nVal(val)
+                , nVal( val )
             {}
 
             int_item( int_item const& v )
@@ -93,10 +93,64 @@ namespace cds_test {
             }
         };
 
+        struct key_val {
+            int nKey;
+            int nVal;
+
+            key_val()
+            {}
+
+            key_val( int key )
+                : nKey( key )
+                , nVal( key )
+            {}
+
+            key_val( int key, int val )
+                : nKey( key )
+                , nVal( val )
+            {}
+
+            key_val( key_val const& v )
+                : nKey( v.nKey )
+                , nVal( v.nVal )
+            {}
+
+            int key() const
+            {
+                return nKey;
+            }
+        };
+
+        struct int_item2: public key_val, public stat
+        {
+            int_item2()
+            {}
+
+            explicit int_item2( int key )
+                : key_val( key )
+            {}
+
+            int_item2( int key, int val )
+                : key_val( key, val )
+            {}
+
+            int_item2( int_item2 const& v )
+                : key_val( v )
+                , stat()
+            {}
+        };
+
         struct hash_accessor {
             int operator()( int_item const& v ) const
             {
                 return v.key();
+            }
+        };
+
+        struct hash_accessor2 {
+            key_val const& operator()( int_item2 const& v ) const
+            {
+                return v;
             }
         };
 
@@ -134,6 +188,15 @@ namespace cds_test {
                 if ( lhs < rhs )
                     return -1;
                 return lhs > rhs ? 1 : 0;
+            }
+        };
+
+        struct cmp2 {
+            int operator ()( key_val const& lhs, key_val const& rhs ) const
+            {
+                if ( lhs.key() < rhs.key() )
+                    return -1;
+                return lhs.key() > rhs.key() ? 1 : 0;
             }
         };
 

@@ -113,6 +113,9 @@ namespace cds { namespace intrusive {
 
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, disposer, void >; ///< pointer to extracted node
 
+        /// The size of hash_type in bytes, see \p feldman_hashset::traits::hash_size for explanation
+        static CDS_CONSTEXPR size_t const c_hash_size = base_class::c_hash_size;
+
         //@cond
         typedef feldman_hashset::level_statistics level_statistics;
         //@endcond

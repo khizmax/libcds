@@ -156,4 +156,21 @@ namespace {
         test( s );
     }
 
+    TEST_F( FeldmanHashSet_DHP, explicit_hash_size )
+    {
+        struct set_traits: public cc::feldman_hashset::traits
+        {
+            typedef get_hash2 hash_accessor;
+            enum: size_t {
+                hash_size = sizeof( std::declval<key_val>().nKey )
+            };
+            typedef cmp2 compare;
+            typedef cc::feldman_hashset::stat<> stat;
+        };
+        typedef cc::FeldmanHashSet< gc_type, int_item2, set_traits > set_type;
+
+        set_type s( 1, 1 );
+        test( s );
+    }
+
 } // namespace

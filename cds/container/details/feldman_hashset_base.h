@@ -46,6 +46,13 @@ namespace cds { namespace container {
         template <typename Accessor>
         using hash_accessor = cds::intrusive::feldman_hashset::hash_accessor< Accessor >;
 
+        /// Hash size option
+        /**
+            @copydetails cds::intrusive::feldman_hashset::traits::hash_size
+        */
+        template <size_t Size>
+        using hash_size = cds::intrusive::feldman_hashset::hash_size< Size >;
+
         /// \p FeldmanHashSet internal statistics, see cds::intrusive::feldman_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
         using stat = cds::intrusive::feldman_hashset::stat< EventCounter >;
@@ -68,6 +75,14 @@ namespace cds { namespace container {
                 @copydetails cds::intrusive::feldman_hashset::traits::hash_accessor
             */
             typedef cds::opt::none hash_accessor;
+
+            /// The size of hash value in bytes
+            /**
+                @copydetails cds::intrusive::feldman_hashset::traits::hash_size
+            */
+            enum : size_t {
+                hash_size = 0
+            };
 
             /// Hash comparing functor
             /**
@@ -126,6 +141,8 @@ namespace cds { namespace container {
             Supported \p Options are:
             - \p feldman_hashset::hash_accessor - mandatory option, hash accessor functor.
                 @copydetails traits::hash_accessor
+            - \p feldman_hashset::hash_size - the size of hash value in bytes.
+                @copydetails traits::hash_size
             - \p opt::allocator - item allocator
                 @copydetails traits::allocator
             - \p opt::node_allocator - array node allocator.

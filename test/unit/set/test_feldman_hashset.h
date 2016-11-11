@@ -129,6 +129,72 @@ namespace cds_test {
             }
         };
 
+        struct key_val {
+            int nKey;
+            int nVal;
+
+            key_val()
+            {}
+
+            key_val( int key )
+                : nKey( key )
+                , nVal( key )
+            {}
+
+            key_val( int key, int val )
+                : nKey( key )
+                , nVal( val )
+            {}
+
+            key_val( key_val const& v )
+                : nKey( v.nKey )
+                , nVal( v.nVal )
+            {}
+
+            int key() const
+            {
+                return nKey;
+            }
+        };
+
+        struct int_item2: public key_val, public stat
+        {
+            std::string strVal;
+
+            int_item2()
+            {}
+
+            explicit int_item2( int key )
+                : key_val( key )
+            {}
+
+            int_item2( int key, int val )
+                : key_val( key, val )
+            {}
+
+            int_item2( int_item2 const& v )
+                : key_val( v )
+                , stat()
+                , strVal( v.strVal )
+            {}
+
+            int_item2( int_item2&& v )
+                : key_val( v )
+                , stat()
+                , strVal( std::move( v.strVal ))
+            {}
+
+            int_item2( int k, std::string&& s )
+                : key_val( k, k * 2 )
+                , strVal( std::move( s ) )
+            {}
+
+            explicit int_item2( other_item const& s )
+                : key_val( s.key(), s.key() * 2 )
+            {}
+        };
+
+
         struct get_hash {
             int operator()( int_item const& i ) const
             {
@@ -143,6 +209,23 @@ namespace cds_test {
             int operator()( int i ) const
             {
                 return i;
+            }
+        };
+
+        struct get_hash2 {
+            key_val const& operator()( int_item2 const& i ) const
+            {
+                return i;
+            }
+
+            key_val operator()( other_item const& i ) const
+            {
+                return key_val( i.key() );
+            }
+
+            key_val operator()( int i ) const
+            {
+                return key_val( i );
             }
         };
 
@@ -181,6 +264,15 @@ namespace cds_test {
                 if ( v1 < v2 )
                     return -1;
                 return v1 > v2 ? 1 : 0;
+            }
+        };
+
+        struct cmp2 {
+            int operator ()( key_val const& v1, key_val const& v2 ) const
+            {
+                if ( v1.key() < v2.key() )
+                    return -1;
+                return v1.key() > v2.key() ? 1 : 0;
             }
         };
 
