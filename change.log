@@ -1,12 +1,12 @@
 2.2.0
     General release
-    - Changed: CMake is used for build libcds. Ancient build.sh is removed
+    - Changed: CMake is used for build libcds. Ancient build.sh has been removed
     - Changed: unit and stress tests are migrated to googletest framework
     - Added: IterableList - an implementation of ordered list with 
-      thread-safe iterator. MichaelSet/Map supports this type of
-      ordered list and thread-safe iterable too.
+      thread-safe iterator. MichaelSet/Map and SplitListSet/Map support 
+      this type of ordered list and thread-safe iterable too.
     - Added: wait strategies for flat combining technique. Based on
-      research of Marsel Galimullin and Nikolai Rapotkin.
+      research by Marsel Galimullin and Nikolai Rapotkin.
     - Fixed: serious bug in MichaelSet::emplace() function
       New node was created twice from the arguments by move semantics. 
       However, move semantics may change internal state of the argument
@@ -27,9 +27,9 @@
     - Fixed: rare priority inversion bug in MSPriorityQueue
     - Added: for minimizing runtime of stress test the detail level for some test is added.
       Command line argument --detail-level=N specifies what test should be ran: each
-      test with level not great than N will be ran. Instead of command line arg
+      test with level not greater than N will be ran. Instead of command line arg
       the enviromnent variable CDSTEST_DETAIL_LEVEL=N can be used.
-      By default, the detail level is 0 that means only small set of the some test will be ran.
+      By default, the detail level is 0 that means only limited set of the test will be ran.
 
 2.1.0 06.01.2016
     General release
