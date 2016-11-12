@@ -45,6 +45,117 @@ namespace cds_test {
     public:
         static size_t const kSize = 1000;
 
+        struct key_type2 {
+            int         nKey;
+            uint16_t    subkey;
+
+            explicit key_type2( int n )
+                : nKey( n )
+                , subkey( n )
+            {}
+
+            explicit key_type2( size_t n )
+                : nKey( static_cast<int>( n ))
+                , subkey( static_cast<uint16_t>( n ))
+            {}
+
+            explicit key_type2( std::string const& str )
+                : nKey( std::stoi( str ) )
+                , subkey( nKey )
+            {}
+
+            key_type2( key_type2 const& s )
+                : nKey( s.nKey )
+                , subkey( s.subkey )
+            {}
+        };
+
+        struct less2
+        {
+            bool operator ()( key_type2 const& v1, key_type2 const& v2 ) const
+            {
+                return v1.nKey < v2.nKey;
+            }
+
+            bool operator ()( key_type2 const& v1, int v2 ) const
+            {
+                return v1.nKey < v2;
+            }
+
+            bool operator ()( int v1, key_type2 const& v2 ) const
+            {
+                return v1 < v2.nKey;
+            }
+
+            bool operator ()( key_type2 const& v1, std::string const& v2 ) const
+            {
+                return v1.nKey < std::stoi( v2 );
+            }
+
+            bool operator ()( std::string const& v1, key_type2 const& v2 ) const
+            {
+                return std::stoi( v1 ) < v2.nKey;
+            }
+        };
+
+        struct cmp2 {
+            int operator ()( key_type2 const& v1, key_type2 const& v2 ) const
+            {
+                if ( v1.nKey < v2.nKey )
+                    return -1;
+                return v1.nKey > v2.nKey ? 1 : 0;
+            }
+
+            int operator ()( key_type2 const& v1, int v2 ) const
+            {
+                if ( v1.nKey < v2 )
+                    return -1;
+                return v1.nKey > v2 ? 1 : 0;
+            }
+
+            int operator ()( int v1, key_type2 const& v2 ) const
+            {
+                if ( v1 < v2.nKey )
+                    return -1;
+                return v1 > v2.nKey ? 1 : 0;
+            }
+
+            int operator ()( key_type2 const& v1, std::string const& v2 ) const
+            {
+                int n2 = std::stoi( v2 );
+                if ( v1.nKey < n2 )
+                    return -1;
+                return v1.nKey > n2 ? 1 : 0;
+            }
+
+            int operator ()( std::string const& v1, key_type2 const& v2 ) const
+            {
+                int n1 = std::stoi( v1 );
+                if ( n1 < v2.nKey )
+                    return -1;
+                return n1 > v2.nKey ? 1 : 0;
+            }
+        };
+
+        struct hash2 {
+            key_type2 operator()( int i ) const
+            {
+                return key_type2( cds::opt::v::hash<int>()(i) );
+            }
+
+            key_type2 operator()( std::string const& str ) const
+            {
+                return key_type2( cds::opt::v::hash<int>()(std::stoi( str )));
+            }
+
+            template <typename T>
+            key_type2 operator()( T const& i ) const
+            {
+                return key_type2( cds::opt::v::hash<int>()(i.nKey));
+            }
+        };
+
+
     protected:
         template <typename Map>
         void test( Map& m )
@@ -55,6 +166,8 @@ namespace cds_test {
             ASSERT_TRUE( m.empty());
             ASSERT_CONTAINER_SIZE( m, 0 );
 
+            typedef typename Map::key_type key_type;
+            typedef typename Map::mapped_type value_type;
             typedef typename Map::value_type map_pair;
             size_t const kkSize = kSize;
 

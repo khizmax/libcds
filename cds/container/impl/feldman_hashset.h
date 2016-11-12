@@ -148,7 +148,7 @@ namespace cds { namespace container {
         /// Count of hazard pointers required
         static CDS_CONSTEXPR size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
 
-        /// The size of hash_type in bytes, see \p feldman_hashset::traits::hash_size for explanation
+        /// The size of \p hash_type in bytes, see \p feldman_hashset::traits::hash_size for explanation
         static CDS_CONSTEXPR size_t const c_hash_size = base_class::c_hash_size;
 
         /// Level statistics

@@ -54,6 +54,14 @@ namespace cds { namespace container {
         /// \p FeldmanHashMap level statistics
         typedef cds::intrusive::feldman_hashset::level_statistics level_statistics;
 
+        /// Key size option
+        /**
+            @copydetails cds::container::feldman_hashmap::traits::hash_size
+        */
+        template <size_t Size>
+        using hash_size = cds::intrusive::feldman_hashset::hash_size< Size >;
+
+
         /// \p FeldmanHashMap traits
         struct traits
         {
@@ -65,7 +73,7 @@ namespace cds { namespace container {
                 <a href="https://en.wikipedia.org/wiki/CityHash">CityHash</a>
                 or its successor <a href="https://code.google.com/p/farmhash/">FarmHash</a>.
 
-                If you use a fixed-sized key you may use it directly instead of a hash.
+                If you use a fixed-sized key you can use it directly instead of a hash.
                 In such case \p %traits::hash should be specified as \p opt::none.
                 However, if you want to use the hash values or if your key type is not fixed-sized
                 you must specify a proper hash functor in your traits.
@@ -121,6 +129,30 @@ namespace cds { namespace container {
                 @endcode
             */
             typedef opt::none hash;
+
+            /// The size of hash value in bytes
+            /**
+                By default, the size of hash value is <tt>sizeof( hash_type )</tt>
+                where \p hash_type is type of \p hash() result or <tt>sizeof( key )</tt> if you use fixed-sized key.
+
+                Sometimes that size is wrong, for example, for that 6-byte key:
+                \code
+                struct key_type {
+                    uint32_t    key;
+                    uint16_t    subkey;
+                };
+
+                static_assert( sizeof( key_type ) == 6, "Key type size mismatch" );
+                \endcode
+                Here <tt>sizeof( key_type ) == 8</tt> so \p static_assert will be thrown.
+
+                For that case you can specify \p hash_size explicitly.
+
+                Value \p 0 means auto-calculated <tt>sizeof( key_type )</tt>.
+            */
+            enum: size_t {
+                hash_size = 0
+            };
 
             /// Hash comparing functor
             /**
@@ -179,6 +211,8 @@ namespace cds { namespace container {
             Supported \p Options are:
             - \p opt::hash - a hash functor, default is \p std::hash
                 @copydetails traits::hash
+            - \p feldman_hashmap::hash_size - the size of hash value in bytes.
+                @copydetails traits::hash_size
             - \p opt::allocator - item allocator
                 @copydetails traits::allocator
             - \p opt::node_allocator - array node allocator.

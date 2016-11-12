@@ -54,6 +54,9 @@ namespace cds_test {
             //typedef typename Map::value_type map_pair;
             size_t const kkSize = base_class::kSize;
 
+            typedef typename Map::key_type key_type;
+            typedef typename Map::mapped_type value_type;
+
             std::vector<key_type> arrKeys;
             for ( int i = 0; i < static_cast<int>(kkSize); ++i )
                 arrKeys.push_back( key_type( i ));
