@@ -1415,7 +1415,7 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 node_type * pCur = pPrev->next.load( memory_model::memory_order_relaxed );
 
-                if ( pCur == pCur->next.load( memory_model::memory_order_acquire ) ) {
+                if ( pCur == pCur->next.load( memory_model::memory_order_acquire )) {
                     // end-of-list
                     return pPrev;
                 }

@@ -970,12 +970,12 @@ namespace cds { namespace intrusive {
                         if ( n1->m_nHash != n2->m_nHash )
                             return n1->m_nHash < n2->m_nHash ? -1 : 1;
 
-                        if ( n1->is_dummy() ) {
-                            assert( n2->is_dummy() );
+                        if ( n1->is_dummy()) {
+                            assert( n2->is_dummy());
                             return 0;
                         }
 
-                        assert( !n1->is_dummy() && !n2->is_dummy() );
+                        assert( !n1->is_dummy() && !n2->is_dummy());
 
                         return native_key_comparator()( lhs, rhs );
                     }
@@ -1117,12 +1117,12 @@ namespace cds { namespace intrusive {
                         if ( n1.m_nHash != n2.m_nHash )
                             return n1.m_nHash < n2.m_nHash ? -1 : 1;
 
-                        if ( n1.is_dummy() ) {
-                            assert( n2.is_dummy() );
+                        if ( n1.is_dummy()) {
+                            assert( n2.is_dummy());
                             return 0;
                         }
 
-                        assert( !n1.is_dummy() && !n2.is_dummy() );
+                        assert( !n1.is_dummy() && !n2.is_dummy());
 
                         return base_class()( lhs, rhs );
                     }

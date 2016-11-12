@@ -59,7 +59,7 @@ namespace cds_test {
 
             void clear_stat()
             {
-                memset( this, 0, sizeof( *this ) );
+                memset( this, 0, sizeof( *this ));
             }
         };
 
@@ -194,7 +194,7 @@ namespace cds_test {
         struct cmp2 {
             int operator ()( key_val const& lhs, key_val const& rhs ) const
             {
-                if ( lhs.key() < rhs.key() )
+                if ( lhs.key() < rhs.key())
                     return -1;
                 return lhs.key() > rhs.key() ? 1 : 0;
             }

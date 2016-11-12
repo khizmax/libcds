@@ -292,8 +292,8 @@ namespace {
         typedef cc::FeldmanHashMap< rcu_type, key_type2, value_type, map_traits > map_type;
 
         map_type m( 5, 3 );
-        EXPECT_EQ( m.head_size(), static_cast<size_t>(1 << 6) );
-        EXPECT_EQ( m.array_node_size(), static_cast<size_t>(1 << 3) );
+        EXPECT_EQ( m.head_size(), static_cast<size_t>(1 << 6));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>(1 << 3));
         this->test( m );
     }
 

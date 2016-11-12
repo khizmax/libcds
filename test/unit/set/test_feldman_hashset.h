@@ -186,7 +186,7 @@ namespace cds_test {
 
             int_item2( int k, std::string&& s )
                 : key_val( k, k * 2 )
-                , strVal( std::move( s ) )
+                , strVal( std::move( s ))
             {}
 
             explicit int_item2( other_item const& s )
@@ -220,7 +220,7 @@ namespace cds_test {
 
             key_val operator()( other_item const& i ) const
             {
-                return key_val( i.key() );
+                return key_val( i.key());
             }
 
             key_val operator()( int i ) const
@@ -270,7 +270,7 @@ namespace cds_test {
         struct cmp2 {
             int operator ()( key_val const& v1, key_val const& v2 ) const
             {
-                if ( v1.key() < v2.key() )
+                if ( v1.key() < v2.key())
                     return -1;
                 return v1.key() > v2.key() ? 1 : 0;
             }

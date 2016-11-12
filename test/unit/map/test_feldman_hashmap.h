@@ -60,7 +60,7 @@ namespace cds_test {
             {}
 
             explicit key_type2( std::string const& str )
-                : nKey( std::stoi( str ) )
+                : nKey( std::stoi( str ))
                 , subkey( nKey )
             {}
 
@@ -140,7 +140,7 @@ namespace cds_test {
         struct hash2 {
             key_type2 operator()( int i ) const
             {
-                return key_type2( cds::opt::v::hash<int>()(i) );
+                return key_type2( cds::opt::v::hash<int>()(i));
             }
 
             key_type2 operator()( std::string const& str ) const
