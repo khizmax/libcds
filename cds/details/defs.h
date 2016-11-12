@@ -183,6 +183,13 @@
    to \p boost library root directory. The test projects search \p boost libraries in:
    - for 32bit: <tt>\$(BOOST_PATH)/stage/lib</tt>, <tt>\$(BOOST_PATH)/stage32/lib</tt>, and <tt>\$(BOOST_PATH)/bin</tt>.
    - for 64bit: <tt>\$(BOOST_PATH)/stage64/lib</tt> and <tt>\$(BOOST_PATH)/bin</tt>.
+   
+   All tests are based on googletest framework. The following environment variables specify
+   where to find gtest include and library directories:
+   - \p GTEST_ROOT - gtest root directory. <tt>\$(GTEST_ROOT)/include</tt> specifies full path to
+        gtest include files;
+   - \p GTEST_LIB64 - the path to 64bit gtest library dir;
+   - \p GTEST_LIB32 - the path to 32bit gtest library dir.
 
    \par *NIX build
 

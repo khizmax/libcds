@@ -80,9 +80,7 @@ namespace cds { namespace container {
             /**
                 @copydetails cds::intrusive::feldman_hashset::traits::hash_size
             */
-            enum : size_t {
-                hash_size = 0
-            };
+            static CDS_CONSTEXPR size_t const hash_size = 0;
 
             /// Hash comparing functor
             /**

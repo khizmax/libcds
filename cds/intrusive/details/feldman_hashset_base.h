@@ -61,7 +61,7 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
-        // Hash size option
+        /// Hash size option
         /**
             @copydetails traits::hash_size
         */
@@ -195,9 +195,7 @@ namespace cds { namespace intrusive {
 
                 Value \p 0 means <tt>sizeof( hash_type )</tt>.
             */
-            enum : size_t {
-                hash_size = 0
-            };
+            static CDS_CONSTEXPR size_t const hash_size = 0;
 
             /// Disposer for removing data nodes
             typedef cds::intrusive::opt::v::empty_disposer disposer;
