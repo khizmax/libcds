@@ -289,12 +289,13 @@ namespace {
         struct set_traits: public cc::feldman_hashset::traits
         {
             enum: size_t {
-                hash_size = sizeof( std::declval<int_item2>().nKey )
+                hash_size = sizeof( std::declval<int_item>().nKey )
             };
             typedef get_hash2 hash_accessor;
+            typedef typename TestFixture::cmp2 compare;
             typedef cc::feldman_hashset::stat<> stat;
         };
-        typedef cc::FeldmanHashSet< rcu_type, int_item2, set_traits > set_type;
+        typedef cc::FeldmanHashSet< rcu_type, int_item, set_traits > set_type;
 
         set_type s( 8, 4 );
         this->test( s );

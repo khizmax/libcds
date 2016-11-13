@@ -46,7 +46,8 @@ namespace cds { namespace algo {
 
         Template parameters:
         - \p BitString - a fixed-sized type that interprets as bit string
-        - \p BitStringSize - the siZe of \p BitString in bytes, default is <tt>sizeof( BitString )</tt>
+        - \p BitStringSize - the size of \p BitString in bytes, default is <tt>sizeof( BitString )</tt>.
+             You can specify 0 for default.
         - \p UInt - an unsigned integer, return type of \p cut()
     */
     template <typename BitString, size_t BitStringSize = sizeof( BitString ), typename UInt = typename std::conditional< BitStringSize % sizeof(size_t) == 0, size_t, unsigned >::type >
@@ -55,7 +56,7 @@ namespace cds { namespace algo {
     public:
         typedef BitString bitstring;    ///< Bit-string type
         typedef UInt      uint_type;    ///< Bit-string portion type
-        static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize; ///< size of \p BitString in bytes
+        static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
 
         //@cond
         static CDS_CONSTEXPR size_t const c_nHashSize   = (c_bitstring_size + sizeof(uint_type) - 1) / sizeof(uint_type);

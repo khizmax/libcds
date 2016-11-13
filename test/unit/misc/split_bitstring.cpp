@@ -195,7 +195,7 @@ namespace {
         {
             typedef PartUInt part_uint;
 
-            typedef cds::algo::split_bitstring< uint64_t, part_uint > split_bitstring;
+            typedef cds::algo::split_bitstring< uint64_t, 0, part_uint > split_bitstring;
 
             uint64_t src = 0xFEDCBA9876543210;
             split_bitstring splitter(src);
@@ -250,7 +250,7 @@ namespace {
         {
             typedef PartUInt part_uint;
 
-            typedef cds::algo::split_bitstring< uint64_t, part_uint > split_bitstring;
+            typedef cds::algo::split_bitstring< uint64_t, 0, part_uint > split_bitstring;
 
             uint64_t src = 0xFEDCBA9876543210;
             split_bitstring splitter(src);

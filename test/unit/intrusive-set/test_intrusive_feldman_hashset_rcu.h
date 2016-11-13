@@ -229,7 +229,7 @@ TYPED_TEST_P( IntrusiveFeldmanHashSet, explicit_hash_size )
     {
         typedef typename TestFixture::hash_accessor2 hash_accessor;
         enum: size_t {
-            hash_size = sizeof( std::declval<key_val>().nKey )
+            hash_size = sizeof( std::declval<typename TestFixture::key_val>().nKey )
         };
         typedef typename TestFixture::cmp2 compare;
         typedef typename TestFixture::mock_disposer disposer;
