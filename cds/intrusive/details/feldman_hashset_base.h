@@ -402,7 +402,7 @@ namespace cds { namespace intrusive {
             >::type hash_comparator;
 
             /// The size of hash_type in bytes, see \p traits::hash_size for explanation
-            static CDS_CONSTEXPR size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : traits::hash_size;
+            static CDS_CONSTEXPR size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : static_cast<size_t>( traits::hash_size );
 
             typedef feldman_hashset::details::hash_splitter< hash_type, c_hash_size > hash_splitter;
 
