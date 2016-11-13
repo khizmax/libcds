@@ -63,6 +63,11 @@ namespace set {
         typedef typename T::hasher hasher;
         typedef typename get_extracted_ptr<GC>::extracted_ptr extracted_ptr;
 
+        template <typename OtherTraits>
+        struct rebind_traits {
+            typedef FeldmanHashSet<GC, T, OtherTraits > result;
+        };
+
         template <class Config>
         FeldmanHashSet( Config const& cfg )
             : base_class( cfg.s_nFeldmanSet_HeadBits, cfg.s_nFeldmanSet_ArrayBits )

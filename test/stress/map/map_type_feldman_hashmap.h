@@ -47,6 +47,12 @@ namespace map {
     {
         typedef cc::FeldmanHashMap< GC, Key, T, Traits > base_class;
     public:
+
+        template <typename OtherTraits>
+        struct rebind_traits {
+            typedef FeldmanHashMap<GC, Key, T, OtherTraits > result;
+        };
+
         template <typename Config>
         FeldmanHashMap( Config const& cfg)
             : base_class( cfg.s_nFeldmanMap_HeadBits, cfg.s_nFeldmanMap_ArrayBits )

@@ -36,18 +36,15 @@ namespace set {
     {
         uint32_t  nKey;
         uint16_t  nThread;
-        uint16_t  pad_;
 
         key_thread( size_t key, size_t threadNo )
             : nKey( static_cast<uint32_t>(key))
             , nThread( static_cast<uint16_t>(threadNo))
-            , pad_(0)
         {}
 
         key_thread()
             : nKey()
             , nThread()
-            , pad_( 0 )
         {}
     };
 
