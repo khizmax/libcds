@@ -15,13 +15,13 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tree)
 add_custom_target(unit-all
     DEPENDS 
         unit-deque
-        unit-intrusive-list
+        unit-ilist
         unit-list
         unit-map
         unit-misc
         unit-pqueue
         unit-queue
-        unit-intrusive-set
+        unit-iset
         unit-set
         unit-striped-set
         unit-stack

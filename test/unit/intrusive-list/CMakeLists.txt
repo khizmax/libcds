@@ -1,15 +1,11 @@
-set(PACKAGE_NAME unit-intrusive-list)
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-set(CDSGTEST_INTRUSIVE_LIST_SOURCES
+# intrusive::MichaelList
+set(UNIT_ILIST_MICHAEL unit-ilist-michael)
+set(UNIT_ILIST_MICHAEL_SOURCES
     ../main.cpp
-    intrusive_lazy_hp.cpp
-    intrusive_lazy_dhp.cpp
-    intrusive_lazy_nogc.cpp
-    intrusive_lazy_rcu_gpb.cpp
-    intrusive_lazy_rcu_gpi.cpp
-    intrusive_lazy_rcu_gpt.cpp
-    intrusive_lazy_rcu_shb.cpp
-    intrusive_lazy_rcu_sht.cpp
     intrusive_michael_hp.cpp
     intrusive_michael_dhp.cpp
     intrusive_michael_nogc.cpp
@@ -19,18 +15,60 @@ set(CDSGTEST_INTRUSIVE_LIST_SOURCES
     intrusive_michael_rcu_shb.cpp
     intrusive_michael_rcu_sht.cpp
 )
-
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_executable(${PACKAGE_NAME} ${CDSGTEST_INTRUSIVE_LIST_SOURCES})
-target_link_libraries(${PACKAGE_NAME} 
+add_executable(${UNIT_ILIST_MICHAEL} ${UNIT_ILIST_MICHAEL_SOURCES})
+target_link_libraries(${UNIT_ILIST_MICHAEL} 
     ${CDS_SHARED_LIBRARY}
     ${GTEST_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+add_test(NAME ${UNIT_ILIST_MICHAEL} COMMAND ${UNIT_ILIST_MICHAEL} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+# intrusive::LazyList
+set(UNIT_ILIST_LAZY unit-ilist-lazy)
+set(UNIT_ILIST_LAZY_SOURCES
+    ../main.cpp
+    intrusive_lazy_hp.cpp
+    intrusive_lazy_dhp.cpp
+    intrusive_lazy_nogc.cpp
+    intrusive_lazy_rcu_gpb.cpp
+    intrusive_lazy_rcu_gpi.cpp
+    intrusive_lazy_rcu_gpt.cpp
+    intrusive_lazy_rcu_shb.cpp
+    intrusive_lazy_rcu_sht.cpp
+)
+add_executable(${UNIT_ILIST_LAZY} ${UNIT_ILIST_LAZY_SOURCES})
+target_link_libraries(${UNIT_ILIST_LAZY} 
+    ${CDS_SHARED_LIBRARY}
+    ${GTEST_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME ${UNIT_ILIST_LAZY} COMMAND ${UNIT_ILIST_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
+# intrusive::IterableList
+set(UNIT_ILIST_ITERABLE unit-ilist-iterable)
+set(UNIT_ILIST_ITERABLE_SOURCES
+    ../main.cpp
+    intrusive_iterable_hp.cpp
+    intrusive_iterable_dhp.cpp
+)
+add_executable(${UNIT_ILIST_ITERABLE} ${UNIT_ILIST_ITERABLE_SOURCES})
+target_link_libraries(${UNIT_ILIST_ITERABLE} 
+    ${CDS_SHARED_LIBRARY}
+    ${GTEST_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME ${UNIT_ILIST_ITERABLE} COMMAND ${UNIT_ILIST_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
+
+add_custom_target( unit-ilist
+    DEPENDS
+        ${UNIT_ILIST_ITERABLE}
+        ${UNIT_ILIST_LAZY}
+        ${UNIT_ILIST_MICHAEL}
+)

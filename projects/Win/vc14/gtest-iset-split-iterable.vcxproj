@@ -27,40 +27,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_dhp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_dhp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_nogc.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_lazy_rcu_sht.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_dhp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_hp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_nogc.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_gpb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_gpi.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_gpt.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\intrusive-set\intrusive_split_iterable_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_iterable_list.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_iterable_list_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_lazy_rcu.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_list.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_list_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_list_nogc.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_list_rcu.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-list\test_intrusive_michael_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_hp.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_nogc.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set.h" />
+    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set_hp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{43563014-EE75-4855-87B5-A2F59762F413}</ProjectGuid>
+    <ProjectGuid>{ACA14BAB-40E5-4507-B9CA-CF62503D8781}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>intrusive_list</RootNamespace>
+    <RootNamespace>intrusive_set</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -167,6 +149,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -183,6 +166,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -199,6 +183,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -215,6 +200,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -233,6 +219,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -253,6 +240,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
