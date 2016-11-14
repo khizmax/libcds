@@ -161,8 +161,8 @@ namespace {
 
         map_type m( kSize, 2 );
         test( m );
-        EXPECT_NE( m.statistics().m_nInsertSuccess, 0 );
-        EXPECT_NE( m.list_statistics().m_nInsertSuccess, 0 );
+        EXPECT_NE( m.statistics().m_nInsertSuccess, 0u );
+        EXPECT_NE( m.list_statistics().m_nInsertSuccess, 0u );
     }
 
     TEST_F( SplitListIterableMap_DHP, back_off )

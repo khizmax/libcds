@@ -74,7 +74,7 @@ add_test(NAME ${UNIT_ISET_MICHAEL_LAZY} COMMAND ${UNIT_ISET_MICHAEL_LAZY} WORKIN
 
 # intrusive::MichaelHashSet<IterableList>
 set(UNIT_ISET_MICHAEL_ITERABLE unit-iset-michael-iterable)
-set(UNIT_ISET_MICHAEL_LAZY_SOURCES
+set(UNIT_ISET_MICHAEL_ITERABLE_SOURCES
     ../main.cpp
     intrusive_michael_iterable_dhp.cpp
     intrusive_michael_iterable_hp.cpp
