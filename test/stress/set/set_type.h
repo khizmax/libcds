@@ -183,7 +183,7 @@ namespace set {
             key_type    key;
             value_type  val;
 
-            /*explicit*/ key_val( key_type const& k ): key(k), val() {}
+            explicit key_val( key_type const& k ): key(k), val() {}
             key_val( key_type const& k, value_type const& v ): key(k), val(v) {}
 
             template <typename K>

@@ -76,6 +76,7 @@ namespace map {
         struct traits_FeldmanHashMap_stdhash : public cc::feldman_hashmap::traits
         {
             typedef std::hash< Key > hash;
+            typedef map::cmp<Key>    compare;
         };
 
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_stdhash >    FeldmanHashMap_hp_stdhash;
@@ -91,6 +92,7 @@ namespace map {
         struct traits_FeldmanHashMap_stdhash_stat: traits_FeldmanHashMap_stdhash
         {
             typedef cc::feldman_hashmap::stat<> stat;
+            typedef map::less<Key> less;
         };
 
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_stdhash_stat >    FeldmanHashMap_hp_stdhash_stat;
@@ -166,28 +168,33 @@ namespace map {
 
 
         // for fixed-sized keys - no hash functor required
-        typedef FeldmanHashMap< cds::gc::HP, Key, Value >    FeldmanHashMap_hp_fixed;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value >   FeldmanHashMap_dhp_fixed;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value >    FeldmanHashMap_rcu_gpi_fixed;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value >    FeldmanHashMap_rcu_gpb_fixed;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value >    FeldmanHashMap_rcu_gpt_fixed;
+        struct traits_FeldmanHashMap_fixed: public cc::feldman_hashmap::traits
+        {
+            typedef map::cmp<Key>    compare;
+        };
+
+        typedef FeldmanHashMap< cds::gc::HP, Key, Value,  traits_FeldmanHashMap_fixed >    FeldmanHashMap_hp_fixed;
+        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_fixed >   FeldmanHashMap_dhp_fixed;
+        typedef FeldmanHashMap< rcu_gpi, Key, Value,      traits_FeldmanHashMap_fixed >    FeldmanHashMap_rcu_gpi_fixed;
+        typedef FeldmanHashMap< rcu_gpb, Key, Value,      traits_FeldmanHashMap_fixed >    FeldmanHashMap_rcu_gpb_fixed;
+        typedef FeldmanHashMap< rcu_gpt, Key, Value,      traits_FeldmanHashMap_fixed >    FeldmanHashMap_rcu_gpt_fixed;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value >    FeldmanHashMap_rcu_shb_fixed;
-        typedef FeldmanHashMap< rcu_sht, Key, Value >    FeldmanHashMap_rcu_sht_fixed;
+        typedef FeldmanHashMap< rcu_shb, Key, Value,      traits_FeldmanHashMap_fixed >    FeldmanHashMap_rcu_shb_fixed;
+        typedef FeldmanHashMap< rcu_sht, Key, Value,      traits_FeldmanHashMap_fixed >    FeldmanHashMap_rcu_sht_fixed;
 #endif
 
-        struct traits_FeldmanHashMap_stat : public cc::feldman_hashmap::traits
+        struct traits_FeldmanHashMap_fixed_stat : public traits_FeldmanHashMap_fixed
         {
             typedef cc::feldman_hashmap::stat<> stat;
         };
-        typedef FeldmanHashMap< cds::gc::HP, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_hp_fixed_stat;
-        typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_stat >   FeldmanHashMap_dhp_fixed_stat;
-        typedef FeldmanHashMap< rcu_gpi, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_rcu_gpi_fixed_stat;
-        typedef FeldmanHashMap< rcu_gpb, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_rcu_gpb_fixed_stat;
-        typedef FeldmanHashMap< rcu_gpt, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_rcu_gpt_fixed_stat;
+        typedef FeldmanHashMap< cds::gc::HP, Key, Value,    traits_FeldmanHashMap_fixed_stat >  FeldmanHashMap_hp_fixed_stat;
+        typedef FeldmanHashMap< cds::gc::DHP, Key, Value,   traits_FeldmanHashMap_fixed_stat >  FeldmanHashMap_dhp_fixed_stat;
+        typedef FeldmanHashMap< rcu_gpi, Key, Value,        traits_FeldmanHashMap_fixed_stat >  FeldmanHashMap_rcu_gpi_fixed_stat;
+        typedef FeldmanHashMap< rcu_gpb, Key, Value,        traits_FeldmanHashMap_fixed_stat >  FeldmanHashMap_rcu_gpb_fixed_stat;
+        typedef FeldmanHashMap< rcu_gpt, Key, Value,        traits_FeldmanHashMap_fixed_stat >  FeldmanHashMap_rcu_gpt_fixed_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_rcu_shb_fixed_stat;
-        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_stat >    FeldmanHashMap_rcu_sht_fixed_stat;
+        typedef FeldmanHashMap< rcu_shb, Key, Value, traits_FeldmanHashMap_fixed_stat > FeldmanHashMap_rcu_shb_fixed_stat;
+        typedef FeldmanHashMap< rcu_sht, Key, Value, traits_FeldmanHashMap_fixed_stat > FeldmanHashMap_rcu_sht_fixed_stat;
 #endif
 
     };

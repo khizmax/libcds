@@ -256,11 +256,11 @@ namespace set {
             {
                 typedef typename set_type_base< Key, Val >::key_val base_class;
 
-                /*explicit*/ key_val(key_type const& k) : base_class(k) {}
+                explicit key_val(key_type const& k) : base_class(k) {}
                 key_val(key_type const& k, value_type const& v) : base_class(k, v) {}
 
                 template <typename K>
-                /*explicit*/ key_val(K const& k) : base_class(k) {}
+                explicit key_val(K const& k) : base_class(k) {}
 
                 template <typename K, typename T>
                 key_val(K const& k, T const& v) : base_class(k, v) {}
@@ -272,17 +272,34 @@ namespace set {
                     {
                         return key_type( k );
                     }
+
+                    key_type const& operator()( key_val const& kv ) const
+                    {
+                        return kv.key;
+                    }
+
+                    key_type const& operator()( key_type const& k ) const
+                    {
+                        return k;
+                    }
                 };
             };
 
             struct traits : public cc::feldman_hashset::traits
             {
                 struct hash_accessor {
-                    key_type operator()(key_val const& kv)
+                    key_type const& operator()( key_val const& kv ) const
                     {
                         return kv.key;
                     }
+
+                    key_type const& operator()( key_type const& k ) const
+                    {
+                        return k;
+                    }
                 };
+
+                typedef set::cmp<Key>   compare;
             };
 
             struct traits_stat : public traits
