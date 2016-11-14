@@ -107,8 +107,6 @@ namespace set {
                 unsigned int i = 0;
                 size_t const nNormalize = size_t(-1) / ( fixture.s_nSetSize * 2);
 
-                typedef typename Set::value_type value_type;
-
                 size_t nRand = 0;
                 while ( !time_elapsed()) {
                     nRand = cds::bitop::RandXorShift(nRand);

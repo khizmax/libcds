@@ -221,7 +221,6 @@ namespace {
         void analyze( Queue& testQueue, size_t /*nLeftOffset*/, size_t nRightOffset )
         {
             typedef Consumer<Queue> Reader;
-            typedef Producer<Queue> Writer;
             typedef typename Reader::const_data_iterator    ReaderIterator;
 
             size_t nPostTestPops = 0;
