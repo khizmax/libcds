@@ -205,80 +205,194 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-freelist", "stress-f
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-feldman", "gtest-map-feldman.vcxproj", "{F6B51C66-CFFF-495F-8012-5D5DD5BC8A48}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-skip", "gtest-map-skip.vcxproj", "{F10B5D8F-3B5D-4961-8D3F-001F17AE997D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-michael", "gtest-map-michael.vcxproj", "{32B5098A-D846-4964-A1A7-CDE98808BFBF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-michael-iterable", "gtest-map-michael-iterable.vcxproj", "{DA761FE3-BA12-4DC5-983E-F14F16442E0D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-michael-lazy", "gtest-map-michael-lazy.vcxproj", "{9C029822-F10B-4906-94B0-EB2E261B196C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-split-iterable", "gtest-map-split-iterable.vcxproj", "{B7C62D31-ED28-4D85-AA01-D1071E870080}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-split-lazy", "gtest-map-split-lazy.vcxproj", "{4CC95A65-049E-4622-9B23-5D9F493F112D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-map-split-michael", "gtest-map-split-michael.vcxproj", "{534CFF3F-827F-4781-858B-F5097AB87755}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-list-iterable", "gtest-list-iterable.vcxproj", "{A1020E07-FEF9-4017-BA19-51A57FE9D2E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-list-lazy", "gtest-list-lazy.vcxproj", "{3C43C24C-45B9-4388-BBE2-D6521A4BB1D4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-list-michael", "gtest-list-michael.vcxproj", "{123BD9AB-D988-499F-BAC5-E6490697567C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-feldman", "gtest-set-feldman.vcxproj", "{E58CE34B-BDFB-4867-BFC0-35F61118AD12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-michael", "gtest-set-michael.vcxproj", "{0FF8CE32-2FF8-4791-92C0-ED25FAAE140D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-michael-iterable", "gtest-set-michael-iterable.vcxproj", "{F4801F77-A195-475D-9330-83E004DE1A56}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-michael-lazy", "gtest-set-michael-lazy.vcxproj", "{254D5C75-6DA4-455E-84DA-8005A18155D9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-skip", "gtest-set-skip.vcxproj", "{0841A7B2-E580-4DCA-8E37-58DE4DC48B64}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-split-iterable", "gtest-set-split-iterable.vcxproj", "{093B83D9-9B04-4BF5-9048-B6F81D559872}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-split-lazy", "gtest-set-split-lazy.vcxproj", "{3AF2EF79-7DDC-46C9-89BB-C7D56615A479}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-set-split-michael", "gtest-set-split-michael.vcxproj", "{B54B6B1B-EFCA-413C-BD7C-7A8C8E009717}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-ilist-iterable", "gtest-ilist-iterable.vcxproj", "{F28BF36F-3E04-44EF-929C-635CC8A44C0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-ilist-lazy", "gtest-ilist-lazy.vcxproj", "{549BD562-1EA4-4BFE-945D-A398947B527B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-ilist-michael", "gtest-ilist-michael.vcxproj", "{AD892D1A-CF4D-4B04-BAC9-10ECDD902D0E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-feldman", "gtest-iset-feldman.vcxproj", "{4B5B03A0-2534-43B5-92CA-3F9B7B9898E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-michael", "gtest-iset-michael.vcxproj", "{6E296FE3-5730-4422-9782-4723ABD1DBCD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-michael-iterable", "gtest-iset-michael-iterable.vcxproj", "{2A3D25FA-16AB-4105-9585-EF5266979989}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-michael-lazy", "gtest-iset-michael-lazy.vcxproj", "{174B2F0B-8D0E-4072-BED2-FFB5765B175D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-skip", "gtest-iset-skip.vcxproj", "{04522047-CCD4-4E27-97B9-26DE6C0A2677}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-split-iterable", "gtest-iset-split-iterable.vcxproj", "{ACA14BAB-40E5-4507-B9CA-CF62503D8781}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-split-lazy", "gtest-iset-split-lazy.vcxproj", "{25B31807-E27E-4644-8CB4-4B7C32E47B0E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-iset-split-michael", "gtest-iset-split-michael.vcxproj", "{60B84B21-741E-45F5-86FB-A2ECBD05782E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-map-boost", "gtest-striped-map-boost.vcxproj", "{32E3E2E1-1953-44FD-AAE2-19BD8D030CAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-map-cuckoo", "gtest-striped-map-cuckoo.vcxproj", "{B032E27A-D7C4-437C-AC10-D235C20130F8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-map-std", "gtest-striped-map-std.vcxproj", "{7D43117B-CB6A-44D2-A79B-6E035CD8FA04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-set-boost", "gtest-striped-set-boost.vcxproj", "{F7A98219-FA54-4CEA-9813-5873A6676D3C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-set-cuckoo", "gtest-striped-set-cuckoo.vcxproj", "{E6C84E07-A02C-4F91-B759-6CA4730F4534}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-striped-set-std", "gtest-striped-set-std.vcxproj", "{BC6BCA1F-3850-4571-ADE2-BB11C2B68807}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-tree-bronson", "gtest-tree-bronson.vcxproj", "{27AB018B-953E-4632-B6A9-A4E9782A81BA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-tree-ellen", "gtest-tree-ellen.vcxproj", "{93F1FE35-2EF4-4193-B8A2-54988F61F3B8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
