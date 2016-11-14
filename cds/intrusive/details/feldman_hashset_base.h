@@ -468,7 +468,7 @@ namespace cds { namespace intrusive {
             ~multilevel_array()
             {
                 destroy_tree();
-                free_array_node(m_Head);
+                free_array_node( m_Head, head_size());
             }
 
             node_ptr traverse(traverse_data& pos)
@@ -542,8 +542,8 @@ namespace cds { namespace intrusive {
                 for (atomic_node_ptr * p = pArr->nodes, *pLast = p + nSize; p != pLast; ++p) {
                     node_ptr slot = p->load(memory_model::memory_order_relaxed);
                     if (slot.bits() == flag_array_node) {
-                        destroy_array_nodes(to_array(slot.ptr()), array_node_size());
-                        free_array_node(to_array(slot.ptr()));
+                        destroy_array_nodes( to_array(slot.ptr()), array_node_size());
+                        free_array_node( to_array( slot.ptr()), array_node_size());
                         p->store(node_ptr(), memory_model::memory_order_relaxed);
                     }
                 }
@@ -566,9 +566,9 @@ namespace cds { namespace intrusive {
                 return alloc_array_node(array_node_size(), pParent, idxParent);
             }
 
-            static void free_array_node(array_node * parr)
+            static void free_array_node( array_node * parr, size_t nSize )
             {
-                cxx_array_node_allocator().Delete(parr);
+                cxx_array_node_allocator().Delete( parr, nSize );
             }
 
             union converter {
@@ -633,7 +633,7 @@ namespace cds { namespace intrusive {
                 if (!slot.compare_exchange_strong(cur, cur | flag_array_converting, memory_model::memory_order_release, atomics::memory_order_relaxed))
                 {
                     stats().onExpandNodeFailed();
-                    free_array_node(pArr);
+                    free_array_node( pArr, array_node_size());
                     return false;
                 }
 
