@@ -478,7 +478,7 @@ namespace cds { namespace container {
 #endif
         upsert( Q&& key, V&& val, bool bAllowInsert = true )
         {
-            return base_class::upsert( std::make_pair( std::forward<Q>( key ), std::forward<V>( val )), bAllowInsert );
+            return base_class::upsert( std::make_pair( key_type( std::forward<Q>( key )), mapped_type( std::forward<V>( val ))), bAllowInsert );
         }
 
 
