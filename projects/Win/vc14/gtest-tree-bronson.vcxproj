@@ -28,38 +28,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\cuckoo_map.cpp">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CDSUNIT_ENABLE_BOOST_CONTAINER;_SCL_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_flat_map.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_list.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_map.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_slist.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_boost_unordered_map.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_list.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_map.cpp" />
-    <ClCompile Include="..\..\..\test\unit\striped-map\map_std_unordered_map.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_sht.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpi.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpt.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_shb.cpp" />
+    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\striped-map\test_map.h" />
-    <ClInclude Include="..\..\..\test\unit\striped-map\test_map_data.h" />
-    <ClInclude Include="..\..\..\test\unit\striped-map\test_striped_map.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map_ptr.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map_data.h" />
+    <ClInclude Include="..\..\..\test\unit\tree\test_tree_map_rcu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{00FD5CB8-E1A4-40CA-B613-30A06A75622B}</ProjectGuid>
+    <ProjectGuid>{27AB018B-953E-4632-B6A9-A4E9782A81BA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>striped-map</RootNamespace>
+    <RootNamespace>tree</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -164,7 +154,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -180,7 +170,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -196,7 +186,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -212,7 +202,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -230,7 +220,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -250,7 +240,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>

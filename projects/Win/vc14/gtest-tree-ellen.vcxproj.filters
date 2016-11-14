@@ -18,9 +18,6 @@
     <Filter Include="Source Files\EllenBinTreeMap">
       <UniqueIdentifier>{5e8e3c4d-563e-41fd-91ed-52f61f4b7d24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\BronsonAVLTree">
-      <UniqueIdentifier>{431d0150-603d-4108-810d-de9ac3be3534}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp">
@@ -92,36 +89,6 @@
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_sht.cpp">
       <Filter>Source Files\EllenBinTreeMap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpb.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpi.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpt.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_shb.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_sht.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpb.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpi.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpt.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_shb.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_sht.cpp">
-      <Filter>Source Files\BronsonAVLTree</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\tree\test_intrusive_tree.h">
@@ -164,12 +131,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_map_rcu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map_ptr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
