@@ -75,8 +75,8 @@ namespace map {
 
         struct traits_FeldmanHashMap_stdhash : public cc::feldman_hashmap::traits
         {
-            typedef std::hash< Key > hash;
-            typedef map::cmp<Key>    compare;
+            typedef std::hash< Key >    hash;
+            typedef std::less<size_t>   less;
         };
 
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_stdhash >    FeldmanHashMap_hp_stdhash;
@@ -92,7 +92,7 @@ namespace map {
         struct traits_FeldmanHashMap_stdhash_stat: traits_FeldmanHashMap_stdhash
         {
             typedef cc::feldman_hashmap::stat<> stat;
-            typedef map::less<Key> less;
+            typedef std::less<size_t>   less;
         };
 
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_stdhash_stat >    FeldmanHashMap_hp_stdhash_stat;

@@ -164,10 +164,11 @@ namespace set {
             return base_class::find( v ) != base_class::end();
         }
 
-        bool insert( value_type const& v )
+        template <typename Key>
+        bool insert( Key const& k )
         {
             scoped_lock al( m_lock );
-            return base_class::insert( v ).second;
+            return base_class::insert( value_type( k )).second;
         }
 
         template <typename Key, typename Func>
