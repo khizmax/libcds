@@ -104,7 +104,8 @@
 
 // double-width CAS support
 // note: gcc-4.8 does not support double-word atomics
-#if CDS_COMPILER_VERSION >= 40900
+//       gcc-4.9: a lot of crashes when use DCAS
+#if CDS_COMPILER_VERSION >= 50000
 #   if CDS_BUILD_BITS == 64
 #       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
 #           define CDS_DCAS_SUPPORT
