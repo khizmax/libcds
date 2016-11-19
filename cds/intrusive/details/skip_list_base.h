@@ -87,6 +87,7 @@ namespace cds { namespace intrusive {
 
                 m_arrNext = nextTower;
                 m_nHeight = nHeight;
+                atomics::atomic_thread_fence( atomics::memory_order_release );
             }
 
             //@cond
@@ -102,6 +103,11 @@ namespace cds { namespace intrusive {
             {
                 return m_arrNext;
             }
+
+            bool has_tower() const
+            {
+                return m_nHeight > 1;
+            }
             //@endcond
 
             /// Access to element of next pointer array
@@ -110,15 +116,7 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr));
 
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                // TSan false positive: m_arrNext is read-only array
-                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
-                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
-                return r;
-#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-#           endif
             }
 
             /// Access to element of next pointer array (const version)
@@ -127,24 +125,16 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                // TSan false positive: m_arrNext is read-only array
-                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
-                atomic_marked_ptr const& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
-                return r;
-#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-#           endif
             }
 
-            /// Access to element of next pointer array (same as \ref next function)
+            /// Access to element of next pointer array (synonym for \p next() function)
             atomic_marked_ptr& operator[]( unsigned int nLevel )
             {
                 return next( nLevel );
             }
 
-            /// Access to element of next pointer array (same as \ref next function)
+            /// Access to element of next pointer array (synonym for \p next() function)
             atomic_marked_ptr const& operator[]( unsigned int nLevel ) const
             {
                 return next( nLevel );

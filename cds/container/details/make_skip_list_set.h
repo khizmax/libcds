@@ -59,8 +59,11 @@ namespace cds { namespace container { namespace details {
                 : m_Value(v)
             {
                 if ( nHeight > 1 ) {
+                    // TSan: make_tower() issues atomic_thread_fence( release )
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     new (pTower) atomic_marked_ptr[ nHeight - 1 ];
                     base_class::make_tower( nHeight, pTower );
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                 }
             }
 
