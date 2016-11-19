@@ -452,7 +452,7 @@ namespace cds { namespace gc {
                 assign( nIndex, src.get_native());
             }
 
-            /// Copy guarded value from slot \p nSrcIndex to slot at index \p nDestIndex
+            /// Copy guarded value from slot \p nSrcIndex to the slot \p nDestIndex
             void copy( size_t nDestIndex, size_t nSrcIndex )
             {
                 assign( nDestIndex, get_native( nSrcIndex ));
