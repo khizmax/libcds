@@ -1,14 +1,19 @@
-# Boost race [?] in test framework. Do not affect to libcds
-race:CppUnitMini::ThreadPool::~ThreadPool
+# Run-time flags: envvar TSAN_OPTIONS="';' delimited option list"
+# Useful options (full list see https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags):
+#   suppressions=<supression_file_name>
+#   verosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
+#   history_size=[0..7], default 2
+
+race:cds_test::thread::run
 
 # DHP 
-race:cds::gc::details::retired_ptr::free
+#race:cds::gc::details::retired_ptr::free
 
 # uRCU false positive
-race:cds::urcu::gc*::batch_retire*
+#race:cds::urcu::gc*::batch_retire*
 
 # EllenBinTree false positive
-race:ellen_bintree_pool::internal_node_allocator*::allocate
+#race:ellen_bintree_pool::internal_node_allocator*::allocate
 
 # TODO: TSan false positive or library issues?
-race:cds::container::OptimisticQueue*::alloc_node
+#race:cds::container::OptimisticQueue*::alloc_node
