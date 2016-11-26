@@ -32,11 +32,12 @@
 
 namespace map {
 
-    size_t  Map_DelOdd::s_nMapSize = 1000000;
+    size_t  Map_DelOdd::s_nMapSize = 10000;
     size_t  Map_DelOdd::s_nInsThreadCount = 4;
     size_t  Map_DelOdd::s_nDelThreadCount = 4;
     size_t  Map_DelOdd::s_nExtractThreadCount = 4;
     size_t  Map_DelOdd::s_nMaxLoadFactor = 8;
+    size_t  Map_DelOdd::s_nInsertPassCount = 100;
 
     size_t  Map_DelOdd::s_nCuckooInitialSize = 1024;
     size_t  Map_DelOdd::s_nCuckooProbesetSize = 16;
@@ -44,11 +45,9 @@ namespace map {
 
     size_t Map_DelOdd::s_nFeldmanMap_HeadBits = 10;
     size_t Map_DelOdd::s_nFeldmanMap_ArrayBits = 4;
-
-
+    
     size_t Map_DelOdd::s_nLoadFactor = 1;
-    std::vector<size_t> Map_DelOdd::m_arrInsert;
-    std::vector<size_t> Map_DelOdd::m_arrRemove;
+    std::vector<size_t> Map_DelOdd::m_arrElements;
 
     void Map_DelOdd::SetUpTestCase()
     {
@@ -69,6 +68,10 @@ namespace map {
         if ( s_nMaxLoadFactor == 0 )
             s_nMaxLoadFactor = 1;
 
+        s_nInsertPassCount = cfg.get_size_t( "PassCount", s_nInsertPassCount );
+        if ( s_nInsertPassCount == 0 )
+            s_nInsertPassCount = 100;
+
         s_nCuckooInitialSize = cfg.get_size_t( "CuckooInitialSize", s_nCuckooInitialSize );
         if ( s_nCuckooInitialSize < 256 )
             s_nCuckooInitialSize = 256;
@@ -87,21 +90,15 @@ namespace map {
         if ( s_nFeldmanMap_ArrayBits == 0 )
             s_nFeldmanMap_ArrayBits = 2;
 
-
-        m_arrInsert.resize( s_nMapSize );
-        m_arrRemove.resize( s_nMapSize );
-        for ( size_t i = 0; i < s_nMapSize; ++i ) {
-            m_arrInsert[i] = i;
-            m_arrRemove[i] = i;
-        }
-        shuffle( m_arrInsert.begin(), m_arrInsert.end());
-        shuffle( m_arrRemove.begin(), m_arrRemove.end());
+        m_arrElements.resize( s_nMapSize );
+        for ( size_t i = 0; i < s_nMapSize; ++i )
+            m_arrElements[i] = i;;
+        shuffle( m_arrElements.begin(), m_arrElements.end() );
     }
 
     void Map_DelOdd::TearDownTestCase()
     {
-        m_arrInsert.clear();
-        m_arrRemove.clear();
+        m_arrElements.clear();
     }
 
     std::vector<size_t> Map_DelOdd_LF::get_load_factors()

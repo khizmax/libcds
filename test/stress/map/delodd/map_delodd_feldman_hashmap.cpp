@@ -33,23 +33,18 @@
 
 namespace map {
 
-    namespace {
-        class Map_DelOdd2: public map::Map_DelOdd {
-        public:
-            template <typename Map>
-            void run()
-            {
-                typedef typename Map::traits original_traits;
-                struct traits: public original_traits {
-                    enum { hash_size = sizeof( uint32_t ) + sizeof( uint16_t ) };
-                };
-                typedef typename Map::template rebind_traits< traits >::result map_type;
-
-                run_test_extract<map_type>();
-            }
+    template <class Map>
+    void Map_DelOdd::run_feldman()
+    {
+        typedef typename Map::traits original_traits;
+        struct traits: public original_traits {
+            enum { hash_size = sizeof( uint32_t ) + sizeof( uint16_t ) };
         };
+        typedef typename Map::template rebind_traits< traits >::result map_type;
 
-        CDSSTRESS_FeldmanHashMap_fixed( Map_DelOdd2, run, key_thread, size_t )
+        run_test_extract<map_type>();
     }
+
+    CDSSTRESS_FeldmanHashMap_fixed( Map_DelOdd, run_feldman, key_thread, size_t )
 
 } // namespace map

@@ -37,6 +37,7 @@ namespace set {
     size_t  Set_DelOdd::s_nDelThreadCount = 4;
     size_t  Set_DelOdd::s_nExtractThreadCount = 4;
     size_t  Set_DelOdd::s_nMaxLoadFactor = 8;
+    size_t  Set_DelOdd::s_nInsertPassCount = 100;
 
     size_t  Set_DelOdd::s_nCuckooInitialSize = 1024;
     size_t  Set_DelOdd::s_nCuckooProbesetSize = 16;
@@ -67,6 +68,10 @@ namespace set {
         s_nMaxLoadFactor = cfg.get_size_t( "MaxLoadFactor", s_nMaxLoadFactor );
         if ( s_nMaxLoadFactor == 0 )
             s_nMaxLoadFactor = 1;
+
+        s_nInsertPassCount = cfg.get_size_t( "PassCount", s_nInsertPassCount );
+        if ( s_nInsertPassCount == 0 )
+            s_nInsertPassCount = 100;
 
         s_nCuckooInitialSize = cfg.get_size_t( "CuckooInitialSize", s_nCuckooInitialSize );
         if ( s_nCuckooInitialSize < 256 )

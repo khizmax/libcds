@@ -50,7 +50,7 @@ namespace map {
         };
 
         static_assert(sizeof( key_thread ) % 8 == 0, "Key size mismatch!!!");
-    }
+    } // namespace
 
     template <>
     struct cmp<key_thread> {
@@ -119,6 +119,7 @@ namespace map {
         static size_t s_nExtractThreadCount;  // extract thread count
         static size_t s_nMapSize;             // max map size
         static size_t s_nMaxLoadFactor;       // maximum load factor
+        static size_t s_nInsertPassCount;
 
         static size_t s_nCuckooInitialSize;       // initial size for CuckooMap
         static size_t s_nCuckooProbesetSize;      // CuckooMap probeset size (only for list-based probeset)
@@ -129,11 +130,22 @@ namespace map {
 
         static size_t  s_nLoadFactor;  // current load factor
 
-        static std::vector<size_t> m_arrInsert;
-        static std::vector<size_t> m_arrRemove;
+        static std::vector<size_t> m_arrElements;
 
         static void SetUpTestCase();
         static void TearDownTestCase();
+
+        template <typename Pred>
+        static void prepare_array( std::vector<size_t>& arr, Pred pred )
+        {
+            arr.reserve( m_arrElements.size() );
+            for ( auto el : m_arrElements ) {
+                if ( pred( el ) )
+                    arr.push_back( el );
+            }
+            arr.resize( arr.size() );
+            shuffle( arr.begin(), arr.end() );
+        }
 
     protected:
         typedef key_thread  key_type;
@@ -155,7 +167,7 @@ namespace map {
             typedef cds_test::thread base_class;
             Map&     m_Map;
 
-            struct ensure_func
+            struct update_func
             {
                 template <typename Q>
                 void operator()( bool /*bNew*/, Q const& ) const
@@ -170,20 +182,40 @@ namespace map {
                 void operator()( Q&, Q*) const
                 {}
             };
+
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t ) -> bool { return true; } );
+                for ( size_t i = 0; i < m_arr.size(); ++i ) {
+                    if ( m_Map.insert( key_type( m_arr[i], id() ) ) )
+                        ++m_nInsertInitSuccess;
+                    else
+                        ++m_nInsertInitFailed;
+                }
+            }
+
         public:
             size_t m_nInsertSuccess = 0;
             size_t m_nInsertFailed = 0;
+            size_t m_nInsertInitSuccess = 0;
+            size_t m_nInsertInitFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Inserter( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool, inserter_thread )
                 , m_Map( map )
-            {}
+            {
+                init_data();
+            }
 
             Inserter( Inserter& src )
                 : base_class( src )
                 , m_Map( src.m_Map )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
@@ -195,22 +227,38 @@ namespace map {
                 Map& rMap = m_Map;
                 Map_DelOdd& fixture = pool().template fixture<Map_DelOdd>();
 
-                std::vector<size_t>& arrData = fixture.m_arrInsert;
-                for ( size_t i = 0; i < arrData.size(); ++i ) {
-                    if ( rMap.insert( key_type( arrData[i], id())))
-                        ++m_nInsertSuccess;
-                    else
-                        ++m_nInsertFailed;
-                }
+                update_func f;
 
-                ensure_func f;
-                for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                    if ( arrData[i] & 1 ) {
-                        rMap.update( key_type( arrData[i], id()), f );
+                for ( size_t nPass = 0; nPass < s_nInsertPassCount; ++nPass ) {
+                    if ( nPass & 1 ) {
+                        // insert pass
+                        for ( auto el : m_arr ) {
+                            if ( el & 1 ) {
+                                if ( rMap.insert( key_type( el, id() )))
+                                    ++m_nInsertSuccess;
+                                else
+                                    ++m_nInsertFailed;
+                            }
+                        }
+                    }
+                    else {
+                        // update pass
+                        for ( auto el : m_arr ) {
+                            if ( el & 1 ) {
+                                bool success;
+                                bool inserted;
+                                std::tie( success, inserted ) = rMap.update( key_type( el, id() ), f );
+                                if ( success && inserted )
+                                    ++m_nInsertSuccess;
+                                else
+                                    ++m_nInsertFailed;
+                            }
+                        }
                     }
                 }
 
-                fixture.m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_acquire );
+                fixture.m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_release );
+                m_arr.resize( 0 );
             }
         };
 
@@ -253,41 +301,36 @@ namespace map {
             typedef cds_test::thread base_class;
             Map&     m_Map;
 
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) ->bool { return ( el & 1 ) != 0; } );
+            }
+
         public:
             size_t  m_nDeleteSuccess = 0;
             size_t  m_nDeleteFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Deleter( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool, deleter_thread )
                 , m_Map( map )
-            {}
+            {
+                init_data();
+            }
+
             Deleter( Deleter& src )
                 : base_class( src )
                 , m_Map( src.m_Map )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
                 return new Deleter( *this );
             }
-
-            template <typename MapType, bool>
-            struct eraser {
-                static bool erase(MapType& map, size_t key, size_t /*insThread*/)
-                {
-                    return map.erase_with(key, key_less());
-                }
-            };
-
-            template <typename MapType>
-            struct eraser<MapType, true>
-            {
-                static bool erase(MapType& map, size_t key, size_t insThread)
-                {
-                    return map.erase(key_type(key, insThread));
-                }
-            };
 
             virtual void test()
             {
@@ -296,57 +339,30 @@ namespace map {
                 Map_DelOdd& fixture = pool().template fixture<Map_DelOdd>();
                 size_t const nInsThreadCount = s_nInsThreadCount;
 
-                for ( size_t pass = 0; pass < 2; pass++ ) {
-                    std::vector<size_t>& arrData = fixture.m_arrRemove;
+                do {
                     if ( id() & 1 ) {
-                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                            for ( size_t i = 0; i < arrData.size(); ++i ) {
-                                if ( arrData[i] & 1 ) {
-                                    if ( Map::c_bEraseExactKey ) {
-                                        for (size_t key = 0; key < nInsThreadCount; ++key) {
-                                            if ( eraser<Map, Map::c_bEraseExactKey>::erase( rMap, arrData[i], key ))
-                                                ++m_nDeleteSuccess;
-                                            else
-                                                ++m_nDeleteFailed;
-                                        }
-                                    }
-                                    else {
-                                        if ( eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
-                                            ++m_nDeleteSuccess;
-                                        else
-                                            ++m_nDeleteFailed;
-                                    }
-                                }
+                        for ( auto el: m_arr ) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                if ( rMap.erase( key_type( el, k )))
+                                    ++m_nDeleteSuccess;
+                                else
+                                    ++m_nDeleteFailed;
                             }
-                            if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                                break;
                         }
                     }
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                            for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                                if ( arrData[i] & 1 ) {
-                                    if ( Map::c_bEraseExactKey ) {
-                                        for (size_t key = 0; key < nInsThreadCount; ++key) {
-                                            if (eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], key))
-                                                ++m_nDeleteSuccess;
-                                            else
-                                                ++m_nDeleteFailed;
-                                        }
-                                    }
-                                    else {
-                                        if (eraser<Map, Map::c_bEraseExactKey>::erase(rMap, arrData[i], 0))
-                                            ++m_nDeleteSuccess;
-                                        else
-                                            ++m_nDeleteFailed;
-                                    }
-                                }
+                            for ( auto el: m_arr ) {
+                                if ( rMap.erase( key_type( el, k ) ) )
+                                    ++m_nDeleteSuccess;
+                                else
+                                    ++m_nDeleteFailed;
                             }
-                            if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                                break;
                         }
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -357,42 +373,36 @@ namespace map {
             typedef cds_test::thread base_class;
             Map&     m_Map;
 
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) ->bool { return ( el & 1 ) != 0; } );
+            }
+
         public:
             size_t  m_nDeleteSuccess = 0;
             size_t  m_nDeleteFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Extractor( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool, extractor_thread )
                 , m_Map( map )
-            {}
+            {
+                init_data();
+            }
 
             Extractor( Extractor& src )
                 : base_class( src )
                 , m_Map( src.m_Map )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
                 return new Extractor( *this );
             }
-
-            template <typename MapType, bool>
-            struct extractor {
-                static typename Map::guarded_ptr extract(MapType& map, size_t key, size_t /*insThread*/)
-                {
-                    return map.extract_with(key, key_less());
-                }
-            };
-
-            template <typename MapType>
-            struct extractor<MapType, true>
-            {
-                static typename Map::guarded_ptr extract(MapType& map, size_t key, size_t insThread)
-                {
-                    return map.extract(key_type(key, insThread));
-                }
-            };
 
             virtual void test()
             {
@@ -402,41 +412,34 @@ namespace map {
                 Map_DelOdd& fixture = pool().template fixture<Map_DelOdd>();
                 size_t const nInsThreadCount = s_nInsThreadCount;
 
-                for ( size_t pass = 0; pass < 2; ++pass ) {
-                    std::vector<size_t>& arrData = fixture.m_arrRemove;
+                do {
                     if ( id() & 1 ) {
-                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                            for ( size_t i = 0; i < arrData.size(); ++i ) {
-                                if ( arrData[i] & 1 ) {
-                                    gp = extractor< Map, Map::c_bEraseExactKey >::extract( rMap, arrData[i], k );
-                                    if ( gp )
-                                        ++m_nDeleteSuccess;
-                                    else
-                                        ++m_nDeleteFailed;
-                                    gp.release();
-                                }
+                        for ( auto el : m_arr ) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                gp = rMap.extract( key_type( el, k ));
+                                if ( gp )
+                                    ++m_nDeleteSuccess;
+                                else
+                                    ++m_nDeleteFailed;
+                                gp.release();
                             }
-                            if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                                break;
                         }
                     }
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                            for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                                if ( arrData[i] & 1 ) {
-                                    gp = extractor< Map, Map::c_bEraseExactKey >::extract( rMap, arrData[i], k);
-                                    if ( gp )
-                                        ++m_nDeleteSuccess;
-                                    else
-                                        ++m_nDeleteFailed;
-                                    gp.release();
-                                }
+                            for ( auto el: m_arr ) {
+                                gp = rMap.extract( key_type( el, k ) );
+                                if ( gp )
+                                    ++m_nDeleteSuccess;
+                                else
+                                    ++m_nDeleteFailed;
+                                gp.release();
                             }
-                            if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                                break;
                         }
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -446,42 +449,36 @@ namespace map {
             typedef cds_test::thread base_class;
             Map&     m_Map;
 
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) -> bool { return ( el & 1 ) != 0; } );
+            }
+
         public:
             size_t  m_nDeleteSuccess = 0;
             size_t  m_nDeleteFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Extractor( cds_test::thread_pool& pool, Map& map )
                 : base_class( pool, extractor_thread )
                 , m_Map( map )
-            {}
+            {
+                init_data();
+            }
 
             Extractor( Extractor& src )
                 : base_class( src )
                 , m_Map( src.m_Map )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
                 return new Extractor( *this );
             }
-
-            template <typename MapType, bool>
-            struct extractor {
-                static typename Map::exempt_ptr extract( MapType& map, size_t key, size_t /*insThread*/ )
-                {
-                    return map.extract_with( key, key_less());
-                }
-            };
-
-            template <typename MapType>
-            struct extractor<MapType, true>
-            {
-                static typename Map::exempt_ptr extract(MapType& map, size_t key, size_t insThread)
-                {
-                    return map.extract( key_type(key, insThread));
-                }
-            };
 
             virtual void test()
             {
@@ -491,23 +488,20 @@ namespace map {
                 typename Map::exempt_ptr xp;
                 size_t const nInsThreadCount = s_nInsThreadCount;
 
-                std::vector<size_t>& arrData = fixture.m_arrRemove;
-                if ( id() & 1 ) {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = 0; i < arrData.size(); ++i ) {
-                            if ( arrData[i] & 1 ) {
+                do {
+                    if ( id() & 1 ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                            for ( auto el: m_arr ) {
                                 if ( Map::c_bExtractLockExternal ) {
-                                    {
-                                        typename Map::rcu_lock l;
-                                        xp = extractor<Map, Map::c_bEraseExactKey>::extract( rMap, arrData[i], k );
-                                        if ( xp )
-                                            ++m_nDeleteSuccess;
-                                        else
-                                            ++m_nDeleteFailed;
-                                    }
+                                    typename Map::rcu_lock l;
+                                    xp = rMap.extract( key_type( el, k ) );
+                                    if ( xp )
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
                                 }
                                 else {
-                                    xp = extractor<Map, Map::c_bEraseExactKey>::extract( rMap, arrData[i], k);
+                                    xp = rMap.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -516,26 +510,20 @@ namespace map {
                                 xp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                        for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                            if ( arrData[i] & 1 ) {
+                    else {
+                        for ( auto el : m_arr ) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Map::c_bExtractLockExternal ) {
-                                    {
-                                        typename Map::rcu_lock l;
-                                        xp = extractor<Map, Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
-                                        if ( xp )
-                                            ++m_nDeleteSuccess;
-                                        else
-                                            ++m_nDeleteFailed;
-                                    }
+                                    typename Map::rcu_lock l;
+                                    xp = rMap.extract( key_type( el, k ) );
+                                    if ( xp )
+                                        ++m_nDeleteSuccess;
+                                    else
+                                        ++m_nDeleteFailed;
                                 }
                                 else {
-                                    xp = extractor<Map, Map::c_bEraseExactKey>::extract(rMap, arrData[i], k);
+                                    xp = rMap.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -544,10 +532,10 @@ namespace map {
                                 xp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -566,12 +554,15 @@ namespace map {
 
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
-                << std::make_pair( "map_size", s_nMapSize );
+                << std::make_pair( "map_size", s_nMapSize )
+                << std::make_pair( "pass_count", s_nInsertPassCount );
 
             std::chrono::milliseconds duration = pool.run();
 
             propout() << std::make_pair( "duration", duration );
 
+            size_t nInsertInitFailed = 0;
+            size_t nInsertInitSuccess = 0;
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
             size_t nDeleteSuccess = 0;
@@ -583,6 +574,8 @@ namespace map {
                     insert_thread& inserter = static_cast<insert_thread&>(thr);
                     nInsertSuccess += inserter.m_nInsertSuccess;
                     nInsertFailed += inserter.m_nInsertFailed;
+                    nInsertInitSuccess += inserter.m_nInsertInitSuccess;
+                    nInsertInitFailed += inserter.m_nInsertInitFailed;
                 }
                 else {
                     assert( thr.type() == deleter_thread );
@@ -592,10 +585,16 @@ namespace map {
                 }
             }
 
-            EXPECT_EQ( nInsertSuccess, s_nMapSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0u );
+            size_t const nInitialOddKeys = ( s_nMapSize * s_nInsThreadCount ) / 2;
+
+            EXPECT_EQ( nInsertInitFailed, 0u );
+            EXPECT_EQ( nInsertInitSuccess, s_nMapSize * s_nInsThreadCount );
+            EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess );
+            EXPECT_LE( nInsertSuccess, nDeleteSuccess );
 
             propout()
+                << std::make_pair( "insert_init_success", nInsertInitSuccess )
+                << std::make_pair( "insert_init_failed", nInsertInitFailed )
                 << std::make_pair( "insert_success", nInsertSuccess )
                 << std::make_pair( "insert_failed",  nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
@@ -623,12 +622,15 @@ namespace map {
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
                 << std::make_pair( "extract_thread_count", s_nExtractThreadCount )
-                << std::make_pair( "map_size", s_nMapSize );
+                << std::make_pair( "map_size", s_nMapSize )
+                << std::make_pair( "pass_count", s_nInsertPassCount );
 
             std::chrono::milliseconds duration = pool.run();
 
             propout() << std::make_pair( "duration", duration );
 
+            size_t nInsertInitFailed = 0;
+            size_t nInsertInitSuccess = 0;
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
             size_t nDeleteSuccess = 0;
@@ -643,6 +645,8 @@ namespace map {
                     insert_thread& inserter = static_cast<insert_thread&>(thr);
                     nInsertSuccess += inserter.m_nInsertSuccess;
                     nInsertFailed += inserter.m_nInsertFailed;
+                    nInsertInitSuccess += inserter.m_nInsertInitSuccess;
+                    nInsertInitFailed += inserter.m_nInsertInitFailed;
                 }
                 break;
                 case deleter_thread:
@@ -664,10 +668,16 @@ namespace map {
                 }
             }
 
-            EXPECT_EQ( nInsertSuccess, s_nMapSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0u );
+            size_t const nInitialOddKeys = ( s_nMapSize * s_nInsThreadCount ) / 2;
+
+            EXPECT_EQ( nInsertInitFailed, 0u );
+            EXPECT_EQ( nInsertInitSuccess, s_nMapSize * s_nInsThreadCount );
+            EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess + nExtractSuccess );
+            EXPECT_LE( nInsertSuccess, nDeleteSuccess + nExtractSuccess );
 
             propout()
+                << std::make_pair( "insert_init_success", nInsertInitSuccess )
+                << std::make_pair( "insert_init_failed", nInsertInitFailed )
                 << std::make_pair( "insert_success", nInsertSuccess )
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
@@ -705,16 +715,29 @@ namespace map {
         {
             static_assert( Map::c_bExtractSupported, "Map class must support extract() method" );
 
+            size_t nMapSize = s_nMapSize;
+            s_nMapSize *= s_nInsThreadCount;
+
             Map testMap( *this );
+
+            s_nMapSize = nMapSize;
             do_test_extract( testMap );
         }
 
         template <class Map>
         void run_test()
         {
+            size_t nMapSize = s_nMapSize;
+            s_nMapSize *= s_nInsThreadCount;
+
             Map testMap( *this );
+
+            s_nMapSize = nMapSize;
             do_test( testMap );
         }
+
+        template <class Map>
+        void run_feldman();
     };
 
     class Map_DelOdd_LF: public Map_DelOdd

@@ -33,25 +33,18 @@
 
 namespace set {
 
-    namespace {
-        class Set_DelOdd2: public set::Set_DelOdd
-        {
-        public:
-            template <typename Set>
-            void run()
-            {
-                typedef typename Set::traits original_traits;
-                struct traits: public original_traits
-                {
-                    enum { hash_size = sizeof(uint32_t) + sizeof(uint16_t) };
-                };
-
-                typedef typename Set::template rebind_traits< traits >::result set_type;
-                run_test_extract< set_type >();
-            }
+    template <class Set>
+    void Set_DelOdd::run_feldman()
+    {
+        typedef typename Set::traits original_traits;
+        struct traits: public original_traits {
+            enum { hash_size = sizeof( uint32_t ) + sizeof( uint16_t ) };
         };
+        typedef typename Set::template rebind_traits< traits >::result set_type;
 
-        CDSSTRESS_FeldmanHashSet_fixed( Set_DelOdd2, run, key_thread, size_t )
+        run_test_extract<set_type>();
     }
 
+    CDSSTRESS_FeldmanHashSet_fixed( Set_DelOdd, run_feldman, key_thread, size_t )
+ 
 } // namespace set

@@ -4,8 +4,6 @@
 #   verosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
 #   history_size=[0..7], default 2
 
-race:cds_test::thread::run
-
 # DHP 
 #race:cds::gc::details::retired_ptr::free
 

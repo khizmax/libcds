@@ -121,6 +121,7 @@ namespace set {
         static size_t s_nDelThreadCount;       // delete thread count
         static size_t s_nExtractThreadCount;   // extract thread count
         static size_t s_nMaxLoadFactor;        // maximum load factor
+        static size_t s_nInsertPassCount;
 
         static size_t s_nCuckooInitialSize;    // initial size for CuckooSet
         static size_t s_nCuckooProbesetSize;   // CuckooSet probeset size (only for list-based probeset)
@@ -135,6 +136,18 @@ namespace set {
 
         static void SetUpTestCase();
         static void TearDownTestCase();
+
+        template <typename Pred>
+        static void prepare_array( std::vector<size_t>& arr, Pred pred )
+        {
+            arr.reserve( m_arrData.size() );
+            for ( auto el : m_arrData ) {
+                if ( pred( el ) )
+                    arr.push_back( el );
+            }
+            arr.resize( arr.size() );
+            shuffle( arr.begin(), arr.end() );
+        }
 
     protected:
         typedef key_thread  key_type;
@@ -165,20 +178,40 @@ namespace set {
                 void operator()(key_value_pair& /*cur*/, key_value_pair * /*prev*/) const
                 {}
             };
+
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t ) -> bool { return true; } );
+                for ( size_t i = 0; i < m_arr.size(); ++i ) {
+                    if ( m_Set.insert( key_type( m_arr[i], id() ) ) )
+                        ++m_nInsertInitSuccess;
+                    else
+                        ++m_nInsertInitFailed;
+                }
+            }
+
         public:
             size_t  m_nInsertSuccess = 0;
             size_t  m_nInsertFailed = 0;
+            size_t m_nInsertInitSuccess = 0;
+            size_t m_nInsertInitFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Inserter( cds_test::thread_pool& pool, Set& set )
                 : base_class( pool, inserter_thread )
                 , m_Set( set )
-            {}
+            {
+                init_data();
+            }
 
             Inserter( Inserter& src )
                 : base_class( src )
                 , m_Set( src.m_Set )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
@@ -190,21 +223,36 @@ namespace set {
                 Set& rSet = m_Set;
                 Set_DelOdd& fixture = pool().template fixture<Set_DelOdd>();
 
-                std::vector<size_t>& arrData = fixture.m_arrData;
-                for ( size_t i = 0; i < arrData.size(); ++i ) {
-                    if ( rSet.insert( key_type( arrData[i], id())))
-                        ++m_nInsertSuccess;
-                    else
-                        ++m_nInsertFailed;
-                }
-
-                update_functor f;
-                for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                    if ( arrData[i] & 1 )
-                        rSet.update( key_type( arrData[i], id()), f, true );
+                for ( size_t nPass = 0; nPass < s_nInsertPassCount; ++nPass ) {
+                    if ( nPass & 1 ) {
+                        // insert pass
+                        for ( auto el : m_arr ) {
+                            if ( el & 1 ) {
+                                if ( rSet.insert( key_type( el, id() ) ) )
+                                    ++m_nInsertSuccess;
+                                else
+                                    ++m_nInsertFailed;
+                            }
+                        }
+                    }
+                    else {
+                        // update pass
+                        for ( auto el : m_arr ) {
+                            if ( el & 1 ) {
+                                bool success;
+                                bool inserted;
+                                std::tie( success, inserted ) = rSet.update( key_type( el, id() ), update_functor() );
+                                if ( success && inserted )
+                                    ++m_nInsertSuccess;
+                                else
+                                    ++m_nInsertFailed;
+                            }
+                        }
+                    }
                 }
 
                 fixture.m_nInsThreadCount.fetch_sub( 1, atomics::memory_order_release );
+                m_arr.resize( 0 );
             }
         };
 
@@ -287,19 +335,30 @@ namespace set {
             typedef cds_test::thread base_class;
             Set&     m_Set;
 
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) ->bool { return ( el & 1 ) != 0; } );
+            }
+
         public:
             size_t  m_nDeleteSuccess = 0;
             size_t  m_nDeleteFailed = 0;
+
+            std::vector<size_t> m_arr;
 
         public:
             Deleter( cds_test::thread_pool& pool, Set& set )
                 : base_class( pool, deleter_thread )
                 , m_Set( set )
-            {}
+            {
+                init_data();
+            }
             Deleter( Deleter& src )
                 : base_class( src )
                 , m_Set( src.m_Set )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
@@ -328,36 +387,31 @@ namespace set {
 
                 size_t const nInsThreadCount = s_nInsThreadCount;
                 Set_DelOdd& fixture = pool().template fixture<Set_DelOdd>();
-                std::vector<size_t>& arrData = fixture.m_arrData;
 
-                if ( id() & 1 ) {
-                    for (size_t i = 0; i < arrData.size(); ++i) {
-                        if ( arrData[i] & 1 ) {
+                do {
+                    if ( id() & 1 ) {
+                        for ( auto el : m_arr ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                if ( eraser<Set, Set::c_bEraseExactKey>::erase( rSet, arrData[i], k ))
+                                if ( rSet.erase( key_type( el, k ) ) )
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                        if ( arrData[i] & 1 ) {
-                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                if (eraser<Set, Set::c_bEraseExactKey>::erase(rSet, arrData[i], k))
+                    else {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                            for ( auto el : m_arr ) {
+                                if ( rSet.erase( key_type( el, k ) ) )
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -368,6 +422,13 @@ namespace set {
             typedef cds_test::thread base_class;
             Set&     m_Set;
 
+            std::vector<size_t> m_arr;
+
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) ->bool { return ( el & 1 ) != 0; } );
+            }
+
         public:
             size_t  m_nExtractSuccess = 0;
             size_t  m_nExtractFailed = 0;
@@ -376,49 +437,35 @@ namespace set {
             Extractor( cds_test::thread_pool& pool, Set& set )
                 : base_class( pool, extractor_thread )
                 , m_Set( set )
-            {}
+            {
+                init_data();
+            }
 
             Extractor( Extractor& src )
                 : base_class( src )
                 , m_Set( src.m_Set )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
                 return new Extractor( *this );
             }
 
-            template <typename SetType, bool>
-            struct extractor {
-                static typename SetType::guarded_ptr extract(SetType& s, size_t key, size_t /*thread*/)
-                {
-                    return s.extract_with( key, key_less());
-                }
-            };
-
-            template <typename SetType>
-            struct extractor<SetType, true> {
-                static typename SetType::guarded_ptr extract(SetType& s, size_t key, size_t thread)
-                {
-                    return s.extract( key_type(key, thread));
-                }
-            };
-
             virtual void test()
             {
                 Set& rSet = m_Set;
-
                 typename Set::guarded_ptr gp;
 
                 Set_DelOdd& fixture = pool().template fixture<Set_DelOdd>();
-                std::vector<size_t>& arrData = fixture.m_arrData;
                 size_t const nInsThreadCount = s_nInsThreadCount;
 
-                if ( id() & 1 ) {
-                    for ( size_t i = 0; i < arrData.size(); ++i ) {
-                        if ( arrData[i] & 1 ) {
+                do {
+                    if ( id() & 1 ) {
+                        for ( auto el : m_arr ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                gp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k );
+                                gp = rSet.extract( key_type( el, k ) );
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -426,15 +473,11 @@ namespace set {
                                 gp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                        if ( arrData[i] & 1 ) {
-                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                gp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k);
+                    else {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                            for ( auto el : m_arr ) {
+                                gp = rSet.extract( key_type( el, k ) );
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -442,10 +485,10 @@ namespace set {
                                 gp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -454,6 +497,12 @@ namespace set {
         {
             typedef cds_test::thread base_class;
             Set&     m_Set;
+            std::vector<size_t> m_arr;
+
+            void init_data()
+            {
+                prepare_array( m_arr, []( size_t el ) -> bool { return ( el & 1 ) != 0; } );
+            }
 
         public:
             size_t  m_nExtractSuccess = 0;
@@ -463,58 +512,44 @@ namespace set {
             Extractor( cds_test::thread_pool& pool, Set& set )
                 : base_class( pool, extractor_thread )
                 , m_Set( set )
-            {}
+            {
+                init_data();
+            }
 
             Extractor( Extractor& src )
                 : base_class( src )
                 , m_Set( src.m_Set )
-            {}
+            {
+                init_data();
+            }
 
             virtual thread * clone()
             {
                 return new Extractor( *this );
             }
 
-            template <typename SetType, bool>
-            struct extractor {
-                static typename SetType::exempt_ptr extract(SetType& s, size_t key, size_t /*thread*/)
-                {
-                    return s.extract_with(key, key_less());
-                }
-            };
-
-            template <typename SetType>
-            struct extractor<SetType, true> {
-                static typename SetType::exempt_ptr extract(SetType& s, size_t key, size_t thread)
-                {
-                    return s.extract(key_type(key, thread));
-                }
-            };
-
             virtual void test()
             {
                 Set& rSet = m_Set;
-
                 typename Set::exempt_ptr xp;
 
                 Set_DelOdd& fixture = pool().template fixture<Set_DelOdd>();
-                std::vector<size_t>& arrData = fixture.m_arrData;
                 size_t const nInsThreadCount = fixture.s_nInsThreadCount;
 
-                if ( id() & 1 ) {
-                    for ( size_t i = 0; i < arrData.size(); ++i ) {
-                        if ( arrData[i] & 1 ) {
-                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                do {
+                    if ( id() & 1 ) {
+                        for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                            for ( auto el : m_arr ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract( rSet, arrData[i], k);
+                                    xp = rSet.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
+                                    xp = rSet.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -523,24 +558,20 @@ namespace set {
                                 xp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
-                else {
-                    for ( size_t i = arrData.size() - 1; i > 0; --i ) {
-                        if ( arrData[i] & 1 ) {
+                    else {
+                        for ( auto el : m_arr ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
+                                    xp = rSet.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = extractor<Set, Set::c_bEraseExactKey>::extract(rSet, arrData[i], k);
+                                    xp = rSet.extract( key_type( el, k ) );
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -549,10 +580,10 @@ namespace set {
                                 xp.release();
                             }
                         }
-                        if ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) == 0 )
-                            break;
                     }
-                }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                m_arr.resize( 0 );
             }
         };
 
@@ -571,12 +602,15 @@ namespace set {
 
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
-                << std::make_pair( "set_size", s_nSetSize );
+                << std::make_pair( "set_size", s_nSetSize )
+                << std::make_pair( "pass_count", s_nInsertPassCount );
 
             std::chrono::milliseconds duration = pool.run();
 
             propout() << std::make_pair( "duration", duration );
 
+            size_t nInsertInitFailed = 0;
+            size_t nInsertInitSuccess = 0;
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
             size_t nDeleteSuccess = 0;
@@ -588,6 +622,8 @@ namespace set {
                     insert_thread& inserter = static_cast<insert_thread&>(thr);
                     nInsertSuccess += inserter.m_nInsertSuccess;
                     nInsertFailed += inserter.m_nInsertFailed;
+                    nInsertInitSuccess += inserter.m_nInsertInitSuccess;
+                    nInsertInitFailed += inserter.m_nInsertInitFailed;
                 }
                 else {
                     assert( thr.type() == deleter_thread );
@@ -597,10 +633,16 @@ namespace set {
                 }
             }
 
-            EXPECT_EQ( nInsertSuccess, s_nSetSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0u );
+            size_t const nInitialOddKeys = ( s_nSetSize * s_nInsThreadCount ) / 2;
+
+            EXPECT_EQ( nInsertInitFailed, 0u );
+            EXPECT_EQ( nInsertInitSuccess, s_nSetSize * s_nInsThreadCount );
+            EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess );
+            EXPECT_LE( nInsertSuccess, nDeleteSuccess );
 
             propout()
+                << std::make_pair( "insert_init_success", nInsertInitSuccess )
+                << std::make_pair( "insert_init_failed", nInsertInitFailed )
                 << std::make_pair( "insert_success", nInsertSuccess )
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
@@ -626,12 +668,15 @@ namespace set {
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
                 << std::make_pair( "extract_thread_count", s_nExtractThreadCount )
-                << std::make_pair( "set_size", s_nSetSize );
+                << std::make_pair( "set_size", s_nSetSize )
+                << std::make_pair( "pass_count", s_nInsertPassCount );
 
             std::chrono::milliseconds duration = pool.run();
 
             propout() << std::make_pair( "duration", duration );
 
+            size_t nInsertInitFailed = 0;
+            size_t nInsertInitSuccess = 0;
             size_t nInsertSuccess = 0;
             size_t nInsertFailed = 0;
             size_t nDeleteSuccess = 0;
@@ -646,6 +691,8 @@ namespace set {
                         insert_thread& inserter = static_cast<insert_thread&>( thr );
                         nInsertSuccess += inserter.m_nInsertSuccess;
                         nInsertFailed += inserter.m_nInsertFailed;
+                        nInsertInitSuccess += inserter.m_nInsertInitSuccess;
+                        nInsertInitFailed += inserter.m_nInsertInitFailed;
                     }
                     break;
                 case deleter_thread:
@@ -667,10 +714,16 @@ namespace set {
                 }
             }
 
-            EXPECT_EQ( nInsertSuccess, s_nSetSize * s_nInsThreadCount );
-            EXPECT_EQ( nInsertFailed, 0u );
+            size_t const nInitialOddKeys = ( s_nSetSize * s_nInsThreadCount ) / 2;
+
+            EXPECT_EQ( nInsertInitFailed, 0u );
+            EXPECT_EQ( nInsertInitSuccess, s_nSetSize * s_nInsThreadCount );
+            EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess + nExtractSuccess );
+            EXPECT_LE( nInsertSuccess, nDeleteSuccess + nExtractSuccess );
 
             propout()
+                << std::make_pair( "insert_init_success", nInsertInitSuccess )
+                << std::make_pair( "insert_init_failed", nInsertInitFailed )
                 << std::make_pair( "insert_success", nInsertSuccess )
                 << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
@@ -720,6 +773,9 @@ namespace set {
             do_test_extract_with( testSet );
             analyze( testSet );
         }
+
+        template <class Map>
+        void run_feldman();
     };
 
     class Set_DelOdd_LF: public Set_DelOdd
