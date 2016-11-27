@@ -57,22 +57,15 @@ namespace cds { namespace container { namespace details {
             //atomic_marked_ptr m_arrTower[] ;  // allocated together with node_type in single memory block
 
             template <typename Q>
-            node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q const& key )
-                : m_Value( std::make_pair( key, mapped_type()))
-            {
-                init_tower( nHeight, pTower );
-            }
-
-            template <typename Q, typename U>
-            node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q const& key, U const& val )
-                : m_Value( std::make_pair( key, val ))
+            node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& key )
+                : m_Value( std::make_pair( std::forward<Q>( key ), mapped_type()))
             {
                 init_tower( nHeight, pTower );
             }
 
             template <typename Q, typename... Args>
             node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& key, Args&&... args )
-                : m_Value( std::forward<Q>(key), std::move( mapped_type( std::forward<Args>(args)... )))
+                : m_Value( std::forward<Q>(key), mapped_type( std::forward<Args>(args)... ))
             {
                 init_tower( nHeight, pTower );
             }

@@ -55,30 +55,32 @@ namespace cds { namespace container { namespace details {
             //atomic_marked_ptr m_arrTower[] ;  // allocated together with node_type in single memory block
 
             template <typename Q>
-            node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q const& v )
-                : m_Value(v)
+            node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& v )
+                : m_Value( std::forward<Q>( v ))
             {
-                if ( nHeight > 1 ) {
-                    // TSan: make_tower() issues atomic_thread_fence( release )
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
-                    new (pTower) atomic_marked_ptr[ nHeight - 1 ];
-                    base_class::make_tower( nHeight, pTower );
-                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
-                }
+                init_tower( nHeight, pTower );
             }
 
             template <typename Q, typename... Args>
             node_type( unsigned int nHeight, atomic_marked_ptr * pTower, Q&& q, Args&&... args )
                 : m_Value( std::forward<Q>(q), std::forward<Args>(args)... )
             {
-                if ( nHeight > 1 ) {
-                    new (pTower) atomic_marked_ptr[ nHeight - 1 ];
-                    base_class::make_tower( nHeight, pTower );
-                }
+                init_tower( nHeight, pTower );
             }
 
+            node_type() = delete;
+
         private:
-            node_type() ;   // no default ctor
+            void init_tower( unsigned nHeight, atomic_marked_ptr* pTower )
+            {
+                if ( nHeight > 1 ) {
+                    // TSan: make_tower() issues atomic_thread_fence( release )
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                    new ( pTower ) atomic_marked_ptr[nHeight - 1];
+                    base_class::make_tower( nHeight, pTower );
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+                }
+            }
         };
 
         typedef skip_list::details::node_allocator< node_type, traits> node_allocator;
