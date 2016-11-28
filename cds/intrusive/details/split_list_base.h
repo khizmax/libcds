@@ -669,6 +669,7 @@ namespace cds { namespace intrusive {
                     // try to allocate new aux segment
                     // We can allocate more aux segments than we need but it is not a problem in this context
                     aux_node_segment* new_aux_segment = allocate_aux_segment();
+                    new_aux_segment->next_segment = aux_segment;
                     new_aux_segment->aux_node_count.fetch_add( 1, memory_model::memory_order_relaxed );
                     if ( m_auxNodeList.compare_exchange_strong( aux_segment, new_aux_segment, memory_model::memory_order_relaxed, atomics::memory_order_relaxed ))
                         return new( new_aux_segment->segment()) aux_node_type();
