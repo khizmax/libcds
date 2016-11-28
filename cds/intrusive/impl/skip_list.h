@@ -1170,7 +1170,7 @@ namespace cds { namespace intrusive {
                 if ( succ.ptr() )
                     succ.ptr()->clear_state( memory_model::memory_order_release );
             }
-            else
+            else if ( succ.ptr() != nullptr )
                 m_Stat.onNodeHandOffFailed();
         }
 
