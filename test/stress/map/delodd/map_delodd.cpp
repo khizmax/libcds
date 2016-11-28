@@ -36,6 +36,7 @@ namespace map {
     size_t  Map_DelOdd::s_nInsThreadCount = 4;
     size_t  Map_DelOdd::s_nDelThreadCount = 4;
     size_t  Map_DelOdd::s_nExtractThreadCount = 4;
+    size_t  Map_DelOdd::s_nFindThreadCount = 2;
     size_t  Map_DelOdd::s_nMaxLoadFactor = 8;
     size_t  Map_DelOdd::s_nInsertPassCount = 100;
 
@@ -63,6 +64,7 @@ namespace map {
 
         s_nDelThreadCount = cfg.get_size_t( "DelThreadCount", s_nDelThreadCount );
         s_nExtractThreadCount = cfg.get_size_t( "ExtractThreadCount", s_nExtractThreadCount );
+        s_nFindThreadCount = cfg.get_size_t( "FindThreadCount", s_nFindThreadCount );
 
         s_nMaxLoadFactor = cfg.get_size_t( "MaxLoadFactor", s_nMaxLoadFactor );
         if ( s_nMaxLoadFactor == 0 )

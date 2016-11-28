@@ -120,6 +120,7 @@ namespace map {
         static size_t s_nMapSize;             // max map size
         static size_t s_nMaxLoadFactor;       // maximum load factor
         static size_t s_nInsertPassCount;
+        static size_t s_nFindThreadCount;     // find thread count
 
         static size_t s_nCuckooInitialSize;       // initial size for CuckooMap
         static size_t s_nCuckooProbesetSize;      // CuckooMap probeset size (only for list-based probeset)
@@ -158,6 +159,7 @@ namespace map {
             inserter_thread,
             deleter_thread,
             extractor_thread,
+            find_thread,
         };
 
         // Inserts keys from [0..N)
@@ -539,21 +541,85 @@ namespace map {
             }
         };
 
+        // Finds keys
+        template <class Map>
+        class Observer: public cds_test::thread
+        {
+            typedef cds_test::thread base_class;
+            Map&                m_Map;
+
+        public:
+            size_t m_nFindEvenSuccess = 0;
+            size_t m_nFindEvenFailed  = 0;
+            size_t m_nFindOddSuccess  = 0;
+            size_t m_nFindOddFailed   = 0;
+
+        public:
+            Observer( cds_test::thread_pool& pool, Map& map )
+                : base_class( pool, find_thread )
+                , m_Map( map )
+            {}
+
+            Observer( Observer& src )
+                : base_class( src )
+                , m_Map( src.m_Map )
+            {}
+
+            virtual thread * clone()
+            {
+                return new Observer( *this );
+            }
+
+            virtual void test()
+            {
+                Map& map = m_Map;
+                Map_DelOdd& fixture = pool().template fixture<Map_DelOdd>();
+                std::vector<size_t> const& arr = m_arrElements;
+                size_t const nInsThreadCount = s_nInsThreadCount;
+
+                do {
+                    for ( size_t key : arr ) {
+                        if ( key & 1 ) {
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                if ( map.contains( key_thread( key, k )))
+                                    ++m_nFindOddSuccess;
+                                else
+                                    ++m_nFindOddFailed;
+                            }
+                        }
+                        else {
+                            // even keys MUST be in the map
+                            for ( size_t k = 0; k < nInsThreadCount; ++k ) {
+                                if ( map.contains( key_thread( key, k )))
+                                    ++m_nFindEvenSuccess;
+                                else
+                                    ++m_nFindEvenFailed;
+                            }
+                        }
+                    }
+                } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+            }
+        };
+
     protected:
         template <class Map>
         void do_test( Map& testMap )
         {
             typedef Inserter<Map> insert_thread;
             typedef Deleter<Map>  delete_thread;
+            typedef Observer<Map> observer_thread;
 
             m_nInsThreadCount.store( s_nInsThreadCount, atomics::memory_order_release );
 
             cds_test::thread_pool& pool = get_pool();
             pool.add( new insert_thread( pool, testMap ), s_nInsThreadCount );
             pool.add( new delete_thread( pool, testMap ), s_nDelThreadCount ? s_nDelThreadCount : cds::OS::topology::processor_count());
+            if ( s_nFindThreadCount )
+                pool.add( new observer_thread( pool, testMap ), s_nFindThreadCount );
 
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
+                << std::make_pair( "find_thread_count", s_nFindThreadCount )
                 << std::make_pair( "map_size", s_nMapSize )
                 << std::make_pair( "pass_count", s_nInsertPassCount );
 
@@ -568,20 +634,39 @@ namespace map {
             size_t nDeleteSuccess = 0;
             size_t nDeleteFailed = 0;
 
+            size_t nFindEvenSuccess = 0;
+            size_t nFindEvenFailed = 0;
+            size_t nFindOddSuccess = 0;
+            size_t nFindOddFailed = 0;
+
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                if ( thr.type() == inserter_thread ) {
-                    insert_thread& inserter = static_cast<insert_thread&>(thr);
-                    nInsertSuccess += inserter.m_nInsertSuccess;
-                    nInsertFailed += inserter.m_nInsertFailed;
-                    nInsertInitSuccess += inserter.m_nInsertInitSuccess;
-                    nInsertInitFailed += inserter.m_nInsertInitFailed;
-                }
-                else {
-                    assert( thr.type() == deleter_thread );
-                    delete_thread& deleter = static_cast<delete_thread&>(thr);
-                    nDeleteSuccess += deleter.m_nDeleteSuccess;
-                    nDeleteFailed += deleter.m_nDeleteFailed;
+                switch ( thr.type() ) {
+                case inserter_thread:
+                    {
+                        insert_thread& inserter = static_cast<insert_thread&>( thr );
+                        nInsertSuccess += inserter.m_nInsertSuccess;
+                        nInsertFailed += inserter.m_nInsertFailed;
+                        nInsertInitSuccess += inserter.m_nInsertInitSuccess;
+                        nInsertInitFailed += inserter.m_nInsertInitFailed;
+                    }
+                    break;
+                case deleter_thread:
+                    {
+                        delete_thread& deleter = static_cast<delete_thread&>( thr );
+                        nDeleteSuccess += deleter.m_nDeleteSuccess;
+                        nDeleteFailed += deleter.m_nDeleteFailed;
+                    }
+                    break;
+                case find_thread:
+                    {
+                        observer_thread& observer = static_cast<observer_thread&>( thr );
+                        nFindEvenSuccess = observer.m_nFindEvenSuccess;
+                        nFindEvenFailed = observer.m_nFindEvenFailed;
+                        nFindOddSuccess = observer.m_nFindOddSuccess;
+                        nFindOddFailed = observer.m_nFindOddFailed;
+                    }
+                    break;
                 }
             }
 
@@ -589,6 +674,7 @@ namespace map {
 
             EXPECT_EQ( nInsertInitFailed, 0u );
             EXPECT_EQ( nInsertInitSuccess, s_nMapSize * s_nInsThreadCount );
+            EXPECT_EQ( nFindEvenFailed, 0u );
             EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess );
             EXPECT_LE( nInsertSuccess, nDeleteSuccess );
 
@@ -596,9 +682,13 @@ namespace map {
                 << std::make_pair( "insert_init_success", nInsertInitSuccess )
                 << std::make_pair( "insert_init_failed", nInsertInitFailed )
                 << std::make_pair( "insert_success", nInsertSuccess )
-                << std::make_pair( "insert_failed",  nInsertFailed )
+                << std::make_pair( "insert_failed", nInsertFailed )
                 << std::make_pair( "delete_success", nDeleteSuccess )
-                << std::make_pair( "delete_failed",  nDeleteFailed );
+                << std::make_pair( "delete_failed", nDeleteFailed )
+                << std::make_pair( "find_even_success", nFindEvenSuccess )
+                << std::make_pair( "find_even_failed", nFindEvenFailed )
+                << std::make_pair( "find_odd_success", nFindOddSuccess )
+                << std::make_pair( "find_odd_failed", nFindOddFailed );
 
             analyze( testMap );
         }
@@ -609,6 +699,7 @@ namespace map {
             typedef Inserter<Map> insert_thread;
             typedef Deleter<Map> delete_thread;
             typedef Extractor< typename Map::gc, Map > extract_thread;
+            typedef Observer<Map> observer_thread;
 
             m_nInsThreadCount.store( s_nInsThreadCount, atomics::memory_order_release );
 
@@ -618,10 +709,13 @@ namespace map {
                 pool.add( new delete_thread( pool, testMap ), s_nDelThreadCount );
             if ( s_nExtractThreadCount )
                 pool.add( new extract_thread( pool, testMap ), s_nExtractThreadCount );
+            if ( s_nFindThreadCount )
+                pool.add( new observer_thread( pool, testMap ), s_nFindThreadCount );
 
             propout() << std::make_pair( "insert_thread_count", s_nInsThreadCount )
                 << std::make_pair( "delete_thread_count", s_nDelThreadCount )
                 << std::make_pair( "extract_thread_count", s_nExtractThreadCount )
+                << std::make_pair( "find_thread_count", s_nFindThreadCount )
                 << std::make_pair( "map_size", s_nMapSize )
                 << std::make_pair( "pass_count", s_nInsertPassCount );
 
@@ -637,6 +731,12 @@ namespace map {
             size_t nDeleteFailed = 0;
             size_t nExtractSuccess = 0;
             size_t nExtractFailed = 0;
+
+            size_t nFindEvenSuccess = 0;
+            size_t nFindEvenFailed = 0;
+            size_t nFindOddSuccess = 0;
+            size_t nFindOddFailed = 0;
+
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
                 switch ( thr.type()) {
@@ -663,6 +763,15 @@ namespace map {
                     nExtractFailed += extractor.m_nDeleteFailed;
                 }
                 break;
+                case find_thread:
+                {
+                    observer_thread& observer = static_cast<observer_thread&>( thr );
+                    nFindEvenSuccess = observer.m_nFindEvenSuccess;
+                    nFindEvenFailed = observer.m_nFindEvenFailed;
+                    nFindOddSuccess = observer.m_nFindOddSuccess;
+                    nFindOddFailed = observer.m_nFindOddFailed;
+                }
+                break;
                 default:
                     assert( false );
                 }
@@ -672,6 +781,7 @@ namespace map {
 
             EXPECT_EQ( nInsertInitFailed, 0u );
             EXPECT_EQ( nInsertInitSuccess, s_nMapSize * s_nInsThreadCount );
+            EXPECT_EQ( nFindEvenFailed, 0u );
             EXPECT_GE( nInsertSuccess + nInitialOddKeys, nDeleteSuccess + nExtractSuccess );
             EXPECT_LE( nInsertSuccess, nDeleteSuccess + nExtractSuccess );
 
@@ -683,7 +793,11 @@ namespace map {
                 << std::make_pair( "delete_success", nDeleteSuccess )
                 << std::make_pair( "delete_failed", nDeleteFailed )
                 << std::make_pair( "extract_success", nExtractSuccess )
-                << std::make_pair( "extract_failed", nExtractFailed );
+                << std::make_pair( "extract_failed", nExtractFailed )
+                << std::make_pair( "find_even_success", nFindEvenSuccess )
+                << std::make_pair( "find_even_failed", nFindEvenFailed )
+                << std::make_pair( "find_odd_success", nFindOddSuccess )
+                << std::make_pair( "find_odd_failed", nFindOddFailed );
 
             analyze( testMap );
         }
