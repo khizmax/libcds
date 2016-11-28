@@ -72,13 +72,21 @@ namespace cds { namespace intrusive {
 
         protected:
             //@cond
-            atomic_marked_ptr           m_pNext{ nullptr };     ///< Next item in bottom-list (list at level 0)
-            unsigned int                m_nHeight{ 1 };         ///< Node height (size of \p m_arrNext array). For node at level 0 the height is 1.
-            atomic_marked_ptr *         m_arrNext{ nullptr };   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
-            atomics::atomic< state >    m_state{ clean };
+            atomic_marked_ptr           m_pNext;     ///< Next item in bottom-list (list at level 0)
+            unsigned int                m_nHeight;   ///< Node height (size of \p m_arrNext array). For node at level 0 the height is 1.
+            atomic_marked_ptr *         m_arrNext;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
+            atomics::atomic< state >    m_state;
             //@endcond
 
         public:
+            node()
+                : m_pNext( nullptr )
+                , m_nHeight( 1 )
+                , m_arrNext( nullptr )
+                , m_state( clean )
+            {}
+
+
             /// Constructs a node's tower of height \p nHeight
             void make_tower( unsigned int nHeight, atomic_marked_ptr * nextTower )
             {
