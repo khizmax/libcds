@@ -71,8 +71,8 @@
 
         void AnnotateNewMemory(char *f, int l, void * mem, size_t size);
 
-        void AnnotateRWLockCreate( char *f, int l, void* m )
-        void AnnotateRWLockDestroy( char *f, int l, void* m )
+        void AnnotateRWLockCreate( char *f, int l, void* m );
+        void AnnotateRWLockDestroy( char *f, int l, void* m );
         void AnnotateRWLockAcquired( const char *f, int l, void *m, long is_w );
         void AnnotateRWLockReleased( const char *f, int l, void *m, long is_w );
     }
