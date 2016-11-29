@@ -52,7 +52,11 @@
                                                     CDS_TSAN_ANNOTATE_IGNORE_READS_END
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( (char *) __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
 
+#   define CDS_TSAN_ANNOTATE_MUTEX_CREATE( addr )    AnnotateRWLockCreate( __FILE__, __LINE__, reinterpret_cast<void *>(addr))
+#   define CDS_TSAN_ANNOTATE_MUTEX_DESTROY( addr )   AnnotateRWLockdESTROY( __FILE__, __LINE__, reinterpret_cast<void *>(addr))
+        // must be called after actual acquire
 #   define CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( addr )  AnnotateRWLockAcquired( __FILE__, __LINE__, reinterpret_cast<void *>(addr), 1 )
+        // must be called before actual release
 #   define CDS_TSAN_ANNOTATE_MUTEX_RELEASED( addr )  AnnotateRWLockReleased( __FILE__, __LINE__, reinterpret_cast<void *>(addr), 1 )
 
     // provided by TSan
@@ -67,6 +71,8 @@
 
         void AnnotateNewMemory(char *f, int l, void * mem, size_t size);
 
+        void AnnotateRWLockCreate( char *f, int l, void* m )
+        void AnnotateRWLockDestroy( char *f, int l, void* m )
         void AnnotateRWLockAcquired( const char *f, int l, void *m, long is_w );
         void AnnotateRWLockReleased( const char *f, int l, void *m, long is_w );
     }
@@ -85,6 +91,8 @@
 
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz )
 
+#   define CDS_TSAN_ANNOTATE_MUTEX_CREATE( addr )
+#   define CDS_TSAN_ANNOTATE_MUTEX_DESTROY( addr )
 #   define CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( addr )
 #   define CDS_TSAN_ANNOTATE_MUTEX_RELEASED( addr )
 
