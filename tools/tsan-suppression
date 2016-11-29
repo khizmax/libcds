@@ -6,6 +6,7 @@
 
 # false: LazyList potential deadlock
 deadlock:cds/intrusive/impl/lazy_list.h
+deadlock:cds/intrusive/lazy_list_nogc.h
 
 # false: BronsonAVLTree potential deadlock
 deadlock:cds/container/impl/bronson_avltree_map_rcu.h
