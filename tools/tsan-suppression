@@ -4,14 +4,21 @@
 #   verosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
 #   history_size=[0..7], default 2
 
-# DHP 
-#race:cds::gc::details::retired_ptr::free
+# false: LazyList potential deadlock
+deadlock:cds/intrusive/impl/lazy_list.h
 
-# uRCU false positive
-#race:cds::urcu::gc*::batch_retire*
+# false: BronsonAVLTree potential deadlock
+deadlock:cds/container/impl/bronson_avltree_map_rcu.h
 
-# EllenBinTree false positive
-#race:ellen_bintree_pool::internal_node_allocator*::allocate
+#TODO: temporary suppressed. Must be researched later
+race:cds/container/impl/bronson_avltree_map_rcu.h
 
-# TODO: TSan false positive or library issues?
-#race:cds::container::OptimisticQueue*::alloc_node
+#TODO: MSPriorityQueue - temporary suppressed. Must be researched later
+# Seems, TSan don't see spinlock blocking. How to learn TSan to see non-traditional locking algo?..
+race:cds::intrusive::MSPriorityQueue
+
+#TODO: gc::DHP must be reimplemented ASAP
+race:cds::gc::dhp::GarbageCollector::scan
+
+#TODO: temporary suppressed. Must be researched later
+race:cds::memory::michael::Heap

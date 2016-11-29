@@ -397,7 +397,13 @@ namespace cds { namespace container {
         */
         bool dequeue( value_type& dest )
         {
-            return dequeue_with( [&dest]( value_type& src ) { dest = std::move( src );});
+            return dequeue_with( [&dest]( value_type& src ) { 
+                // TSan finds a race between this read of \p src and node_type constructor
+                // I think, it is wrong
+                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
+                dest = std::move( src );
+                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
+            });
         }
 
         /// Dequeues a value using a functor

@@ -375,6 +375,7 @@ namespace cds {
                     thread_record * pOldHead = m_pHead.load( atomics::memory_order_acquire );
                     do {
                         pRec->m_list.m_pNext = pOldHead;
+                        CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &( pRec->m_list.m_pNext ));
                     } while ( !m_pHead.compare_exchange_weak( pOldHead, pRec, atomics::memory_order_release, atomics::memory_order_relaxed ));
 
                     return pRec;

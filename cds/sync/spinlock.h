@@ -149,8 +149,10 @@ namespace cds {
             {
                 backoff_strategy backoff;
                 while ( nTryCount-- ) {
-                    if ( try_lock())
+                    if ( try_lock() ) {
+                        CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
                         return true;
+                    }
                     backoff();
                 }
                 return false;
@@ -182,6 +184,7 @@ namespace cds {
                 CDS_DEBUG_ONLY( m_dbgOwnerId = OS::c_NullThreadId; )
 
                 m_spin.store( false, atomics::memory_order_release );
+                CDS_TSAN_ANNOTATE_MUTEX_RELEASED( &m_spin );
             }
         };
 
@@ -246,8 +249,10 @@ namespace cds {
                 backoff_strategy bkoff;
 
                 while ( nTryCount-- ) {
-                    if ( try_acquire())
+                    if ( try_acquire() ) {
+                        CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
                         return true;
+                    }
                     bkoff();
                 }
                 return false;
@@ -347,6 +352,7 @@ namespace cds {
                     else {
                         free();
                         m_spin.store( 0, atomics::memory_order_release );
+                        CDS_TSAN_ANNOTATE_MUTEX_RELEASED( &m_spin );
                     }
                     return true;
                 }

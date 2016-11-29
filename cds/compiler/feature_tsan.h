@@ -32,7 +32,7 @@
 #define CDSLIB_COMPILER_FEATURE_TSAN_H
 
 // Thread Sanitizer annotations.
-// From https://groups.google.com/d/msg/thread-sanitizer/SsrHB7FTnTk/mNTGNLQj-9cJ
+// From http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/test/tsan/annotate_happens_before.cc?view=markup
 
 //@cond
 
@@ -52,6 +52,9 @@
                                                     CDS_TSAN_ANNOTATE_IGNORE_READS_END
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( (char *) __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
 
+#   define CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( addr )  AnnotateRWLockAcquired( __FILE__, __LINE__, reinterpret_cast<void *>(addr), 1 )
+#   define CDS_TSAN_ANNOTATE_MUTEX_RELEASED( addr )  AnnotateRWLockReleased( __FILE__, __LINE__, reinterpret_cast<void *>(addr), 1 )
+
     // provided by TSan
     extern "C" {
         void AnnotateHappensBefore(const char *f, int l, void *addr);
@@ -64,6 +67,8 @@
 
         void AnnotateNewMemory(char *f, int l, void * mem, size_t size);
 
+        void AnnotateRWLockAcquired( const char *f, int l, void *m, long is_w );
+        void AnnotateRWLockReleased( const char *f, int l, void *m, long is_w );
     }
 
 #else // CDS_THREAD_SANITIZER_ENABLED
@@ -79,6 +84,9 @@
 #   define CDS_TSAN_ANNOTATE_IGNORE_RW_END
 
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz )
+
+#   define CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( addr )
+#   define CDS_TSAN_ANNOTATE_MUTEX_RELEASED( addr )
 
 #endif
 

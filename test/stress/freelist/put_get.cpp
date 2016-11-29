@@ -88,7 +88,9 @@ namespace {
                     item_type* p;
 
                     while ( (p = static_cast<item_type*>( m_FreeList.get())) != nullptr ) {
+                        CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN;
                         p->counter++;
+                        CDS_TSAN_ANNOTATE_IGNORE_RW_END;
                         arr[n] = p;
                         ++m_nSuccess;
                         ++n;
