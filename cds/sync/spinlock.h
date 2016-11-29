@@ -130,7 +130,14 @@ namespace cds {
             bool try_lock() CDS_NOEXCEPT
             {
                 bool bCurrent = false;
+
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                if ( m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
+                    CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
+                }
+#           else
                 m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed );
+#           endif
 
                 CDS_DEBUG_ONLY(
                     if ( !bCurrent ) {
@@ -149,10 +156,8 @@ namespace cds {
             {
                 backoff_strategy backoff;
                 while ( nTryCount-- ) {
-                    if ( try_lock() ) {
-                        CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
+                    if ( try_lock() )
                         return true;
-                    }
                     backoff();
                 }
                 return false;
@@ -241,7 +246,15 @@ namespace cds {
             bool try_acquire() CDS_NOEXCEPT
             {
                 integral_type nCurrent = 0;
+#           ifdef CDS_THREAD_SANITIZER_ENABLED
+                if ( m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
+                    CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
+                    return true;
+                }
+                return false;
+#           else
                 return m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed );
+#           endif
             }
 
             bool try_acquire( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()()))
@@ -249,10 +262,8 @@ namespace cds {
                 backoff_strategy bkoff;
 
                 while ( nTryCount-- ) {
-                    if ( try_acquire() ) {
-                        CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
+                    if ( try_acquire() )
                         return true;
-                    }
                     bkoff();
                 }
                 return false;
