@@ -46,7 +46,7 @@ namespace {
         template <typename FreeList >
         struct value_type: public FreeList::node
         {
-            size_t  counter;
+            atomics::atomic<size_t> counter;
 
             value_type()
                 : counter(0)
@@ -84,7 +84,7 @@ namespace {
                 for ( size_t pass = 0; pass < s_nPassCount; ++pass ) {
                     item_type* p;
                     while ( (p = static_cast<item_type*>( m_FreeList.get())) == nullptr );
-                    p->counter++;
+                    p->counter.fetch_add( 1, atomics::memory_order_relaxed );
                     m_FreeList.put( p );
                 }
             }
@@ -125,7 +125,7 @@ namespace {
             propout() << std::make_pair( "duration", duration );
 
             // analyze result
-            EXPECT_EQ( item.counter, s_nPassCount * s_nThreadCount );
+            EXPECT_EQ( item.counter.load( atomics::memory_order_relaxed ), s_nPassCount * s_nThreadCount );
 
             list.clear( []( typename FreeList::node* ) {} );
         }
