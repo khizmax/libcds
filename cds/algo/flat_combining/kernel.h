@@ -293,8 +293,6 @@ namespace cds { namespace algo {
             {
                 // mark all publication record as detached
                 for ( publication_record* p = m_pHead; p; ) {
-                    p->pOwner = nullptr;
-
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
                     free_publication_record( static_cast<publication_record_type *>( pRec ));
@@ -312,7 +310,6 @@ namespace cds { namespace algo {
                 if ( !pRec ) {
                     // Allocate new publication record
                     pRec = cxx11_allocator().New();
-                    pRec->pOwner = reinterpret_cast<void *>( this );
                     m_pThreadRec.reset( pRec );
                     m_Stat.onCreatePubRecord();
                 }
@@ -570,16 +567,7 @@ namespace cds { namespace algo {
             {
                 // Thread done
                 // pRec that is TLS data should be excluded from publication list
-                if ( pRec ) {
-                    if ( pRec->pOwner ) {
-                        // kernel is alive
-                        pRec->nState.store( removed, memory_model::memory_order_release );
-                    }
-                    else {
-                        // kernel already deleted
-                        free_publication_record( pRec );
-                    }
-                }
+                pRec->nState.store( removed, memory_model::memory_order_release );
             }
 
             static void free_publication_record( publication_record_type* pRec )
@@ -592,7 +580,6 @@ namespace cds { namespace algo {
                 assert( m_pThreadRec.get() == nullptr );
                 publication_record_type* pRec = cxx11_allocator().New();
                 m_pHead = pRec;
-                pRec->pOwner = this;
                 m_pThreadRec.reset( pRec );
                 m_Stat.onCreatePubRecord();
             }

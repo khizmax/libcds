@@ -61,7 +61,6 @@ namespace cds { namespace algo { namespace flat_combining {
         atomics::atomic<unsigned int>           nState;     ///< Record state: inactive, active, removed
         atomics::atomic<unsigned int>           nAge;       ///< Age of the record
         atomics::atomic<publication_record *>   pNext;      ///< Next record in publication list
-        void *                                  pOwner;     ///< [internal data] Pointer to \ref kernel object that manages the publication list
 
         /// Initializes publication record
         publication_record()
@@ -69,7 +68,6 @@ namespace cds { namespace algo { namespace flat_combining {
             , nState( inactive )
             , nAge( 0 )
             , pNext( nullptr )
-            , pOwner( nullptr )
         {}
 
         /// Returns the value of \p nRequest field
