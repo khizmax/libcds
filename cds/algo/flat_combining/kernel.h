@@ -297,8 +297,7 @@ namespace cds { namespace algo {
 
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
-                    if ( pRec->nState.load( memory_model::memory_order_acquire ) == removed )
-                        free_publication_record( static_cast<publication_record_type *>( pRec ));
+                    free_publication_record( static_cast<publication_record_type *>( pRec ));
                 }
             }
 
