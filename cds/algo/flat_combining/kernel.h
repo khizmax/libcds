@@ -291,7 +291,9 @@ namespace cds { namespace algo {
             /// Destroys the objects and mark all publication records as inactive
             ~kernel()
             {
-                // mark all publication record as detached
+                m_pThreadRec.reset();   // calls tls_cleanup()
+
+                // delete all publication records
                 for ( publication_record* p = m_pHead; p; ) {
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
