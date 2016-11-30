@@ -270,37 +270,38 @@ namespace map {
 }   // namespace map
 
 
-#define CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, ellen_map_type, key_type, value_type ) \
+#define CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, ellen_map_type, key_type, value_type, level ) \
     TEST_F( fixture, ellen_map_type ) \
     { \
+        if ( !check_detail_level( level )) return; \
         typedef map::map_type< tag_EllenBinTreeMap, key_type, value_type >::ellen_map_type map_type; \
         test_case<map_type>(); \
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb,        key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht,        key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb_stat,   key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht_stat,   key_type, value_type )
+        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb,        key_type, value_type, 0 ) \
+        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht,        key_type, value_type, 0 ) \
+        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb_stat,   key_type, value_type, 0 ) \
+        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht_stat,   key_type, value_type, 0 )
 #else
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #define CDSSTRESS_EllenBinTreeMap( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp,             key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp,            key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi,        key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb,        key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt,        key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp_yield,       key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp_yield,      key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_yield,  key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp_stat,        key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp_stat,       key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi_stat,   key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_stat,   key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt_stat,   key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp,             key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp,            key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi,        key_type, value_type, 1 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb,        key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt,        key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp_yield,       key_type, value_type, 1 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp_yield,      key_type, value_type, 1 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_yield,  key_type, value_type, 1 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_hp_stat,        key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_dhp_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi_stat,   key_type, value_type, 1 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_stat,   key_type, value_type, 0 ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt_stat,   key_type, value_type, 0 ) \
     CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #endif // ifndef CDSUNIT_MAP_TYPE_ELLEN_BINTREE_H
