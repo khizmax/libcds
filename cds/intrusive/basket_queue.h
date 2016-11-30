@@ -656,6 +656,7 @@ namespace cds { namespace intrusive {
             link_checker::is_empty( pNew );
 
             typename gc::Guard guard;
+            typename gc::Guard gNext;
             back_off bkoff;
 
             marked_ptr t;
@@ -665,9 +666,9 @@ namespace cds { namespace intrusive {
                 marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_acquire );
 
                 if ( pNext.ptr() == nullptr ) {
-                    pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_release );
+                    pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_relaxed );
                     if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
-                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_acquire ))
                             m_Stat.onAdvanceTailFailed();
                         break;
                     }
@@ -676,8 +677,6 @@ namespace cds { namespace intrusive {
                     m_Stat.onTryAddBasket();
 
                     // Reread tail next
-                    typename gc::Guard gNext;
-
                 try_again:
                     pNext = gNext.protect( t->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 

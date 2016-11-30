@@ -598,10 +598,10 @@ namespace cds { namespace algo {
                     publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
                     if ( p != static_cast<publication_record *>( pRec )) {
                         do {
-                            pRec->pNext = p;
+                            pRec->pNext.store( p, memory_model::memory_order_relaxed );
                             // Failed CAS changes p
                         } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed ));
+                            memory_model::memory_order_release, atomics::memory_order_acquire ));
                         m_Stat.onActivatePubRecord();
                     }
                 }
@@ -810,7 +810,7 @@ namespace cds { namespace algo {
                 if ( pPrev ) {
                     publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
                     if ( pPrev->pNext.compare_exchange_strong( p, pNext,
-                        memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                        memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                     {
                         free_publication_record( static_cast<publication_record_type *>( p ));
                         m_Stat.onDeletePubRecord();

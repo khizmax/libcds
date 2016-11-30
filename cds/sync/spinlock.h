@@ -76,13 +76,11 @@ namespace cds {
         public:
             /// Construct free (unlocked) spin-lock
             spin_lock() CDS_NOEXCEPT
+                : m_spin( false )
 #    ifdef CDS_DEBUG
-                :m_dbgOwnerId( OS::c_NullThreadId )
+                , m_dbgOwnerId( OS::c_NullThreadId )
 #    endif
-            {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
-                m_spin.store( false, atomics::memory_order_relaxed );
-            }
+            {}
 
             /// Construct spin-lock in specified state
             /**
@@ -93,12 +91,7 @@ namespace cds {
                 : m_dbgOwnerId( bLocked ? cds::OS::get_current_thread_id() : cds::OS::c_NullThreadId )
 #    endif
             {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
                 m_spin.store( bLocked, atomics::memory_order_relaxed );
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                if ( bLocked )
-                    CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
-#           endif
             }
 
             /// Dummy copy constructor
@@ -112,15 +105,12 @@ namespace cds {
 #   ifdef CDS_DEBUG
                 , m_dbgOwnerId( cds::OS::c_NullThreadId )
 #   endif
-            {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
-            }
+            {}
 
             /// Destructor. On debug time it checks whether spin-lock is free
             ~spin_lock()
             {
                 assert( !m_spin.load( atomics::memory_order_relaxed ));
-                CDS_TSAN_ANNOTATE_MUTEX_DESTROY( &m_spin );
             }
 
             /// Check if the spin is locked
@@ -140,13 +130,7 @@ namespace cds {
             {
                 bool bCurrent = false;
 
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                if ( m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
-                    CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
-                }
-#           else
-                m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_relaxed );
-#           endif
+                m_spin.compare_exchange_strong( bCurrent, true, atomics::memory_order_acquire, atomics::memory_order_acquire );
 
                 CDS_DEBUG_ONLY(
                     if ( !bCurrent ) {
@@ -197,7 +181,6 @@ namespace cds {
                 assert( m_dbgOwnerId == OS::get_current_thread_id());
                 CDS_DEBUG_ONLY( m_dbgOwnerId = OS::c_NullThreadId; )
 
-                CDS_TSAN_ANNOTATE_MUTEX_RELEASED( &m_spin );
                 m_spin.store( false, atomics::memory_order_release );
             }
         };
@@ -255,15 +238,7 @@ namespace cds {
             bool try_acquire() CDS_NOEXCEPT
             {
                 integral_type nCurrent = 0;
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                if ( m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed )) {
-                    CDS_TSAN_ANNOTATE_MUTEX_ACQUIRED( &m_spin );
-                    return true;
-                }
-                return false;
-#           else
-                return m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_relaxed );
-#           endif
+                return m_spin.compare_exchange_weak( nCurrent, 1, atomics::memory_order_acquire, atomics::memory_order_acquire );
             }
 
             bool try_acquire( unsigned int nTryCount ) CDS_NOEXCEPT_( noexcept( backoff_strategy()()))
@@ -294,9 +269,7 @@ namespace cds {
             reentrant_spin_lock() CDS_NOEXCEPT
                 : m_spin(0)
                 , m_OwnerId( OS::c_NullThreadId )
-            {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
-            }
+            {}
 
             /// Dummy copy constructor
             /**
@@ -307,16 +280,13 @@ namespace cds {
             reentrant_spin_lock( const reentrant_spin_lock<Integral, Backoff>& ) CDS_NOEXCEPT
                 : m_spin(0)
                 , m_OwnerId( OS::c_NullThreadId )
-            {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
-            }
+            {}
 
             /// Construct object in specified state
             explicit reentrant_spin_lock( bool bLocked )
                 : m_spin(0)
                 , m_OwnerId( OS::c_NullThreadId )
             {
-                CDS_TSAN_ANNOTATE_MUTEX_CREATE( &m_spin );
                 if ( bLocked )
                     lock();
             }
@@ -376,7 +346,6 @@ namespace cds {
                         m_spin.store( n - 1, atomics::memory_order_relaxed );
                     else {
                         free();
-                        CDS_TSAN_ANNOTATE_MUTEX_RELEASED( &m_spin );
                         m_spin.store( 0, atomics::memory_order_release );
                     }
                     return true;

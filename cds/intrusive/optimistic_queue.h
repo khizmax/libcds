@@ -613,8 +613,8 @@ namespace cds { namespace intrusive {
             guards.assign( 1, &val );
             node_type * pTail = guards.protect( 0, m_pTail, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);} );   // Read the tail
             while( true ) {
-                pNew->m_pNext.store( pTail, memory_model::memory_order_release );
-                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) { // Try to CAS the tail
+                pNew->m_pNext.store( pTail, memory_model::memory_order_relaxed );
+                if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_acquire )) { // Try to CAS the tail
                     pTail->m_pPrev.store( pNew, memory_model::memory_order_release ); // Success, write prev
                     ++m_ItemCounter;
                     m_Stat.onEnqueue();

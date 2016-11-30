@@ -232,7 +232,7 @@ namespace cds { namespace intrusive {
             atomics::atomic<base_class *> m_pRight;  ///< Right subtree
             atomics::atomic<update_ptr>   m_pUpdate; ///< Update descriptor
             //@cond
-            uintptr_t  m_nEmptyUpdate; ///< ABA prevention for m_pUpdate, from 0..2^16 step 4
+            atomics::atomic<uintptr_t>    m_nEmptyUpdate; ///< ABA prevention for m_pUpdate, from 0..2^16 step 4
             //@endcond
 
             /// Default ctor
@@ -247,7 +247,7 @@ namespace cds { namespace intrusive {
             //@cond
             update_ptr null_update_desc()
             {
-                return update_ptr( reinterpret_cast<update_desc_type *>( (++m_nEmptyUpdate << 2) & 0xFFFF ));
+                return update_ptr( reinterpret_cast<update_desc_type *>( (m_nEmptyUpdate.fetch_add(1, atomics::memory_order_relaxed) << 2) & 0xFFFF ));
             }
 
             base_class * get_child( bool bRight, atomics::memory_order mo ) const

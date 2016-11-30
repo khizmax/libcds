@@ -150,10 +150,8 @@ namespace cds { namespace gc {
 
             hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_acquire );
             do {
-                // TSan: Next CAS release orders the memory
-                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE(&hprec->m_pNextNode );
                 hprec->m_pNextNode = pOldHead;
-            } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_relaxed ));
+            } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 
             return hprec;
         }
