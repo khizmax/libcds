@@ -375,12 +375,12 @@ namespace cds {
                     // No records available for reuse
                     // Allocate and push a new record
                     pRec = allocator_type().New( curThreadId );
-                    CDS_COMPILER_RW_BARRIER;
 
                     thread_record * pOldHead = m_pHead.load( atomics::memory_order_acquire );
                     do {
+                        // Compiler barriers: assignment MUST BE inside the loop
+                        CDS_COMPILER_RW_BARRIER;
                         pRec->m_list.m_pNext = pOldHead;
-                        // Compiler barrier: assignment above MUST BE inside the loop
                         CDS_COMPILER_RW_BARRIER;
                     } while ( !m_pHead.compare_exchange_weak( pOldHead, pRec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 

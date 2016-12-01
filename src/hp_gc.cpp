@@ -145,12 +145,12 @@ namespace cds { namespace gc {
             // No HP records available for reuse
             // Allocate and push a new HP record
             hprec = NewHPRec( curThreadId );
-            CDS_COMPILER_RW_BARRIER;
 
             hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_acquire );
             do {
+                // Compiler barriers: assignment MUST BE inside the loop
+                CDS_COMPILER_RW_BARRIER;
                 hprec->m_pNextNode = pOldHead;
-                // Compiler barrier: assignment above MUST BE inside the loop
                 CDS_COMPILER_RW_BARRIER;
             } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 

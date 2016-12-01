@@ -1703,7 +1703,7 @@ namespace michael {
                 );
             }
 
-            CDS_TSAN_ANNOTATE_NEW_MEMORY( pBlock + 1, nSize );
+            CDS_TSAN_ANNOTATE_PUBLISH_MEMORY_RANGE( pBlock + 1, nSize );
             return pBlock + 1;
         }
 
