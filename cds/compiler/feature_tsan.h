@@ -70,7 +70,7 @@
         void AnnotateIgnoreWritesBegin(const char *f, int l);
         void AnnotateIgnoreWritesEnd(const char *f, int l);
 
-        void AnnotatePublishMemoryRange( const char *f, int l, void * mem, size_t size )
+        void AnnotatePublishMemoryRange( const char *f, int l, void * mem, size_t size );
         void AnnotateNewMemory( const char *f, int l, void * mem, size_t size );
 
         void AnnotateRWLockCreate( const char *f, int l, void* m );
