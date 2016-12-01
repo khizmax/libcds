@@ -247,7 +247,7 @@ namespace cds { namespace intrusive {
             //@cond
             update_ptr null_update_desc()
             {
-                return update_ptr( reinterpret_cast<update_desc_type *>( (m_nEmptyUpdate.fetch_add(1, atomics::memory_order_relaxed) << 2) & 0xFFFF ));
+                return update_ptr( reinterpret_cast<update_desc_type *>( ((m_nEmptyUpdate.fetch_add(1, atomics::memory_order_relaxed) + 1 ) << 2) & 0xFFFF ));
             }
 
             base_class * get_child( bool bRight, atomics::memory_order mo ) const
