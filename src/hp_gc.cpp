@@ -112,10 +112,10 @@ namespace cds { namespace gc {
             }
         }
 
-        inline GarbageCollector::hplist_node * GarbageCollector::NewHPRec()
+        inline GarbageCollector::hplist_node * GarbageCollector::NewHPRec( OS::ThreadId owner )
         {
             CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocNewHPRec )
-            return new hplist_node( *this );
+            return new hplist_node( *this, owner );
         }
 
         inline void GarbageCollector::DeleteHPRec( hplist_node * pNode )
@@ -144,13 +144,14 @@ namespace cds { namespace gc {
 
             // No HP records available for reuse
             // Allocate and push a new HP record
-            hprec = NewHPRec();
-            hprec->m_idOwner.store( curThreadId, atomics::memory_order_release );
-            hprec->m_bFree.store( false, atomics::memory_order_release );
+            hprec = NewHPRec( curThreadId );
+            CDS_COMPILER_RW_BARRIER;
 
             hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_acquire );
             do {
                 hprec->m_pNextNode = pOldHead;
+                // Compiler barrier: assignment above MUST BE inside the loop
+                CDS_COMPILER_RW_BARRIER;
             } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 
             return hprec;

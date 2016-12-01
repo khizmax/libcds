@@ -3,6 +3,11 @@
 #   suppressions=<supression_file_name>
 #   verosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
 #   history_size=[0..7], default 2
+#   detect_deadlocks=0 - some data structs in libcds tests use a lot of node-level mutexes.
+#                        TSan has the hardcoded limit =16 for the number of mutex per thread.
+#                        To prevent "possibly deadlock" reporting disable deadlock detection.
+#                        Suppression can help in that case but stack unwinding increases 
+#                        test time significantly.
 
 # false: LazyList potential deadlock
 deadlock:cds/intrusive/impl/lazy_list.h

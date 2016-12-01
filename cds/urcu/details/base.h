@@ -328,6 +328,11 @@ namespace cds {
                     , m_idOwner( cds::OS::c_NullThreadId )
                 {}
 
+                explicit thread_list_record( OS::ThreadId owner )
+                    : m_pNext( nullptr )
+                    , m_idOwner( owner )
+                {}
+
                 ~thread_list_record()
                 {}
             };
@@ -369,12 +374,14 @@ namespace cds {
 
                     // No records available for reuse
                     // Allocate and push a new record
-                    pRec = allocator_type().New();
-                    pRec->m_list.m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
+                    pRec = allocator_type().New( curThreadId );
+                    CDS_COMPILER_RW_BARRIER;
 
                     thread_record * pOldHead = m_pHead.load( atomics::memory_order_acquire );
                     do {
                         pRec->m_list.m_pNext = pOldHead;
+                        // Compiler barrier: assignment above MUST BE inside the loop
+                        CDS_COMPILER_RW_BARRIER;
                     } while ( !m_pHead.compare_exchange_weak( pOldHead, pRec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 
                     return pRec;

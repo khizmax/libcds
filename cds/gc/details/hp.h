@@ -112,7 +112,7 @@ namespace cds {
                 typedef retired_vector_impl::iterator  iterator;
 
                 /// Constructor
-                retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
+                explicit retired_vector( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
                 ~retired_vector()
                 {}
 
@@ -185,7 +185,7 @@ namespace cds {
                 char padding2[cds::c_nCacheLineSize];
 
                 /// Ctor
-                hp_record( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
+                explicit hp_record( const cds::gc::hp::GarbageCollector& HzpMgr ); // inline
                 ~hp_record()
                 {}
 
@@ -294,14 +294,21 @@ namespace cds {
             {
                 hplist_node *                    m_pNextNode; ///< next hazard ptr record in list
                 atomics::atomic<OS::ThreadId>    m_idOwner;   ///< Owner thread id; 0 - the record is free (not owned)
-                atomics::atomic<bool>            m_bFree;     ///< true if record if free (not owned)
+                atomics::atomic<bool>            m_bFree;     ///< true if record is free (not owned)
 
                 //@cond
-                hplist_node( const GarbageCollector& HzpMgr )
+                explicit hplist_node( const GarbageCollector& HzpMgr )
                     : hp_record( HzpMgr ),
                     m_pNextNode( nullptr ),
                     m_idOwner( OS::c_NullThreadId ),
                     m_bFree( true )
+                {}
+
+                hplist_node( const GarbageCollector& HzpMgr, OS::ThreadId owner )
+                    : hp_record( HzpMgr ),
+                    m_pNextNode( nullptr ),
+                    m_idOwner( owner ),
+                    m_bFree( false )
                 {}
 
                 ~hplist_node()
@@ -338,7 +345,7 @@ namespace cds {
             ~GarbageCollector();
 
             /// Allocate new HP record
-            hplist_node * NewHPRec();
+            hplist_node * NewHPRec( OS::ThreadId owner );
 
             /// Permanently deletes HPrecord \p pNode
             /**

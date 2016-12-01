@@ -51,6 +51,7 @@ namespace cds { namespace urcu { namespace details {
         atomics::atomic<bool>            m_bNeedMemBar    ; \
         thread_list_record< thread_data >   m_list ; \
         thread_data(): m_nAccessControl(0), m_bNeedMemBar(false) {} \
+        explicit thread_data( OS::ThreadId owner ): m_nAccessControl(0), m_bNeedMemBar(false), m_list(owner) {} \
         ~thread_data() {} \
     }
 
