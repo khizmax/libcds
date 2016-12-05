@@ -342,18 +342,18 @@ namespace {
         //static void TearDownTestCase();
     };
 
-    using value_for_fc_with_heavy_value = queue_push_pop< fc_test::HeavyValue<36000> >;
-    using old_queue_push_pop = queue_push_pop<>;
+    using fc_with_heavy_value = queue_push_pop< fc_test::heavy_value<36000> >;
+    using simple_queue_push_pop = queue_push_pop<>;
 
-    CDSSTRESS_MSQueue( old_queue_push_pop )
-    CDSSTRESS_MoirQueue( old_queue_push_pop )
-    CDSSTRESS_BasketQueue( old_queue_push_pop )
-    CDSSTRESS_OptimsticQueue( old_queue_push_pop )
-    CDSSTRESS_FCQueue( old_queue_push_pop )
-    CDSSTRESS_FCDeque( old_queue_push_pop )
-    CDSSTRESS_FCDeque_HeavyValue( value_for_fc_with_heavy_value )
-    CDSSTRESS_RWQueue( old_queue_push_pop )
-    CDSSTRESS_StdQueue( old_queue_push_pop )
+    CDSSTRESS_MSQueue( simple_queue_push_pop )
+    CDSSTRESS_MoirQueue( simple_queue_push_pop )
+    CDSSTRESS_BasketQueue( simple_queue_push_pop )
+    CDSSTRESS_OptimsticQueue( simple_queue_push_pop )
+    CDSSTRESS_FCQueue( simple_queue_push_pop )
+    CDSSTRESS_FCDeque( simple_queue_push_pop )
+    CDSSTRESS_FCDeque_HeavyValue( fc_with_heavy_value )
+    CDSSTRESS_RWQueue( simple_queue_push_pop )
+    CDSSTRESS_StdQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
@@ -365,7 +365,7 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_VyukovQueue( old_queue_push_pop )
+    CDSSTRESS_VyukovQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 

@@ -29,7 +29,7 @@ namespace fc_test {
     };
 
     template<int DefaultSize = 10>
-    struct HeavyValue {
+    struct heavy_value {
 
         int value;
 
@@ -39,13 +39,13 @@ namespace fc_test {
         static std::vector<int> pop_buff;
         static size_t buffer_size;
 
-        explicit HeavyValue(int new_value = 0)
+        explicit heavy_value(int new_value = 0)
         : value(new_value),
           nNo(0),
           nWriterNo(0)
         {
         };
-        HeavyValue(const HeavyValue &other)
+        heavy_value(const heavy_value &other)
             : value(other.value),
               nNo(other.nNo),
               nWriterNo(other.nWriterNo)
@@ -63,8 +63,8 @@ namespace fc_test {
         }
     };
     template<int DefaultSize>
-    std::vector<int> HeavyValue< DefaultSize >::pop_buff(DefaultSize, rand());
+    std::vector<int> heavy_value< DefaultSize >::pop_buff(DefaultSize, rand());
     template<int DefaultSize>
-    std::vector<int>::size_type HeavyValue< DefaultSize >::buffer_size = DefaultSize;
+    std::vector<int>::size_type heavy_value< DefaultSize >::buffer_size = DefaultSize;
 }
 #endif /* SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEVY_VALUE_H_ */
