@@ -2,12 +2,12 @@ set(PACKAGE_NAME stress-queue)
 
 set(CDSSTRESS_QUEUE_SOURCES
     ../main.cpp
-#    bounded_queue_fulness.cpp
-#    intrusive_push_pop.cpp
-#    pop.cpp
-#    push.cpp
+    bounded_queue_fulness.cpp
+    intrusive_push_pop.cpp
+    pop.cpp
+    push.cpp
     push_pop.cpp
-#    random.cpp
+    random.cpp
 )
 
 include_directories(
