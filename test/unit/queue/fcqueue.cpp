@@ -169,7 +169,7 @@ namespace {
 
 	TEST_F( FCQueue, std_deque_heavy_value )
 	{
-		typedef HeavyValue<> ValueType;
+		typedef fc_test::HeavyValue<> ValueType;
 		typedef cds::container::FCQueue<ValueType> queue_type;
 
 		queue_type q;
@@ -178,7 +178,7 @@ namespace {
 
     TEST_F( FCQueue, std_empty_wait_strategy_heavy_value )
     {
-    	typedef HeavyValue<> ValueType;
+    	typedef fc_test::HeavyValue<> ValueType;
         typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
@@ -191,7 +191,7 @@ namespace {
 
     TEST_F( FCQueue, std_single_mutex_single_condvar_heavy_value )
     {
-    	typedef HeavyValue<> ValueType;
+    	typedef fc_test::HeavyValue<> ValueType;
         typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> >
@@ -204,7 +204,7 @@ namespace {
 
     TEST_F( FCQueue, std_single_mutex_multi_condvar_heavy_value )
     {
-    	typedef HeavyValue<> ValueType;
+    	typedef fc_test::HeavyValue<> ValueType;
         typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> >
@@ -217,7 +217,7 @@ namespace {
 
     TEST_F( FCQueue, std_multi_mutex_multi_condvar_heavy_value )
     {
-    	typedef HeavyValue<> ValueType;
+    	typedef fc_test::HeavyValue<> ValueType;
         typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> >

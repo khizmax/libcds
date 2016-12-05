@@ -11,7 +11,23 @@
 #include <math.h>
 #include <vector>
 
-namespace{
+namespace fc_test {
+
+    // SFINAE test
+    template <typename T>
+    class has_set_array_size {
+        typedef char small;
+        class big{char dummy[2];};
+
+        template <typename C, void (C::*) (size_t)> class SFINAE {};
+
+        template <typename C> static small test( SFINAE<C, &C::set_array> * ) ;
+        template <typename C> static big   test(...);
+
+    public:
+        static constexpr bool value = sizeof(test<T>(0)) == sizeof(char) ;
+    };
+
     template<int DefaultSize = 10>
     struct HeavyValue {
 
@@ -21,7 +37,7 @@ namespace{
         size_t nWriterNo;
 
         static std::vector<int> pop_buff;
-        static std::vector<int>::size_type buffer_size;
+        static size_t buffer_size;
 
         explicit HeavyValue(int new_value = 0)
         : value(new_value),
@@ -34,10 +50,14 @@ namespace{
               nNo(other.nNo),
               nWriterNo(other.nWriterNo)
         {
-            for(decltype(buffer_size) i = 0; i < buffer_size; ++i)
+            for(size_t i = 0; i < buffer_size; ++i)
                 pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]*rand()));
         }
-        static void setArraySize(decltype(buffer_size) new_size){
+        void set_array(size_t new_size) {
+            set_array_size(new_size);
+        }
+        static void set_array_size(size_t new_size){
+            if (buffer_size == new_size) return;
             buffer_size = new_size;
             pop_buff.resize(buffer_size, rand());
         }
