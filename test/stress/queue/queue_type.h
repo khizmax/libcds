@@ -545,39 +545,39 @@ namespace fc_details{
 
     template <typename Value>
     struct TypesFCHeavyValue {
-    	typedef details::FCDequeL< Value > FCDequeL_HeavyValue_default;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_mutex > FCDequeL_HeavyValue_mutex;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat > FCDequeL_HeavyValue_stat;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss > FCDequeL_HeavyValue_wait_ss;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeL_HeavyValue_wait_ss_stat;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm > FCDequeL_HeavyValue_wait_sm;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeL_HeavyValue_wait_sm_stat;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm > FCDequeL_HeavyValue_wait_mm;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeL_HeavyValue_wait_mm_stat;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination > FCDequeL_HeavyValue_elimination;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeL_HeavyValue_elimination_stat;
+        typedef details::FCDequeL< Value > FCDequeL_HeavyValue_default;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_mutex > FCDequeL_HeavyValue_mutex;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat > FCDequeL_HeavyValue_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss > FCDequeL_HeavyValue_wait_ss;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeL_HeavyValue_wait_ss_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm > FCDequeL_HeavyValue_wait_sm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeL_HeavyValue_wait_sm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm > FCDequeL_HeavyValue_wait_mm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeL_HeavyValue_wait_mm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination > FCDequeL_HeavyValue_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeL_HeavyValue_elimination_stat;
 
-		typedef details::FCDequeL< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeL_HeavyValue_boost;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_stat;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination;
-		typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination_stat;
+        typedef details::FCDequeL< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeL_HeavyValue_boost;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination_stat;
 
-		typedef details::FCDequeR< Value > FCDequeR_HeavyValue_default;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_mutex > FCDequeR_HeavyValue_mutex;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat > FCDequeR_HeavyValue_stat;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss > FCDequeR_HeavyValue_wait_ss;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeR_HeavyValue_wait_ss_stat;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm > FCDequeR_HeavyValue_wait_sm;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeR_HeavyValue_wait_sm_stat;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm > FCDequeR_HeavyValue_wait_mm;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeR_HeavyValue_wait_mm_stat;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination > FCDequeR_HeavyValue_elimination;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeR_HeavyValue_elimination_stat;
+        typedef details::FCDequeR< Value > FCDequeR_HeavyValue_default;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_mutex > FCDequeR_HeavyValue_mutex;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat > FCDequeR_HeavyValue_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss > FCDequeR_HeavyValue_wait_ss;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeR_HeavyValue_wait_ss_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm > FCDequeR_HeavyValue_wait_sm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeR_HeavyValue_wait_sm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm > FCDequeR_HeavyValue_wait_mm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeR_HeavyValue_wait_mm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination > FCDequeR_HeavyValue_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeR_HeavyValue_elimination_stat;
 
-		typedef details::FCDequeR< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeR_HeavyValue_boost;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_stat;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination;
-		typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination_stat;
+        typedef details::FCDequeR< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeR_HeavyValue_boost;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination_stat;
     };
 }
 
