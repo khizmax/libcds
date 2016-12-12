@@ -106,7 +106,7 @@ namespace cds { namespace gc {
                     ++itRetired;
                 }
                 vect.clear();
-                pNext = hprec->m_pNextNode;
+                pNext = hprec->m_pNextNode.load( atomics::memory_order_relaxed );
                 hprec->m_bFree.store( true, atomics::memory_order_relaxed );
                 DeleteHPRec( hprec );
             }
@@ -134,11 +134,11 @@ namespace cds { namespace gc {
             const cds::OS::ThreadId curThreadId  = cds::OS::get_current_thread_id();
 
             // First try to reuse a retired (non-active) HP record
-            for ( hprec = m_pListHead.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode ) {
+            for ( hprec = m_pListHead.load( atomics::memory_order_relaxed ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed )) {
                 cds::OS::ThreadId thId = nullThreadId;
-                if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_seq_cst, atomics::memory_order_relaxed ))
+                if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
                     continue;
-                hprec->m_bFree.store( false, atomics::memory_order_release );
+                hprec->m_bFree.store( false, atomics::memory_order_relaxed );
                 return hprec;
             }
 
@@ -146,12 +146,9 @@ namespace cds { namespace gc {
             // Allocate and push a new HP record
             hprec = NewHPRec( curThreadId );
 
-            hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_acquire );
+            hplist_node * pOldHead = m_pListHead.load( atomics::memory_order_relaxed );
             do {
-                // Compiler barriers: assignment MUST BE inside the loop
-                CDS_COMPILER_RW_BARRIER;
-                hprec->m_pNextNode = pOldHead;
-                CDS_COMPILER_RW_BARRIER;
+                hprec->m_pNextNode.store( pOldHead, atomics::memory_order_relaxed );
             } while ( !m_pListHead.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
 
             return hprec;
@@ -173,8 +170,8 @@ namespace cds { namespace gc {
         {
             hplist_node * pNext = nullptr;
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
-            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = pNext ) {
-                pNext = hprec->m_pNextNode;
+            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_relaxed); hprec; hprec = pNext ) {
+                pNext = hprec->m_pNextNode.load( atomics::memory_order_relaxed );
                 if ( hprec->m_idOwner.load(atomics::memory_order_relaxed) != nullThreadId ) {
                     free_hp_record( hprec );
                 }
@@ -191,7 +188,7 @@ namespace cds { namespace gc {
 
             // Stage 1: Scan HP list and insert non-null values in plist
 
-            hplist_node * pNode = m_pListHead.load(atomics::memory_order_acquire);
+            hplist_node * pNode = m_pListHead.load(atomics::memory_order_relaxed);
 
             while ( pNode ) {
                 for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
@@ -200,7 +197,7 @@ namespace cds { namespace gc {
                     if ( hptr )
                         plist.push_back( hptr );
                 }
-                pNode = pNode->m_pNextNode;
+                pNode = pNode->m_pNextNode.load( atomics::memory_order_relaxed );
             }
 
             // Sort plist to simplify search in
@@ -270,12 +267,12 @@ namespace cds { namespace gc {
             */
 
             // Search guarded pointers in retired array
-            hplist_node * pNode = m_pListHead.load( atomics::memory_order_acquire );
+            hplist_node * pNode = m_pListHead.load( atomics::memory_order_relaxed );
 
             {
                 details::retired_ptr dummyRetired;
                 while ( pNode ) {
-                    if ( !pNode->m_bFree.load( atomics::memory_order_acquire )) {
+                    if ( !pNode->m_bFree.load( atomics::memory_order_relaxed )) {
                         for ( size_t i = 0; i < m_nHazardPointerCount; ++i ) {
                             pRec->sync();
                             void * hptr = pNode->m_hzp[i].get();
@@ -289,7 +286,7 @@ namespace cds { namespace gc {
                             }
                         }
                     }
-                    pNode = pNode->m_pNextNode;
+                    pNode = pNode->m_pNextNode.load( atomics::memory_order_relaxed );
                 }
             }
 
@@ -323,25 +320,27 @@ namespace cds { namespace gc {
 
             const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
             const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
-            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = hprec->m_pNextNode ) {
+            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_relaxed); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed )) {
 
                 // If m_bFree == true then hprec->m_arrRetired is empty - we don't need to see it
-                if ( hprec->m_bFree.load(atomics::memory_order_acquire))
+                if ( hprec->m_bFree.load(atomics::memory_order_relaxed))
                     continue;
 
                 // Owns hprec if it is empty.
                 // Several threads may work concurrently so we use atomic technique only.
                 {
-                    cds::OS::ThreadId curOwner = hprec->m_idOwner.load(atomics::memory_order_acquire);
-                    if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner )) {
-                        if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_release, atomics::memory_order_relaxed ))
+                    cds::OS::ThreadId curOwner = hprec->m_idOwner.load(atomics::memory_order_relaxed);
+                    if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner ) ) {
+                        if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
                             continue;
                     }
-                    else {
-                        curOwner = nullThreadId;
-                        if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_release, atomics::memory_order_relaxed ))
-                            continue;
-                    }
+                    else
+                        continue;
+                    //else {
+                    //    curOwner = nullThreadId;
+                    //    if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+                    //        continue;
+                    //}
                 }
 
                 // We own the thread successfully. Now, we can see whether hp_record has retired pointers.
@@ -373,7 +372,7 @@ namespace cds { namespace gc {
                 src.clear();
                 CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 
-                hprec->m_bFree.store(true, atomics::memory_order_release);
+                hprec->m_bFree.store(true, atomics::memory_order_relaxed);
                 hprec->m_idOwner.store( nullThreadId, atomics::memory_order_release );
 
                 Scan( pThis );
@@ -393,7 +392,7 @@ namespace cds { namespace gc {
                 stat.nTotalRetiredPtrCount   =
                 stat.nRetiredPtrInFreeHPRecs = 0;
 
-            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_acquire); hprec; hprec = hprec->m_pNextNode ) {
+            for ( hplist_node * hprec = m_pListHead.load(atomics::memory_order_relaxed); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed )) {
                 ++stat.nHPRecAllocated;
                 stat.nTotalRetiredPtrCount += hprec->m_arrRetired.size();
 

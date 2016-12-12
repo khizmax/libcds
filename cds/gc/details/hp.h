@@ -292,7 +292,7 @@ namespace cds {
             /// Internal list of cds::gc::hp::details::hp_record
             struct hplist_node : public details::hp_record
             {
-                hplist_node *                    m_pNextNode; ///< next hazard ptr record in list
+                atomics::atomic<hplist_node*>    m_pNextNode; ///< next hazard ptr record in list
                 atomics::atomic<OS::ThreadId>    m_idOwner;   ///< Owner thread id; 0 - the record is free (not owned)
                 atomics::atomic<bool>            m_bFree;     ///< true if record is free (not owned)
 
