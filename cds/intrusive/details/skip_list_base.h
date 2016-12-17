@@ -63,11 +63,6 @@ namespace cds { namespace intrusive {
             //@cond
             typedef atomic_marked_ptr tower_item_type;
 
-            enum state {
-                clean,      // initial state
-                removed,    // final state
-                hand_off    // temp state
-            };
             //@endcond
 
         protected:
@@ -75,7 +70,6 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr           m_pNext;     ///< Next item in bottom-list (list at level 0)
             unsigned int                m_nHeight;   ///< Node height (size of \p m_arrNext array). For node at level 0 the height is 1.
             atomic_marked_ptr *         m_arrNext;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
-            atomics::atomic< state >    m_state;
             //@endcond
 
         public:
@@ -83,7 +77,6 @@ namespace cds { namespace intrusive {
                 : m_pNext( nullptr )
                 , m_nHeight( 1 )
                 , m_arrNext( nullptr )
-                , m_state( clean )
             {}
 
 
@@ -169,16 +162,6 @@ namespace cds { namespace intrusive {
                 return m_pNext == atomic_marked_ptr()
                     && m_arrNext == nullptr
                     && m_nHeight <= 1;
-            }
-
-            bool set_state( state& cur_state, state new_state, atomics::memory_order order )
-            {
-                return m_state.compare_exchange_strong( cur_state, new_state, order, atomics::memory_order_relaxed );
-            }
-
-            void clear_state( atomics::memory_order order )
-            {
-                m_state.store( clean, order );
             }
             //@endcond
         };
@@ -429,7 +412,6 @@ namespace cds { namespace intrusive {
             event_counter   m_nExtractMaxRetries    ; ///< Count of retries of \p extract_max call
             event_counter   m_nEraseWhileFind       ; ///< Count of erased item while searching
             event_counter   m_nExtractWhileFind     ; ///< Count of extracted item while searching (RCU only)
-            event_counter   m_nNodeHandOffFailed    ; ///< Cannot set "hand-off" node state
 
             //@cond
             void onAddNode( unsigned int nHeight )
@@ -475,8 +457,6 @@ namespace cds { namespace intrusive {
             void onExtractMaxSuccess()      { ++m_nExtractMaxSuccess; }
             void onExtractMaxFailed()       { ++m_nExtractMaxFailed;  }
             void onExtractMaxRetry()        { ++m_nExtractMaxRetries; }
-            void onNodeHandOffFailed()      { ++m_nNodeHandOffFailed; }
-
             //@endcond
         };
 
@@ -517,7 +497,6 @@ namespace cds { namespace intrusive {
             void onExtractMaxSuccess()      const {}
             void onExtractMaxFailed()       const {}
             void onExtractMaxRetry()        const {}
-            void onNodeHandOffFailed()      const {}
             //@endcond
         };
 

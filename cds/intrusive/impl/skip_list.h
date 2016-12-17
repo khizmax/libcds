@@ -394,8 +394,7 @@ namespace cds { namespace intrusive {
         // c_nMaxHeight * 2 - pPred/pSucc guards
         // + 1 - for erase, unlink
         // + 1 - for clear
-        // + 1 - for help_remove
-        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 3; ///< Count of hazard pointer required for the skip-list
+        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2; ///< Count of hazard pointer required for the skip-list
 
     protected:
         typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic marked node pointer
@@ -1150,28 +1149,15 @@ namespace cds { namespace intrusive {
 
         void help_remove( int nLevel, node_type* pPred, marked_node_ptr pCur, marked_node_ptr pSucc )
         {
-            typename gc::Guard succ_guard;
-            marked_node_ptr succ = succ_guard.protect( pCur->next( nLevel ), gc_protect );
-
-            typename node_type::state state = node_type::clean;
-            if ( succ == pSucc && ( succ.ptr() == nullptr ||
-                succ.ptr()->set_state( state, node_type::hand_off, memory_model::memory_order_acquire )))
+            marked_node_ptr p( pCur.ptr() );
+            if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
+                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
             {
-                marked_node_ptr p( pCur.ptr() );
-                if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( succ.ptr()),
-                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
-                {
-                    if ( nLevel == 0 ) {
-                        gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
-                        m_Stat.onEraseWhileFind();
-                    }
+                if ( nLevel == 0 ) {
+                    gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                    m_Stat.onEraseWhileFind();
                 }
-
-                if ( succ.ptr() )
-                    succ.ptr()->clear_state( memory_model::memory_order_release );
             }
-            else if ( succ.ptr() != nullptr )
-                m_Stat.onNodeHandOffFailed();
         }
 
         template <typename Q, typename Compare >
@@ -1353,20 +1339,12 @@ namespace cds { namespace intrusive {
             // Insert at level 0
             {
                 node_type* succ = pos.pSucc[0];
-                typename node_type::state state = node_type::clean;
-                if ( succ != nullptr && !succ->set_state( state, node_type::hand_off, memory_model::memory_order_acquire ) )
-                    return false;
 
                 marked_node_ptr p( succ );
                 pNode->next( 0 ).store( p, memory_model::memory_order_release );
-                if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
-                    if ( succ )
-                        succ->clear_state( memory_model::memory_order_release );
+                if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     return false;
-                }
 
-                if ( succ )
-                    succ->clear_state( memory_model::memory_order_release );
                 f( val );
             }
 
@@ -1374,30 +1352,21 @@ namespace cds { namespace intrusive {
             for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel ) {
                 marked_node_ptr p;
                 while ( true ) {
-                    typename node_type::state state = node_type::clean;
-                    node_type* succ = pos.pSucc[nLevel];
-                    if ( succ == nullptr ||
-                        succ->set_state( state, node_type::hand_off, memory_model::memory_order_acquire ) ) 
-                    {
-                        marked_node_ptr q( succ );
-                        if ( !pNode->next( nLevel ).compare_exchange_strong( p, q, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
-                            // pNode has been marked as removed while we are inserting it
-                            // Stop inserting
-                            if ( succ )
-                                succ->clear_state( memory_model::memory_order_release );
-                            assert( p.bits() );
-                            m_Stat.onLogicDeleteWhileInsert();
-                            return true;
-                        }
+                    marked_node_ptr q( pos.pSucc[nLevel] );
 
-                        p = q;
-                        bool const result = pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( q, marked_node_ptr( pNode ),
-                            memory_model::memory_order_release, atomics::memory_order_relaxed );
-                        if ( succ )
-                            succ->clear_state( memory_model::memory_order_release );
-                        if ( result )
-                            break;
+                    if ( !pNode->next( nLevel ).compare_exchange_strong( p, q, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                        // pNode has been marked as removed while we are inserting it
+                        // Stop inserting
+                        assert( p.bits() );
+                        m_Stat.onLogicDeleteWhileInsert();
+                        return true;
                     }
+
+                    p = q;
+                    bool const result = pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( q, marked_node_ptr( pNode ),
+                        memory_model::memory_order_release, atomics::memory_order_relaxed );
+                    if ( result )
+                        break;
 
                     // Renew insert position
                     m_Stat.onRenewInsertPosition();
@@ -1415,17 +1384,6 @@ namespace cds { namespace intrusive {
         bool try_remove_at( node_type * pDel, position& pos, Func f )
         {
             assert( pDel != nullptr );
-
-            // set "removed" node state
-            {
-                back_off bkoff;
-                typename node_type::state state = node_type::clean;
-                while ( !( pDel->set_state( state, node_type::removed, memory_model::memory_order_release )
-                    || state == node_type::removed ))
-                {
-                    bkoff();
-                }
-            }
 
             marked_node_ptr pSucc;
 
