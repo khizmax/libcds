@@ -7,15 +7,17 @@
       this type of ordered list and thread-safe iterable too.
     - Added: wait strategies for flat combining technique. Based on
       research by Marsel Galimullin and Nikolai Rapotkin.
+    - Fixed: SkipList erase() and find() bugs that cause to infinite loop 
+      or to program crash in rare case.
     - Fixed: serious bug in MichaelSet::emplace() function
       New node was created twice from the arguments by move semantics. 
       However, move semantics may change internal state of the argument
-      that can lead to an incorrect element in the set and even
-      to an incorrect key that breaks the set logic.
+      that can lead to an incorrect element and even an incorrect key
+      that breaks the set logic.
     - Fixed: bug in FeldmanHashSet::erase_at( iterator ): due an error
-      in precondition checking the function can incorrectly return false.
+      in precondition checking the function may incorrectly return false.
     - Fixed: possible double-free case in flat combining algorithm. 
-      Thanks to Amila Jayasekara who points me to this problem
+      Thanks to Amila Jayasekara who pointed me to this problem
     - Changed: cds::opt::buffer option is divided to initialized
       (cds::opt::v::initialized_dynamic_buffer, cds::opt::v::initialized_static_buffer)
       and uninitialized (cds::opt::v::uninitialized_dynamic_buffer, cds::opt::v::uninitialized_static_buffer)
@@ -28,7 +30,7 @@
     - Added: for minimizing runtime of stress test the detail level for some test is added.
       Command line argument --detail-level=N specifies what test should be ran: each
       test with level not greater than N will be ran. Instead of command line arg
-      the enviromnent variable CDSTEST_DETAIL_LEVEL=N can be used.
+      the enviromnent variable CDSTEST_DETAIL_LEVEL=N may be used.
       By default, the detail level is 0 that means only limited set of the test will be ran.
 
 2.1.0 06.01.2016
