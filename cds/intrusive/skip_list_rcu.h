@@ -697,7 +697,7 @@ namespace cds { namespace intrusive {
         /// Clears and destructs the skip-list
         ~SkipListSet()
         {
-            clear();
+            destroy();
         }
 
     public:
@@ -2002,6 +2002,17 @@ namespace cds { namespace intrusive {
             if ( nCur < nHeight )
                 m_nHeight.compare_exchange_strong( nCur, nHeight, memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
+
+        void destroy()
+        {
+            node_type* p = m_Head.head()->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
+            while ( p ) {
+                node_type* pNext = p->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
+                dispose_node( node_traits::to_value_ptr( p ) );
+                p = pNext;
+            }
+        }
+
         //@endcond
     };
 
