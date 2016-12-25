@@ -85,7 +85,8 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nSlowExtract )
             << CDSSTRESS_STAT_OUT( s, m_nEraseWhileFind )
             << CDSSTRESS_STAT_OUT( s, m_nExtractWhileFind )
-            << CDSSTRESS_STAT_OUT( s, m_nMarkFailed );
+            << CDSSTRESS_STAT_OUT( s, m_nMarkFailed )
+            << CDSSTRESS_STAT_OUT( s, m_nEraseContention );
     }
 
 } // namespace cds_test

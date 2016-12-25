@@ -1453,8 +1453,9 @@ namespace cds { namespace intrusive {
                     m_Stat.onFastErase();
                     return true;
                 }
-                else if ( p.bits() ) {
+                else if ( p.bits()) {
                     // Another thread is deleting pDel right now
+                    m_Stat.onEraseContention();
                     return false;
                 }
                 m_Stat.onEraseRetry();

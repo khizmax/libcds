@@ -423,6 +423,7 @@ namespace cds { namespace intrusive {
             event_counter   m_nEraseWhileFind       ; ///< Count of erased item while searching
             event_counter   m_nExtractWhileFind     ; ///< Count of extracted item while searching (RCU only)
             event_counter   m_nMarkFailed           ; ///< Count of failed node marking (logical deletion mark)
+            event_counter   m_nEraseContention      ; ///< Count of key erasing contention encountered
 
             //@cond
             void onAddNode( unsigned int nHeight )
@@ -472,6 +473,7 @@ namespace cds { namespace intrusive {
             void onExtractMaxFailed()       { ++m_nExtractMaxFailed;  }
             void onExtractMaxRetry()        { ++m_nExtractMaxRetries; }
             void onMarkFailed()             { ++m_nMarkFailed;        }
+            void onEraseContention()        { ++m_nEraseContention;   }
             //@endcond
         };
 
@@ -516,6 +518,7 @@ namespace cds { namespace intrusive {
             void onExtractMaxFailed()       const {}
             void onExtractMaxRetry()        const {}
             void onMarkFailed()             const {}
+            void onEraseContention()        const {}
             //@endcond
         };
 
