@@ -60,7 +60,7 @@
 
    Supported compilers:
       - GCC 4.8+
-      - Clang 3.3+
+      - Clang 3.6+
       - MS Visual C++ 2013 Update 4 and above
       - Intel C++ Compiler 15
 
@@ -194,7 +194,7 @@
    \par *NIX build
 
    For Unix-like systems GCC and Clang compilers are supported.
-   Use GCC 4.8+ compiler or Clang 3.3+ to build <b>cds</b> library with CMake.
+   Use GCC 4.8+ compiler or Clang 3.6+ to build <b>cds</b> library with CMake.
    See accompanying file <tt>/build/cmake/readme.md</tt> for more info.
 
    @note Important for GCC compiler: all your projects that use \p libcds must be compiled with <b>-fno-strict-aliasing</b>
