@@ -1348,7 +1348,6 @@ namespace cds { namespace container {
 
                     if ( pChild == nullptr ) {
                         // Found min/max
-                        assert(pNode->is_valued( memory_model::memory_order_acquire ));
                         int result = try_remove_node( pParent, pNode, nVersion, func, disp );
                         if ( result != update_flags::retry )
                             return result;
