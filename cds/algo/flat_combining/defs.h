@@ -60,7 +60,8 @@ namespace cds { namespace algo { namespace flat_combining {
         atomics::atomic<unsigned int>           nRequest;   ///< Request field (depends on data structure)
         atomics::atomic<unsigned int>           nState;     ///< Record state: inactive, active, removed
         atomics::atomic<unsigned int>           nAge;       ///< Age of the record
-        atomics::atomic<publication_record *>   pNext;      ///< Next record in publication list
+        atomics::atomic<publication_record *>   pNext;      ///< Next record in active publication list
+        atomics::atomic<publication_record *>   pNextAllocated; ///< Next record in allocated publication list
 
         /// Initializes publication record
         publication_record()
@@ -68,6 +69,7 @@ namespace cds { namespace algo { namespace flat_combining {
             , nState( inactive )
             , nAge( 0 )
             , pNext( nullptr )
+            , pNextAllocated( nullptr )
         {}
 
         /// Returns the value of \p nRequest field
