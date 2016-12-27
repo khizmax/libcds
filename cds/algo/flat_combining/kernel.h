@@ -298,6 +298,7 @@ namespace cds { namespace algo {
                     publication_record * pRec = p;
                     p = p->pNext.load( memory_model::memory_order_relaxed );
                     free_publication_record( static_cast<publication_record_type *>( pRec ));
+                    m_Stat.onDeletePubRecord();
                 }
             }
 
@@ -714,9 +715,12 @@ namespace cds { namespace algo {
                             assert( p == m_pHead );
                             break;
                         case removed:
-                            // The record should be removed
-                            p = unlink_and_delete_record( pPrev, p );
-                            continue;
+                            // The record should be removed (except m_pHead)
+                            if ( pPrev ) {
+                                p = unlink_and_delete_record( pPrev, p );
+                                continue;
+                            }
+                            break;
                         default:
                             /// ??? That is impossible
                             assert(false);
@@ -807,22 +811,18 @@ namespace cds { namespace algo {
 
             publication_record * unlink_and_delete_record( publication_record * pPrev, publication_record * p )
             {
-                if ( pPrev ) {
-                    publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
-                    if ( pPrev->pNext.compare_exchange_strong( p, pNext,
-                        memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
-                    {
-                        free_publication_record( static_cast<publication_record_type *>( p ));
-                        m_Stat.onDeletePubRecord();
-                    }
-                    return pNext;
-                }
-                else {
-                    m_pHead = static_cast<publication_record_type *>( p->pNext.load( memory_model::memory_order_acquire ));
+                // m_pHead is persistent node and cannot be deleted
+                assert( pPrev != nullptr );
+                assert( p != m_pHead );
+
+                publication_record * pNext = p->pNext.load( memory_model::memory_order_acquire );
+                if ( pPrev->pNext.compare_exchange_strong( p, pNext,
+                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                {
                     free_publication_record( static_cast<publication_record_type *>( p ));
                     m_Stat.onDeletePubRecord();
-                    return m_pHead;
                 }
+                return pNext;
             }
             //@endcond
         };
