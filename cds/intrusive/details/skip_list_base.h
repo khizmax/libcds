@@ -70,7 +70,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr           m_pNext;     ///< Next item in bottom-list (list at level 0)
             unsigned int                m_nHeight;   ///< Node height (size of \p m_arrNext array). For node at level 0 the height is 1.
             atomic_marked_ptr *         m_arrNext;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
-            atomics::atomic<unsigned int> m_nUnlink; ///< How many levels has been unlinked
+            atomics::atomic<unsigned int> m_nUnlink; ///< Unlink helper
             //@endcond
 
         public:
@@ -78,7 +78,7 @@ namespace cds { namespace intrusive {
                 : m_pNext( nullptr )
                 , m_nHeight( 1 )
                 , m_arrNext( nullptr )
-                , m_nUnlink( 0 )
+                , m_nUnlink( 1 )
             {}
 
 
@@ -92,7 +92,7 @@ namespace cds { namespace intrusive {
 
                 m_arrNext = nextTower;
                 m_nHeight = nHeight;
-                atomics::atomic_thread_fence( atomics::memory_order_release );
+                m_nUnlink.store( nHeight, atomics::memory_order_relaxed );
             }
 
             //@cond
@@ -168,7 +168,12 @@ namespace cds { namespace intrusive {
 
             bool level_unlinked( unsigned nCount = 1 )
             {
-                return m_nUnlink.fetch_add( nCount, std::memory_order_relaxed ) + 1 == height();
+                return m_nUnlink.fetch_sub( nCount, atomics::memory_order_relaxed ) == 1;
+            }
+
+            bool is_upper_level( unsigned nLevel ) const
+            {
+                return m_nUnlink.load( atomics::memory_order_relaxed ) == nLevel + 1;
             }
             //@endcond
         };
@@ -403,12 +408,9 @@ namespace cds { namespace intrusive {
             event_counter   m_nFindSlowFailed       ; ///< Count of failed call of \p find and all derivatives (via slow-path)
             event_counter   m_nRenewInsertPosition  ; ///< Count of renewing position events while inserting
             event_counter   m_nLogicDeleteWhileInsert; ///< Count of events "The node has been logically deleted while inserting"
-            event_counter   m_nEraseWhileInsert     ; ///< Count of events "The node has been disposed while inserting"
             event_counter   m_nNotFoundWhileInsert  ; ///< Count of events "Inserting node is not found"
             event_counter   m_nFastErase            ; ///< Fast erase event counter
-            event_counter   m_nFastEraseHelped      ; ///< Fast erase with helping of other thread
             event_counter   m_nFastExtract          ; ///< Fast extract event counter
-            event_counter   m_nFastExtractHelped    ; ///< Fast extract with helping of other thread
             event_counter   m_nSlowErase            ; ///< Slow erase event counter
             event_counter   m_nSlowExtract          ; ///< Slow extract event counter
             event_counter   m_nExtractSuccess       ; ///< Count of successful call of \p extract
@@ -455,12 +457,9 @@ namespace cds { namespace intrusive {
             void onExtractWhileFind()       { ++m_nExtractWhileFind ; }
             void onRenewInsertPosition()    { ++m_nRenewInsertPosition; }
             void onLogicDeleteWhileInsert() { ++m_nLogicDeleteWhileInsert; }
-            void onEraseWhileInsert()       { ++m_nEraseWhileInsert;  }
             void onNotFoundWhileInsert()    { ++m_nNotFoundWhileInsert; }
             void onFastErase()              { ++m_nFastErase;         }
-            void onFastEraseHelped()        { ++m_nFastEraseHelped;   }
             void onFastExtract()            { ++m_nFastExtract;       }
-            void onFastExtractHelped()      { ++m_nFastExtractHelped; }
             void onSlowErase()              { ++m_nSlowErase;         }
             void onSlowExtract()            { ++m_nSlowExtract;       }
             void onExtractSuccess()         { ++m_nExtractSuccess;    }
@@ -500,12 +499,9 @@ namespace cds { namespace intrusive {
             void onExtractWhileFind()       const {}
             void onRenewInsertPosition()    const {}
             void onLogicDeleteWhileInsert() const {}
-            void onEraseWhileInsert()       const {}
             void onNotFoundWhileInsert()    const {}
             void onFastErase()              const {}
-            void onFastEraseHelped()        const {}
             void onFastExtract()            const {}
-            void onFastExtractHelped()      const {}
             void onSlowErase()              const {}
             void onSlowExtract()            const {}
             void onExtractSuccess()         const {}

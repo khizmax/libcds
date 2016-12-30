@@ -67,7 +67,7 @@ namespace cds { namespace intrusive {
         protected:
             unsigned int            m_nHeight;   ///< Node height (size of m_arrNext array). For node at level 0 the height is 1.
             atomic_marked_ptr *     m_arrNext;   ///< Array of next items for levels 1 .. m_nHeight - 1. For node at level 0 \p m_arrNext is \p nullptr
-            atomics::atomic<unsigned> m_nUnlink; ///< How many levels has been unlinked
+            atomics::atomic<unsigned> m_nUnlink; ///< Unlink helper
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
@@ -76,7 +76,7 @@ namespace cds { namespace intrusive {
                 , m_pDelChain( nullptr )
                 , m_nHeight(1)
                 , m_arrNext( nullptr )
-                , m_nUnlink(0)
+                , m_nUnlink(1)
             {}
 
             /// Constructs a node of height \p nHeight
@@ -89,6 +89,7 @@ namespace cds { namespace intrusive {
 
                 m_arrNext = nextTower;
                 m_nHeight = nHeight;
+                m_nUnlink.store( nHeight, atomics::memory_order_release );
             }
 
             atomic_marked_ptr * release_tower()
@@ -179,7 +180,12 @@ namespace cds { namespace intrusive {
 
             bool level_unlinked( unsigned nCount = 1 )
             {
-                return m_nUnlink.fetch_add( nCount, std::memory_order_relaxed ) + 1 == height();
+                return m_nUnlink.fetch_sub( nCount, std::memory_order_relaxed ) == 1;
+            }
+
+            bool is_upper_level( unsigned nLevel ) const
+            {
+                return m_nUnlink.load( atomics::memory_order_relaxed ) == nLevel + 1;
             }
         };
     } // namespace skip_list
@@ -1403,8 +1409,10 @@ namespace cds { namespace intrusive {
         void help_remove( int nLevel, node_type* pPred, marked_node_ptr pCur, marked_node_ptr pSucc, position& pos )
         {
             marked_node_ptr p( pCur.ptr() );
-            if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
-                memory_model::memory_order_release, atomics::memory_order_relaxed ) )
+
+            if ( pCur->is_upper_level( nLevel )
+                && pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
+                    memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 if ( pCur->level_unlinked()) {
                     if ( !is_extracted( pSucc ) ) {
@@ -1585,9 +1593,8 @@ namespace cds { namespace intrusive {
             {
                 marked_node_ptr p( pos.pSucc[0] );
                 pNode->next( 0 ).store( p, memory_model::memory_order_relaxed );
-                if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ) ) {
+                if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     return false;
-                }
 
                 f( val );
             }
@@ -1601,19 +1608,14 @@ namespace cds { namespace intrusive {
                     // Set pNode->next
                     // pNode->next must be null but can have a "logical deleted" flag if another thread is removing pNode right now
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
-                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
+                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ) )
                     {
                         // pNode has been marked as removed while we are inserting it
                         // Stop inserting
                         assert( p.bits() != 0 );
-
-                        if ( pNode->level_unlinked( nHeight - nLevel ) && p.bits() == 1 ) {
+                        if ( pNode->level_unlinked( nHeight - nLevel ))
                             pos.dispose( pNode );
-                            m_Stat.onEraseWhileInsert();
-                        }
-                        else
-                            m_Stat.onLogicDeleteWhileInsert();
-
+                        m_Stat.onLogicDeleteWhileInsert();
                         return true;
                     }
                     p = pSucc;
@@ -1676,26 +1678,15 @@ namespace cds { namespace intrusive {
                     // physical deletion
                     // try fast erase
                     p = pDel;
-                    unsigned nCount = 0;
                     for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
 
                         pSucc = pDel->next( nLevel ).load( memory_model::memory_order_relaxed );
-                        if ( !pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
+                        if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
                             memory_model::memory_order_acq_rel, atomics::memory_order_acquire ) )
                         {
-                            // Do slow erase
-                            if ( nCount ) {
-                                if ( pDel->level_unlinked( nCount )) {
-                                    if ( p.bits() == 1 ) {
-                                        pos.dispose( pDel );
-                                        m_Stat.onFastEraseHelped();
-                                    }
-                                    else
-                                        m_Stat.onFastExtractHelped();
-                                    return true;
-                                }
-                            }
-
+                            pDel->level_unlinked();
+                        }
+                        else {
                             // Make slow erase
                             find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
                             if ( bExtract )
@@ -1705,9 +1696,9 @@ namespace cds { namespace intrusive {
 
                             return true;
                         }
-                        ++nCount;
                     }
 
+                    // Fast erasing success
                     if ( !bExtract ) {
                         // We cannot free the node at this moment since RCU is locked
                         // Link deleted nodes to a chain to free later
@@ -1749,12 +1740,10 @@ namespace cds { namespace intrusive {
             pPred = m_Head.head();
             for ( int nLevel = static_cast<int>( m_nHeight.load( memory_model::memory_order_relaxed ) - 1 ); nLevel >= 0; --nLevel ) {
                 pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
-                if ( pCur == pNull )
-                    continue;
 
                 while ( pCur != pNull ) {
                     if ( pCur.bits() ) {
-                        // pPrev is being removed
+                        // pPred is being removed
                         if ( ++attempt < 4 ) {
                             bkoff();
                             goto try_again;

@@ -394,7 +394,8 @@ namespace cds { namespace intrusive {
         // c_nMaxHeight * 2 - pPred/pSucc guards
         // + 1 - for erase, unlink
         // + 1 - for clear
-        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 2; ///< Count of hazard pointer required for the skip-list
+        // + 1 - for help_remove()
+        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 3; ///< Count of hazard pointer required for the skip-list
 
     protected:
         typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic marked node pointer
@@ -1150,12 +1151,17 @@ namespace cds { namespace intrusive {
         void help_remove( int nLevel, node_type* pPred, marked_node_ptr pCur, marked_node_ptr pSucc )
         {
             marked_node_ptr p( pCur.ptr() );
-            if ( pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
-                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
-            {
-                if ( pCur->level_unlinked() ) {
-                    gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
-                    m_Stat.onEraseWhileFind();
+
+            if ( pCur->is_upper_level( nLevel )) {
+                typename gc::Guard hp;
+                if ( hp.protect( pCur->next( nLevel ), gc_protect ) == pSucc &&
+                     pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
+                        memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
+                {
+                    if ( pCur->level_unlinked() ) {
+                        gc::retire( node_traits::to_value_ptr( pCur.ptr() ), dispose_node );
+                        m_Stat.onEraseWhileFind();
+                    }
                 }
             }
         }
@@ -1355,18 +1361,14 @@ namespace cds { namespace intrusive {
                     // Set pNode->next
                     // pNode->next must be null but can have a "logical deleted" flag if another thread is removing pNode right now
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
-                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire )) 
+                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ) )
                     {
                         // pNode has been marked as removed while we are inserting it
                         // Stop inserting
                         assert( p.bits() != 0 );
-
-                        if ( pNode->level_unlinked( nHeight - nLevel )) {
-                            gc::retire( node_traits::to_value_ptr( pNode ), dispose_node );
-                            m_Stat.onEraseWhileInsert();
-                        }
-                        else
-                            m_Stat.onLogicDeleteWhileInsert();
+                        if ( pNode->level_unlinked( nHeight - nLevel ))
+                            gc::retire( &val, dispose_node );
+                        m_Stat.onLogicDeleteWhileInsert();
                         return true;
                     }
                     p = pSucc;
@@ -1423,29 +1425,21 @@ namespace cds { namespace intrusive {
                     // Physical deletion
                     // try fast erase
                     p = pDel;
-                    unsigned nCount = 0;
 
                     for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
 
                         pSucc = pDel->next( nLevel ).load( memory_model::memory_order_relaxed );
-                        if ( !pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
-                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                        if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
                         {
-                            // Maybe, another threads already helped us to delete the node?..
-                            if ( nCount ) {
-                                if ( pDel->level_unlinked( nCount )) {
-                                    gc::retire( node_traits::to_value_ptr( pDel ), dispose_node );
-                                    m_Stat.onFastEraseHelped();
-                                    return true;
-                                }
-                            }
-
+                            pDel->level_unlinked();
+                        }
+                        else {
                             // Make slow erase
                             find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
                             m_Stat.onSlowErase();
                             return true;
                         }
-                        ++nCount;
                     }
 
                     // Fast erasing success
@@ -1486,8 +1480,6 @@ namespace cds { namespace intrusive {
             pPred = m_Head.head();
             for ( int nLevel = static_cast<int>( m_nHeight.load( memory_model::memory_order_relaxed ) - 1 ); nLevel >= 0; --nLevel ) {
                 pCur = guards.protect( 1, pPred->next( nLevel ), gc_protect );
-                if ( pCur == pNull )
-                    continue;
 
                 while ( pCur != pNull ) {
                     if ( pCur.bits() ) {
