@@ -80,8 +80,6 @@ References
   - *SegmentedQueue*: [2010] Afek, Korland, Yanovsky "Quasi-Linearizability: relaxed consistency for improved concurrency"
         [pdf](http://mcg.cs.tau.ac.il/papers/opodis2010-quasi.pdf)
   - *FCQueue* - flat-combining wrapper for *std::queue*
-  - *TsigasCycleQueue*: [2000] Philippas Tsigas, Yi Zhang "A Simple, Fast and Scalable Non-Blocking Concurrent FIFO Queue for Shared Memory Multiprocessor Systems"
-        [pdf](http://www.cse.chalmers.se/~tsigas/papers/latest-spaa01.pdf)
   - *VyukovMPMCCycleQueue* Dmitry Vyukov (see http://www.1024cores.net)
 
 *Deque*
