@@ -1,7 +1,7 @@
 /*
     This file is a part of libcds - Concurrent Data Structures library
 
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/

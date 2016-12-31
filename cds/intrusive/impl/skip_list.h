@@ -1,7 +1,7 @@
 /*
     This file is a part of libcds - Concurrent Data Structures library
 
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2016
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
 
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
@@ -1359,7 +1359,7 @@ namespace cds { namespace intrusive {
                     marked_node_ptr pSucc( pos.pSucc[nLevel] );
 
                     // Set pNode->next
-                    // pNode->next must be null but can have a "logical deleted" flag if another thread is removing pNode right now
+                    // pNode->next can have a "logical deleted" flag if another thread is removing pNode right now
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
                         memory_model::memory_order_acq_rel, atomics::memory_order_acquire ) )
                     {
