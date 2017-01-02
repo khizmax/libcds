@@ -29,6 +29,7 @@
 */
 
 #include "map_type.h"
+#include <cds/os/topology.h>
 
 namespace map {
 

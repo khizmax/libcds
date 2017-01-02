@@ -42,8 +42,6 @@
 #include <cds_test/stat_lazy_list_out.h>
 #include <cds_test/stat_iterable_list_out.h>
 
-#include <framework/michael_alloc.h>
-
 namespace set {
 
     template <class GC, typename List, typename Traits = cc::michael_set::traits>
@@ -78,85 +76,59 @@ namespace set {
 
         typedef michael_list_type< Key, Val > ml;
 
-        struct traits_MichaelSet_stdAlloc :
+        struct traits_MichaelSet :
             public cc::michael_set::make_traits<
                 co::hash< hash >
             >::type
         {};
-        typedef MichaelHashSet< cds::gc::HP,  typename ml::MichaelList_HP_cmp_stdAlloc,  traits_MichaelSet_stdAlloc > MichaelSet_HP_cmp_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_DHP_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPI_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPB_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPT_cmp_stdAlloc;
+        typedef MichaelHashSet< cds::gc::HP,  typename ml::MichaelList_HP_cmp,  traits_MichaelSet > MichaelSet_HP_cmp;
+        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_cmp, traits_MichaelSet > MichaelSet_DHP_cmp;
+        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp, traits_MichaelSet > MichaelSet_RCU_GPI_cmp;
+        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp, traits_MichaelSet > MichaelSet_RCU_GPB_cmp;
+        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp, traits_MichaelSet > MichaelSet_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHB_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_cmp_stdAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp, traits_MichaelSet > MichaelSet_RCU_SHB_cmp;
+        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp, traits_MichaelSet > MichaelSet_RCU_SHT_cmp;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_HP_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_DHP_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPI_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPB_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPT_cmp_stdAlloc_stat;
+        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_cmp_stat, traits_MichaelSet > MichaelSet_HP_cmp_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_stat, traits_MichaelSet > MichaelSet_DHP_cmp_stat;
+        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp_stat, traits_MichaelSet > MichaelSet_RCU_GPI_cmp_stat;
+        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp_stat, traits_MichaelSet > MichaelSet_RCU_GPB_cmp_stat;
+        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stat, traits_MichaelSet > MichaelSet_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHB_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_cmp_stdAlloc_stat;
+        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stat, traits_MichaelSet > MichaelSet_RCU_SHB_cmp_stat;
+        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stat, traits_MichaelSet > MichaelSet_RCU_SHT_cmp_stat;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_HP_less_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_DHP_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPI_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPB_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPT_less_stdAlloc;
+        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less, traits_MichaelSet > MichaelSet_HP_less;
+        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less, traits_MichaelSet > MichaelSet_DHP_less;
+        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less, traits_MichaelSet > MichaelSet_RCU_GPI_less;
+        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less, traits_MichaelSet > MichaelSet_RCU_GPB_less;
+        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less, traits_MichaelSet > MichaelSet_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHB_less_stdAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_less_stdAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less, traits_MichaelSet > MichaelSet_RCU_SHB_less;
+        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less, traits_MichaelSet > MichaelSet_RCU_SHT_less;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_HP_less_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_DHP_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPI_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPB_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPT_less_stdAlloc_stat;
+        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_stat, traits_MichaelSet > MichaelSet_HP_less_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_stat, traits_MichaelSet > MichaelSet_DHP_less_stat;
+        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_stat, traits_MichaelSet > MichaelSet_RCU_GPI_less_stat;
+        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_stat, traits_MichaelSet > MichaelSet_RCU_GPB_less_stat;
+        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stat, traits_MichaelSet > MichaelSet_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHB_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_less_stdAlloc_stat;
+        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stat, traits_MichaelSet > MichaelSet_RCU_SHB_less_stat;
+        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stat, traits_MichaelSet > MichaelSet_RCU_SHT_less_stat;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_HP_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_DHP_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPI_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPB_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_GPT_less_stdAlloc_seqcst;
+        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_seqcst, traits_MichaelSet > MichaelSet_HP_less_seqcst;
+        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_seqcst, traits_MichaelSet > MichaelSet_DHP_less_seqcst;
+        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_seqcst, traits_MichaelSet > MichaelSet_RCU_GPI_less_seqcst;
+        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_seqcst, traits_MichaelSet > MichaelSet_RCU_GPB_less_seqcst;
+        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_seqcst, traits_MichaelSet > MichaelSet_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHB_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_RCU_SHT_less_stdAlloc_seqcst;
-#endif
-
-        struct traits_MichaelSet_michaelAlloc :
-            public cc::michael_set::make_traits<
-                co::hash< hash >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        {};
-        typedef MichaelHashSet< cds::gc::HP,  typename ml::MichaelList_HP_cmp_michaelAlloc,  traits_MichaelSet_michaelAlloc > MichaelSet_HP_cmp_michaelAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_DHP_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPI_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPB_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPT_cmp_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_SHB_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_SHT_cmp_michaelAlloc;
-#endif
-
-        typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_HP_less_michaelAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ml::MichaelList_DHP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_DHP_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ml::MichaelList_RCU_GPI_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPI_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ml::MichaelList_RCU_GPB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPB_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_GPT_less_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_SHB_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_RCU_SHT_less_michaelAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_seqcst, traits_MichaelSet > MichaelSet_RCU_SHB_less_seqcst;
+        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_seqcst, traits_MichaelSet > MichaelSet_RCU_SHT_less_seqcst;
 #endif
 
 
@@ -165,74 +137,54 @@ namespace set {
 
         typedef lazy_list_type< Key, Val > ll;
 
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_HP_cmp_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_DHP_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPB_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPT_cmp_stdAlloc;
+        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp, traits_MichaelSet > MichaelSet_Lazy_HP_cmp;
+        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_cmp, traits_MichaelSet > MichaelSet_Lazy_DHP_cmp;
+        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_GPI_cmp;
+        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_GPB_cmp;
+        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHB_cmp_stdAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHT_cmp_stdAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_cmp;
+        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_cmp;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_HP_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_DHP_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPB_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPT_cmp_stdAlloc_stat;
+        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_HP_cmp_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_DHP_cmp_stat;
+        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPI_cmp_stat;
+        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPB_cmp_stat;
+        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHB_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHT_cmp_stdAlloc_stat;
+        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_cmp_stat;
+        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_cmp_stat;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_HP_less_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_DHP_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPI_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPB_less_stdAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPT_less_stdAlloc;
+        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less, traits_MichaelSet > MichaelSet_Lazy_HP_less;
+        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less, traits_MichaelSet > MichaelSet_Lazy_DHP_less;
+        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less, traits_MichaelSet > MichaelSet_Lazy_RCU_GPI_less;
+        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less, traits_MichaelSet > MichaelSet_Lazy_RCU_GPB_less;
+        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHB_less_stdAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHT_less_stdAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less;
+        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_HP_less_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_DHP_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPI_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPB_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPT_less_stdAlloc_stat;
+        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_stat, traits_MichaelSet > MichaelSet_Lazy_HP_less_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_stat, traits_MichaelSet > MichaelSet_Lazy_DHP_less_stat;
+        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPI_less_stat;
+        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPB_less_stat;
+        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHB_less_stdAlloc_stat;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHT_less_stdAlloc_stat;
+        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less_stat;
+        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less_stat;
 #endif
 
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_HP_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_DHP_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPI_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPB_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_GPT_less_stdAlloc_seqcst;
+        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_HP_less_seqcst;
+        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_DHP_less_seqcst;
+        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_GPI_less_seqcst;
+        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_GPB_less_seqcst;
+        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHB_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Lazy_RCU_SHT_less_stdAlloc_seqcst;
-#endif
-
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_HP_cmp_michaelAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_DHP_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPI_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPB_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPT_cmp_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_SHB_cmp_michaelAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_SHT_cmp_michaelAlloc;
-#endif
-
-        typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_HP_less_michaelAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename ll::LazyList_DHP_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_DHP_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpi, typename ll::LazyList_RCU_GPI_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPI_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpb, typename ll::LazyList_RCU_GPB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPB_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_GPT_less_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_SHB_less_michaelAlloc;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_michaelAlloc, traits_MichaelSet_michaelAlloc > MichaelSet_Lazy_RCU_SHT_less_michaelAlloc;
+        typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less_seqcst;
+        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less_seqcst;
 #endif
 
 
@@ -241,55 +193,20 @@ namespace set {
 
         typedef iterable_list_type< Key, Val > il;
 
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_HP_cmp_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_DHP_cmp_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpi, typename il::IterableList_RCU_GPI_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPI_cmp_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpb, typename il::IterableList_RCU_GPB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPB_cmp_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpt, typename il::IterableList_RCU_GPT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPT_cmp_stdAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef MichaelHashSet< rcu_shb, typename il::IterableList_RCU_SHB_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHB_cmp_stdAlloc;
-        //typedef MichaelHashSet< rcu_sht, typename il::IterableList_RCU_SHT_cmp_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHT_cmp_stdAlloc;
-#endif
+        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp, traits_MichaelSet > MichaelSet_Iterable_HP_cmp;
+        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp, traits_MichaelSet > MichaelSet_Iterable_DHP_cmp;
 
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_HP_cmp_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_DHP_cmp_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpi, typename il::IterableList_RCU_GPI_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPI_cmp_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpb, typename il::IterableList_RCU_GPB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPB_cmp_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpt, typename il::IterableList_RCU_GPT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPT_cmp_stdAlloc_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef MichaelHashSet< rcu_shb, typename il::IterableList_RCU_SHB_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHB_cmp_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_sht, typename il::IterableList_RCU_SHT_cmp_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHT_cmp_stdAlloc_stat;
-#endif
+        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp_stat, traits_MichaelSet > MichaelSet_Iterable_HP_cmp_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp_stat, traits_MichaelSet > MichaelSet_Iterable_DHP_cmp_stat;
 
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_HP_less_stdAlloc;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_DHP_less_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpi, typename il::IterableList_RCU_GPI_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPI_less_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpb, typename il::IterableList_RCU_GPB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPB_less_stdAlloc;
-        //typedef MichaelHashSet< rcu_gpt, typename il::IterableList_RCU_GPT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPT_less_stdAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef MichaelHashSet< rcu_shb, typename il::IterableList_RCU_SHB_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHB_less_stdAlloc;
-        //typedef MichaelHashSet< rcu_sht, typename il::IterableList_RCU_SHT_less_stdAlloc, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHT_less_stdAlloc;
-#endif
+        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less, traits_MichaelSet > MichaelSet_Iterable_HP_less;
+        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less, traits_MichaelSet > MichaelSet_Iterable_DHP_less;
 
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_HP_less_stdAlloc_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_DHP_less_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpi, typename il::IterableList_RCU_GPI_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPI_less_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpb, typename il::IterableList_RCU_GPB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPB_less_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_gpt, typename il::IterableList_RCU_GPT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPT_less_stdAlloc_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef MichaelHashSet< rcu_shb, typename il::IterableList_RCU_SHB_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHB_less_stdAlloc_stat;
-        //typedef MichaelHashSet< rcu_sht, typename il::IterableList_RCU_SHT_less_stdAlloc_stat, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHT_less_stdAlloc_stat;
-#endif
+        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_stat, traits_MichaelSet > MichaelSet_Iterable_HP_less_stat;
+        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_stat, traits_MichaelSet > MichaelSet_Iterable_DHP_less_stat;
 
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_HP_less_stdAlloc_seqcst;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_DHP_less_stdAlloc_seqcst;
-        //typedef MichaelHashSet< rcu_gpi, typename il::IterableList_RCU_GPI_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPI_less_stdAlloc_seqcst;
-        //typedef MichaelHashSet< rcu_gpb, typename il::IterableList_RCU_GPB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPB_less_stdAlloc_seqcst;
-        //typedef MichaelHashSet< rcu_gpt, typename il::IterableList_RCU_GPT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_GPT_less_stdAlloc_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef MichaelHashSet< rcu_shb, typename il::IterableList_RCU_SHB_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHB_less_stdAlloc_seqcst;
-        //typedef MichaelHashSet< rcu_sht, typename il::IterableList_RCU_SHT_less_stdAlloc_seqcst, traits_MichaelSet_stdAlloc > MichaelSet_Iterable_RCU_SHT_less_stdAlloc_seqcst;
-#endif
+        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_seqcst, traits_MichaelSet > MichaelSet_Iterable_HP_less_seqcst;
+        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_seqcst, traits_MichaelSet > MichaelSet_Iterable_DHP_less_seqcst;
 
     };
 
@@ -312,40 +229,32 @@ namespace set {
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_stdAlloc,             key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_stdAlloc,             key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_stdAlloc_stat,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_stdAlloc,            key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_stdAlloc,            key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_stdAlloc_stat,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_stdAlloc_stat,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_michaelAlloc,         key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_michaelAlloc,         key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_michaelAlloc,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_michaelAlloc,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_stdAlloc,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_stdAlloc,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_stdAlloc_stat,   key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_stdAlloc_stat,   key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stdAlloc,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stdAlloc,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stdAlloc_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stdAlloc_stat,  key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_michaelAlloc,    key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_michaelAlloc,    key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_michaelAlloc,   key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_michaelAlloc,   key_type, value_type, 0 )
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp,             key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp,             key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_stat,        key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_stat,        key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less,            key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less,            key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_stat,       key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_stat,       key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp,        key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp,        key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_stat,   key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_stat,   key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less,       key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less,       key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stat,  key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stat,  key_type, value_type, 1 ) \
 
 #   define CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stdAlloc,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stdAlloc,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stdAlloc_stat,   key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stdAlloc_stat,   key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stdAlloc,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stdAlloc,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stdAlloc_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stdAlloc_stat,  key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp,        key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp,        key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stat,   key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stat,   key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less,       key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less,       key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stat,  key_type, value_type, 0 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stat,  key_type, value_type, 1 ) \
 
 #else
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type )
@@ -354,89 +263,56 @@ namespace set {
 
 
 #define CDSSTRESS_MichaelSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_stdAlloc,                  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_stdAlloc,                 key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_stdAlloc,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_stdAlloc,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_stdAlloc,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_stdAlloc_stat,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_stdAlloc_stat,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_stdAlloc_stat,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_stdAlloc,                 key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_stdAlloc,                key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_stdAlloc,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_stdAlloc,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_stdAlloc,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_stdAlloc_stat,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_stdAlloc_stat,           key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_stdAlloc_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_stdAlloc_stat,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_stdAlloc_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_michaelAlloc,              key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_michaelAlloc,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_michaelAlloc,         key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_michaelAlloc,         key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_michaelAlloc,         key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_michaelAlloc,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_michaelAlloc,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_michaelAlloc,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_michaelAlloc,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_michaelAlloc,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_stdAlloc,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_stdAlloc,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_stdAlloc,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_stdAlloc,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_stdAlloc_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_stdAlloc_stat,   key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_stdAlloc_stat,   key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_stdAlloc_stat,   key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_stdAlloc,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_stdAlloc,           key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_stdAlloc,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stdAlloc,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stdAlloc,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_stdAlloc_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_stdAlloc_stat,      key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_stdAlloc_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stdAlloc_stat,  key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stdAlloc_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_michaelAlloc,         key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_michaelAlloc,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_michaelAlloc,    key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_michaelAlloc,    key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_michaelAlloc,    key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_michaelAlloc,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_michaelAlloc,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_michaelAlloc,   key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_michaelAlloc,   key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_michaelAlloc,   key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp,                  key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp,             key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_stat,             key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_stat,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_stat,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_stat,        key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_stat,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less,                 key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less,                key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_stat,            key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_stat,           key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_stat,       key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp,        key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp,        key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_stat,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_stat,   key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_stat,   key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_stat,   key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less,       key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less,       key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_stat,      key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_stat,  key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stat,  key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stat,  key_type, value_type, 0 ) \
     CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_MichaelIterableSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stdAlloc,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stdAlloc,            key_type, value_type, 1 ) \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPI_cmp_stdAlloc,        key_type, value_type, 0 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPB_cmp_stdAlloc,        key_type, value_type, 1 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPT_cmp_stdAlloc,        key_type, value_type, 0 )*/ \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stdAlloc_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stdAlloc_stat,       key_type, value_type, 0 ) \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPI_cmp_stdAlloc_stat,   key_type, value_type, 1 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPB_cmp_stdAlloc_stat,   key_type, value_type, 0 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPT_cmp_stdAlloc_stat,   key_type, value_type, 1 )*/ \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stdAlloc,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stdAlloc,           key_type, value_type, 0 ) \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPI_less_stdAlloc,       key_type, value_type, 1 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPB_less_stdAlloc,       key_type, value_type, 0 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPT_less_stdAlloc,       key_type, value_type, 1 )*/ \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stdAlloc_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stdAlloc_stat,      key_type, value_type, 1 ) \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPI_less_stdAlloc_stat,  key_type, value_type, 0 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPB_less_stdAlloc_stat,  key_type, value_type, 1 )*/ \
-    /*CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_GPT_less_stdAlloc_stat,  key_type, value_type, 0 )*/ \
-    /*CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type )*/
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp,             key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stat,        key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less,            key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less,           key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stat,       key_type, value_type, 0 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stat,      key_type, value_type, 1 ) \
 
 #endif // #ifndef CDSUNIT_SET_TYPE_MICHAEL_H

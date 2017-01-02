@@ -43,7 +43,6 @@
 
 #include <cds_test/stress_test.h>
 #include <cds_test/check_size.h>
-#include "framework/michael_alloc.h"
 
 namespace map {
     namespace cc = cds::container;

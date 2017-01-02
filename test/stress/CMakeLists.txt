@@ -4,7 +4,6 @@ set(CDSSTRESS_FRAMEWORK_SOURCES
     framework/city.cpp
     framework/config.cpp
     framework/ellen_bintree_update_desc_pool.cpp
-    framework/michael_alloc.cpp
     framework/stress_test.cpp
 )
 

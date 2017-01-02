@@ -29,6 +29,7 @@
 */
 
 #include "set_type.h"
+#include <cds/os/topology.h>
 
 namespace set {
 

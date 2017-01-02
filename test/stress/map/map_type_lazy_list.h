@@ -49,143 +49,110 @@ namespace map {
         typedef typename map_type_base<Key, Value>::key_less    less;
         typedef typename map_type_base<Key, Value>::equal_to    equal_to;
 
-        struct traits_LazyList_cmp_stdAlloc:
+        struct traits_LazyList_cmp:
             public cc::lazy_list::make_traits<
                 co::compare< compare >
             >::type
         {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_HP_cmp_stdAlloc;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_DHP_cmp_stdAlloc;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_NOGC_cmp_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPI_cmp_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPB_cmp_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_GPT_cmp_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp > LazyList_HP_cmp;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp > LazyList_DHP_cmp;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp > LazyList_NOGC_cmp;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp > LazyList_RCU_GPI_cmp;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp > LazyList_RCU_GPB_cmp;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp > LazyList_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHB_cmp_stdAlloc;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc > LazyList_RCU_SHT_cmp_stdAlloc;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp > LazyList_RCU_SHB_cmp;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp > LazyList_RCU_SHT_cmp;
 #endif
 
-        struct traits_LazyList_cmp_stdAlloc_stat: public traits_LazyList_cmp_stdAlloc
+        struct traits_LazyList_cmp_stat: public traits_LazyList_cmp
         {
             typedef cc::lazy_list::stat<> stat;
         };
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_HP_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_DHP_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_NOGC_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPI_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPB_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_GPT_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stat > LazyList_HP_cmp_stat;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stat > LazyList_DHP_cmp_stat;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stat > LazyList_NOGC_cmp_stat;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_GPI_cmp_stat;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_GPB_cmp_stat;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHB_cmp_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc_stat > LazyList_RCU_SHT_cmp_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_SHB_cmp_stat;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_SHT_cmp_stat;
 #endif
 
-        struct traits_LazyList_unord_stdAlloc :
+        struct traits_LazyList_unord :
             public cc::lazy_list::make_traits<
                 co::equal_to< equal_to >
                 ,co::sort< false >
             >::type
         {};
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_unord_stdAlloc > LazyList_NOGC_unord_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_unord > LazyList_NOGC_unord;
 
-        struct traits_LazyList_cmp_stdAlloc_seqcst :
+        struct traits_LazyList_cmp_seqcst :
             public cc::lazy_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
         {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_HP_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_DHP_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_NOGC_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPI_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPB_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_GPT_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_seqcst > LazyList_HP_cmp_seqcst;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_seqcst > LazyList_DHP_cmp_seqcst;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_seqcst > LazyList_NOGC_cmp_seqcst;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_GPI_cmp_seqcst;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_GPB_cmp_seqcst;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_SHB_cmp_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stdAlloc_seqcst > LazyList_RCU_SHT_cmp_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_SHB_cmp_seqcst;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_SHT_cmp_seqcst;
 #endif
 
-        struct traits_LazyList_cmp_michaelAlloc :
-            public cc::lazy_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_HP_cmp_michaelAlloc;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_DHP_cmp_michaelAlloc;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_NOGC_cmp_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPI_cmp_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPB_cmp_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_GPT_cmp_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHB_cmp_michaelAlloc;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_michaelAlloc > LazyList_RCU_SHT_cmp_michaelAlloc;
-#endif
-
-        struct traits_LazyList_less_stdAlloc :
+        struct traits_LazyList_less :
             public cc::lazy_list::make_traits<
                 co::less< less >
             >::type
         {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc > LazyList_HP_less_stdAlloc;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc > LazyList_DHP_less_stdAlloc;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc > LazyList_NOGC_less_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPI_less_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPB_less_stdAlloc;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_GPT_less_stdAlloc;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less > LazyList_HP_less;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less > LazyList_DHP_less;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less > LazyList_NOGC_less;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less > LazyList_RCU_GPI_less;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less > LazyList_RCU_GPB_less;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less > LazyList_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHB_less_stdAlloc;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc > LazyList_RCU_SHT_less_stdAlloc;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less > LazyList_RCU_SHB_less;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less > LazyList_RCU_SHT_less;
 #endif
 
-        struct traits_LazyList_less_stdAlloc_stat: public traits_LazyList_less_stdAlloc
+        struct traits_LazyList_less_stat: public traits_LazyList_less
         {
             typedef cc::lazy_list::stat<> stat;
         };
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_HP_less_stdAlloc_stat;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_DHP_less_stdAlloc_stat;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_NOGC_less_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPI_less_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPB_less_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_GPT_less_stdAlloc_stat;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stat > LazyList_HP_less_stat;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stat > LazyList_DHP_less_stat;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stat > LazyList_NOGC_less_stat;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stat > LazyList_RCU_GPI_less_stat;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stat > LazyList_RCU_GPB_less_stat;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stat > LazyList_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHB_less_stdAlloc_stat;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc_stat > LazyList_RCU_SHT_less_stdAlloc_stat;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stat > LazyList_RCU_SHB_less_stat;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stat > LazyList_RCU_SHT_less_stat;
 #endif
 
-        struct traits_LazyList_less_stdAlloc_seqcst :
+        struct traits_LazyList_less_seqcst :
             public cc::lazy_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
         {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_HP_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_DHP_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_NOGC_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPI_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPB_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_GPT_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_seqcst > LazyList_HP_less_seqcst;
+        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_seqcst > LazyList_DHP_less_seqcst;
+        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_seqcst > LazyList_NOGC_less_seqcst;
+        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_GPI_less_seqcst;
+        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_GPB_less_seqcst;
+        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_SHB_less_stdAlloc_seqcst;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stdAlloc_seqcst > LazyList_RCU_SHT_less_stdAlloc_seqcst;
+        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_SHB_less_seqcst;
+        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_SHT_less_seqcst;
 #endif
 
-        struct traits_LazyList_less_michaelAlloc :
-            public cc::lazy_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        {};
-        typedef cc::LazyKVList< cds::gc::HP, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_HP_less_michaelAlloc;
-        typedef cc::LazyKVList< cds::gc::DHP, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_DHP_less_michaelAlloc;
-        typedef cc::LazyKVList< cds::gc::nogc, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_NOGC_less_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpi, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPI_less_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpb, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPB_less_michaelAlloc;
-        typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_GPT_less_michaelAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_SHB_less_michaelAlloc;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_michaelAlloc > LazyList_RCU_SHT_less_michaelAlloc;
-#endif
     };
 
 } // namespace map

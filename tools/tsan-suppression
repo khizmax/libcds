@@ -25,6 +25,3 @@ race:cds::intrusive::MSPriorityQueue
 
 #TODO: gc::DHP must be reimplemented ASAP
 race:cds::gc::dhp::GarbageCollector::scan
-
-#TODO: temporary suppressed. Must be researched later
-race:cds::memory::michael::Heap

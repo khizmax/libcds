@@ -93,9 +93,6 @@
     <Filter Include="Header Files\cds\memory">
       <UniqueIdentifier>{5c631093-3ca2-4a36-acf7-2d9368b65366}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\memory\michael">
-      <UniqueIdentifier>{b7cdb65c-15d3-4655-abec-1e4640271432}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\opt">
       <UniqueIdentifier>{fe7576b4-d93f-473a-8522-493feac51996}</UniqueIdentifier>
     </Filter>
@@ -159,9 +156,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\init.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\michael_heap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\topology_hpux.cpp">
@@ -426,21 +420,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\os\details\fake_topology.h">
       <Filter>Header Files\cds\OS\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\michael\allocator.h">
-      <Filter>Header Files\cds\memory\michael</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\michael\bound_check.h">
-      <Filter>Header Files\cds\memory\michael</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\michael\options.h">
-      <Filter>Header Files\cds\memory\michael</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\michael\osalloc_stat.h">
-      <Filter>Header Files\cds\memory\michael</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\memory\michael\procheap_stat.h">
-      <Filter>Header Files\cds\memory\michael</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\opt\buffer.h">
       <Filter>Header Files\cds\opt</Filter>

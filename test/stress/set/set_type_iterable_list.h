@@ -46,93 +46,51 @@ namespace set {
         typedef typename set_type_base< Key, Val >::compare compare;
         typedef typename set_type_base< Key, Val >::less    less;
 
-        struct traits_IterableList_cmp_stdAlloc:
+        struct traits_IterableList_cmp:
             public cc::iterable_list::make_traits<
                 co::compare< compare >
             >::type
         {};
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp_stdAlloc > IterableList_HP_cmp_stdAlloc;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp_stdAlloc > IterableList_DHP_cmp_stdAlloc;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPI_cmp_stdAlloc;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPB_cmp_stdAlloc;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPT_cmp_stdAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_cmp_stdAlloc > IterableList_RCU_SHB_cmp_stdAlloc;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_cmp_stdAlloc > IterableList_RCU_SHT_cmp_stdAlloc;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp > IterableList_HP_cmp;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp > IterableList_DHP_cmp;
 
-        struct traits_IterableList_cmp_stdAlloc_stat: public traits_IterableList_cmp_stdAlloc
+        struct traits_IterableList_cmp_stat: public traits_IterableList_cmp
         {
             typedef cc::iterable_list::stat<> stat;
         };
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_HP_cmp_stdAlloc_stat;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_DHP_cmp_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPI_cmp_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPB_cmp_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPT_cmp_stdAlloc_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_SHB_cmp_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_SHT_cmp_stdAlloc_stat;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp_stat > IterableList_HP_cmp_stat;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp_stat > IterableList_DHP_cmp_stat;
 
-        struct traits_IterableList_cmp_stdAlloc_seqcst : public traits_IterableList_cmp_stdAlloc
+        struct traits_IterableList_cmp_seqcst : public traits_IterableList_cmp
         {
             typedef co::v::sequential_consistent memory_model;
         };
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_HP_cmp_stdAlloc_seqcst;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_DHP_cmp_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPI_cmp_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPB_cmp_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPT_cmp_stdAlloc_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_SHB_cmp_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_SHT_cmp_stdAlloc_seqcst;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_cmp_seqcst > IterableList_HP_cmp_seqcst;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_cmp_seqcst > IterableList_DHP_cmp_seqcst;
 
-        struct traits_IterableList_less_stdAlloc :
+        struct traits_IterableList_less :
             public cc::iterable_list::make_traits<
                 co::less< less >
             >::type
         {};
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less_stdAlloc > IterableList_HP_less_stdAlloc;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less_stdAlloc > IterableList_DHP_less_stdAlloc;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_less_stdAlloc > IterableList_RCU_GPI_less_stdAlloc;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_less_stdAlloc > IterableList_RCU_GPB_less_stdAlloc;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_less_stdAlloc > IterableList_RCU_GPT_less_stdAlloc;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_less_stdAlloc > IterableList_RCU_SHB_less_stdAlloc;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_less_stdAlloc > IterableList_RCU_SHT_less_stdAlloc;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less > IterableList_HP_less;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less > IterableList_DHP_less;
 
-        struct traits_IterableList_less_stdAlloc_stat : public traits_IterableList_less_stdAlloc
+        struct traits_IterableList_less_stat : public traits_IterableList_less
         {
             typedef cc::iterable_list::stat<> stat;
         };
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less_stdAlloc_stat > IterableList_HP_less_stdAlloc_stat;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_DHP_less_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPI_less_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPB_less_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPT_less_stdAlloc_stat;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_SHB_less_stdAlloc_stat;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_SHT_less_stdAlloc_stat;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less_stat > IterableList_HP_less_stat;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less_stat > IterableList_DHP_less_stat;
 
-        struct traits_IterableList_less_stdAlloc_seqcst :
+        struct traits_IterableList_less_seqcst :
             public cc::iterable_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
         {};
-        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_HP_less_stdAlloc_seqcst;
-        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_DHP_less_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpi, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPI_less_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpb, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPB_less_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_gpt, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPT_less_stdAlloc_seqcst;
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //typedef cc::IterableList< rcu_shb, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_SHB_less_stdAlloc_seqcst;
-        //typedef cc::IterableList< rcu_sht, key_val, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_SHT_less_stdAlloc_seqcst;
-#endif
+        typedef cc::IterableList< cds::gc::HP,  key_val, traits_IterableList_less_seqcst > IterableList_HP_less_seqcst;
+        typedef cc::IterableList< cds::gc::DHP, key_val, traits_IterableList_less_seqcst > IterableList_DHP_less_seqcst;
 
     };
 

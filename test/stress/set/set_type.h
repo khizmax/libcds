@@ -41,7 +41,6 @@
 #include <cds/sync/spinlock.h>
 
 #include <cds_test/stress_test.h>
-#include "framework/michael_alloc.h"
 
 namespace set {
     namespace cc = cds::container;

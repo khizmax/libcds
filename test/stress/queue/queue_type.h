@@ -46,7 +46,6 @@
 
 #include "std_queue.h"
 #include "lock/win32_lock.h"
-#include "framework/michael_alloc.h"
 
 #include <boost/container/deque.hpp>
 
@@ -136,15 +135,6 @@ namespace queue {
         typedef cds::container::MoirQueue<cds::gc::HP, Value > MoirQueue_HP;
         typedef cds::container::MoirQueue<cds::gc::DHP, Value > MoirQueue_DHP;
 
-        struct traits_MSQueue_michaelAlloc : public cds::container::msqueue::traits
-        {
-            typedef memory::MichaelAllocator<int>  allocator;
-        };
-        typedef cds::container::MSQueue<cds::gc::HP,  Value, traits_MSQueue_michaelAlloc > MSQueue_HP_michaelAlloc;
-        typedef cds::container::MSQueue<cds::gc::DHP, Value, traits_MSQueue_michaelAlloc > MSQueue_DHP_michaelAlloc;
-        typedef cds::container::MoirQueue<cds::gc::HP, Value, traits_MSQueue_michaelAlloc > MoirQueue_HP_michaelAlloc;
-        typedef cds::container::MoirQueue<cds::gc::DHP, Value, traits_MSQueue_michaelAlloc > MoirQueue_DHP_michaelAlloc;
-
         struct traits_MSQueue_seqcst : public
             cds::container::msqueue::make_traits <
                 cds::opt::memory_model < cds::opt::v::sequential_consistent >
@@ -181,13 +171,6 @@ namespace queue {
         // OptimisticQueue
         typedef cds::container::OptimisticQueue< cds::gc::HP, Value > OptimisticQueue_HP;
         typedef cds::container::OptimisticQueue< cds::gc::DHP, Value > OptimisticQueue_DHP;
-
-        struct traits_OptimisticQueue_michaelAlloc : public cds::container::optimistic_queue::traits
-        {
-            typedef memory::MichaelAllocator<int> allocator;
-        };
-        typedef cds::container::OptimisticQueue< cds::gc::HP,  Value, traits_OptimisticQueue_michaelAlloc > OptimisticQueue_HP_michaelAlloc;
-        typedef cds::container::OptimisticQueue< cds::gc::DHP, Value, traits_OptimisticQueue_michaelAlloc > OptimisticQueue_DHP_michaelAlloc;
 
         struct traits_OptimisticQueue_seqcst : public cds::container::optimistic_queue::traits
         {
@@ -235,28 +218,6 @@ namespace queue {
             }
         };
 
-        struct traits_VyukovMPMCCycleQueue_dyn_michaelAlloc : public cds::container::vyukov_queue::traits
-        {
-            typedef cds::opt::v::uninitialized_dynamic_buffer< int, memory::MichaelAllocator<int> > buffer;
-        };
-        class VyukovMPMCCycleQueue_dyn_michaelAlloc
-            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_michaelAlloc >
-        {
-            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPMCCycleQueue_dyn_michaelAlloc > base_class;
-        public:
-            VyukovMPMCCycleQueue_dyn_michaelAlloc()
-                : base_class( 1024 * 64 )
-            {}
-            VyukovMPMCCycleQueue_dyn_michaelAlloc( size_t nCapacity )
-                : base_class( nCapacity )
-            {}
-
-            cds::opt::none statistics() const
-            {
-                return cds::opt::none();
-            }
-        };
-
         struct traits_VyukovMPMCCycleQueue_dyn_ic : public traits_VyukovMPMCCycleQueue_dyn
         {
             typedef cds::atomicity::item_counter item_counter;
@@ -284,13 +245,6 @@ namespace queue {
 
         typedef cds::container::BasketQueue< cds::gc::HP , Value > BasketQueue_HP;
         typedef cds::container::BasketQueue< cds::gc::DHP, Value > BasketQueue_DHP;
-
-        struct traits_BasketQueue_michaelAlloc : public cds::container::basket_queue::traits
-        {
-            typedef memory::MichaelAllocator<int> allocator;
-        };
-        typedef cds::container::BasketQueue< cds::gc::HP,  Value, traits_BasketQueue_michaelAlloc > BasketQueue_HP_michaelAlloc;
-        typedef cds::container::BasketQueue< cds::gc::DHP, Value, traits_BasketQueue_michaelAlloc > BasketQueue_DHP_michaelAlloc;
 
         struct traits_BasketQueue_seqcst : public cds::container::basket_queue::traits
         {
@@ -594,48 +548,40 @@ namespace cds_test {
 
 #define CDSSTRESS_MSQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_HP,                0 ) \
-    CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_michaelAlloc,   0 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_seqcst,         2 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_ic,             1 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_HP_stat,           0 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP,               0 ) \
-    CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_michaelAlloc,  0 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_seqcst,        2 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_ic,            1 ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_stat,          0 )
 
 #define CDSSTRESS_MoirQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP,              0 ) \
-    CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_michaelAlloc, 0 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_seqcst,       2 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_ic,           1 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP_stat,         0 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP,             0 ) \
-    CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_michaelAlloc,0 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_seqcst,      2 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_ic,          1 ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_DHP_stat,        0 )
 
 #define CDSSTRESS_OptimsticQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP,                0 ) \
-    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_michaelAlloc,   0 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_seqcst,         2 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_ic,             1 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_HP_stat,           0 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP,               0 ) \
-    CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_michaelAlloc,  0 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_seqcst,        2 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_ic,            1 ) \
     CDSSTRESS_Queue_F( test_fixture, OptimisticQueue_DHP_stat,          0 )
 
 #define CDSSTRESS_BasketQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP,                0 ) \
-    CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_michaelAlloc,   0 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_seqcst,         2 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_ic,             1 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_HP_stat,           0 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP,               0 ) \
-    CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_michaelAlloc,  0 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_seqcst,        2 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_ic,            1 ) \
     CDSSTRESS_Queue_F( test_fixture, BasketQueue_DHP_stat,          0 )
@@ -716,7 +662,6 @@ namespace cds_test {
 
 #define CDSSTRESS_VyukovQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn,              0 ) \
-    CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_michaelAlloc, 0 ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_ic,           1 )
 
 #define CDSSTRESS_StdQueue( test_fixture ) \

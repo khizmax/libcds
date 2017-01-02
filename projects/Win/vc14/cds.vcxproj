@@ -371,7 +371,6 @@
     <ClCompile Include="..\..\..\src\dllmain.cpp" />
     <ClCompile Include="..\..\..\src\hp_gc.cpp" />
     <ClCompile Include="..\..\..\src\init.cpp" />
-    <ClCompile Include="..\..\..\src\michael_heap.cpp" />
     <ClCompile Include="..\..\..\src\topology_hpux.cpp" />
     <ClCompile Include="..\..\..\src\topology_linux.cpp" />
     <ClCompile Include="..\..\..\src\topology_osx.cpp" />
@@ -687,11 +686,6 @@
     <ClInclude Include="..\..\..\cds\os\free_bsd\timer.h" />
     <ClInclude Include="..\..\..\cds\os\free_bsd\topology.h" />
     <ClInclude Include="..\..\..\cds\os\details\fake_topology.h" />
-    <ClInclude Include="..\..\..\cds\memory\michael\allocator.h" />
-    <ClInclude Include="..\..\..\cds\memory\michael\bound_check.h" />
-    <ClInclude Include="..\..\..\cds\memory\michael\options.h" />
-    <ClInclude Include="..\..\..\cds\memory\michael\osalloc_stat.h" />
-    <ClInclude Include="..\..\..\cds\memory\michael\procheap_stat.h" />
     <ClInclude Include="..\..\..\cds\opt\buffer.h" />
     <ClInclude Include="..\..\..\cds\opt\compare.h" />
     <ClInclude Include="..\..\..\cds\opt\hash.h" />

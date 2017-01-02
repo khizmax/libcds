@@ -46,127 +46,55 @@ namespace map {
         typedef typename map_type_base<Key, Value>::key_compare compare;
         typedef typename map_type_base<Key, Value>::key_less    less;
 
-        struct traits_IterableList_cmp_stdAlloc :
+        struct traits_IterableList_cmp :
             public cc::iterable_list::make_traits<
                 co::compare< compare >
             >::type
         {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_HP_cmp_stdAlloc;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_DHP_cmp_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPI_cmp_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPB_cmp_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_RCU_GPT_cmp_stdAlloc;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_RCU_SHB_cmp_stdAlloc;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_cmp_stdAlloc > IterableList_RCU_SHT_cmp_stdAlloc;
-//#endif
+        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_cmp > IterableList_HP_cmp;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp > IterableList_DHP_cmp;
 
-        struct traits_IterableList_cmp_stdAlloc_stat: public traits_IterableList_cmp_stdAlloc
+        struct traits_IterableList_cmp_stat: public traits_IterableList_cmp
         {
             typedef cc::iterable_list::stat<> stat;
         };
-        typedef cc::IterableKVList< cds::gc::HP, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_HP_cmp_stdAlloc_stat;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_DHP_cmp_stdAlloc_stat;
-        //        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPI_cmp_stdAlloc_stat;
-        //        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPB_cmp_stdAlloc_stat;
-        //        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_GPT_cmp_stdAlloc_stat;
-        //#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        //        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_SHB_cmp_stdAlloc_stat;
-        //        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_cmp_stdAlloc_stat > IterableList_RCU_SHT_cmp_stdAlloc_stat;
-        //#endif
+        typedef cc::IterableKVList< cds::gc::HP, Key, Value, traits_IterableList_cmp_stat > IterableList_HP_cmp_stat;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_stat > IterableList_DHP_cmp_stat;
 
-        struct traits_IterableList_cmp_stdAlloc_seqcst :
+        struct traits_IterableList_cmp_seqcst :
             public cc::iterable_list::make_traits<
                 co::compare< compare >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
         {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_HP_cmp_stdAlloc_seqcst;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_DHP_cmp_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPI_cmp_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPB_cmp_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_GPT_cmp_stdAlloc_seqcst;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_SHB_cmp_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_cmp_stdAlloc_seqcst > IterableList_RCU_SHT_cmp_stdAlloc_seqcst;
-//#endif
+        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_cmp_seqcst > IterableList_HP_cmp_seqcst;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_seqcst > IterableList_DHP_cmp_seqcst;
 
-        struct traits_IterableList_cmp_michaelAlloc :
-            public cc::iterable_list::make_traits<
-                co::compare< compare >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_HP_cmp_michaelAlloc;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_DHP_cmp_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_RCU_GPI_cmp_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_RCU_GPB_cmp_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_RCU_GPT_cmp_michaelAlloc;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_RCU_SHB_cmp_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_cmp_michaelAlloc > IterableList_RCU_SHT_cmp_michaelAlloc;
-//#endif
 
-        struct traits_IterableList_less_stdAlloc :
+        struct traits_IterableList_less :
             public cc::iterable_list::make_traits<
                 co::less< less >
             >::type
         {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_less_stdAlloc > IterableList_HP_less_stdAlloc;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_stdAlloc > IterableList_DHP_less_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_less_stdAlloc > IterableList_RCU_GPI_less_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_less_stdAlloc > IterableList_RCU_GPB_less_stdAlloc;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_less_stdAlloc > IterableList_RCU_GPT_less_stdAlloc;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_less_stdAlloc > IterableList_RCU_SHB_less_stdAlloc;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_less_stdAlloc > IterableList_RCU_SHT_less_stdAlloc;
-//#endif
+        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_less > IterableList_HP_less;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less > IterableList_DHP_less;
 
-        struct traits_IterableList_less_stdAlloc_stat: public traits_IterableList_less_stdAlloc
+        struct traits_IterableList_less_stat: public traits_IterableList_less
         {
             typedef cc::iterable_list::stat<> stat;
         };
-        typedef cc::IterableKVList< cds::gc::HP, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_HP_less_stdAlloc_stat;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_DHP_less_stdAlloc_stat;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPI_less_stdAlloc_stat;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPB_less_stdAlloc_stat;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_GPT_less_stdAlloc_stat;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_SHB_less_stdAlloc_stat;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_less_stdAlloc_stat > IterableList_RCU_SHT_less_stdAlloc_stat;
-//#endif
+        typedef cc::IterableKVList< cds::gc::HP, Key, Value, traits_IterableList_less_stat > IterableList_HP_less_stat;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_stat > IterableList_DHP_less_stat;
 
-        struct traits_IterableList_less_stdAlloc_seqcst :
+        struct traits_IterableList_less_seqcst :
             public cc::iterable_list::make_traits<
                 co::less< less >
                 ,co::memory_model< co::v::sequential_consistent >
             >::type
         {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_HP_less_stdAlloc_seqcst;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_DHP_less_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPI_less_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPB_less_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_GPT_less_stdAlloc_seqcst;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_SHB_less_stdAlloc_seqcst;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_less_stdAlloc_seqcst > IterableList_RCU_SHT_less_stdAlloc_seqcst;
-//#endif
+        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_less_seqcst > IterableList_HP_less_seqcst;
+        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_seqcst > IterableList_DHP_less_seqcst;
 
-        struct traits_IterableList_less_michaelAlloc :
-            public cc::iterable_list::make_traits<
-                co::less< less >,
-                co::allocator< memory::MichaelAllocator<int> >
-            >::type
-        {};
-        typedef cc::IterableKVList< cds::gc::HP,  Key, Value, traits_IterableList_less_michaelAlloc > IterableList_HP_less_michaelAlloc;
-        typedef cc::IterableKVList< cds::gc::DHP, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_DHP_less_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpi, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_RCU_GPI_less_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpb, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_RCU_GPB_less_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_gpt, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_RCU_GPT_less_michaelAlloc;
-//#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-//        typedef cc::IterableKVList< rcu_shb, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_RCU_SHB_less_michaelAlloc;
-//        typedef cc::IterableKVList< rcu_sht, Key, Value, traits_IterableList_less_michaelAlloc > IterableList_RCU_SHT_less_michaelAlloc;
-//#endif
     };
 
 } // namespace map
