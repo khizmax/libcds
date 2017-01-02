@@ -123,8 +123,6 @@ namespace cds { namespace container {
                 To enable it use \p iterable_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consistent memory model).
-            - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_IterableList_rcu "RCU-based IterableList"
-                Default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>
         struct make_traits {

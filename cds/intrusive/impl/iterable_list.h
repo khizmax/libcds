@@ -108,7 +108,6 @@ namespace cds { namespace intrusive {
         You should select GC you want and include appropriate .h-file:
         - for \p gc::HP: <tt> <cds/intrusive/iterable_list_hp.h> </tt>
         - for \p gc::DHP: <tt> <cds/intrusive/iterable_list_dhp.h> </tt>
-        - for \ref cds_urcu_gc "RCU type" - see \ref cds_intrusive_IterableList_rcu "RCU-based IterableList"
     */
     template <
         class GC

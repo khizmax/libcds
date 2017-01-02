@@ -221,12 +221,6 @@ namespace cds { namespace intrusive {
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             */
             typedef opt::v::relaxed_ordering        memory_model;
-
-            /// RCU deadlock checking policy (only for \ref cds_intrusive_IterableList_rcu "RCU-based IterableList")
-            /**
-                List of available policy see \p opt::rcu_check_deadlock
-            */
-            typedef opt::v::rcu_throw_deadlock      rcu_check_deadlock;
         };
 
         /// Metafunction converting option list to \p iterable_list::traits
@@ -245,8 +239,6 @@ namespace cds { namespace intrusive {
                 To enable it use \p iterable_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consistent memory model).
-            - \p opt::rcu_check_deadlock - a deadlock checking policy for \ref cds_intrusive_IterableList_rcu "RCU-based IterableList"
-                Default is \p opt::v::rcu_throw_deadlock
         */
         template <typename... Options>
         struct make_traits {
