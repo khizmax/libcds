@@ -130,10 +130,6 @@ References
              Implementations of Read-Copy Update"
              [pdf](http://www.dorsal.polymtl.ca/sites/www.dorsal.polymtl.ca/files/publications/desnoyers-ieee-urcu-submitted.pdf)
 
-*Memory allocation*
-  - [2004] M.Michael "Scalable Lock-free Dynamic Memory Allocation"
-            [pdf](http://www.research.ibm.com/people/m/michael/pldi-2004.pdf)
-
 *Flat Combining* technique
   - [2010] Hendler, Incze, Shavit and Tzafrir "Flat Combining and the Synchronization-Parallelism Tradeoff"
             [pdf](http://www.cs.bgu.ac.il/~hendlerd/papers/flat-combining.pdf)

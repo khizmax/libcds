@@ -24,6 +24,7 @@
       ones. The old cds::opt::v::dynamic_buffer and cds::opt::v::static_buffer classes
       are removed.
     - Removed: TsigasCysleQueue (due undecidable ABA-problem)
+    - Removed: Michael's allocator cds/memory/michael/allocator.h
     - Fixed: use-after-free bug in VyukovMPMCCycleQueue internal buffer.
       To prevent this bug the queue uses an uninitialized buffer now.
     - Fixed: rare priority inversion bug in MSPriorityQueue
