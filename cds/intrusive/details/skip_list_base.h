@@ -92,7 +92,7 @@ namespace cds { namespace intrusive {
 
                 m_arrNext = nextTower;
                 m_nHeight = nHeight;
-                m_nUnlink.store( nHeight, atomics::memory_order_relaxed );
+                m_nUnlink.store( nHeight, atomics::memory_order_release );
             }
 
             //@cond
@@ -408,7 +408,7 @@ namespace cds { namespace intrusive {
             event_counter   m_nFindSlowFailed       ; ///< Count of failed call of \p find and all derivatives (via slow-path)
             event_counter   m_nRenewInsertPosition  ; ///< Count of renewing position events while inserting
             event_counter   m_nLogicDeleteWhileInsert; ///< Count of events "The node has been logically deleted while inserting"
-            event_counter   m_nNotFoundWhileInsert  ; ///< Count of events "Inserting node is not found"
+            event_counter   m_nRemoveWhileInsert    ; ///< Count of evnts "The node is removing while inserting"
             event_counter   m_nFastErase            ; ///< Fast erase event counter
             event_counter   m_nFastExtract          ; ///< Fast extract event counter
             event_counter   m_nSlowErase            ; ///< Slow erase event counter
@@ -457,7 +457,7 @@ namespace cds { namespace intrusive {
             void onExtractWhileFind()       { ++m_nExtractWhileFind ; }
             void onRenewInsertPosition()    { ++m_nRenewInsertPosition; }
             void onLogicDeleteWhileInsert() { ++m_nLogicDeleteWhileInsert; }
-            void onNotFoundWhileInsert()    { ++m_nNotFoundWhileInsert; }
+            void onRemoveWhileInsert()      { ++m_nRemoveWhileInsert; }
             void onFastErase()              { ++m_nFastErase;         }
             void onFastExtract()            { ++m_nFastExtract;       }
             void onSlowErase()              { ++m_nSlowErase;         }
@@ -499,7 +499,7 @@ namespace cds { namespace intrusive {
             void onExtractWhileFind()       const {}
             void onRenewInsertPosition()    const {}
             void onLogicDeleteWhileInsert() const {}
-            void onNotFoundWhileInsert()    const {}
+            void onRemoveWhileInsert()      const {}
             void onFastErase()              const {}
             void onFastExtract()            const {}
             void onSlowErase()              const {}

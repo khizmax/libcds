@@ -337,10 +337,12 @@ namespace cds {}
 
 // CDS_VERIFY: Debug - assert(_expr); Release - _expr
 #ifdef CDS_DEBUG
-#   define CDS_VERIFY( _expr )    assert( _expr )
+#   define CDS_VERIFY( _expr )       assert( _expr )
+#   define CDS_VERIFY_FALSE( _expr ) assert( !( _expr ))
 #   define CDS_DEBUG_ONLY( _expr )        _expr
 #else
 #   define CDS_VERIFY( _expr )    _expr
+#   define CDS_VERIFY_FALSE( _expr ) _expr
 #   define CDS_DEBUG_ONLY( _expr )
 #endif
 

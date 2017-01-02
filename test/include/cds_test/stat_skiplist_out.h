@@ -75,7 +75,7 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nFindSlowFailed )
             << CDSSTRESS_STAT_OUT( s, m_nRenewInsertPosition )
             << CDSSTRESS_STAT_OUT( s, m_nLogicDeleteWhileInsert )
-            << CDSSTRESS_STAT_OUT( s, m_nNotFoundWhileInsert )
+            << CDSSTRESS_STAT_OUT( s, m_nRemoveWhileInsert )
             << CDSSTRESS_STAT_OUT( s, m_nFastErase )
             << CDSSTRESS_STAT_OUT( s, m_nSlowErase )
             << CDSSTRESS_STAT_OUT( s, m_nFastExtract )
