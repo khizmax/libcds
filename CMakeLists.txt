@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12)
+
 cmake_policy(SET CMP0016 NEW)
+cmake_policy(SET CMP0042 NEW)
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
 include(TargetArch)
 
@@ -15,48 +18,59 @@ option(WITH_ASAN "Build AddressSantinizer instrumented code" OFF)
 option(WITH_TSAN "Build ThreadSantinizer instrumented code" OFF)
 
 find_package(Threads REQUIRED)
-find_package(Boost 1.50 COMPONENTS system thread REQUIRED)
+
+if(TARGET boost::system AND TARGET boost::thread)
+    link_libraries(boost::system boost::thread)
+else()
+    find_package(Boost 1.50 COMPONENTS system thread)
+endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
 target_architecture(CMAKE_TARGET_ARCHITECTURE)
 
 if(WITH_BOOST_ATOMIC)
-  if(${Boost_MINOR_VERSION} GREATER 53)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDS_USE_BOOST_ATOMIC")
-    message(STATUS "Boost version allows using of boost.atomic: activated")
-  endif()
+    if(Boost_FOUND)
+        if(${Boost_MINOR_VERSION} GREATER 53)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDS_USE_BOOST_ATOMIC")
+            message(STATUS "Boost version allows using of boost.atomic: activated")
+        endif()
+    else()
+        if(TARGET boost::atomic)
+            link_libraries(boost::atomic)
+        endif()
+    endif()
 endif(WITH_BOOST_ATOMIC)
 
 if(WITH_ASAN)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=address -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -fsanitize=address -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -pie")
-  else()
-    message(WARNING "Compiler does not support AddressSanitizer")
-  endif()
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=address -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -fsanitize=address -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -pie")
+    else()
+        message(WARNING "Compiler does not support AddressSanitizer")
+    endif()
 endif(WITH_ASAN)
 
 if(WITH_TSAN)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=thread -g -DCDS_THREAD_SANITIZER_ENABLED -fno-omit-frame-pointer")
-    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=thread -g -DCDS_THREAD_SANITIZER_ENABLED -fno-omit-frame-pointer")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=thread -pie")
-  else()
-    message(WARNING "Compiler does not support ThreadSanitizer")
-  endif()
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=thread -g -DCDS_THREAD_SANITIZER_ENABLED -fno-omit-frame-pointer")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -O1 -fPIC -fsanitize=thread -g -DCDS_THREAD_SANITIZER_ENABLED -fno-omit-frame-pointer")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=thread -pie")
+    else()
+        message(WARNING "Compiler does not support ThreadSanitizer")
+    endif()
 endif(WITH_TSAN)
 
 if(WITH_TESTS_COVERAGE)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
-    message(STATUS "Test coverage analysis: activated")
-  else()
-	message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
-  endif()  
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+        message(STATUS "Test coverage analysis: activated")
+    else()
+        message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
+    endif()
 endif(WITH_TESTS_COVERAGE)
 
 set(CDS_SHARED_LIBRARY ${PROJECT_NAME})
@@ -75,32 +89,36 @@ endif()
 message(STATUS "Binary output path: ${EXECUTABLE_OUTPUT_PATH}")
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -fno-strict-aliasing")  
-  if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16")
-    set(LIB_SUFFIX "64")
-  endif()    
-  if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.0.0")
-#   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")  
-  endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -fno-strict-aliasing")
+    if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16")
+        set(LIB_SUFFIX "64")
+    endif()
+    if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.0.0")
+        #   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")
+    endif()
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 message("Build type -- ${CMAKE_BUILD_TYPE}")
 message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-MESSAGE("Target architecture: ${CMAKE_TARGET_ARCHITECTURE}")
-if (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-  message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+message("Target architecture: ${CMAKE_TARGET_ARCHITECTURE}")
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 else()
-  message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
-message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
+if(Boost_FOUND)
+    message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
+else()
+    message("Boost: Using CMake-fied boost")
+endif()
 
 
 include_directories(${PROJECT_SOURCE_DIR})
@@ -110,19 +128,19 @@ set(LIBRARIES_COMPONENT lib)
 set(HEADERS_COMPONENT devel)
 
 set(SOURCES src/hp_gc.cpp
-            src/init.cpp
-            src/dhp_gc.cpp
-            src/urcu_gp.cpp
-            src/urcu_sh.cpp
-            src/michael_heap.cpp
-            src/topology_hpux.cpp
-            src/topology_linux.cpp
-            src/topology_osx.cpp
-            src/dllmain.cpp)
+        src/init.cpp
+        src/dhp_gc.cpp
+        src/urcu_gp.cpp
+        src/urcu_sh.cpp
+        src/michael_heap.cpp
+        src/topology_hpux.cpp
+        src/topology_linux.cpp
+        src/topology_osx.cpp
+        src/dllmain.cpp)
 
 add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES})
-set_target_properties( ${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
-                                                        DEBUG_POSTFIX "_d")
+set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
+        DEBUG_POSTFIX "_d")
 add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
 target_link_libraries(${CDS_SHARED_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
@@ -134,9 +152,9 @@ install(TARGETS ${CDS_STATIC_LIBRARY} DESTINATION lib${LIB_SUFFIX} COMPONENT ${L
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEADERS_COMPONENT})
 
 if(WITH_TESTS)
-  enable_testing()
-  add_subdirectory(${PROJECT_SOURCE_DIR}/test)
-  message(STATUS "Build tests: activated")
+    enable_testing()
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+    message(STATUS "Build tests: activated")
 endif(WITH_TESTS)
 
 ### FOR PACKAGING in RPM, TGZ, DEB, NSYS...###############################################################################
@@ -170,7 +188,7 @@ set(CPACK_RPM_devel_PACKAGE_REQUIRES "boost >= 1.50, cds-lib = ${PROJECT_VERSION
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost (>= 1.50)")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/khizmax/libcds")
-set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${PROJECT_SOURCE_DIR}/build/cmake/post_install_script.sh;;${PROJECT_SOURCE_DIR}/build/cmake/post_uninstall_script.sh;" )
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${PROJECT_SOURCE_DIR}/build/cmake/post_install_script.sh;;${PROJECT_SOURCE_DIR}/build/cmake/post_uninstall_script.sh;")
 
 # NSYS specific
 set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
