@@ -69,7 +69,7 @@ OUTPUT_LANGUAGE        = English
 
 BRIEF_MEMBER_DESC      = YES
 
-MARKDOWN_SUPPORT = YES
+MARKDOWN_SUPPORT = NO
 
 # If the REPEAT_BRIEF tag is set to YES (the default) Doxygen will prepend 
 # the brief description of a member or function before the detailed description. 
