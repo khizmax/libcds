@@ -133,16 +133,16 @@ namespace cds {
             }
 
             // construct default allocator (do nothing)
-            aligned_allocator() throw()
+            aligned_allocator() CDS_NOEXCEPT
             {}
 
             /// construct by copying (do nothing)
-            aligned_allocator(const aligned_allocator<T>&) throw()
+            aligned_allocator(const aligned_allocator<T>&) CDS_NOEXCEPT
             {}
 
             /// construct from a related allocator (do nothing)
             template <class OTHER>
-            aligned_allocator(const aligned_allocator<OTHER>&) throw()
+            aligned_allocator(const aligned_allocator<OTHER>&) CDS_NOEXCEPT
             {}
 
             /// assign from a related allocator (do nothing)
@@ -209,7 +209,7 @@ namespace cds {
             }
 
             /// estimate maximum array size
-            size_type max_size() const throw()
+            size_type max_size() const CDS_NOEXCEPT
             {
                 prototype a;
                 return a.max_size();
