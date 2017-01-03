@@ -36,7 +36,7 @@
 namespace cds { namespace sync {
     /**
         @page cds_sync_monitor Synchronization monitor
-        A <a href="http://en.wikipedia.org/wiki/Monitor_%28synchronization%29">monitor</a> is synchronization construct
+        A <a href="http://en.wikipedia.org/wiki/Monitor_%28synchronization%29">monitor</a> is synchronization construction
         that allows threads to have both mutual exclusion and the ability to wait (block) for a certain condition to become true.
         Some blocking data structure algoritms like the trees require per-node locking.
         For huge trees containing millions of nodes it can be very inefficient to inject
