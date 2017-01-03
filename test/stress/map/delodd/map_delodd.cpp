@@ -46,7 +46,7 @@ namespace map {
 
     size_t Map_DelOdd::s_nFeldmanMap_HeadBits = 10;
     size_t Map_DelOdd::s_nFeldmanMap_ArrayBits = 4;
-    
+
     size_t Map_DelOdd::s_nLoadFactor = 1;
     std::vector<size_t> Map_DelOdd::m_arrElements;
 
@@ -95,7 +95,7 @@ namespace map {
         m_arrElements.resize( s_nMapSize );
         for ( size_t i = 0; i < s_nMapSize; ++i )
             m_arrElements[i] = i;;
-        shuffle( m_arrElements.begin(), m_arrElements.end() );
+        shuffle( m_arrElements.begin(), m_arrElements.end());
     }
 
     void Map_DelOdd::TearDownTestCase()

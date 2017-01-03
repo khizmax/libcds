@@ -289,7 +289,7 @@ namespace cds { namespace algo {
             {
                 assert( m_pThreadRec.get() == nullptr );
                 publication_record_type* pRec = cxx11_allocator().New();
-                m_pAllocatedHead = 
+                m_pAllocatedHead =
                     m_pHead = pRec;
                 m_pThreadRec.reset( pRec );
                 m_Stat.onCreatePubRecord();
@@ -706,11 +706,11 @@ namespace cds { namespace algo {
                 publication_record* p = m_pHead;
                 bool bOpDone = false;
                 while ( p ) {
-                    switch ( p->nState.load( memory_model::memory_order_acquire ) ) {
+                    switch ( p->nState.load( memory_model::memory_order_acquire )) {
                     case active:
                         if ( p->op() >= req_Operation ) {
                             p->nAge.store( nCurAge, memory_model::memory_order_relaxed );
-                            owner.fc_apply( static_cast<publication_record_type*>( p ) );
+                            owner.fc_apply( static_cast<publication_record_type*>( p ));
                             operation_done( *p );
                             bOpDone = true;
                         }
@@ -735,12 +735,12 @@ namespace cds { namespace algo {
             void batch_combining( Container& owner )
             {
                 // The thread is a combiner
-                assert( !m_Mutex.try_lock() );
+                assert( !m_Mutex.try_lock());
 
                 unsigned int const nCurAge = m_nCount.fetch_add( 1, memory_model::memory_order_relaxed ) + 1;
 
                 for ( unsigned int nPass = 0; nPass < m_nCombinePassCount; ++nPass )
-                    owner.fc_process( begin(), end() );
+                    owner.fc_process( begin(), end());
 
                 combining_pass( owner, nCurAge );
                 m_Stat.onCombining();
@@ -760,10 +760,10 @@ namespace cds { namespace algo {
                     m_Stat.onPassiveWaitIteration();
 
                     // Wait while operation processing
-                    if ( m_waitStrategy.wait( *this, *pRec ) )
+                    if ( m_waitStrategy.wait( *this, *pRec ))
                         m_Stat.onWakeupByNotifying();
 
-                    if ( m_Mutex.try_lock() ) {
+                    if ( m_Mutex.try_lock()) {
                         if ( pRec->op( memory_model::memory_order_acquire ) == req_Response ) {
                             // Operation is done
                             m_Mutex.unlock();
@@ -790,13 +790,13 @@ namespace cds { namespace algo {
             try_again:
                 publication_record * pPrev = m_pHead;
                 for ( publication_record * p = pPrev->pNext.load( memory_model::memory_order_acquire ); p; ) {
-                    switch ( p->nState.load( memory_model::memory_order_relaxed ) ) {
+                    switch ( p->nState.load( memory_model::memory_order_relaxed )) {
                     case active:
                         if ( p->nAge.load( memory_model::memory_order_relaxed ) + m_nCompactFactor < nCurAge )
                         {
                             publication_record * pNext = p->pNext.load( memory_model::memory_order_relaxed );
                             if ( pPrev->pNext.compare_exchange_strong( p, pNext,
-                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ) )
+                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                             {
                                 p->nState.store( inactive, memory_model::memory_order_release );
                                 p = pNext;

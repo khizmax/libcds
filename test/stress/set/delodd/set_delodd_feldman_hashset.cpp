@@ -46,5 +46,5 @@ namespace set {
     }
 
     CDSSTRESS_FeldmanHashSet_fixed( Set_DelOdd, run_feldman, key_thread, size_t )
- 
+
 } // namespace set

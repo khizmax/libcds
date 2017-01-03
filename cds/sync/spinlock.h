@@ -149,7 +149,7 @@ namespace cds {
             {
                 backoff_strategy backoff;
                 while ( nTryCount-- ) {
-                    if ( try_lock() )
+                    if ( try_lock())
                         return true;
                     backoff();
                 }
@@ -246,7 +246,7 @@ namespace cds {
                 backoff_strategy bkoff;
 
                 while ( nTryCount-- ) {
-                    if ( try_acquire() )
+                    if ( try_acquire())
                         return true;
                     bkoff();
                 }

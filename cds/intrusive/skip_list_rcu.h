@@ -1408,17 +1408,17 @@ namespace cds { namespace intrusive {
 
         void help_remove( int nLevel, node_type* pPred, marked_node_ptr pCur, marked_node_ptr pSucc, position& pos )
         {
-            marked_node_ptr p( pCur.ptr() );
+            marked_node_ptr p( pCur.ptr());
 
             if ( pCur->is_upper_level( nLevel )
                 && pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
                     memory_model::memory_order_release, atomics::memory_order_relaxed ))
             {
                 if ( pCur->level_unlinked()) {
-                    if ( !is_extracted( pSucc ) ) {
+                    if ( !is_extracted( pSucc )) {
                         // We cannot free the node at this moment because RCU is locked
                         // Link deleted nodes to a chain to free later
-                        pos.dispose( pCur.ptr() );
+                        pos.dispose( pCur.ptr());
                         m_Stat.onEraseWhileFind();
                     }
                     else
@@ -1430,7 +1430,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare >
         bool find_position( Q const& val, position& pos, Compare cmp, bool bStopIfFound )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             node_type * pPred;
             marked_node_ptr pSucc;
@@ -1444,7 +1444,7 @@ namespace cds { namespace intrusive {
 
                 while ( true ) {
                     pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
                     }
@@ -1457,16 +1457,16 @@ namespace cds { namespace intrusive {
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
                         help_remove( nLevel, pPred, pCur, pSucc, pos );
                         goto retry;
                     }
                     else {
-                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
                         if ( nCmp < 0 )
                             pPred = pCur.ptr();
                         else if ( nCmp == 0 && bStopIfFound )
@@ -1491,7 +1491,7 @@ namespace cds { namespace intrusive {
 
         bool find_min_position( position& pos )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             node_type * pPred;
             marked_node_ptr pSucc;
@@ -1507,15 +1507,15 @@ namespace cds { namespace intrusive {
                 // head cannot be deleted
                 assert( pCur.bits() == 0 );
 
-                if ( pCur.ptr() ) {
+                if ( pCur.ptr()) {
 
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
                         help_remove( nLevel, pPred, pCur, pSucc, pos );
                         goto retry;
@@ -1526,12 +1526,12 @@ namespace cds { namespace intrusive {
                 pos.pPrev[nLevel] = pPred;
                 pos.pSucc[nLevel] = pCur.ptr();
             }
-            return ( pos.pCur = pCur.ptr() ) != nullptr;
+            return ( pos.pCur = pCur.ptr()) != nullptr;
         }
 
         bool find_max_position( position& pos )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             node_type * pPred;
             marked_node_ptr pSucc;
@@ -1544,7 +1544,7 @@ namespace cds { namespace intrusive {
 
                 while ( true ) {
                     pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
                     }
@@ -1557,16 +1557,16 @@ namespace cds { namespace intrusive {
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
                         help_remove( nLevel, pPred, pCur, pSucc, pos );
                         goto retry;
                     }
                     else {
-                        if ( !pSucc.ptr() )
+                        if ( !pSucc.ptr())
                             break;
 
                         pPred = pCur.ptr();
@@ -1578,12 +1578,12 @@ namespace cds { namespace intrusive {
                 pos.pSucc[nLevel] = pCur.ptr();
             }
 
-            return ( pos.pCur = pCur.ptr() ) != nullptr;
+            return ( pos.pCur = pCur.ptr()) != nullptr;
         }
 
         bool renew_insert_position( value_type& val, node_type * pNode, position& pos )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             node_type * pPred;
             marked_node_ptr pSucc;
@@ -1598,7 +1598,7 @@ namespace cds { namespace intrusive {
 
                 while ( true ) {
                     pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
                         goto retry;
                     }
@@ -1611,10 +1611,10 @@ namespace cds { namespace intrusive {
                     // pSucc contains deletion mark for pCur
                     pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
 
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr() )
+                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
                         goto retry;
 
-                    if ( pSucc.bits() ) {
+                    if ( pSucc.bits()) {
                         // pCur is marked, i.e. logically deleted.
                         if ( pCur.ptr() == pNode ) {
                             // Node is removing while we are inserting it
@@ -1626,7 +1626,7 @@ namespace cds { namespace intrusive {
                         goto retry;
                     }
                     else {
-                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
                         if ( nCmp < 0 )
                             pPred = pCur.ptr();
                         else
@@ -1645,7 +1645,7 @@ namespace cds { namespace intrusive {
         template <typename Func>
         bool insert_at_position( value_type& val, node_type * pNode, position& pos, Func f )
         {
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             unsigned int const nHeight = pNode->height();
             pNode->clear_tower();
@@ -1669,7 +1669,7 @@ namespace cds { namespace intrusive {
                     // Set pNode->next
                     // pNode->next must be null but can have a "logical deleted" flag if another thread is removing pNode right now
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
-                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ) )
+                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                     {
                         // pNode has been marked as removed while we are inserting it
                         // Stop inserting
@@ -1701,7 +1701,7 @@ namespace cds { namespace intrusive {
                     if ( !renew_insert_position( val, pNode, pos )) {
                         // The node has been deleted while we are inserting it
                         // Update current height for concurent removing
-                        CDS_VERIFY_FALSE( pNode->level_unlinked( nHeight - nLevel ) );
+                        CDS_VERIFY_FALSE( pNode->level_unlinked( nHeight - nLevel ));
 
                         m_Stat.onRemoveWhileInsert();
 
@@ -1718,7 +1718,7 @@ namespace cds { namespace intrusive {
         bool try_remove_at( node_type * pDel, position& pos, Func f, bool bExtract )
         {
             assert( pDel != nullptr );
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             marked_node_ptr pSucc;
             back_off bkoff;
@@ -1743,11 +1743,11 @@ namespace cds { namespace intrusive {
                 }
             }
 
-            marked_node_ptr p( pDel->next( 0 ).load( memory_model::memory_order_relaxed ).ptr() );
+            marked_node_ptr p( pDel->next( 0 ).load( memory_model::memory_order_relaxed ).ptr());
             while ( true ) {
                 if ( pDel->next( 0 ).compare_exchange_strong( p, p | nMask, memory_model::memory_order_release, atomics::memory_order_acquire ))
                 {
-                    f( *node_traits::to_value_ptr( pDel ) );
+                    f( *node_traits::to_value_ptr( pDel ));
 
                     // physical deletion
                     // try fast erase
@@ -1755,15 +1755,15 @@ namespace cds { namespace intrusive {
                     for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
 
                         pSucc = pDel->next( nLevel ).load( memory_model::memory_order_acquire );
-                        if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr() ),
-                            memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ) )
+                        if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
+                            memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ))
                         {
                             pDel->level_unlinked();
                         }
                         else {
                             // Make slow erase
 #       ifdef CDS_DEBUG
-                            if ( find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false ) )
+                            if ( find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false ))
                                 assert( pDel != pos.pCur );
 #       else
                             find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
@@ -1788,7 +1788,7 @@ namespace cds { namespace intrusive {
                         m_Stat.onFastExtract();
                     return true;
                 }
-                else if ( p.bits() ) {
+                else if ( p.bits()) {
                     // Another thread is deleting pDel right now
                     m_Stat.onEraseContention();
                     return false;
@@ -1821,7 +1821,7 @@ namespace cds { namespace intrusive {
                 pCur = pPred->next( nLevel ).load( memory_model::memory_order_acquire );
 
                 while ( pCur != pNull ) {
-                    if ( pCur.bits() ) {
+                    if ( pCur.bits()) {
                         // pPred is being removed
                         if ( ++attempt < 4 ) {
                             bkoff();
@@ -1831,15 +1831,15 @@ namespace cds { namespace intrusive {
                         return find_fastpath_abort;
                     }
 
-                    if ( pCur.ptr() ) {
-                        int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                    if ( pCur.ptr()) {
+                        int nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
                         if ( nCmp < 0 ) {
                             pPred = pCur.ptr();
                             pCur = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
                         }
                         else if ( nCmp == 0 ) {
                             // found
-                            f( *node_traits::to_value_ptr( pCur.ptr() ), val );
+                            f( *node_traits::to_value_ptr( pCur.ptr()), val );
                             return find_fastpath_found;
                         }
                         else // pCur > val - go down
@@ -1854,7 +1854,7 @@ namespace cds { namespace intrusive {
         template <typename Q, typename Compare, typename Func>
         bool find_slowpath( Q& val, Compare cmp, Func f, position& pos )
         {
-            if ( find_position( val, pos, cmp, true ) ) {
+            if ( find_position( val, pos, cmp, true )) {
                 assert( cmp( *node_traits::to_value_ptr( pos.pCur ), val ) == 0 );
 
                 f( *node_traits::to_value_ptr( pos.pCur ), val );
@@ -1879,7 +1879,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
 
-                switch ( find_fastpath( val, cmp, f ) ) {
+                switch ( find_fastpath( val, cmp, f )) {
                 case find_fastpath_found:
                     m_Stat.onFindFastSuccess();
                     return true;
@@ -1890,7 +1890,7 @@ namespace cds { namespace intrusive {
                     break;
                 }
 
-                if ( find_slowpath( val, cmp, f, pos ) ) {
+                if ( find_slowpath( val, cmp, f, pos )) {
                     m_Stat.onFindSlowSuccess();
                     bRet = true;
                 }
@@ -1913,7 +1913,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock rcuLock;
 
-                if ( !find_position( val, pos, cmp, false ) ) {
+                if ( !find_position( val, pos, cmp, false )) {
                     m_Stat.onEraseFailed();
                     bRet = false;
                 }
@@ -1922,7 +1922,7 @@ namespace cds { namespace intrusive {
                     assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
 
                     unsigned int nHeight = pDel->height();
-                    if ( try_remove_at( pDel, pos, f, false ) ) {
+                    if ( try_remove_at( pDel, pos, f, false )) {
                         --m_ItemCounter;
                         m_Stat.onRemoveNode( nHeight );
                         m_Stat.onEraseSuccess();
@@ -1942,11 +1942,11 @@ namespace cds { namespace intrusive {
         value_type * do_extract_key( Q const& key, Compare cmp, position& pos )
         {
             // RCU should be locked!!!
-            assert( gc::is_locked() );
+            assert( gc::is_locked());
 
             node_type * pDel;
 
-            if ( !find_position( key, pos, cmp, false ) ) {
+            if ( !find_position( key, pos, cmp, false )) {
                 m_Stat.onExtractFailed();
                 pDel = nullptr;
             }
@@ -1956,7 +1956,7 @@ namespace cds { namespace intrusive {
 
                 unsigned int const nHeight = pDel->height();
 
-                if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true ) ) {
+                if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true )) {
                     --m_ItemCounter;
                     m_Stat.onRemoveNode( nHeight );
                     m_Stat.onExtractSuccess();
@@ -2001,7 +2001,7 @@ namespace cds { namespace intrusive {
 
         value_type * do_extract_min()
         {
-            assert( !gc::is_locked() );
+            assert( !gc::is_locked());
 
             position pos;
             node_type * pDel;
@@ -2009,7 +2009,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
 
-                if ( !find_min_position( pos ) ) {
+                if ( !find_min_position( pos )) {
                     m_Stat.onExtractMinFailed();
                     pDel = nullptr;
                 }
@@ -2017,7 +2017,7 @@ namespace cds { namespace intrusive {
                     pDel = pos.pCur;
                     unsigned int const nHeight = pDel->height();
 
-                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true ) ) {
+                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true )) {
                         --m_ItemCounter;
                         m_Stat.onRemoveNode( nHeight );
                         m_Stat.onExtractMinSuccess();
@@ -2034,7 +2034,7 @@ namespace cds { namespace intrusive {
 
         value_type * do_extract_max()
         {
-            assert( !gc::is_locked() );
+            assert( !gc::is_locked());
 
             position pos;
             node_type * pDel;
@@ -2042,7 +2042,7 @@ namespace cds { namespace intrusive {
             {
                 rcu_lock l;
 
-                if ( !find_max_position( pos ) ) {
+                if ( !find_max_position( pos )) {
                     m_Stat.onExtractMaxFailed();
                     pDel = nullptr;
                 }
@@ -2050,7 +2050,7 @@ namespace cds { namespace intrusive {
                     pDel = pos.pCur;
                     unsigned int const nHeight = pDel->height();
 
-                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true ) ) {
+                    if ( try_remove_at( pDel, pos, []( value_type const& ) {}, true )) {
                         --m_ItemCounter;
                         m_Stat.onRemoveNode( nHeight );
                         m_Stat.onExtractMaxSuccess();
@@ -2077,7 +2077,7 @@ namespace cds { namespace intrusive {
             node_type* p = m_Head.head()->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
             while ( p ) {
                 node_type* pNext = p->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
-                dispose_node( node_traits::to_value_ptr( p ) );
+                dispose_node( node_traits::to_value_ptr( p ));
                 p = pNext;
             }
         }

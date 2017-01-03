@@ -330,8 +330,8 @@ namespace cds { namespace gc {
                 // Several threads may work concurrently so we use atomic technique only.
                 {
                     cds::OS::ThreadId curOwner = hprec->m_idOwner.load(atomics::memory_order_relaxed);
-                    if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner ) ) {
-                        if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
+                    if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner )) {
+                        if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
                             continue;
                     }
                     else

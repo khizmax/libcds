@@ -140,13 +140,13 @@ namespace map {
         template <typename Pred>
         static void prepare_array( std::vector<size_t>& arr, Pred pred )
         {
-            arr.reserve( m_arrElements.size() );
+            arr.reserve( m_arrElements.size());
             for ( auto el : m_arrElements ) {
-                if ( pred( el ) )
+                if ( pred( el ))
                     arr.push_back( el );
             }
-            arr.resize( arr.size() );
-            shuffle( arr.begin(), arr.end() );
+            arr.resize( arr.size());
+            shuffle( arr.begin(), arr.end());
         }
 
     protected:
@@ -190,7 +190,7 @@ namespace map {
             {
                 prepare_array( m_arr, []( size_t ) -> bool { return true; } );
                 for ( size_t i = 0; i < m_arr.size(); ++i ) {
-                    if ( m_Map.insert( key_type( m_arr[i], id() ) ) )
+                    if ( m_Map.insert( key_type( m_arr[i], id())))
                         ++m_nInsertInitSuccess;
                     else
                         ++m_nInsertInitFailed;
@@ -237,7 +237,7 @@ namespace map {
                         // insert pass
                         for ( auto el : m_arr ) {
                             if ( el & 1 ) {
-                                if ( rMap.insert( key_type( el, id() )))
+                                if ( rMap.insert( key_type( el, id())))
                                     ++m_nInsertSuccess;
                                 else
                                     ++m_nInsertFailed;
@@ -250,7 +250,7 @@ namespace map {
                             if ( el & 1 ) {
                                 bool success;
                                 bool inserted;
-                                std::tie( success, inserted ) = rMap.update( key_type( el, id() ), f );
+                                std::tie( success, inserted ) = rMap.update( key_type( el, id()), f );
                                 if ( success && inserted )
                                     ++m_nInsertSuccess;
                                 else
@@ -356,7 +356,7 @@ namespace map {
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( auto el: m_arr ) {
-                                if ( rMap.erase( key_type( el, k ) ) )
+                                if ( rMap.erase( key_type( el, k )))
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -431,7 +431,7 @@ namespace map {
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( auto el: m_arr ) {
-                                gp = rMap.extract( key_type( el, k ) );
+                                gp = rMap.extract( key_type( el, k ));
                                 if ( gp )
                                     ++m_nDeleteSuccess;
                                 else
@@ -497,14 +497,14 @@ namespace map {
                             for ( auto el: m_arr ) {
                                 if ( Map::c_bExtractLockExternal ) {
                                     typename Map::rcu_lock l;
-                                    xp = rMap.extract( key_type( el, k ) );
+                                    xp = rMap.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
                                         ++m_nDeleteFailed;
                                 }
                                 else {
-                                    xp = rMap.extract( key_type( el, k ) );
+                                    xp = rMap.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -519,14 +519,14 @@ namespace map {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Map::c_bExtractLockExternal ) {
                                     typename Map::rcu_lock l;
-                                    xp = rMap.extract( key_type( el, k ) );
+                                    xp = rMap.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
                                         ++m_nDeleteFailed;
                                 }
                                 else {
-                                    xp = rMap.extract( key_type( el, k ) );
+                                    xp = rMap.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nDeleteSuccess;
                                     else
@@ -642,7 +642,7 @@ namespace map {
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get( i );
-                switch ( thr.type() ) {
+                switch ( thr.type()) {
                 case inserter_thread:
                     {
                         insert_thread& inserter = static_cast<insert_thread&>( thr );

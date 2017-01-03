@@ -192,7 +192,7 @@ namespace cds_test {
 
             // Create threads
             std::vector< std::thread > threads;
-            threads.reserve( m_workers.size() );
+            threads.reserve( m_workers.size());
             for ( auto w : m_workers )
                 threads.emplace_back( &thread::run, w );
 

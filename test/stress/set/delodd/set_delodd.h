@@ -142,13 +142,13 @@ namespace set {
         template <typename Pred>
         static void prepare_array( std::vector<size_t>& arr, Pred pred )
         {
-            arr.reserve( m_arrData.size() );
+            arr.reserve( m_arrData.size());
             for ( auto el : m_arrData ) {
-                if ( pred( el ) )
+                if ( pred( el ))
                     arr.push_back( el );
             }
-            arr.resize( arr.size() );
-            shuffle( arr.begin(), arr.end() );
+            arr.resize( arr.size());
+            shuffle( arr.begin(), arr.end());
         }
 
     protected:
@@ -186,7 +186,7 @@ namespace set {
             {
                 prepare_array( m_arr, []( size_t ) -> bool { return true; } );
                 for ( size_t i = 0; i < m_arr.size(); ++i ) {
-                    if ( m_Set.insert( key_type( m_arr[i], id() ) ) )
+                    if ( m_Set.insert( key_type( m_arr[i], id())))
                         ++m_nInsertInitSuccess;
                     else
                         ++m_nInsertInitFailed;
@@ -231,7 +231,7 @@ namespace set {
                         // insert pass
                         for ( auto el : m_arr ) {
                             if ( el & 1 ) {
-                                if ( rSet.insert( key_type( el, id() ) ) )
+                                if ( rSet.insert( key_type( el, id())))
                                     ++m_nInsertSuccess;
                                 else
                                     ++m_nInsertFailed;
@@ -244,7 +244,7 @@ namespace set {
                             if ( el & 1 ) {
                                 bool success;
                                 bool inserted;
-                                std::tie( success, inserted ) = rSet.update( key_type( el, id() ), update_functor() );
+                                std::tie( success, inserted ) = rSet.update( key_type( el, id()), update_functor());
                                 if ( success && inserted )
                                     ++m_nInsertSuccess;
                                 else
@@ -395,7 +395,7 @@ namespace set {
                     if ( id() & 1 ) {
                         for ( auto el : m_arr ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                if ( rSet.erase( key_type( el, k ) ) )
+                                if ( rSet.erase( key_type( el, k )))
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -405,7 +405,7 @@ namespace set {
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( auto el : m_arr ) {
-                                if ( rSet.erase( key_type( el, k ) ) )
+                                if ( rSet.erase( key_type( el, k )))
                                     ++m_nDeleteSuccess;
                                 else
                                     ++m_nDeleteFailed;
@@ -468,7 +468,7 @@ namespace set {
                     if ( id() & 1 ) {
                         for ( auto el : m_arr ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                gp = rSet.extract( key_type( el, k ) );
+                                gp = rSet.extract( key_type( el, k ));
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -480,7 +480,7 @@ namespace set {
                     else {
                         for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                             for ( auto el : m_arr ) {
-                                gp = rSet.extract( key_type( el, k ) );
+                                gp = rSet.extract( key_type( el, k ));
                                 if ( gp )
                                     ++m_nExtractSuccess;
                                 else
@@ -545,14 +545,14 @@ namespace set {
                             for ( auto el : m_arr ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = rSet.extract( key_type( el, k ) );
+                                    xp = rSet.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = rSet.extract( key_type( el, k ) );
+                                    xp = rSet.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -567,14 +567,14 @@ namespace set {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
                                 if ( Set::c_bExtractLockExternal ) {
                                     typename Set::rcu_lock l;
-                                    xp = rSet.extract( key_type( el, k ) );
+                                    xp = rSet.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
                                         ++m_nExtractFailed;
                                 }
                                 else {
-                                    xp = rSet.extract( key_type( el, k ) );
+                                    xp = rSet.extract( key_type( el, k ));
                                     if ( xp )
                                         ++m_nExtractSuccess;
                                     else
@@ -630,7 +630,7 @@ namespace set {
                     for ( size_t key : arr ) {
                         if ( key & 1 ) {
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                if ( set.contains( key_thread( key, k ) ) )
+                                if ( set.contains( key_thread( key, k )))
                                     ++m_nFindOddSuccess;
                                 else
                                     ++m_nFindOddFailed;
@@ -639,7 +639,7 @@ namespace set {
                         else {
                             // even keys MUST be in the map
                             for ( size_t k = 0; k < nInsThreadCount; ++k ) {
-                                if ( set.contains( key_thread( key, k ) ) )
+                                if ( set.contains( key_thread( key, k )))
                                     ++m_nFindEvenSuccess;
                                 else
                                     ++m_nFindEvenFailed;
