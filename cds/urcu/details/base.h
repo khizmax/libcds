@@ -112,10 +112,10 @@ namespace cds {
           The \p libcds contains several implementations if signal-handling %RCU: \ref signal_buffered,
           \ref signal_threaded.
 
-    @note The signal-handled %RCU is defined only for UNIX-like systems, not for Windows.
+        @note The signal-handled %RCU is defined only for UNIX-like systems, not for Windows.
 
-    @anchor cds_urcu_type
-    <b>RCU implementation type</b>
+        @anchor cds_urcu_type
+        <b>RCU implementation type</b>
 
         There are several internal implementation of RCU (all declared in \p %cds::urcu namespace):
         - \ref general_instant - general purpose RCU with immediate reclamation
@@ -130,8 +130,8 @@ namespace cds {
         and has the reacher interface that combines interfaces of wrapped class i.e. RCU global part like
         \p synchronize, and corresponding RCU thread-specific interface like \p access_lock, \p access_unlock and \p retire_ptr.
 
-    @anchor cds_urcu_gc
-    There are several wrapper classes (all declared in \p %cds::urcu namespace)
+        @anchor cds_urcu_gc
+        There are several wrapper classes (all declared in \p %cds::urcu namespace)
         - \ref cds_urcu_general_instant_gc "gc<general_instant>" - general purpose RCU with immediate reclamation,
             include file <tt><cds/urcu/general_instant.h></tt>
         - \ref cds_urcu_general_buffered_gc "gc<general_buffered>" - general purpose RCU with deferred (buffered) reclamation,
@@ -145,7 +145,7 @@ namespace cds {
 
         Any RCU-related container in \p libcds expects that its \p RCU template parameter is one of those wrapper.
 
-    @anchor cds_urcu_tags
+        @anchor cds_urcu_tags
         For simplicity, in some algorithms instead of using RCU implementation type
         you should specify corresponding RCU tags (all declared in \p %cds::urcu namespace):
         - \ref general_instant_tag - for \ref general_instant
@@ -154,8 +154,8 @@ namespace cds {
         - \ref signal_buffered_tag - for \ref signal_buffered
         - \ref signal_threaded_tag - for \ref signal_threaded
 
-    @anchor cds_urcu_performance
-    <b>Performance</b>
+        @anchor cds_urcu_performance
+        <b>Performance</b>
 
         As a result of our experiments we can range above %RCU implementation in such order,
         from high to low performance:
@@ -169,8 +169,8 @@ namespace cds {
         type of payload - mostly read-only (seeking) or read-write (inserting and deleting), -
         a hardware, your application, and so on.
 
-    @anchor cds_urcu_howto
-    <b>How to use</b>
+        @anchor cds_urcu_howto
+        <b>How to use</b>
 
         Usually, in your application you use only one \ref cds_urcu_gc "type of RCU" that is the best for your needs.
         However, the library allows to apply several RCU singleton in one application.

@@ -255,22 +255,18 @@ namespace cds {
             class not_initialized : public std::runtime_error
             {
             public:
-                //@cond
                 not_initialized()
                     : std::runtime_error( "Global Hazard Pointer GarbageCollector is not initialized" )
                 {}
-                //@endcond
             };
 
             /// Not enough Hazard Pointer
             class too_many_hazard_ptr : public std::length_error
             {
             public:
-                //@cond
                 too_many_hazard_ptr()
                     : std::length_error( "Not enough Hazard Pointer" )
                 {}
-                //@endcond
             };
 
         private:
@@ -296,7 +292,6 @@ namespace cds {
                 atomics::atomic<OS::ThreadId>    m_idOwner;   ///< Owner thread id; 0 - the record is free (not owned)
                 atomics::atomic<bool>            m_bFree;     ///< true if record is free (not owned)
 
-                //@cond
                 explicit hplist_node( const GarbageCollector& HzpMgr )
                     : hp_record( HzpMgr ),
                     m_pNextNode( nullptr ),
@@ -316,7 +311,6 @@ namespace cds {
                     assert( m_idOwner.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
                     assert( m_bFree.load(atomics::memory_order_relaxed));
                 }
-                //@endcond
             };
 
             atomics::atomic<hplist_node *>   m_pListHead  ;  ///< Head of GC list
