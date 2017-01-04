@@ -23,7 +23,6 @@ print "Remove $DistrDir/.git directory\n";
 `rm -f $DistrDir/.gitignore $DistrDir/tools/brush_cds.pl $DistrDir/tools/make_distrib.pl $DistrDir/tools/make_distrib.bat $DistrDir/doxygen/images.odp`;
 
 print "patch files...\n";
-patch_file("$DistrDir/build/Makefile", 'VERSION=\d+\.\d+\.\d+', "VERSION=$Version" );
 patch_file("$DistrDir/CMakeList.txt", 'PROJECT_VERSION \d+\.\d+\.\d+', "PROJECT_VERSION $Version" );
 patch_file("$DistrDir/doxygen/cds.doxy", 'PROJECT_NUMBER\s*=\s*\d+\.\d+\.\d+', "PROJECT_NUMBER = $Version" ) ;
 

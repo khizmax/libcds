@@ -5,7 +5,7 @@ include(TargetArch)
 
 project(cds)
 
-set(PROJECT_VERSION 2.2.0)
+set(PROJECT_VERSION 2.3.0)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
