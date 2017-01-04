@@ -1,4 +1,4 @@
-2.2.0
+2.2.0 04.01.2017
     General release
     - Changed: CMake is used for build libcds. Ancient build.sh has been removed
     - Changed: unit and stress tests are migrated to googletest framework
