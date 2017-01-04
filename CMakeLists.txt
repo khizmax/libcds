@@ -55,7 +55,7 @@ if(WITH_TESTS_COVERAGE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
     message(STATUS "Test coverage analysis: activated")
   else()
-	message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
+    message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
   endif()  
 endif(WITH_TESTS_COVERAGE)
 

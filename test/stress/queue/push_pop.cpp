@@ -32,6 +32,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <type_traits>
 
 // Multi-threaded queue push/pop test
 namespace {
@@ -39,17 +40,21 @@ namespace {
     static size_t s_nConsumerThreadCount = 4;
     static size_t s_nProducerThreadCount = 4;
     static size_t s_nQueueSize = 4000000;
+    static size_t s_nHeavyValueSize = 100;
 
     static std::atomic<size_t> s_nProducerDone( 0 );
 
+    struct old_value
+    {
+        size_t nNo;
+        size_t nWriterNo;
+    };
+
+    template<class Value = old_value>
     class queue_push_pop: public cds_test::stress_fixture
     {
     protected:
-        struct value_type
-        {
-            size_t      nNo;
-            size_t      nWriterNo;
-        };
+       using value_type = Value;
 
         enum {
             producer_thread,
@@ -298,6 +303,20 @@ namespace {
             propout() << q.statistics();
         }
 
+    private:
+        static void set_array_size( size_t size ) {
+            const bool tmp = fc_test::has_set_array_size<value_type>::value;
+            set_array_size(size, std::integral_constant<bool, tmp>());
+        }
+
+        static void set_array_size(size_t size, std::true_type){
+            value_type::set_array_size(size);
+        }
+
+        static void set_array_size(size_t, std::false_type)
+        {
+        }
+
     public:
         static void SetUpTestCase()
         {
@@ -306,6 +325,7 @@ namespace {
             s_nConsumerThreadCount = cfg.get_size_t( "ConsumerCount", s_nConsumerThreadCount );
             s_nProducerThreadCount = cfg.get_size_t( "ProducerCount", s_nProducerThreadCount );
             s_nQueueSize = cfg.get_size_t( "QueueSize", s_nQueueSize );
+            s_nHeavyValueSize = cfg.get_size_t( "HeavyValueSize", s_nHeavyValueSize );
 
             if ( s_nConsumerThreadCount == 0u )
                 s_nConsumerThreadCount = 1;
@@ -313,19 +333,27 @@ namespace {
                 s_nProducerThreadCount = 1;
             if ( s_nQueueSize == 0u )
                 s_nQueueSize = 1000;
+            if ( s_nHeavyValueSize == 0 )
+                s_nHeavyValueSize = 1;
+
+            set_array_size( s_nHeavyValueSize );
         }
 
         //static void TearDownTestCase();
     };
 
-    CDSSTRESS_MSQueue( queue_push_pop )
-    CDSSTRESS_MoirQueue( queue_push_pop )
-    CDSSTRESS_BasketQueue( queue_push_pop )
-    CDSSTRESS_OptimsticQueue( queue_push_pop )
-    CDSSTRESS_FCQueue( queue_push_pop )
-    CDSSTRESS_FCDeque( queue_push_pop )
-    CDSSTRESS_RWQueue( queue_push_pop )
-    CDSSTRESS_StdQueue( queue_push_pop )
+    using fc_with_heavy_value = queue_push_pop< fc_test::heavy_value<36000> >;
+    using simple_queue_push_pop = queue_push_pop<>;
+
+    CDSSTRESS_MSQueue( simple_queue_push_pop )
+    CDSSTRESS_MoirQueue( simple_queue_push_pop )
+    CDSSTRESS_BasketQueue( simple_queue_push_pop )
+    CDSSTRESS_OptimsticQueue( simple_queue_push_pop )
+    CDSSTRESS_FCQueue( simple_queue_push_pop )
+    CDSSTRESS_FCDeque( simple_queue_push_pop )
+    CDSSTRESS_FCDeque_HeavyValue( fc_with_heavy_value )
+    CDSSTRESS_RWQueue( simple_queue_push_pop )
+    CDSSTRESS_StdQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
@@ -337,7 +365,7 @@ namespace {
         test( queue ); \
     }
 
-    CDSSTRESS_VyukovQueue( queue_push_pop )
+    CDSSTRESS_VyukovQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 
@@ -346,10 +374,10 @@ namespace {
     // SegmentedQueue test
 
     class segmented_queue_push_pop
-        : public queue_push_pop
+        : public queue_push_pop<>
         , public ::testing::WithParamInterface< size_t >
     {
-        typedef queue_push_pop base_class;
+        typedef queue_push_pop<> base_class;
 
     protected:
 
@@ -376,8 +404,7 @@ namespace {
             if ( bIterative && quasi_factor > 4 ) {
                 for ( size_t qf = 4; qf <= quasi_factor; qf *= 2 )
                     args.push_back( qf );
-            }
-            else {
+            } else {
                 if ( quasi_factor > 2 )
                     args.push_back( quasi_factor );
                 else

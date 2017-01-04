@@ -30,6 +30,7 @@
 
 #include <gtest/gtest.h>
 #include <cds/container/fcqueue.h>
+#include <test/include/cds_test/fc_hevy_value.h>
 
 #include <list>
 
@@ -159,6 +160,67 @@ namespace {
         typedef cds::container::FCQueue<int, std::queue< int, std::deque<int>>,
             cds::container::fcqueue::make_traits<
                 cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_deque_heavy_value )
+    {
+        typedef fc_test::heavy_value<> ValueType;
+        typedef cds::container::FCQueue<ValueType> queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_empty_wait_strategy_heavy_value )
+    {
+        typedef fc_test::heavy_value<> ValueType;
+        typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::empty >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_single_mutex_single_condvar_heavy_value )
+    {
+        typedef fc_test::heavy_value<> ValueType;
+        typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_single_mutex_multi_condvar_heavy_value )
+    {
+        typedef fc_test::heavy_value<> ValueType;
+        typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> >
+            >::type
+        > queue_type;
+
+        queue_type q;
+        test( q );
+    }
+
+    TEST_F( FCQueue, std_multi_mutex_multi_condvar_heavy_value )
+    {
+        typedef fc_test::heavy_value<> ValueType;
+        typedef cds::container::FCQueue<ValueType, std::queue< ValueType, std::deque<ValueType>>,
+            cds::container::fcqueue::make_traits<
+                cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> >
             >::type
         > queue_type;
 
