@@ -89,8 +89,10 @@
 // Processor architecture
 
 #if defined(__arm__) && !defined(__ARM_ARCH)
-    // GCC 4.6 does not defined __ARM_ARCH
-#   if defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__)
+// GCC 4.6 does not defined __ARM_ARCH
+#   if defined(__ARM_ARCH_8A__) || defined(__ARM_ARCH_8S__) || defined(__aarch64__) || defined(__ARM_ARCH_ISA_A64)
+#       define __ARM_ARCH   8
+#   elif defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7S__)
 #       define __ARM_ARCH   7
 #   else
 #       define __ARM_ARCH   5
@@ -126,11 +128,16 @@
 #    define CDS_BUILD_BITS        64
 #    define CDS_PROCESSOR__NAME   "IBM PowerPC64"
 #    define CDS_PROCESSOR__NICK   "ppc64"
-#elif defined(__arm__) && __SIZEOF_POINTER__ == 4 && __ARM_ARCH >= 7
+#elif defined(__arm__) && __SIZEOF_POINTER__ == 4 && __ARM_ARCH >= 7 && __ARM_ARCH < 8
 #    define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_ARM7
 #    define CDS_BUILD_BITS        32
 #    define CDS_PROCESSOR__NAME   "ARM v7"
 #    define CDS_PROCESSOR__NICK   "arm7"
+#elif defined(__arm__) && __ARM_ARCH >= 8
+#    define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_ARM8
+#    define CDS_BUILD_BITS        64
+#    define CDS_PROCESSOR__NAME   "ARM v8"
+#    define CDS_PROCESSOR__NICK   "arm8"
 #else
 #   if defined(CDS_USE_LIBCDS_ATOMIC)
 #       error "Libcds does not support atomic implementation for the processor architecture. Try to use C++11-compatible compiler and remove CDS_USE_LIBCDS_ATOMIC flag from compiler command line"
@@ -150,7 +157,7 @@
 #   endif
 #else
 #   ifndef __declspec
-#       define __declspec( _x )
+#       define __declspec(_x)
 #   endif
 #endif
 

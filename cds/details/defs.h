@@ -183,7 +183,7 @@
    to \p boost library root directory. The test projects search \p boost libraries in:
    - for 32bit: <tt>\$(BOOST_PATH)/stage/lib</tt>, <tt>\$(BOOST_PATH)/stage32/lib</tt>, and <tt>\$(BOOST_PATH)/bin</tt>.
    - for 64bit: <tt>\$(BOOST_PATH)/stage64/lib</tt> and <tt>\$(BOOST_PATH)/bin</tt>.
-   
+
    All tests are based on googletest framework. The following environment variables specify
    where to find gtest include and library directories:
    - \p GTEST_ROOT - gtest root directory. <tt>\$(GTEST_ROOT)/include</tt> specifies full path to
@@ -237,6 +237,7 @@ namespace cds {}
                     - CDS_PROCESSOR_SPARC   Sparc
                     - CDS_PROCESSOR_PPC64   PowerPC64
                     - CDS_PROCESSOR_ARM7    ARM v7
+                    - CDS_PROCESSOR_ARM8    ARM v8
                     - CDS_PROCESSOR_UNKNOWN undefined processor architecture
 
     CDS_PROCESSOR__NAME    The name (string) of processor architecture
@@ -292,6 +293,7 @@ namespace cds {}
 #define CDS_PROCESSOR_AMD64     4
 #define CDS_PROCESSOR_PPC64     5   // PowerPC 64bit
 #define CDS_PROCESSOR_ARM7      7
+#define CDS_PROCESSOR_ARM8      8
 #define CDS_PROCESSOR_UNKNOWN   -1
 
 // Supported OS interfaces
