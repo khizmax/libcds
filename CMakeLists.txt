@@ -16,6 +16,7 @@ option(WITH_TESTS_COVERAGE "Analyze test coverage using gcov (only for gcc)" OFF
 option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 option(WITH_ASAN "Build AddressSantinizer instrumented code" OFF)
 option(WITH_TSAN "Build ThreadSantinizer instrumented code" OFF)
+set(CMAKE_TARGET_ARCHITECTURE "" CACHE string "Target build architecture")
 
 find_package(Threads)
 
@@ -27,7 +28,9 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-target_architecture(CMAKE_TARGET_ARCHITECTURE)
+if(NOT CMAKE_TARGET_ARCHITECTURE)
+    target_architecture(CMAKE_TARGET_ARCHITECTURE)
+endif()
 
 if(WITH_BOOST_ATOMIC)
     if(Boost_FOUND)
