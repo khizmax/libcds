@@ -17,7 +17,11 @@ option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 option(WITH_ASAN "Build AddressSantinizer instrumented code" OFF)
 option(WITH_TSAN "Build ThreadSantinizer instrumented code" OFF)
 
-find_package(Threads REQUIRED)
+if(CMAKE_CROSSCOMPILING)
+    find_package(Threads)
+else()
+    find_package(Threads REQUIRED)
+endif()
 
 if(TARGET boost::system AND TARGET boost::thread)
     link_libraries(boost::system boost::thread)
