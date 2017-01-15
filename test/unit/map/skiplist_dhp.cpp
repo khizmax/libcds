@@ -45,14 +45,14 @@ namespace {
         {
             typedef cc::SkipListMap< gc_type, key_type, value_type > map_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, map_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( map_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
     };
 

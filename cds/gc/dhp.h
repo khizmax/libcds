@@ -31,8 +31,8 @@
 #ifndef CDSLIB_GC_DHP_H
 #define CDSLIB_GC_DHP_H
 
-#include <cds/gc/impl/dhp_decl.h>
-#include <cds/gc/impl/dhp_impl.h>
+#include <cds/gc/dhp_smr.h>
 #include <cds/details/lib.h>
+#include <cds/threading/model.h>
 
 #endif // #ifndef CDSLIB_GC_DHP_H

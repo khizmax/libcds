@@ -42,14 +42,14 @@ namespace {
         {
             typedef cc::LazyList< gc_type, item > list_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, list_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::Construct( list_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::Destruct();
         }
     };
 

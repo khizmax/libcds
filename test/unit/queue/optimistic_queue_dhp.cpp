@@ -45,14 +45,14 @@ namespace {
         {
             typedef cc::OptimisticQueue< gc_type, int > queue_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, queue_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( queue_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
     };
 

@@ -31,9 +31,6 @@
 #ifndef CDSLIB_THREADING__COMMON_H
 #define CDSLIB_THREADING__COMMON_H
 
-#include <cds/gc/impl/hp_decl.h>
-#include <cds/gc/impl/dhp_decl.h>
-
 #include <cds/urcu/details/gp_decl.h>
 #include <cds/urcu/details/sh_decl.h>
 #include <cds/algo/elimination_tls.h>
@@ -99,9 +96,6 @@ namespace cds {
             // (called by dtor of GC thread object, for example, by dtor of cds::gc::HP::thread_gc)
             static void detachThread();
 
-            // Get cds::gc::HP thread GC implementation for current thread
-            static gc::HP::thread_gc_impl&   getHZPGC();
-
             // Get cds::gc::DHP thread GC implementation for current thread;
             static gc::DHP::thread_gc_impl&   getDHPGC();
         };
@@ -137,9 +131,6 @@ namespace cds {
         struct ThreadData {
 
             //@cond
-            char CDS_DATA_ALIGNMENT(8) m_hpManagerPlaceholder[sizeof(cds::gc::HP::thread_gc_impl)];   ///< Michael's Hazard Pointer GC placeholder
-            char CDS_DATA_ALIGNMENT(8) m_dhpManagerPlaceholder[sizeof(cds::gc::DHP::thread_gc_impl)]; ///< Dynamic Hazard Pointer GC placeholder
-
             cds::urcu::details::thread_data< cds::urcu::general_instant_tag > *     m_pGPIRCU;
             cds::urcu::details::thread_data< cds::urcu::general_buffered_tag > *    m_pGPBRCU;
             cds::urcu::details::thread_data< cds::urcu::general_threaded_tag > *    m_pGPTRCU;
@@ -150,8 +141,8 @@ namespace cds {
 
             //@endcond
 
-            cds::gc::HP::thread_gc_impl  * m_hpManager     ;   ///< Michael's Hazard Pointer GC thread-specific data
-            cds::gc::DHP::thread_gc_impl * m_dhpManager    ;   ///< Dynamic Hazard Pointer GC thread-specific data
+            //cds::gc::HP::thread_gc_impl  * m_hpManager     ;   ///< Michael's Hazard Pointer GC thread-specific data
+            //cds::gc::DHP::thread_gc_impl * m_dhpManager    ;   ///< Dynamic Hazard Pointer GC thread-specific data
 
             size_t  m_nFakeProcessorNumber  ;   ///< fake "current processor" number
 
@@ -164,7 +155,7 @@ namespace cds {
 
             //@cond
             static CDS_EXPORT_API atomics::atomic<size_t> s_nLastUsedProcNo;
-            static CDS_EXPORT_API size_t                     s_nProcCount;
+            static CDS_EXPORT_API size_t                  s_nProcCount;
             //@endcond
 
             //@cond
@@ -178,32 +169,10 @@ namespace cds {
 #endif
                 , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, atomics::memory_order_relaxed) % s_nProcCount )
                 , m_nAttachCount(0)
-            {
-                if (cds::gc::HP::isUsed())
-                    m_hpManager = new (m_hpManagerPlaceholder) cds::gc::HP::thread_gc_impl;
-                else
-                    m_hpManager = nullptr;
-
-                if ( cds::gc::DHP::isUsed())
-                    m_dhpManager = new (m_dhpManagerPlaceholder) cds::gc::DHP::thread_gc_impl;
-                else
-                    m_dhpManager = nullptr;
-            }
+            {}
 
             ~ThreadData()
             {
-                if ( m_hpManager ) {
-                    typedef cds::gc::HP::thread_gc_impl hp_thread_gc_impl;
-                    m_hpManager->~hp_thread_gc_impl();
-                    m_hpManager = nullptr;
-                }
-
-                if ( m_dhpManager ) {
-                    typedef cds::gc::DHP::thread_gc_impl dhp_thread_gc_impl;
-                    m_dhpManager->~dhp_thread_gc_impl();
-                    m_dhpManager = nullptr;
-                }
-
                 assert( m_pGPIRCU == nullptr );
                 assert( m_pGPBRCU == nullptr );
                 assert( m_pGPTRCU == nullptr );
@@ -213,63 +182,8 @@ namespace cds {
 #endif
             }
 
-            void init()
-            {
-                if ( m_nAttachCount++ == 0 ) {
-                    if ( cds::gc::HP::isUsed())
-                        m_hpManager->init();
-                    if ( cds::gc::DHP::isUsed())
-                        m_dhpManager->init();
-
-                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed())
-                        m_pGPIRCU = cds::urcu::details::singleton<cds::urcu::general_instant_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed())
-                        m_pGPBRCU = cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed())
-                        m_pGPTRCU = cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::attach_thread();
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed())
-                        m_pSHBRCU = cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::attach_thread();
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed())
-                        m_pSHTRCU = cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::attach_thread();
-#endif
-                }
-            }
-
-            bool fini()
-            {
-                if ( --m_nAttachCount == 0 ) {
-                    if ( cds::gc::DHP::isUsed())
-                        m_dhpManager->fini();
-                    if ( cds::gc::HP::isUsed())
-                        m_hpManager->fini();
-
-                    if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed()) {
-                        cds::urcu::details::singleton<cds::urcu::general_instant_tag>::detach_thread( m_pGPIRCU );
-                        m_pGPIRCU = nullptr;
-                    }
-                    if ( cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::isUsed()) {
-                        cds::urcu::details::singleton<cds::urcu::general_buffered_tag>::detach_thread( m_pGPBRCU );
-                        m_pGPBRCU = nullptr;
-                    }
-                    if ( cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::isUsed()) {
-                        cds::urcu::details::singleton<cds::urcu::general_threaded_tag>::detach_thread( m_pGPTRCU );
-                        m_pGPTRCU = nullptr;
-                    }
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed()) {
-                        cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::detach_thread( m_pSHBRCU );
-                        m_pSHBRCU = nullptr;
-                    }
-                    if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed()) {
-                        cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::detach_thread( m_pSHTRCU );
-                        m_pSHTRCU = nullptr;
-                    }
-#endif
-                    return true;
-                }
-                return false;
-            }
+            CDS_EXPORT_API void init();
+            CDS_EXPORT_API bool fini();
 
             size_t fake_current_processor()
             {
@@ -280,6 +194,6 @@ namespace cds {
         //@endcond
 
     } // namespace threading
-} // namespace cds::threading
+} // namespace cds
 
 #endif // #ifndef CDSLIB_THREADING__COMMON_H

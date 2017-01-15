@@ -126,9 +126,6 @@
     <Filter Include="Header Files\cds\intrusive\impl">
       <UniqueIdentifier>{00a14aa8-3035-4b56-bc86-442ca9bf8f44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\cds\gc\impl">
-      <UniqueIdentifier>{3195cce2-1710-4b79-a1cf-6c7cea085fa3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\cds\sync">
       <UniqueIdentifier>{03d212fb-73f8-4f0e-9aff-f22b0783fee8}</UniqueIdentifier>
     </Filter>
@@ -173,10 +170,13 @@
     <ClCompile Include="..\..\..\src\topology_osx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\hp_gc.cpp">
+    <ClCompile Include="..\..\..\src\hp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\dhp_gc.cpp">
+    <ClCompile Include="..\..\..\src\thread_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\dhp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1090,30 +1090,6 @@
     <ClInclude Include="..\..\..\src\hp_const.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\details\hp_alloc.h">
-      <Filter>Header Files\cds\gc\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\details\hp_type.h">
-      <Filter>Header Files\cds\gc\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\details\hp.h">
-      <Filter>Header Files\cds\gc\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\details\dhp.h">
-      <Filter>Header Files\cds\gc\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\impl\dhp_decl.h">
-      <Filter>Header Files\cds\gc\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\impl\dhp_impl.h">
-      <Filter>Header Files\cds\gc\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\impl\hp_decl.h">
-      <Filter>Header Files\cds\gc\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\impl\hp_impl.h">
-      <Filter>Header Files\cds\gc\impl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
@@ -1266,6 +1242,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_iterable_list.h">
       <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp_smr.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\dhp_smr.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\details\hp_common.h">
+      <Filter>Header Files\cds\gc\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\throw_exception.h">
+      <Filter>Header Files\cds\details</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

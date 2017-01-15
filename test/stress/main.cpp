@@ -58,13 +58,15 @@ int main( int argc, char **argv )
         cds_test::config const& general_cfg = cds_test::stress_fixture::get_config( "General" );
 
         // Init SMR
-        cds::gc::HP hzpGC( general_cfg.get_size_t( "hazard_pointer_count", 16 ));
-        hzpGC.setScanType( general_cfg.get( "HZP_scan_strategy", "inplace" ) == "inplace" ? cds::gc::HP::scan_type::inplace : cds::gc::HP::scan_type::classic );
+        cds::gc::HP hzpGC( 
+            general_cfg.get_size_t( "hazard_pointer_count", 16 ),
+            general_cfg.get_size_t( "hp_max_thread_count", 0 ),
+            general_cfg.get_size_t( "hp_retired_ptr_count", 0 ),
+            general_cfg.get( "hp_scan_strategy", "inplace" ) == "inplace" ? cds::gc::HP::scan_type::inplace : cds::gc::HP::scan_type::classic
+        );
 
         cds::gc::DHP dhpGC(
-            general_cfg.get_size_t( "dhp_liberate_threshold", 1024 ),
-            general_cfg.get_size_t( "dhp_init_guard_count", 16 ),
-            general_cfg.get_size_t( "dhp_epoch_count", 16 )
+            general_cfg.get_size_t( "dhp_init_guard_count", 16 )
         );
 
 #ifdef CDSUNIT_USE_URCU

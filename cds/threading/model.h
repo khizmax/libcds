@@ -46,32 +46,6 @@ namespace cds { namespace threading {
     */
     template <typename RCUtag> cds::urcu::details::thread_data<RCUtag> * getRCU();
 
-    /// Get cds::gc::HP thread GC implementation for current thread
-    /**
-        The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-        or if you did not use cds::gc::HP.
-        To initialize cds::gc::HP GC you must constuct cds::gc::HP object in the beginning of your application,
-        see \ref cds_how_to_use "How to use libcds"
-    */
-    template <>
-    inline cds::gc::HP::thread_gc_impl&   getGC<cds::gc::HP>()
-    {
-        return Manager::getHZPGC();
-    }
-
-    /// Get cds::gc::DHP thread GC implementation for current thread
-    /**
-        The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-        or if you did not use cds::gc::DHP.
-        To initialize cds::gc::DHP GC you must constuct cds::gc::DHP object in the beginning of your application,
-        see \ref cds_how_to_use "How to use libcds"
-    */
-    template <>
-    inline cds::gc::DHP::thread_gc_impl&   getGC<cds::gc::DHP>()
-    {
-        return Manager::getDHPGC();
-    }
-
     //@cond
     template<>
     inline cds::urcu::details::thread_data<cds::urcu::general_instant_tag> * getRCU<cds::urcu::general_instant_tag>()

@@ -52,14 +52,14 @@ namespace {
         {
             typedef cc::EllenBinTreeSet< gc_type, key_type, int_item > set_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, set_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( set_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::hp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
     };
 

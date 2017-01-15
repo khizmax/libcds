@@ -1,3 +1,19 @@
+2.3.0
+    General release
+    - Changed: cds::gc::HP is totally refactored:
+        - simplified internal structures;
+        - added ability to specify an external allocator for internal data;
+        - external API for gc::HP is slightly changed: now scan type
+          cannot be changed on the fly; it can be specified only in
+          construction time.
+    - Changed: cds::gc::DHP is totally refactored to overcome some internal
+      limitations. Now gc::DHP is fully adaptive variant of Hazard Pointer 
+      SMR, any dependencies on thread count is removed, count of retired
+      data and hazard pointers per thread are increased automaticaly by perforce.
+      External API of gc::DHP class is changed: now only initial count 
+      of hazard pointers can be specified in the constructor. Like new gc::HP,
+      the new gc::DHP supports an external allocator for internal data.
+
 2.2.0 04.01.2017
     General release
     - Changed: CMake is used for build libcds. Ancient build.sh has been removed

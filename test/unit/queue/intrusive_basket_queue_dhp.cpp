@@ -55,7 +55,7 @@ namespace {
                 >::type
             > queue_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, queue_type::c_nHazardPtrCount );
+            cds::gc::dhp::GarbageCollector::Construct( queue_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 

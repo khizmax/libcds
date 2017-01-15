@@ -133,9 +133,24 @@
 // Attributes
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
 #   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
+#   define CDS_NORETURN __declspec(noreturn)
 #else
 #   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
+#   define CDS_NORETURN __attribute__((__noreturn__))
 #endif
+
+// Exceptions
+
+#if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
+#   if defined( _CPPUNWIND )
+#       define CDS_EXCEPTION_ENABLED
+#   endif
+#else
+#   if defined( __EXCEPTIONS ) && __EXCEPTIONS == 1
+#       define CDS_EXCEPTION_ENABLED
+#   endif
+#endif
+
 
 #include <cds/compiler/icl/compiler_barriers.h>
 

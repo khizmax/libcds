@@ -52,14 +52,14 @@ namespace {
         {
             typedef ci::EllenBinTree< gc_type, key_type, base_item_type > tree_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, tree_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( tree_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
 
         struct generic_traits: public ci::ellen_bintree::traits

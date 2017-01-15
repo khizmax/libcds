@@ -108,6 +108,8 @@
 #   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
 #endif
 
+#define CDS_NORETURN __attribute__((__noreturn__))
+
 // *************************************************
 // Features
 #if defined(__has_feature) && __has_feature(thread_sanitizer)
@@ -126,6 +128,13 @@
 
 #define cds_likely( expr )   __builtin_expect( !!( expr ), 1 )
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
+
+// Exceptions
+
+#if defined( __EXCEPTIONS ) && __EXCEPTIONS == 1
+#   define CDS_EXCEPTION_ENABLED
+#endif
+
 
 // double-width CAS support - only for libc++
 #ifdef _LIBCPP_VERSION

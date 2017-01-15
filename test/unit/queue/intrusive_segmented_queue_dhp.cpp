@@ -49,14 +49,14 @@ namespace {
         {
             typedef ci::SegmentedQueue< gc_type, item > queue_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, queue_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( queue_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::hp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
 
         template <typename V>

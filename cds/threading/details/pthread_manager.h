@@ -217,28 +217,6 @@ namespace cds { namespace threading {
                 return _threadData( do_getData );
             }
 
-            /// Get gc::HP thread GC implementation for current thread
-            /**
-                The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-                or if you did not use gc::HP.
-                To initialize gc::HP GC you must constuct cds::gc::HP object in the beginning of your application
-            */
-            static gc::HP::thread_gc_impl&   getHZPGC()
-            {
-                return *(_threadData( do_getData )->m_hpManager);
-            }
-
-            /// Get gc::DHP thread GC implementation for current thread
-            /**
-                The object returned may be uninitialized if you did not call attachThread in the beginning of thread execution
-                or if you did not use gc::DHP.
-                To initialize gc::DHP GC you must constuct cds::gc::DHP object in the beginning of your application
-            */
-            static gc::DHP::thread_gc_impl&   getDHPGC()
-            {
-                return *(_threadData( do_getData )->m_dhpManager);
-            }
-
             //@cond
             static size_t fake_current_processor()
             {

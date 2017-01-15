@@ -47,14 +47,14 @@ namespace {
         {
             typedef cc::TreiberStack< gc_type, int > stack_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, stack_type::c_nHazardPtrCount );
+            cds::gc::dhp::smr::construct( stack_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 
         void TearDown()
         {
             cds::threading::Manager::detachThread();
-            cds::gc::dhp::GarbageCollector::Destruct();
+            cds::gc::dhp::smr::destruct();
         }
 
         template <typename Stack>

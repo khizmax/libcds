@@ -31,12 +31,12 @@
 #ifndef CDSLIB_GC_HP_H
 #define CDSLIB_GC_HP_H
 
-#include <cds/gc/impl/hp_decl.h>
-#include <cds/gc/impl/hp_impl.h>
+#include <cds/gc/hp_smr.h>
 #include <cds/details/lib.h>
+#include <cds/threading/model.h>
 
 /**
-    @page cds_garbage_collectors_comparison GC comparison
+    @page cds_garbage_collectors_comparison SMR (Safe Memory Reclamation schema) comparison
     @ingroup cds_garbage_collector
 
     <table>
@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td>Max number of guarded (hazard) pointers per thread</td>
-            <td>limited (specifies in GC object ctor)</td>
+            <td>limited (specifies in SMR object ctor)</td>
             <td>unlimited (dynamically allocated when needed)</td>
         </tr>
         <tr>

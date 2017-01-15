@@ -159,6 +159,15 @@
 #   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
 #endif
 
+#define CDS_NORETURN __declspec(noreturn)
+
+// Exceptions
+
+#if defined( _CPPUNWIND )
+#   define CDS_EXCEPTION_ENABLED
+#endif
+
+
 // double-width CAS support
 //#define CDS_DCAS_SUPPORT
 

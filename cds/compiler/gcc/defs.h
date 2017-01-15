@@ -97,10 +97,18 @@
 #   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
 #endif
 
+#define CDS_NORETURN __attribute__((__noreturn__))
+
 // likely/unlikely
 
 #define cds_likely( expr )   __builtin_expect( !!( expr ), 1 )
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
+
+// Exceptions
+
+#if defined( __EXCEPTIONS ) && __EXCEPTIONS == 1
+#   define CDS_EXCEPTION_ENABLED
+#endif
 
 // double-width CAS support
 // note: gcc-4.8 does not support double-word atomics

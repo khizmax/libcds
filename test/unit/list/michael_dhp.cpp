@@ -42,7 +42,7 @@ namespace {
         {
             typedef cc::MichaelList< gc_type, item > list_type;
 
-            cds::gc::dhp::GarbageCollector::Construct( 16, list_type::c_nHazardPtrCount );
+            cds::gc::dhp::GarbageCollector::Construct( list_type::c_nHazardPtrCount );
             cds::threading::Manager::attachThread();
         }
 

@@ -49,9 +49,6 @@
 
 namespace cds {
 
-    CDS_EXPORT_API atomics::atomic<size_t> threading::ThreadData::s_nLastUsedProcNo(0);
-    CDS_EXPORT_API size_t threading::ThreadData::s_nProcCount = 1;
-
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
     CDS_EXPORT_API DWORD cds::threading::wintls::Manager::Holder::m_key = TLS_OUT_OF_INDEXES;
 #   if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL
