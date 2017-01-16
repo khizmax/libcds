@@ -16,13 +16,16 @@ namespace fc_test {
     // SFINAE test
     template <typename T>
     class has_set_array_size {
-        typedef char small;
-        class big{char dummy[2];};
+        typedef char select_small;
+        class select_big {
+            char dummy[2];
+        };
 
-        template <typename C, void (C::*) (size_t)> class SFINAE {};
+        template <typename C, void (C::*) (size_t)> class selector
+        {};
 
-        template <typename C> static small test( SFINAE<C, &C::set_array> * ) ;
-        template <typename C> static big   test(...);
+        template <typename C> static select_small test( selector<C, &C::set_array>* ) ;
+        template <typename C> static select_big   test(...);
 
     public:
         static constexpr bool value = sizeof(test<T>(0)) == sizeof(char) ;
@@ -43,25 +46,30 @@ namespace fc_test {
         : value(new_value),
           nNo(0),
           nWriterNo(0)
-        {
-        };
-        heavy_value(const heavy_value &other)
-            : value(other.value),
-              nNo(other.nNo),
-              nWriterNo(other.nWriterNo)
+        {};
+
+        heavy_value( heavy_value const& other)
+            : value(other.value)
+            , nNo(other.nNo)
+            , nWriterNo(other.nWriterNo)
         {
             for(size_t i = 0; i < buffer_size; ++i)
                 pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]*rand()));
         }
-        void set_array(size_t new_size) {
+
+        void set_array(size_t new_size) 
+        {
             set_array_size(new_size);
         }
-        static void set_array_size(size_t new_size){
+
+        static void set_array_size(size_t new_size)
+        {
             if (buffer_size == new_size) return;
             buffer_size = new_size;
             pop_buff.resize(buffer_size, rand());
         }
     };
+
     template<int DefaultSize>
     std::vector<int> heavy_value< DefaultSize >::pop_buff(DefaultSize, rand());
     template<int DefaultSize>

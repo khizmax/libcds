@@ -45,48 +45,48 @@ namespace {
             typedef typename Queue::value_type value_type;
             value_type it;
 
-            const size_t nSize = 100;
+            const int nSize = 100;
 
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // enqueue/dequeue
-            for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.enqueue( static_cast<value_type>(i)));
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.enqueue( value_type(i)));
                 ASSERT_EQ( q.size(), i + 1 );
             }
             ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );
 
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = -1;
+            for ( int i = 0; i < nSize; ++i ) {
+                it = value_type( -1 );
                 ASSERT_TRUE( q.dequeue( it ));
-                ASSERT_EQ( it, static_cast<value_type>( i ));
+                ASSERT_EQ( it, value_type( i ));
                 ASSERT_EQ( q.size(), nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // push/pop
-            for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.push( static_cast<value_type>(i)));
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.push( value_type(i)));
                 ASSERT_EQ( q.size(), i + 1 );
             }
             ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );
 
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = -1;
+            for ( int i = 0; i < nSize; ++i ) {
+                it = value_type( -1 );
                 ASSERT_TRUE( q.pop( it ));
-                ASSERT_EQ( it, static_cast<value_type>( i ));
+                ASSERT_EQ( it, value_type( i ));
                 ASSERT_EQ( q.size(), nSize - i - 1 );
             }
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // clear
-            for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_TRUE( q.push( static_cast<value_type>( i )));
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.push( value_type( i )));
             }
             ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );
@@ -96,7 +96,7 @@ namespace {
             ASSERT_EQ( q.size(), 0u );
 
             // pop from empty queue
-            it = nSize * 2;
+            it = value_type( nSize * 2 );
             ASSERT_FALSE( q.pop( it ));
             ASSERT_EQ( it, static_cast<value_type>( nSize * 2 ));
             ASSERT_TRUE( q.empty());
@@ -137,6 +137,76 @@ namespace {
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
         }
+
+        template <class Queue>
+        void test_heavy( Queue& q )
+        {
+            typedef typename Queue::value_type value_type;
+            value_type it;
+
+            const int nSize = 100;
+
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+
+            // enqueue/dequeue
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.enqueue( value_type( i )));
+                ASSERT_EQ( q.size(), i + 1 );
+            }
+            ASSERT_FALSE( q.empty() );
+            ASSERT_EQ( q.size(), nSize );
+
+            for ( int i = 0; i < nSize; ++i ) {
+                it.value = -1;
+                ASSERT_TRUE( q.dequeue( it ) );
+                ASSERT_EQ( it.value, i );
+                ASSERT_EQ( q.size(), nSize - i - 1 );
+            }
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+
+            // push/pop
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.push( value_type( i )));
+                ASSERT_EQ( q.size(), i + 1 );
+            }
+            ASSERT_FALSE( q.empty() );
+            ASSERT_EQ( q.size(), nSize );
+
+            for ( int i = 0; i < nSize; ++i ) {
+                it.value = -1;
+                ASSERT_TRUE( q.pop( it ) );
+                ASSERT_EQ( it.value, i );
+                ASSERT_EQ( q.size(), nSize - i - 1 );
+            }
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+
+            // clear
+            for ( int i = 0; i < nSize; ++i ) {
+                ASSERT_TRUE( q.push( value_type( i )));
+            }
+            ASSERT_FALSE( q.empty() );
+            ASSERT_EQ( q.size(), nSize );
+
+            q.clear();
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+
+            // pop from empty queue
+            it = value_type( nSize * 2 );
+            ASSERT_FALSE( q.pop( it ) );
+            ASSERT_EQ( it.value, nSize * 2 );
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+
+            ASSERT_FALSE( q.dequeue( it ) );
+            ASSERT_EQ( it.value, nSize * 2 );
+            ASSERT_TRUE( q.empty() );
+            ASSERT_EQ( q.size(), 0u );
+        }
+
     };
 
     TEST_F( FCQueue, std_deque )
@@ -173,7 +243,7 @@ namespace {
         typedef cds::container::FCQueue<ValueType> queue_type;
 
         queue_type q;
-        test( q );
+        test_heavy( q );
     }
 
     TEST_F( FCQueue, std_empty_wait_strategy_heavy_value )
@@ -186,7 +256,7 @@ namespace {
         > queue_type;
 
         queue_type q;
-        test( q );
+        test_heavy( q );
     }
 
     TEST_F( FCQueue, std_single_mutex_single_condvar_heavy_value )
@@ -199,7 +269,7 @@ namespace {
         > queue_type;
 
         queue_type q;
-        test( q );
+        test_heavy( q );
     }
 
     TEST_F( FCQueue, std_single_mutex_multi_condvar_heavy_value )
@@ -212,7 +282,7 @@ namespace {
         > queue_type;
 
         queue_type q;
-        test( q );
+        test_heavy( q );
     }
 
     TEST_F( FCQueue, std_multi_mutex_multi_condvar_heavy_value )
@@ -225,7 +295,7 @@ namespace {
         > queue_type;
 
         queue_type q;
-        test( q );
+        test_heavy( q );
     }
 
     TEST_F( FCQueue, std_single_mutex_single_condvar )
