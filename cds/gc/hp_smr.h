@@ -156,6 +156,7 @@ namespace cds { namespace gc {
                 free_head_ = gList;
             }
 
+            // cppcheck-suppress functionConst
             void clear()
             {
                 for ( guard* cur = array_, *last = array_ + capacity(); cur < last; ++cur )
@@ -294,6 +295,8 @@ namespace cds { namespace gc {
             atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
             char pad2_[cds::c_nCacheLineSize];
 
+            // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
+            // cppcheck-suppress uninitMemberVar
             thread_data( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
                 : hazards_( guards, guard_count )
                 , retired_( retired_arr, retired_capacity )
@@ -534,7 +537,7 @@ namespace cds { namespace gc {
         private:
             //@cond
             CDS_EXPORT_API thread_record* create_thread_data();
-            CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
+            static CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
 
             /// Allocates Hazard Pointer SMR thread private data
             CDS_EXPORT_API thread_record* alloc_thread_data();

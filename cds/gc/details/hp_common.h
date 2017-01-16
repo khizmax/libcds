@@ -123,7 +123,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
             : arr_{ nullptr }
         {}
 
-        constexpr size_t capacity() const
+        static constexpr size_t capacity()
         {
             return c_nCapacity;
         }

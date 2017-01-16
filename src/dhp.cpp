@@ -63,14 +63,14 @@ namespace cds { namespace gc { namespace dhp {
             allocator() {}
             allocator( allocator const& ) {}
             template <class U>
-            allocator( allocator<U> const& ) {}
+            explicit allocator( allocator<U> const& ) {}
 
-            T* allocate( size_t nCount )
+            static T* allocate( size_t nCount )
             {
                 return reinterpret_cast<T*>( s_alloc_memory( sizeof( value_type ) * nCount ));
             }
 
-            void deallocate( T* p, size_t /*nCount*/ )
+            static void deallocate( T* p, size_t /*nCount*/ )
             {
                 s_free_memory( reinterpret_cast<void*>( p ));
             }
@@ -282,7 +282,7 @@ namespace cds { namespace gc { namespace dhp {
         );
     }
 
-    CDS_EXPORT_API void smr::destroy_thread_data( thread_record* pRec )
+    /*static*/ CDS_EXPORT_API void smr::destroy_thread_data( thread_record* pRec )
     {
         // all retired pointers must be freed
         pRec->~thread_record();

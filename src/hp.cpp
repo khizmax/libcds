@@ -59,14 +59,14 @@ namespace cds { namespace gc { namespace hp {
             allocator() {}
             allocator( allocator const& ) {}
             template <class U>
-            allocator( allocator<U> const& ) {}
+            explicit allocator( allocator<U> const& ) {}
 
-            T* allocate( size_t nCount )
+            static T* allocate( size_t nCount )
             {
                 return reinterpret_cast<T*>( s_alloc_memory( sizeof( value_type ) * nCount ) );
             }
 
-            void deallocate( T* p, size_t /*nCount*/ )
+            static void deallocate( T* p, size_t /*nCount*/ )
             {
                 s_free_memory( reinterpret_cast<void*>( p ) );
             }
@@ -213,7 +213,7 @@ namespace cds { namespace gc { namespace hp {
         );
     }
 
-    CDS_EXPORT_API void smr::destroy_thread_data( thread_record* pRec )
+    /*static*/ CDS_EXPORT_API void smr::destroy_thread_data( thread_record* pRec )
     {
         // all retired pointers must be freed
         assert( pRec->retired_.size() == 0 );
@@ -381,6 +381,7 @@ namespace cds { namespace gc { namespace hp {
         }
     }
 
+    // cppcheck-suppress functionConst
     CDS_EXPORT_API void smr::classic_scan( thread_data* pThreadRec )
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );

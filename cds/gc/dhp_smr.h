@@ -213,12 +213,12 @@ namespace cds { namespace gc {
                 : next_( nullptr )
             {}
 
-            retired_ptr*    first()
+            retired_ptr* first() const
             {
-                return reinterpret_cast<retired_ptr*>( this + 1 );
+                return reinterpret_cast<retired_ptr*>( const_cast<retired_block*>( this ) + 1 );
             }
 
-            retired_ptr*    last()
+            retired_ptr* last() const
             {
                 return first() + c_capacity;
             }
@@ -370,6 +370,8 @@ namespace cds { namespace gc {
             atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
             char pad2_[cds::c_nCacheLineSize];
 
+            // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
+            // cppcheck-suppress uninitMemberVar
             thread_data( guard* guards, size_t guard_count )
                 : hazards_( guards, guard_count )
                 , sync_( 0 )
@@ -504,7 +506,7 @@ namespace cds { namespace gc {
             }
 
         private:
-            CDS_EXPORT_API smr(
+            CDS_EXPORT_API explicit smr(
                 size_t nInitialHazardPtrCount
             );
 
@@ -515,7 +517,7 @@ namespace cds { namespace gc {
         private:
             //@cond
             CDS_EXPORT_API thread_record* create_thread_data();
-            CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
+            static CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
 
             /// Allocates Hazard Pointer SMR thread private data
             CDS_EXPORT_API thread_record* alloc_thread_data();
@@ -1205,7 +1207,7 @@ namespace cds { namespace gc {
                 By perforce the local thread's guard pool is grown automatically from common pool.
                 When the thread terminated its guard pool is backed to common GC's pool.
         */
-        DHP(
+        explicit DHP(
             size_t nInitialHazardPtrCount = 16  ///< Initial number of hazard pointer per thread
         )
         {
