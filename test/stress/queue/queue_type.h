@@ -51,6 +51,8 @@
 
 #include <cds_test/stress_test.h>
 #include <cds_test/stat_flat_combining_out.h>
+#include <cds_test/fc_hevy_value.h>
+
 #include "print_stat.h"
 
 namespace queue {
@@ -126,6 +128,56 @@ namespace queue {
 
     } // namespace details
 
+namespace fc_details{
+// FCDeque
+        struct traits_FCDeque_stat:
+            public cds::container::fcdeque::make_traits<
+                cds::opt::stat< cds::container::fcdeque::stat<> >
+            >::type
+        {};
+        struct traits_FCDeque_elimination:
+            public cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+            >::type
+        {};
+        struct traits_FCDeque_elimination_stat:
+            public cds::container::fcdeque::make_traits<
+                cds::opt::stat< cds::container::fcdeque::stat<> >,
+                cds::opt::enable_elimination< true >
+            >::type
+        {};
+        struct traits_FCDeque_mutex:
+            public cds::container::fcdeque::make_traits<
+                cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+
+        struct traits_FCDeque_wait_ss: cds::container::fcdeque::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> wait_strategy;
+        };
+        struct traits_FCDeque_wait_ss_stat: traits_FCDeque_wait_ss
+        {
+            typedef cds::container::fcdeque::stat<> stat;
+        };
+        struct traits_FCDeque_wait_sm: cds::container::fcdeque::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
+        };
+        struct traits_FCDeque_wait_sm_stat: traits_FCDeque_wait_sm
+        {
+            typedef cds::container::fcdeque::stat<> stat;
+        };
+        struct traits_FCDeque_wait_mm: cds::container::fcdeque::traits
+        {
+            typedef cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> wait_strategy;
+        };
+        struct traits_FCDeque_wait_mm_stat: traits_FCDeque_wait_mm
+        {
+            typedef cds::container::fcdeque::stat<> stat;
+        };
+
+}
     template <typename Value>
     struct Types {
 
@@ -354,87 +406,40 @@ namespace queue {
         typedef cds::container::FCQueue< Value, std::queue<Value, std::list<Value> >, traits_FCQueue_elimination_stat > FCQueue_list_elimination_stat;
 
 
-   // FCDeque
-        struct traits_FCDeque_stat:
-            public cds::container::fcdeque::make_traits<
-                cds::opt::stat< cds::container::fcdeque::stat<> >
-            >::type
-        {};
-        struct traits_FCDeque_elimination:
-            public cds::container::fcdeque::make_traits<
-                cds::opt::enable_elimination< true >
-            >::type
-        {};
-        struct traits_FCDeque_elimination_stat:
-            public cds::container::fcdeque::make_traits<
-                cds::opt::stat< cds::container::fcdeque::stat<> >,
-                cds::opt::enable_elimination< true >
-            >::type
-        {};
-        struct traits_FCDeque_mutex:
-            public cds::container::fcdeque::make_traits<
-                cds::opt::lock_type< std::mutex >
-            >::type
-        {};
-
-        struct traits_FCDeque_wait_ss: cds::container::fcdeque::traits
-        {
-            typedef cds::algo::flat_combining::wait_strategy::single_mutex_single_condvar<> wait_strategy;
-        };
-        struct traits_FCDeque_wait_ss_stat: traits_FCDeque_wait_ss
-        {
-            typedef cds::container::fcdeque::stat<> stat;
-        };
-        struct traits_FCDeque_wait_sm: cds::container::fcdeque::traits
-        {
-            typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
-        };
-        struct traits_FCDeque_wait_sm_stat: traits_FCDeque_wait_sm
-        {
-            typedef cds::container::fcdeque::stat<> stat;
-        };
-        struct traits_FCDeque_wait_mm: cds::container::fcdeque::traits
-        {
-            typedef cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<> wait_strategy;
-        };
-        struct traits_FCDeque_wait_mm_stat: traits_FCDeque_wait_mm
-        {
-            typedef cds::container::fcdeque::stat<> stat;
-        };
 
         typedef details::FCDequeL< Value > FCDequeL_default;
-        typedef details::FCDequeL< Value, traits_FCDeque_mutex > FCDequeL_mutex;
-        typedef details::FCDequeL< Value, traits_FCDeque_stat > FCDequeL_stat;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_ss > FCDequeL_wait_ss;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_ss_stat > FCDequeL_wait_ss_stat;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_sm > FCDequeL_wait_sm;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_sm_stat > FCDequeL_wait_sm_stat;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_mm > FCDequeL_wait_mm;
-        typedef details::FCDequeL< Value, traits_FCDeque_wait_mm_stat > FCDequeL_wait_mm_stat;
-        typedef details::FCDequeL< Value, traits_FCDeque_elimination > FCDequeL_elimination;
-        typedef details::FCDequeL< Value, traits_FCDeque_elimination_stat > FCDequeL_elimination_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_mutex > FCDequeL_mutex;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat > FCDequeL_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss > FCDequeL_wait_ss;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeL_wait_ss_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm > FCDequeL_wait_sm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeL_wait_sm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm > FCDequeL_wait_mm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeL_wait_mm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination > FCDequeL_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeL_elimination_stat;
 
         typedef details::FCDequeL< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeL_boost;
-        typedef details::FCDequeL< Value, traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_boost_stat;
-        typedef details::FCDequeL< Value, traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_boost_elimination;
-        typedef details::FCDequeL< Value, traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_boost_elimination_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_boost_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_boost_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_boost_elimination_stat;
 
         typedef details::FCDequeR< Value > FCDequeR_default;
-        typedef details::FCDequeR< Value, traits_FCDeque_mutex > FCDequeR_mutex;
-        typedef details::FCDequeR< Value, traits_FCDeque_stat > FCDequeR_stat;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_ss > FCDequeR_wait_ss;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_ss_stat > FCDequeR_wait_ss_stat;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_sm > FCDequeR_wait_sm;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_sm_stat > FCDequeR_wait_sm_stat;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_mm > FCDequeR_wait_mm;
-        typedef details::FCDequeR< Value, traits_FCDeque_wait_mm_stat > FCDequeR_wait_mm_stat;
-        typedef details::FCDequeR< Value, traits_FCDeque_elimination > FCDequeR_elimination;
-        typedef details::FCDequeR< Value, traits_FCDeque_elimination_stat > FCDequeR_elimination_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_mutex > FCDequeR_mutex;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat > FCDequeR_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss > FCDequeR_wait_ss;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeR_wait_ss_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm > FCDequeR_wait_sm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeR_wait_sm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm > FCDequeR_wait_mm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeR_wait_mm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination > FCDequeR_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeR_elimination_stat;
 
         typedef details::FCDequeR< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeR_boost;
-        typedef details::FCDequeR< Value, traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_boost_stat;
-        typedef details::FCDequeR< Value, traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_boost_elimination;
-        typedef details::FCDequeR< Value, traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_boost_elimination_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_boost_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_boost_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_boost_elimination_stat;
 
         // STL
         typedef StdQueue_deque<Value>               StdQueue_deque_Spinlock;
@@ -491,6 +496,43 @@ namespace queue {
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_padding >  SegmentedQueue_DHP_mutex_padding;
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
     };
+
+    template <typename Value>
+    struct TypesFCHeavyValue {
+        typedef details::FCDequeL< Value > FCDequeL_HeavyValue_default;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_mutex > FCDequeL_HeavyValue_mutex;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat > FCDequeL_HeavyValue_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss > FCDequeL_HeavyValue_wait_ss;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeL_HeavyValue_wait_ss_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm > FCDequeL_HeavyValue_wait_sm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeL_HeavyValue_wait_sm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm > FCDequeL_HeavyValue_wait_mm;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeL_HeavyValue_wait_mm_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination > FCDequeL_HeavyValue_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeL_HeavyValue_elimination_stat;
+
+        typedef details::FCDequeL< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeL_HeavyValue_boost;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_stat;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination;
+        typedef details::FCDequeL< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeL_HeavyValue_boost_elimination_stat;
+
+        typedef details::FCDequeR< Value > FCDequeR_HeavyValue_default;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_mutex > FCDequeR_HeavyValue_mutex;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat > FCDequeR_HeavyValue_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss > FCDequeR_HeavyValue_wait_ss;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_ss_stat > FCDequeR_HeavyValue_wait_ss_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm > FCDequeR_HeavyValue_wait_sm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_sm_stat > FCDequeR_HeavyValue_wait_sm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm > FCDequeR_HeavyValue_wait_mm;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_wait_mm_stat > FCDequeR_HeavyValue_wait_mm_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination > FCDequeR_HeavyValue_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat > FCDequeR_HeavyValue_elimination_stat;
+
+        typedef details::FCDequeR< Value, cds::container::fcdeque::traits, boost::container::deque<Value> > FCDequeR_HeavyValue_boost;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_stat;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination;
+        typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_HeavyValue_boost_elimination_stat;
+    };
 }
 
 
@@ -542,6 +584,15 @@ namespace cds_test {
     { \
         if ( !check_detail_level( level )) return; \
         typedef queue::Types< value_type >::type_name queue_type; \
+        queue_type queue; \
+        test( queue ); \
+    }
+
+#define CDSSTRESS_FCQueue_F( test_fixture, type_name, level ) \
+    TEST_F( test_fixture, type_name ) \
+    { \
+        if ( !check_detail_level( level )) return; \
+        typedef queue::TypesFCHeavyValue< value_type >::type_name queue_type; \
         queue_type queue; \
         test( queue ); \
     }
@@ -608,11 +659,12 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list_elimination,      1 ) \
     CDSSTRESS_Queue_F( test_fixture, FCQueue_list_elimination_stat, 0 )
 
+
 #define CDSSTRESS_FCDeque( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, FCDequeL_default,              0 ) \
-    CDSSTRESS_Queue_F( test_fixture, FCDequeL_mutex,                0 ) \
-    CDSSTRESS_Queue_F( test_fixture, FCDequeL_stat,                 0 ) \
-    CDSSTRESS_Queue_F( test_fixture, FCDequeL_wait_ss,              1 ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_mutex,                1 ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_stat,                 1 ) \
+    CDSSTRESS_Queue_F( test_fixture, FCDequeL_wait_ss,              1 )\
     CDSSTRESS_Queue_F( test_fixture, FCDequeL_wait_ss_stat,         0 ) \
     CDSSTRESS_Queue_F( test_fixture, FCDequeL_wait_sm,              1 ) \
     CDSSTRESS_Queue_F( test_fixture, FCDequeL_wait_sm_stat,         0 ) \
@@ -639,6 +691,38 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_stat,           0 ) \
     CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_elimination,    1 ) \
     CDSSTRESS_Queue_F( test_fixture, FCDequeR_boost_elimination_stat, 1 )
+
+#define CDSSTRESS_FCDeque_HeavyValue( test_fixture ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_default,              0 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_mutex,                0 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_stat,                 0 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_ss,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_ss_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_sm,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_sm_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_mm,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_wait_mm_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_elimination,          1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_elimination_stat,     1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_boost,                1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_boost_stat,           1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_boost_elimination,    1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_boost_elimination_stat, 1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_default,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_mutex,                1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_stat,                 1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_ss,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_ss_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_sm,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_sm_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_mm,              1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_wait_mm_stat,         1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_elimination,          1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_elimination_stat,     1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_boost,                1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_boost_stat,           1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_boost_elimination,    1 ) \
+    CDSSTRESS_FCQueue_F( test_fixture, FCDequeR_HeavyValue_boost_elimination_stat, 1 )
 
 #define CDSSTRESS_RWQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin,      0 ) \
