@@ -8,11 +8,11 @@
           construction time.
     - Changed: cds::gc::DHP is totally refactored to overcome some internal
       limitations. Now gc::DHP is fully adaptive variant of Hazard Pointer 
-      SMR, any dependencies on thread count is removed, count of retired
+      SMR, any dependencies on count of thread are removed, count of retired
       data and hazard pointers per thread are increased automaticaly by perforce.
       External API of gc::DHP class is changed: now only initial count 
       of hazard pointers can be specified in the constructor. Like new gc::HP,
-      the new gc::DHP supports an external allocator for internal data.
+      the new gc::DHP supports an external allocator.
     - Added more flat-combining queue tests, thanks to Marsel Galimullin.
     - Changed cmake scripts to support MacOS and ARMv7/ARMv8 (64 bit),
       thanks to Michail Komarov (https://github.com/Nemo1369)
