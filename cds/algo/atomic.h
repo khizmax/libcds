@@ -121,7 +121,7 @@ namespace cds {
                 Returns \p n.
             */
             value_type operator =(
-                value_type n    //< new value of the counter
+                value_type n    ///< new value of the counter
             ) CDS_NOEXCEPT
             {
                 m_counter.exchange( n, atomics::memory_order_relaxed );
