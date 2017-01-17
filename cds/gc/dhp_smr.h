@@ -73,8 +73,8 @@ namespace cds { namespace gc {
         public:
             static hp_allocator& instance();
 
-            CDS_EXPORT_API guard_block*    alloc();
-            void            free( guard_block* block )
+            CDS_EXPORT_API guard_block* alloc();
+            void free( guard_block* block )
             {
                 free_list_.put( block );
             }
@@ -98,7 +98,10 @@ namespace cds { namespace gc {
                 , extended_list_( nullptr )
                 , array_( arr )
                 , initial_capacity_( nSize )
-            {}
+            {
+                // Initialize guards
+                new( arr ) guard[nSize];
+            }
 
             thread_hp_storage() = delete;
             thread_hp_storage( thread_hp_storage const& ) = delete;

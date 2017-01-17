@@ -74,6 +74,9 @@ namespace cds { namespace gc {
                 , free_guard_count_(0)
 #       endif
             {
+                // Initialize guards
+                new( arr ) guard[nSize];
+
                 for ( guard* pEnd = arr + nSize - 1; arr < pEnd; ++arr )
                     arr->next_ = arr + 1;
                 arr->next_ = nullptr;
