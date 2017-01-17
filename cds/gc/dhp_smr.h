@@ -40,6 +40,8 @@
 #include <cds/user_setup/cache_line.h>
 
 namespace cds { namespace gc {
+
+    /// Dynamic (adaptive) Hazard Pointer implementation details
     namespace dhp {
         using namespace cds::gc::hp::common;
 
@@ -47,11 +49,14 @@ namespace cds { namespace gc {
         class not_initialized: public std::runtime_error
         {
         public:
+            //@cond
             not_initialized()
                 : std::runtime_error( "Global DHP SMR object is not initialized" )
             {}
+            //@endcond
         };
 
+        //@cond
         struct guard_block: public cds::intrusive::FreeListImpl::node
         {
             guard_block*    next_;  // next block in the thread list
@@ -65,7 +70,9 @@ namespace cds { namespace gc {
                 return reinterpret_cast<guard*>( this + 1 );
             }
         };
+        //@endcond
 
+        //@cond
         /// \p guard_block allocator (global object)
         class hp_allocator
         {
@@ -87,7 +94,9 @@ namespace cds { namespace gc {
         private:
             cds::intrusive::FreeListImpl    free_list_; ///< list of free \p guard_block
         };
+        //@endcond
 
+        //@cond
         /// Per-thread hazard pointer storage
         class thread_hp_storage 
         {
@@ -205,7 +214,9 @@ namespace cds { namespace gc {
             guard* const    array_;            ///< initial HP array
             size_t const    initial_capacity_; ///< Capacity of \p array_
         };
+        //@endcond
 
+        //@cond
         struct retired_block: public cds::intrusive::FreeListImpl::node
         {
             retired_block*  next_;  ///< Next block in thread-private retired array
@@ -226,7 +237,9 @@ namespace cds { namespace gc {
                 return first() + c_capacity;
             }
         };
+        //@endcond
 
+        //@cond
         class retired_allocator
         {
             friend class smr;
@@ -248,7 +261,9 @@ namespace cds { namespace gc {
         private:
             cds::intrusive::FreeListImpl    free_list_; ///< list of free \p guard_block
         };
+        //@endcond
 
+        //@cond
         /// Per-thread retired array
         class retired_array
         {
@@ -363,7 +378,9 @@ namespace cds { namespace gc {
             retired_block*          list_tail_;
             size_t                  block_count_;
         };
+        //@endcond
 
+        //@cond
         /// Per-thread data
         struct thread_data {
             thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
@@ -389,8 +406,10 @@ namespace cds { namespace gc {
                 sync_.fetch_add( 1, atomics::memory_order_acq_rel );
             }
         };
+        //@endcond
 
-        // Hazard Pointer SMR (Safe Memory Reclamation)
+        //@cond
+        // Dynmic (adaptive) Hazard Pointer SMR (Safe Memory Reclamation)
         class smr
         {
             struct thread_record;
@@ -426,7 +445,6 @@ namespace cds { namespace gc {
                 size_t nInitialHazardPtrCount = 16  ///< Initial number of hazard pointer per thread
             );
 
-            //@cond
             // for back-copatibility
             static void Construct(
                 size_t nInitialHazardPtrCount = 16  ///< Initial number of hazard pointer per thread
@@ -434,7 +452,6 @@ namespace cds { namespace gc {
             {
                 construct( nInitialHazardPtrCount );
             }
-            //@endcond
 
             /// Destroys global instance of \ref smr
             /**
@@ -447,15 +464,13 @@ namespace cds { namespace gc {
                 bool bDetachAll = false     ///< Detach all threads
             );
 
-            //@cond
-            // for back-copatibility
+            // for back-compatibility
             static void Destruct(
                 bool bDetachAll = false     ///< Detach all threads
             )
             {
                 destruct( bDetachAll );
             }
-            //@endcond
 
             /// Checks if global SMR object is constructed and may be used
             static bool isUsed() CDS_NOEXCEPT
@@ -518,7 +533,6 @@ namespace cds { namespace gc {
             CDS_EXPORT_API void detach_all_thread();
 
         private:
-            //@cond
             CDS_EXPORT_API thread_record* create_thread_data();
             static CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
 
@@ -527,7 +541,6 @@ namespace cds { namespace gc {
 
             /// Free HP SMR thread-private data
             CDS_EXPORT_API void free_thread_data( thread_record* pRec );
-            //@endcond
 
         private:
             static CDS_EXPORT_API smr* instance_;
@@ -540,7 +553,9 @@ namespace cds { namespace gc {
             // temporaries
             std::atomic<size_t> last_plist_size_;   ///< HP array size in last scan() call
         };
+        //@endcond
 
+        //@cond
         // for backward compatibility
         typedef smr GarbageCollector;
 
@@ -555,25 +570,24 @@ namespace cds { namespace gc {
         {
             return smr::instance().get_retired_allocator();
         }
+        //@endcond
 
     } // namespace dhp
 
 
-        /// Dynamic Hazard Pointer garbage collector
+    /// Dynamic (adaptie) Hazard Pointer SMR
     /**  @ingroup cds_garbage_collector
-        @headerfile cds/gc/dhp.h
 
-        Implementation of Dynamic Hazard Pointer garbage collector.
+        Implementation of Dynamic (adaptive) Hazard Pointer SMR
 
         Sources:
             - [2002] Maged M.Michael "Safe memory reclamation for dynamic lock-freeobjects using atomic reads and writes"
             - [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
             - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
-        Dynamic Hazard Pointers SMR (safe memory reclamation) provides an unbounded number of hazard pointer per thread
-        despite of classic Hazard Pointer SMR in which the count of the hazard pointef per thread is limited.
+        %DHP is an adaptive variant of classic \p cds::gc::HP, see @ref cds_garbage_collectors_comparison "Compare HP implementation"
 
-        See \ref cds_how_to_use "How to use" section for details how to apply garbage collector.
+        See \ref cds_how_to_use "How to use" section for details how to apply SMR.
     */
     class DHP
     {
@@ -1249,8 +1263,7 @@ namespace cds { namespace gc {
             @note This function may be called <b>BEFORE</b> creating an instance
             of Dynamic Hazard Pointer SMR
 
-            SMR object allocates some memory for thread-specific data and for
-            creating SMR object.
+            SMR object allocates some memory for thread-specific data and for creating SMR object.
             By default, a standard \p new and \p delete operators are used for this.
         */
         static void set_memory_allocator(

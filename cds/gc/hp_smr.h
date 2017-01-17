@@ -38,30 +38,80 @@
 #include <cds/details/marked_ptr.h>
 #include <cds/user_setup/cache_line.h>
 
+/**
+    @page cds_garbage_collectors_comparison Hazard Pointer SMR implementations
+    @ingroup cds_garbage_collector
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>%cds::gc::HP</th>
+            <th>%cds::gc::DHP</th>
+        </tr>
+        <tr>
+            <td>Max number of guarded (hazard) pointers per thread</td>
+            <td>limited (specified at construction time)</td>
+            <td>unlimited (dynamically allocated when needed)</td>
+        </tr>
+        <tr>
+            <td>Max number of retired pointers<sup>1</sup></td>
+            <td>bounded, specified at construction time</td>
+            <td>bounded, adaptive, depends on current thread count and number of hazard pointer for each thread</td>
+        </tr>
+        <tr>
+            <td>Thread count</td>
+            <td>bounded, upper bound is specified at construction time</td>
+            <td>unbounded</td>
+        </tr>
+    </table>
+
+    <sup>1</sup>Unbounded count of retired pointers means a possibility of memory exhaustion.
+*/
+
+namespace cds {
+    /// @defgroup cds_garbage_collector Garbage collectors
+
+
+    /// Different safe memory reclamation schemas (garbage collectors)
+    /** @ingroup cds_garbage_collector
+
+        This namespace specifies different safe memory reclamation (SMR) algorithms.
+        See \ref cds_garbage_collector "Garbage collectors"
+    */
+    namespace gc {
+    } // namespace gc
+
+} // namespace cds
+
+
 namespace cds { namespace gc {
+    /// Hazard pointer implementation details
     namespace hp {
         using namespace cds::gc::hp::common;
 
         /// Exception "Not enough Hazard Pointer"
         class not_enought_hazard_ptr: public std::length_error
         {
+        //@cond
         public:
-            //@cond
             not_enought_hazard_ptr()
                 : std::length_error( "Not enough Hazard Pointer" )
             {}
-            //@endcond
+        //@endcond
         };
 
         /// Exception "Hazard Pointer SMR is not initialized"
         class not_initialized: public std::runtime_error
         {
+        //@cond
         public:
             not_initialized()
                 : std::runtime_error( "Global Hazard Pointer SMR object is not initialized" )
             {}
+        //@endcond
         };
 
+        //@cond
         /// Per-thread hazard pointer storage
         class thread_hp_storage {
         public:
@@ -188,7 +238,9 @@ namespace cds { namespace gc {
             size_t          free_guard_count_;
 #       endif
         };
+        //@endcond
 
+        //@cond
         /// Per-thread retired array
         class retired_array
         {
@@ -256,8 +308,8 @@ namespace cds { namespace gc {
         public:
             size_t  retire_call_count_;
 #       endif
-
         };
+        //@endcond
 
         /// Internal statistics
         struct stat {
@@ -270,11 +322,13 @@ namespace cds { namespace gc {
 
             size_t  thread_rec_count;   ///< Count of thread records
 
+            /// Default ctor
             stat()
             {
                 clear();
             }
 
+            /// Clears all counters
             void clear()
             {
                 guard_allocated =
@@ -287,6 +341,7 @@ namespace cds { namespace gc {
             }
         };
 
+        //@cond
         /// Per-thread data
         struct thread_data {
             thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
@@ -315,14 +370,16 @@ namespace cds { namespace gc {
                 sync_.fetch_add( 1, atomics::memory_order_acq_rel );
             }
         };
+        //@endcond
 
-        /// smr::scan() strategy
+        /// \p smr::scan() strategy
         enum scan_type {
             classic,    ///< classic scan as described in Michael's works (see smr::classic_scan() )
             inplace     ///< inplace scan without allocation (see smr::inplace_scan() )
         };
 
-        // Hazard Pointer SMR (Safe Memory Reclamation)
+        //@cond
+        /// Hazard Pointer SMR (Safe Memory Reclamation)
         class smr
         {
             struct thread_record;
@@ -361,7 +418,6 @@ namespace cds { namespace gc {
                 scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
             );
 
-            //@cond
             // for back-copatibility
             static void Construct(
                 size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
@@ -372,8 +428,6 @@ namespace cds { namespace gc {
             {
                 construct( nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
             }
-
-            //@endcond
 
             /// Destroys global instance of \ref smr
             /**
@@ -386,15 +440,13 @@ namespace cds { namespace gc {
                 bool bDetachAll = false     ///< Detach all threads
             );
 
-            //@cond
-            // for back-copatibility
+            // for back-compatibility
             static void Destruct(
                 bool bDetachAll = false     ///< Detach all threads
             )
             {
                 destruct( bDetachAll );
             }
-            //@endcond
 
             /// Checks if global SMR object is constructed and may be used
             static bool isUsed() CDS_NOEXCEPT
@@ -538,7 +590,6 @@ namespace cds { namespace gc {
             CDS_EXPORT_API void inplace_scan( thread_data* pRec );
 
         private:
-            //@cond
             CDS_EXPORT_API thread_record* create_thread_data();
             static CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
 
@@ -547,8 +598,6 @@ namespace cds { namespace gc {
 
             /// Free HP SMR thread-private data
             CDS_EXPORT_API void free_thread_data( thread_record* pRec );
-
-            //@endcond
 
         private:
             static CDS_EXPORT_API smr* instance_;
@@ -561,27 +610,27 @@ namespace cds { namespace gc {
             scan_type const scan_type_;             ///< scan type (see \ref scan_type enum)
             void ( smr::*scan_func_ )( thread_data* pRec );
         };
+        //@endcond
 
+        //@cond
         // for backward compatibility
         typedef smr GarbageCollector;
+        //@endcond
 
     } // namespace hp
-
-
-    /// @defgroup cds_garbage_collector Garbage collectors
 
     /// Hazard Pointer SMR (Safe Memory Reclamation)
     /**  @ingroup cds_garbage_collector
 
-        Implementation of classic Hazard Pointer garbage collector.
+        Implementation of classic Hazard Pointer SMR
 
         Sources:
             - [2002] Maged M.Michael "Safe memory reclamation for dynamic lock-freeobjects using atomic reads and writes"
             - [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects"
             - [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers"
 
-        Hazard Pointer garbage collector is a singleton. The main user-level part of Hazard Pointer schema is
-        \p %cds::gc::HP class and its nested classes. Before use any HP-related class you must initialize HP
+        Hazard Pointer SMR is a singleton. The main user-level part of Hazard Pointer schema is
+        \p %cds::gc::HP class and its nested classes. Before use any HP-related class you must initialize \p %HP
         by contructing \p %cds::gc::HP object in beginning of your \p main().
         See \ref cds_how_to_use "How to use" section for details how to apply SMR schema.
     */
