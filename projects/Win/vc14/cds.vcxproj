@@ -511,8 +511,6 @@
     <ClInclude Include="..\..\..\cds\details\throw_exception.h" />
     <ClInclude Include="..\..\..\cds\gc\details\hp_common.h" />
     <ClInclude Include="..\..\..\cds\gc\dhp.h" />
-    <ClInclude Include="..\..\..\cds\gc\dhp_smr.h" />
-    <ClInclude Include="..\..\..\cds\gc\hp_smr.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />

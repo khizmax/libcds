@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <cds/gc/hp_smr.h>
+#include <cds/gc/hp.h>
 #include <cds/os/thread.h>
 
 namespace cds { namespace gc { namespace hp {

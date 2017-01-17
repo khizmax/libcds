@@ -1243,12 +1243,6 @@
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_iterable_list.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\hp_smr.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\gc\dhp_smr.h">
-      <Filter>Header Files\cds\gc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\hp_common.h">
       <Filter>Header Files\cds\gc\details</Filter>
     </ClInclude>
