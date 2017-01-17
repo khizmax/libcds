@@ -449,7 +449,7 @@ namespace cds_test {
             // Force retiring cycle
             Tree::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1u );
+                EXPECT_EQ( i.nDisposeCount, 1u ) << "key=" << i.key();
             }
 
             // clear
@@ -470,7 +470,7 @@ namespace cds_test {
             // Force retiring cycle
             Tree::gc::force_dispose();
             for ( auto& i : data ) {
-                EXPECT_EQ( i.nDisposeCount, 1u );
+                EXPECT_EQ( i.nDisposeCount, 1u ) << "key=" << i.key();
             }
         }
     };
