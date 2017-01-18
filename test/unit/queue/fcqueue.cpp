@@ -73,7 +73,7 @@ namespace {
                 ASSERT_EQ( q.size(), static_cast<size_t>( i + 1 ));
             }
             ASSERT_FALSE( q.empty());
-            ASSERT_EQ( q.size(), nSize );
+            ASSERT_EQ( q.size(), static_cast<size_t>( nSize ));
 
             for ( int i = 0; i < nSize; ++i ) {
                 it = value_type( -1 );
