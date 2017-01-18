@@ -2736,7 +2736,7 @@ namespace cds { namespace intrusive {
         /// Clears the set
         /**
             The function unlinks all items from the set.
-            For any item <tt> @ref disposer </tt> is called
+            For any item \p Traits::disposer is called
         */
         void clear()
         {
@@ -2753,7 +2753,7 @@ namespace cds { namespace intrusive {
             };
             \endcode
 
-            The <tt> @ref disposer </tt> specified in \p Traits is not called.
+            The \p Traits::disposer is not called.
         */
         template <typename Disposer>
         void clear_and_dispose( Disposer oDisposer )
