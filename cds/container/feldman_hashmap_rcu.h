@@ -319,8 +319,8 @@ namespace cds { namespace container {
     public:
         /// Creates empty map
         /**
-            @param head_bits: 2<sup>head_bits</sup> specifies the size of head array, minimum is 4.
-            @param array_bits: 2<sup>array_bits</sup> specifies the size of array node, minimum is 2.
+            @param head_bits - 2<sup>head_bits</sup> specifies the size of head array, minimum is 4.
+            @param array_bits - 2<sup>array_bits</sup> specifies the size of array node, minimum is 2.
 
             Equation for \p head_bits and \p array_bits:
             \code
