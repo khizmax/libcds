@@ -8,7 +8,7 @@
 #ifndef SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEAVY_VALUE_H_
 #define SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEAVY_VALUE_H_
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 namespace fc_test {
