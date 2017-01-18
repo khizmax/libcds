@@ -62,7 +62,7 @@ namespace {
                 it = value_type( -1 );
                 ASSERT_TRUE( q.dequeue( it ));
                 ASSERT_EQ( it, value_type( i ));
-                ASSERT_EQ( q.size(), nSize - i - 1 );
+                ASSERT_EQ( q.size(), static_cast<size_t>( nSize - i - 1 ));
             }
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
@@ -70,7 +70,7 @@ namespace {
             // push/pop
             for ( int i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.push( value_type(i)));
-                ASSERT_EQ( q.size(), i + 1 );
+                ASSERT_EQ( q.size(), static_cast<size_t>( i + 1 ));
             }
             ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );
@@ -79,7 +79,7 @@ namespace {
                 it = value_type( -1 );
                 ASSERT_TRUE( q.pop( it ));
                 ASSERT_EQ( it, value_type( i ));
-                ASSERT_EQ( q.size(), nSize - i - 1 );
+                ASSERT_EQ( q.size(), static_cast<size_t>( nSize - i - 1 ));
             }
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
@@ -89,7 +89,7 @@ namespace {
                 ASSERT_TRUE( q.push( value_type( i )));
             }
             ASSERT_FALSE( q.empty());
-            ASSERT_EQ( q.size(), nSize );
+            ASSERT_EQ( q.size(), static_cast<size_t>( nSize ));
 
             q.clear();
             ASSERT_TRUE( q.empty());
