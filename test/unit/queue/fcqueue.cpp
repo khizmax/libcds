@@ -53,7 +53,7 @@ namespace {
             // enqueue/dequeue
             for ( int i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.enqueue( value_type(i)));
-                ASSERT_EQ( q.size(), i + 1 );
+                ASSERT_EQ( q.size(), static_cast<size_t>(i + 1));
             }
             ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), nSize );

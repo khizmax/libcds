@@ -44,8 +44,8 @@ namespace cds_test {
     static inline property_stream& operator <<( property_stream& o, cds::intrusive::ellen_bintree::stat<> const& s )
     {
         return o
-            //<< "\t\t   Internal node allocated: " << ellen_bintree_pool::internal_node_counter::m_nAlloc.get() << "\n"
-            //<< "\t\t       Internal node freed: " << ellen_bintree_pool::internal_node_counter::m_nFree.get() << "\n"
+            // << "\t\t   Internal node allocated: " << ellen_bintree_pool::internal_node_counter::m_nAlloc.get() << "\n"
+            // << "\t\t       Internal node freed: " << ellen_bintree_pool::internal_node_counter::m_nFree.get() << "\n"
             << CDSSTRESS_STAT_OUT( s, m_nInternalNodeCreated )
             << CDSSTRESS_STAT_OUT( s, m_nInternalNodeDeleted )
             << CDSSTRESS_STAT_OUT( s, m_nUpdateDescCreated )
