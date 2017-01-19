@@ -76,6 +76,7 @@ namespace cds { namespace gc { namespace dhp {
             }
         };
 
+        stat s_postmortem_stat;
     } // namespace
 
     /*static*/ CDS_EXPORT_API smr* smr::instance_ = nullptr;
@@ -99,6 +100,8 @@ namespace cds { namespace gc { namespace dhp {
             // allocate new block
             gb = new( s_alloc_memory( sizeof( guard_block ) + sizeof( guard ) * defaults::c_extended_guard_block_size )) guard_block;
             new ( gb->first() ) guard[defaults::c_extended_guard_block_size];
+
+            CDS_HPSTAT( block_allocated_.fetch_add( 1, atomics::memory_order_relaxed ));
         }
 
         // links guards in the block
@@ -197,6 +200,8 @@ namespace cds { namespace gc { namespace dhp {
         CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
         CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id(); )
 
+        CDS_HPSTAT( statistics( s_postmortem_stat ) );
+
         thread_record* pHead = thread_list_.load( atomics::memory_order_relaxed );
         thread_list_.store( nullptr, atomics::memory_order_relaxed );
 
@@ -212,12 +217,16 @@ namespace cds { namespace gc { namespace dhp {
 
             // delete retired data
             for ( retired_block* block = retired.list_head_; block && block != retired.current_block_; block = block->next_ ) {
-                for ( retired_ptr* p = block->first(); p != block->last(); ++p )
+                for ( retired_ptr* p = block->first(); p != block->last(); ++p ) {
                     p->free();
+                    CDS_HPSTAT( ++s_postmortem_stat.free_count );
+                }
             }
             if ( retired.current_block_ ) {
-                for ( retired_ptr* p = retired.current_block_->first(); p != retired.current_cell_; ++p )
+                for ( retired_ptr* p = retired.current_block_->first(); p != retired.current_cell_; ++p ) {
                     p->free();
+                    CDS_HPSTAT( ++s_postmortem_stat.free_count );
+                }
             }
             hprec->retired_.fini();
             hprec->hazards_.clear();
@@ -372,7 +381,7 @@ namespace cds { namespace gc { namespace dhp {
 
             for ( retired_ptr* p = block->first(), *end = p + block_size; p != end; ++p ) {
                 if ( cds_unlikely( std::binary_search( hp_begin, hp_end, p->m_p )))
-                    stg.safe_push( p );
+                    stg.repush( p );
                 else {
                     p->free();
                     ++count;
@@ -387,6 +396,8 @@ namespace cds { namespace gc { namespace dhp {
     CDS_EXPORT_API void smr::scan( thread_data* pThreadRec )
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
+
+        CDS_HPSTAT( ++pRec->scan_call_count_ );
 
         hp_vector plist;
         size_t plist_size = last_plist_size_.load( std::memory_order_relaxed );
@@ -429,6 +440,7 @@ namespace cds { namespace gc { namespace dhp {
             if ( end_block )
                 break;
         }
+        CDS_HPSTAT( pRec->free_call_count_ += free_count );
 
         // If the count of freed elements is too small, increase retired array
         if ( free_count == 0 && last_block == pRec->retired_.list_tail_ && last_block_cell == last_block->last() )
@@ -438,6 +450,7 @@ namespace cds { namespace gc { namespace dhp {
     CDS_EXPORT_API void smr::help_scan( thread_data* pThis )
     {
         assert( static_cast<thread_record*>( pThis )->m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::get_current_thread_id() );
+        CDS_HPSTAT( ++pThis->help_scan_call_count_ );
 
         const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
         const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
@@ -485,4 +498,33 @@ namespace cds { namespace gc { namespace dhp {
         scan( pThis );
     }
 
+    void smr::statistics( stat& st )
+    {
+        st.clear();
+#   ifdef CDS_ENABLE_HPSTAT
+        for ( thread_record* hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ) )
+        {
+            ++st.thread_rec_count;
+            st.guard_allocated      += hprec->hazards_.alloc_guard_count_;
+            st.guard_freed          += hprec->hazards_.free_guard_count_;
+            st.hp_extend_count      += hprec->hazards_.extend_call_count_;
+            st.retired_count        += hprec->retired_.retire_call_count_;
+            st.retired_extend_count += hprec->retired_.extend_call_count_;
+            st.free_count           += hprec->free_call_count_;
+            st.scan_count           += hprec->scan_call_count_;
+            st.help_scan_count      += hprec->help_scan_call_count_;
+        }
+
+        st.hp_block_count = hp_allocator_.block_allocated_.load( atomics::memory_order_relaxed );
+        st.retired_block_count = retired_allocator_.block_allocated_.load( atomics::memory_order_relaxed );
+#   endif
+    }
+
+
 }}} // namespace cds::gc::dhp
+
+/*static*/ cds::gc::DHP::stat const& cds::gc::DHP::postmortem_statistics()
+{
+    return cds::gc::dhp::s_postmortem_stat;
+}
+

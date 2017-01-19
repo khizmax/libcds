@@ -90,11 +90,18 @@ namespace cds { namespace gc {
 
         private:
             hp_allocator()
+#ifdef CDS_ENABLE_HPSTAT
+                : block_allocated_(0)
+#endif
             {}
             CDS_EXPORT_API ~hp_allocator();
 
         private:
             cds::intrusive::FreeListImpl    free_list_; ///< list of free \p guard_block
+#ifdef CDS_ENABLE_HPSTAT
+        public:
+            atomics::atomic<size_t>         block_allocated_;   ///< count of allocated blocks
+#endif
         };
         //@endcond
 
@@ -109,6 +116,11 @@ namespace cds { namespace gc {
                 , extended_list_( nullptr )
                 , array_( arr )
                 , initial_capacity_( nSize )
+#       ifdef CDS_ENABLE_HPSTAT
+                , alloc_guard_count_( 0 )
+                , free_guard_count_( 0 )
+                , extend_call_count_( 0 )
+#       endif
             {
                 // Initialize guards
                 new( arr ) guard[nSize];
@@ -132,6 +144,7 @@ namespace cds { namespace gc {
 
                 guard* g = free_head_;
                 free_head_ = g->next_;
+                CDS_HPSTAT( ++alloc_guard_count_ );
                 return g;
             }
 
@@ -141,6 +154,7 @@ namespace cds { namespace gc {
                     g->clear();
                     g->next_ = free_head_;
                     free_head_ = g;
+                    CDS_HPSTAT( ++free_guard_count_ );
                 }
             }
 
@@ -153,6 +167,7 @@ namespace cds { namespace gc {
                     arr.reset( i, free_head_ );
                     free_head_ = free_head_->next_;
                 }
+                CDS_HPSTAT( alloc_guard_count_ += Capacity );
                 return Capacity;
             }
 
@@ -166,6 +181,7 @@ namespace cds { namespace gc {
                         g->clear();
                         g->next_ = gList;
                         gList = g;
+                        CDS_HPSTAT( ++free_guard_count_ );
                     }
                 }
                 free_head_ = gList;
@@ -208,6 +224,7 @@ namespace cds { namespace gc {
                 block->next_ = extended_list_;
                 extended_list_ = block;
                 free_head_ = block->first();
+                CDS_HPSTAT( ++extend_call_count_ );
             }
 
         private:
@@ -215,6 +232,12 @@ namespace cds { namespace gc {
             guard_block*    extended_list_;    ///< Head of extended guard blocks allocated for the thread
             guard* const    array_;            ///< initial HP array
             size_t const    initial_capacity_; ///< Capacity of \p array_
+#       ifdef CDS_ENABLE_HPSTAT
+        public:
+            size_t          alloc_guard_count_;
+            size_t          free_guard_count_;
+            size_t          extend_call_count_;
+#       endif
         };
         //@endcond
 
@@ -257,11 +280,18 @@ namespace cds { namespace gc {
 
         private:
             retired_allocator()
+#ifdef CDS_ENABLE_HPSTAT
+                : block_allocated_(0)
+#endif
             {}
             CDS_EXPORT_API ~retired_allocator();
 
         private:
             cds::intrusive::FreeListImpl    free_list_; ///< list of free \p guard_block
+#ifdef CDS_ENABLE_HPSTAT
+        public:
+            atomics::atomic<size_t> block_allocated_; ///< Count of allocated blocks
+#endif
         };
         //@endcond
 
@@ -277,6 +307,10 @@ namespace cds { namespace gc {
                 , list_head_( nullptr )
                 , list_tail_( nullptr )
                 , block_count_(0)
+#       ifdef CDS_ENABLE_HPSTAT
+                , retire_call_count_( 0 )
+                , extend_call_count_( 0 )
+#       endif
             {}
 
             retired_array( retired_array const& ) = delete;
@@ -296,6 +330,8 @@ namespace cds { namespace gc {
                 //assert( &p != current_cell_ );
 
                 *current_cell_ = p;
+                CDS_HPSTAT( ++retire_call_count_ );
+
                 if ( ++current_cell_ == current_block_->last() ) {
                     // goto next block if exists
                     if ( current_block_->next_ ) {
@@ -312,9 +348,10 @@ namespace cds { namespace gc {
                 return true;
             }
 
-            bool safe_push( retired_ptr* p ) CDS_NOEXCEPT
+            bool repush( retired_ptr* p ) CDS_NOEXCEPT
             {                
                 bool ret = push( *p );
+                CDS_HPSTAT( --retire_call_count_ );
                 assert( ret );
                 return ret;
             }
@@ -364,6 +401,7 @@ namespace cds { namespace gc {
                 list_tail_ = list_tail_->next_ = block;
                 current_cell_ = block->first();
                 ++block_count_;
+                CDS_HPSTAT( ++extend_call_count_ );
             }
 
             bool empty() const
@@ -379,14 +417,64 @@ namespace cds { namespace gc {
             retired_block*          list_head_;
             retired_block*          list_tail_;
             size_t                  block_count_;
+#       ifdef CDS_ENABLE_HPSTAT
+        public:
+            size_t  retire_call_count_;
+            size_t  extend_call_count_;
+#       endif
         };
         //@endcond
+
+        /// Internal statistics
+        struct stat {
+            size_t  guard_allocated;    ///< Count of allocated HP guards
+            size_t  guard_freed;        ///< Count of freed HP guards
+            size_t  retired_count;      ///< Count of retired pointers
+            size_t  free_count;         ///< Count of free pointers
+            size_t  scan_count;         ///< Count of \p scan() call
+            size_t  help_scan_count;    ///< Count of \p help_scan() call
+
+            size_t  thread_rec_count;   ///< Count of thread records
+
+            size_t  hp_block_count;         ///< Count of extended HP blocks allocated
+            size_t  retired_block_count;    ///< Count of retired blocks allocated
+            size_t  hp_extend_count;        ///< Count of hp array \p extend() call
+            size_t  retired_extend_count;   ///< Count of retired array \p extend() call
+
+                                        /// Default ctor
+            stat()
+            {
+                clear();
+            }
+
+            /// Clears all counters
+            void clear()
+            {
+                guard_allocated =
+                    guard_freed =
+                    retired_count =
+                    free_count =
+                    scan_count =
+                    help_scan_count =
+                    thread_rec_count = 
+                    hp_block_count = 
+                    retired_block_count = 
+                    hp_extend_count = 
+                    retired_extend_count = 0;
+            }
+        };
 
         //@cond
         /// Per-thread data
         struct thread_data {
             thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
             retired_array       retired_;   ///< Retired data private to the thread
+
+#       ifdef CDS_ENABLE_HPSTAT
+            size_t              free_call_count_;
+            size_t              scan_call_count_;
+            size_t              help_scan_call_count_;
+#       endif
 
             char pad1_[cds::c_nCacheLineSize];
             atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
@@ -397,6 +485,11 @@ namespace cds { namespace gc {
             thread_data( guard* guards, size_t guard_count )
                 : hazards_( guards, guard_count )
                 , sync_( 0 )
+#       ifdef CDS_ENABLE_HPSTAT
+                , free_call_count_(0)
+                , scan_call_count_(0)
+                , help_scan_call_count_(0)
+#       endif
             {}
 
             thread_data() = delete;
@@ -499,6 +592,9 @@ namespace cds { namespace gc {
 
             static CDS_EXPORT_API void attach_thread();
             static CDS_EXPORT_API void detach_thread();
+
+            /// Get internal statistics
+            void statistics( stat& st );
 
         public: // for internal use only
             /// The main garbage collecting function
@@ -609,6 +705,8 @@ namespace cds { namespace gc {
         /// Atomic marked pointer
         template <typename MarkedPtr> using atomic_marked_ptr = atomics::atomic<MarkedPtr>;
 
+        /// Internal statistics
+        typedef dhp::stat stat;
 
         /// Dynamic Hazard Pointer guard
         /**
@@ -1366,6 +1464,64 @@ namespace cds { namespace gc {
         {
             scan();
         }
+
+        /// Returns internal statistics
+        /**
+            The function clears \p st before gathering statistics.
+
+            @note Internal statistics is available only if you compile
+            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT key.
+        */
+        static void statistics( stat& st )
+        {
+            dhp::smr::instance().statistics( st );
+        }
+
+        /// Returns post-mortem statistics
+        /**
+            Post-mortem statistics is gathered in the \p %DHP object destructor
+            and can be accessible after destructing the global \p %DHP object.
+
+            @note Internal statistics is available only if you compile
+            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT key.
+
+            Usage:
+            \code
+            int main()
+            {
+                cds::Initialize();
+                {
+                    // Initialize DHP SMR
+                    cds::gc::DHP dhp;
+
+                    // deal with DHP-based data structured
+                    // ...
+                }
+
+                // DHP object destroyed
+                // Get total post-mortem statistics
+                cds::gc::DHP::stat const& st = cds::gc::DHP::postmortem_statistics();
+
+                printf( "DHP statistics:\n"
+                    "  thread count           = %llu\n"
+                    "  guard allocated        = %llu\n"
+                    "  guard freed            = %llu\n"
+                    "  retired data count     = %llu\n"
+                    "  free data count        = %llu\n"
+                    "  scan() call count      = %llu\n"
+                    "  help_scan() call count = %llu\n",
+                    st.thread_rec_count,
+                    st.guard_allocated, st.guard_freed,
+                    st.retired_count, st.free_count,
+                    st.scan_count, st.help_scan_count
+                );
+
+                cds::Terminate();
+            }
+            \endcode
+        */
+        static stat const& postmortem_statistics();
+
     };
 
 }} // namespace cds::gc

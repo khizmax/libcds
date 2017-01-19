@@ -151,7 +151,7 @@ namespace cds { namespace gc { namespace hp {
     CDS_EXPORT_API smr::~smr()
     {
         CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
-            CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id();)
+        CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id();)
 
         CDS_HPSTAT( statistics( s_postmortem_stat ));
 
@@ -434,9 +434,6 @@ namespace cds { namespace gc { namespace hp {
             }
 
             retired.reset( insert_pos - first_retired );
-
-            //CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeferredNode += nDeferredCount )
-            //CDS_HAZARDPTR_STATISTIC( m_Stat.m_DeletedNode += ( itRetiredEnd - arrRetired.begin() ) - nDeferredCount )
         }
     }
 

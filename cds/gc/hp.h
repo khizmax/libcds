@@ -1492,13 +1492,13 @@ namespace cds { namespace gc {
                 cds::gc::HP::stat const& st = cds::gc::HP::postmortem_statistics();
 
                 printf( "HP statistics:\n"
-                    "\tthread count           = %llu\n"
-                    "\tguard allocated        = %llu\n"
-                    "\tguard freed            = %llu\n"
-                    "\tretired data count     = %llu\n"
-                    "\tfree data count        = %llu\n"
-                    "\tscan() call count      = %llu\n"
-                    "\thelp_scan() call count = %llu\n",
+                    "  thread count           = %llu\n"
+                    "  guard allocated        = %llu\n"
+                    "  guard freed            = %llu\n"
+                    "  retired data count     = %llu\n"
+                    "  free data count        = %llu\n"
+                    "  scan() call count      = %llu\n"
+                    "  help_scan() call count = %llu\n",
                     st.thread_rec_count,
                     st.guard_allocated, st.guard_freed,
                     st.retired_count, st.free_count,
