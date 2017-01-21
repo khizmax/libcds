@@ -349,11 +349,16 @@ namespace cds { namespace gc {
             thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
             retired_array       retired_;   ///< Retired data private to the thread
 
-            stat                stat_;      ///< Internal statistics for the thread
-
             char pad1_[cds::c_nCacheLineSize];
             atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
             char pad2_[cds::c_nCacheLineSize];
+
+#       ifdef CDS_ENABLE_HPSTAT
+            // Internal statistics:
+            size_t              free_count_;
+            size_t              scan_count_;
+            size_t              help_scan_count_;
+#       endif
 
             // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
             // cppcheck-suppress uninitMemberVar
@@ -361,6 +366,11 @@ namespace cds { namespace gc {
                 : hazards_( guards, guard_count )
                 , retired_( retired_arr, retired_capacity )
                 , sync_(0)
+#       ifdef CDS_ENABLE_HPSTAT
+                , free_count_(0)
+                , scan_count_(0)
+                , help_scan_count_(0)
+#       endif
             {}
 
             thread_data() = delete;

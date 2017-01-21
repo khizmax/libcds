@@ -32,6 +32,11 @@
 #include <iostream>
 #include <cds_test/stress_test.h>
 
+#ifdef CDS_ENABLE_HPSTAT
+#   include <cds_test/stat_hp_out.h>
+#   include <cds_test/stat_dhp_out.h>
+#endif
+
 namespace cds_test {
 
     static std::string s_stat_prefix( "stat" );
@@ -54,6 +59,23 @@ namespace cds_test {
         static property_stream s_prop_stream;
         return s_prop_stream;
     }
+
+    /*static*/ void stress_fixture::print_hp_stat()
+    {
+#ifdef CDS_ENABLE_HPSTAT
+        {
+            cds::gc::HP::stat st;
+            cds::gc::HP::statistics( st );
+            propout() << st;
+        }
+        {
+            cds::gc::DHP::stat st;
+            cds::gc::DHP::statistics( st );
+            propout() << st;
+        }
+#endif
+    }
+
 
     /*static*/ std::vector<std::string> stress_fixture::load_dictionary()
     {

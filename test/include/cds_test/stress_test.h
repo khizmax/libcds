@@ -172,6 +172,8 @@ namespace cds_test {
 
     class stress_fixture : public fixture
     {
+        typedef fixture base_class;
+
     protected:
         stress_fixture()
             : m_thread_pool( *this )
@@ -179,13 +181,18 @@ namespace cds_test {
 
         //static void SetUpTestCase();
         //static void TearDownTestCase();
+        void TearDown()
+        {
+            print_hp_stat();
+            base_class::TearDown();
+        }
 
         thread_pool& get_pool()
         {
             return m_thread_pool;
         }
 
-        static property_stream& propout();
+        static void print_hp_stat();
 
     public:
         static config const& get_config( char const * slot );
@@ -195,6 +202,8 @@ namespace cds_test {
 
         static void init_detail_level( int argc, char **argv );
         static bool check_detail_level( int nLevel );
+
+        static property_stream& propout();
 
     private:
         thread_pool     m_thread_pool;

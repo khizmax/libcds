@@ -470,15 +470,15 @@ namespace cds { namespace gc {
             thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
             retired_array       retired_;   ///< Retired data private to the thread
 
+            char pad1_[cds::c_nCacheLineSize];
+            atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
+            char pad2_[cds::c_nCacheLineSize];
+
 #       ifdef CDS_ENABLE_HPSTAT
             size_t              free_call_count_;
             size_t              scan_call_count_;
             size_t              help_scan_call_count_;
 #       endif
-
-            char pad1_[cds::c_nCacheLineSize];
-            atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
-            char pad2_[cds::c_nCacheLineSize];
 
             // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
             // cppcheck-suppress uninitMemberVar
@@ -504,7 +504,7 @@ namespace cds { namespace gc {
         //@endcond
 
         //@cond
-        // Dynmic (adaptive) Hazard Pointer SMR (Safe Memory Reclamation)
+        // Dynamic (adaptive) Hazard Pointer SMR (Safe Memory Reclamation)
         class smr
         {
             struct thread_record;

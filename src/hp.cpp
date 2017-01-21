@@ -318,7 +318,7 @@ namespace cds { namespace gc { namespace hp {
             }
         }
 
-        CDS_HPSTAT( ++pRec->stat_.scan_count );
+        CDS_HPSTAT( ++pRec->scan_count_ );
 
         // Sort retired pointer array
         std::sort( first_retired, last_retired, retired_ptr::less );
@@ -373,7 +373,7 @@ namespace cds { namespace gc { namespace hp {
                 else {
                     // Retired pointer may be freed
                     it->free();
-                    CDS_HPSTAT( ++pRec->stat_.free_count );
+                    CDS_HPSTAT( ++pRec->free_count_ );
                 }
             }
             const size_t nDeferred = insert_pos - first_retired;
@@ -386,7 +386,7 @@ namespace cds { namespace gc { namespace hp {
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
 
-        CDS_HPSTAT( ++pRec->stat_.scan_count );
+        CDS_HPSTAT( ++pRec->scan_count_ );
 
         std::vector< void*, allocator<void*>>   plist;
         plist.reserve( get_max_thread_count() * get_hazard_ptr_count());
@@ -429,7 +429,7 @@ namespace cds { namespace gc { namespace hp {
                 }
                 else {
                     it->free();
-                    CDS_HPSTAT( ++pRec->stat_.free_count );
+                    CDS_HPSTAT( ++pRec->free_count_ );
                 }
             }
 
@@ -441,7 +441,7 @@ namespace cds { namespace gc { namespace hp {
     {
         assert( static_cast<thread_record*>( pThis )->m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::get_current_thread_id() );
 
-        CDS_HPSTAT( ++pThis->stat_.help_scan_count );
+        CDS_HPSTAT( ++pThis->help_scan_count_ );
 
         const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
         const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
@@ -496,9 +496,9 @@ namespace cds { namespace gc { namespace hp {
             st.guard_allocated += hprec->hazards_.alloc_guard_count_;
             st.guard_freed     += hprec->hazards_.free_guard_count_;
             st.retired_count   += hprec->retired_.retire_call_count_;
-            st.free_count      += hprec->stat_.free_count;
-            st.scan_count      += hprec->stat_.scan_count;
-            st.help_scan_count += hprec->stat_.help_scan_count;
+            st.free_count      += hprec->free_count_;
+            st.scan_count      += hprec->scan_count_;
+            st.help_scan_count += hprec->help_scan_count_;
         }
 #   endif
     }

@@ -41,6 +41,12 @@
 #   include <cds/urcu/signal_threaded.h>
 #endif
 
+#ifdef CDS_ENABLE_HPSTAT
+#   include <cds_test/stat_hp_out.h>
+#   include <cds_test/stat_dhp_out.h>
+#   include <iostream>
+#endif
+
 int main( int argc, char **argv )
 {
     int result;
@@ -97,6 +103,13 @@ int main( int argc, char **argv )
 
         cds::threading::Manager::detachThread();
     }
+
+#ifdef CDS_ENABLE_HPSTAT
+    std::cout << cds::gc::HP::postmortem_statistics();
+    std::cout << cds::gc::DHP::postmortem_statistics();
+#endif
+
     cds::Terminate();
+
     return result;
 }
