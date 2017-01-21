@@ -734,7 +734,6 @@
     <ClInclude Include="..\..\..\cds\container\details\make_lazy_list.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_michael_kvlist.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_michael_list.h" />
-    <ClInclude Include="..\..\..\src\hp_const.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1087,9 +1087,6 @@
     <ClInclude Include="..\..\..\cds\gc\dhp.h">
       <Filter>Header Files\cds\gc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\hp_const.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\algo\atomic.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
