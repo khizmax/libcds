@@ -1469,7 +1469,7 @@ namespace cds { namespace gc {
             The function clears \p st before gathering statistics.
 
             @note Internal statistics is available only if you compile
-            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT key.
+            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT.
         */
         static void statistics( stat& st )
         {
@@ -1482,7 +1482,7 @@ namespace cds { namespace gc {
             and can be accessible after destructing the global \p %HP object.
 
             @note Internal statistics is available only if you compile
-            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT key.
+            \p libcds and your program with \p -DCDS_ENABLE_HPSTAT.
 
             Usage:
             \code
