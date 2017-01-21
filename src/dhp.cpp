@@ -134,6 +134,7 @@ namespace cds { namespace gc { namespace dhp {
             // allocate new block
             rb = new( s_alloc_memory( sizeof( retired_block ) + sizeof( retired_ptr ) * retired_block::c_capacity )) retired_block;
             new ( rb->first()) retired_ptr[retired_block::c_capacity];
+            CDS_HPSTAT( block_allocated_.fetch_add( 1, atomics::memory_order_relaxed ) );
         }
 
         rb->next_ = nullptr;
@@ -425,6 +426,7 @@ namespace cds { namespace gc { namespace dhp {
 
         // Stage 2: Search plist
         size_t free_count = 0;
+        size_t retired_count = 0;
         retired_block* last_block = pRec->retired_.current_block_;
         retired_ptr*   last_block_cell = pRec->retired_.current_cell_;
 
@@ -435,6 +437,7 @@ namespace cds { namespace gc { namespace dhp {
             bool const end_block = block == last_block;
             size_t const size = end_block ? last_block_cell - block->first() : retired_block::c_capacity;
 
+            retired_count += retired_block::c_capacity;
             free_count += retire_data( plist, pRec->retired_, block, size );
 
             if ( end_block )
@@ -443,7 +446,7 @@ namespace cds { namespace gc { namespace dhp {
         CDS_HPSTAT( pRec->free_call_count_ += free_count );
 
         // If the count of freed elements is too small, increase retired array
-        if ( free_count == 0 && last_block == pRec->retired_.list_tail_ && last_block_cell == last_block->last() )
+        if ( free_count < retired_count / 4 && last_block == pRec->retired_.list_tail_ && last_block_cell == last_block->last() )
             pRec->retired_.extend();
     }
 

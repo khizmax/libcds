@@ -105,8 +105,18 @@ int main( int argc, char **argv )
     }
 
 #ifdef CDS_ENABLE_HPSTAT
-    std::cout << cds::gc::HP::postmortem_statistics();
-    std::cout << cds::gc::DHP::postmortem_statistics();
+    {
+        cds::gc::HP::stat const& st = cds::gc::HP::postmortem_statistics();
+        EXPECT_EQ( st.guard_allocated, st.guard_freed );
+        EXPECT_EQ( st.retired_count, st.free_count );
+        std::cout << st;
+    }
+    {
+        cds::gc::DHP::stat const& st = cds::gc::DHP::postmortem_statistics();
+        EXPECT_EQ( st.guard_allocated, st.guard_freed );
+        EXPECT_EQ( st.retired_count, st.free_count );
+        std::cout << st;
+    }
 #endif
 
     cds::Terminate();
