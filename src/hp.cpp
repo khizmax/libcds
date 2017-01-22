@@ -486,7 +486,7 @@ namespace cds { namespace gc { namespace hp {
         }
     }
 
-    void smr::statistics( stat& st )
+    CDS_EXPORT_API void smr::statistics( stat& st )
     {
         st.clear();
 #   ifdef CDS_ENABLE_HPSTAT
@@ -505,7 +505,7 @@ namespace cds { namespace gc { namespace hp {
 
 }}} // namespace cds::gc::hp
 
-/*static*/ cds::gc::HP::stat const& cds::gc::HP::postmortem_statistics()
+CDS_EXPORT_API /*static*/ cds::gc::HP::stat const& cds::gc::HP::postmortem_statistics()
 {
     return cds::gc::hp::s_postmortem_stat;
 }

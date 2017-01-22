@@ -395,8 +395,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tree", "tree", "{31977D29-25C2-4FEC-9176-15247A15A9B4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-del3", "stress-map-del3.vcxproj", "{729E28BB-F36F-4462-8434-9C252C286525}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-del3", "stress-set-del3.vcxproj", "{E91A1938-BB89-4676-9C9F-69AA697CB488}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

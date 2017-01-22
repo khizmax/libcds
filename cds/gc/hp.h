@@ -526,7 +526,7 @@ namespace cds { namespace gc {
             static CDS_EXPORT_API void detach_thread();
 
             /// Get internal statistics
-            void statistics( stat& st );
+            CDS_EXPORT_API void statistics( stat& st );
 
         public: // for internal use only
             /// The main garbage collecting function
@@ -1519,7 +1519,7 @@ namespace cds { namespace gc {
             }
             \endcode
         */
-        static stat const& postmortem_statistics();
+        CDS_EXPORT_API static stat const& postmortem_statistics();
     };
 
 }} // namespace cds::gc
