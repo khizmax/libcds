@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <cds/container/details/base.h>
+//#include <iostream>
 
 namespace cds
 {
@@ -63,20 +64,17 @@ namespace cds
 						atomics::atomic< int > internal_count;
 						counted_node_ptr next;
 
-						node_type( value_type data_ ) : node_type( new value_type( data_ ) )
-						{}
+                                                node_type( const value_type& data_ )
+                                                    : data( std::make_shared<value_type>(data_) ),
+                                                      internal_count(0)
+                                                {}
 
 						template <typename... Args>
 						node_type( Args&&... args ) : node_type( value_type( std::forward<Args>( args )... ) )
 						{}
             
-						node_type() : node_type( (value_type*) nullptr )
-						{}
-
-					private:
-						node_type (value_type data_)		:	data(std::make_shared<value_type>(data_)),
-																internal_count(0)
-						{}
+                                                node_type() : node_type( (value_type*) nullptr )
+                                                {}
 						};
 
 					atomics::atomic< counted_node_ptr > head;
@@ -106,10 +104,10 @@ namespace cds
 				
 				static void free_node( node_type * p )
 				{
-					node_allocator().Delete( p );
+                                    if (p) node_allocator().Delete( p );
 				}
         
-				static void increase_head_count(counted_node_ptr& old_counter )
+                                void increase_head_count(counted_node_ptr& old_counter )
 				{
 					counted_node_ptr new_counter;
 
@@ -127,7 +125,10 @@ namespace cds
 			public:
 				WilliamsStack()
 				{
-					
+                                    counted_node_ptr _head;
+                                    _head.external_count = 0;
+                                    _head.ptr = nullptr;
+                                    head.store(_head, atomics::memory_order_relaxed);
 				}
 
 				~WilliamsStack()
@@ -141,16 +142,17 @@ namespace cds
 
 				// push
 				bool push( value_type const& val )
-				{
-					counted_node_ptr new_node;
+                                {
+                                    counted_node_ptr new_node;
 					new_node.ptr = alloc_node(val);
-					new_node.external_count = 1;
+                                        new_node.external_count = 1;
 					
 					new_node.ptr->next = head.load(std::memory_order_relaxed);
 					
 					while (!head.compare_exchange_weak(	new_node.ptr->next, new_node,
 														std::memory_order_release,
 														std::memory_order_relaxed))
+                                        {}
 
 					++itemCounter;
 					return true;
@@ -165,54 +167,56 @@ namespace cds
 				
 				bool pop(value_type& val)
 				{
-					return pop_with([&val](value_type& src) { val = src; });
+                                    return pop_with([&val](value_type& src) { val = src; });
 				}
 				
 				// pop
 				template <typename Func>
 				bool pop_with(Func f)
 				{
-					counted_node_ptr old_head = m_Head.load(atomics::memory_order_relaxed);
+                                    counted_node_ptr old_head = head.load(atomics::memory_order_relaxed);
 					while (true)
-					{
+                                        {
 						increase_head_count(old_head);
-						node_type * const ptr = old_head.ptr;
-						if (!ptr)
+                                                node_type * const ptr = old_head.ptr;
+                                                if (!ptr)
+                                                {
 							return false;
+                                                }
 
-						counted_node_ptr next = ptr->next.load();
-						if (head.compare_exchange_strong(old_head, next,
+                                                counted_node_ptr next = ptr->next;
+                                                if (head.compare_exchange_strong(old_head, next,
 							std::memory_order_relaxed))
 						{
-							std::shared_ptr<value_type> res;
-							res.swap(ptr->data);
+                                                        std::shared_ptr<value_type> res;
+                                                        res.swap(ptr->data);
 
 							int const count_increase = old_head.external_count - 2;
 
 							if (ptr->internal_count.fetch_add(count_increase, std::memory_order_release) == -count_increase)
 							{
-								delete ptr;
+                                                                delete ptr;
 							}
 
 							--itemCounter;
 							f(*res);
-							return true;
+                                                        return true;
 						}
 						else
 						{
 							if (ptr->internal_count.fetch_add(-1, std::memory_order_relaxed) == 1)
 							{
 								ptr->internal_count.load(std::memory_order_acquire);
-								delete ptr;
+                                                                delete ptr;
 							}
 						}
-					}
+                                        }
 				}
 								
 				void clear()
 				{
 					value_type v;
-					while( pop( &v ) );
+                                        while( pop( v ) );
 				}
 
 				bool empty() const
@@ -225,9 +229,9 @@ namespace cds
 					return itemCounter.value();
 				}
         
-				std::nullptr_t statistics() const
+                                int  statistics() const
 				{
-					return nullptr;
+                                    return 0;
 				}
 		};
 
