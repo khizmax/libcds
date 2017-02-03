@@ -1339,21 +1339,36 @@ namespace cds { namespace container {
                 nVersion = stack[pos].nVersion;
 
                 while ( true ) {
-                    node_type * pChild = child( pNode, nDir, memory_model::memory_order_acquire );
+                    int iterDir = nDir;
+                    node_type * pChild = child( pNode, iterDir, memory_model::memory_order_acquire );
                     if ( pNode->version(memory_model::memory_order_acquire) != nVersion ) {
                         --pos;
                         m_stat.onRemoveRetry();
                         break;
                     }
 
-                    if ( pChild == nullptr ) {
+                    if ( !pChild ) {
                         // Found min/max
-                        int result = try_remove_node( pParent, pNode, nVersion, func, disp );
-                        if ( result != update_flags::retry )
-                            return result;
-                        --pos;
-                        m_stat.onRemoveRetry();
-                        break;
+                        if ( pNode->is_valued( memory_model::memory_order_acquire ) ) {
+                            int result = try_remove_node( pParent, pNode, nVersion, func, disp );
+
+                            if ( result == update_flags::result_removed )
+                                return result;
+
+                            --pos;
+                            m_stat.onRemoveRetry();
+                            break;
+                        }
+                        else {
+                            // check right (for min) or left (for max) child node
+                            iterDir = -iterDir;
+                            pChild = child( pNode, iterDir, memory_model::memory_order_acquire );
+                            if ( !pChild ) {
+                                --pos;
+                                m_stat.onRemoveRetry();
+                                break;
+                            }
+                        }
                     }
 
                     version_type nChildVersion = pChild->version( memory_model::memory_order_acquire );
@@ -1362,7 +1377,7 @@ namespace cds { namespace container {
                         pChild->template wait_until_shrink_completed<back_off>( memory_model::memory_order_acquire );
                         // retry
                     }
-                    else if ( pChild == child( pNode, nDir, memory_model::memory_order_acquire )) {
+                    else if ( pChild == child( pNode, iterDir, memory_model::memory_order_acquire )) {
                         // this second read is important, because it is protected by nChildVersion
 
                         // validate the read that our caller took to get to node
@@ -1848,12 +1863,8 @@ namespace cds { namespace container {
             if ( pLRight != nullptr )
                 pLRight->parent( pNode, memory_model::memory_order_release  );
 
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
-
             pLeft->m_pRight.store( pNode, memory_model::memory_order_release );
             pNode->parent( pLeft, memory_model::memory_order_release );
-
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pLeft, memory_model::memory_order_release );
@@ -1862,8 +1873,6 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pLeft, memory_model::memory_order_release );
             }
             pLeft->parent( pParent, memory_model::memory_order_release );
-
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             // fix up heights links
             int hNode = 1 + std::max( hLR, hR );
@@ -1924,12 +1933,8 @@ namespace cds { namespace container {
             if ( pRLeft != nullptr )
                 pRLeft->parent( pNode, memory_model::memory_order_release );
 
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
-
             pRight->m_pLeft.store( pNode, memory_model::memory_order_release );
             pNode->parent( pRight, memory_model::memory_order_release );
-
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pRight, memory_model::memory_order_release );
@@ -1938,8 +1943,6 @@ namespace cds { namespace container {
                 pParent->m_pRight.store( pRight, memory_model::memory_order_release );
             }
             pRight->parent( pParent, memory_model::memory_order_release );
-
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
 
             // fix up heights
             int hNode = 1 + std::max( hL, hRL );

@@ -450,15 +450,15 @@ namespace cds { namespace container {
 
             /// Internal statistics
             /**
-                By default, internal statistics is disabled (\p ellen_bintree::empty_stat).
-                To enable it use \p ellen_bintree::stat.
+                By default, internal statistics is disabled (\p bronson_avltree::empty_stat).
+                To enable it use \p bronson_avltree::stat.
             */
             typedef empty_stat                      stat;
 
             /// Back-off strategy
             typedef cds::backoff::empty             back_off;
 
-            /// RCU deadlock checking policy (only for \ref cds_container_BronsonAVLTreeMap_rcu "RCU-based BronsonAVLTree")
+            /// RCU deadlock checking policy
             /**
                 List of available options see \p opt::rcu_check_deadlock
             */

@@ -190,7 +190,7 @@ namespace map {
             {
                 EXPECT_TRUE( false ) << "Tree violation on level=" << nLevel << ": hLeft=" << hLeft << ", hRight=" << hRight;
             });
-        EXPECT_TRUE( check_consistency_result );
+        EXPECT_TRUE( check_consistency_result ) << "Internal tree structure violation";
     }
 
 
