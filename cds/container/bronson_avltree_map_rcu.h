@@ -479,7 +479,7 @@ namespace cds { namespace container {
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
-            During unlinking, a concurrent thread may insert an item with key great than leftmost item's key.
+            During unlinking, a concurrent thread may insert an item with key greater than rightmost item's key.
             So, the function returns the item with maximum key at the moment of tree traversing.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
@@ -510,7 +510,7 @@ namespace cds { namespace container {
 
             @note Due the concurrent nature of the map, the function extracts <i>nearly</i> maximal key.
             It means that the function gets rightmost leaf of the tree and tries to unlink it.
-            During unlinking, a concurrent thread may insert an item with key great than leftmost item's key.
+            During unlinking, a concurrent thread may insert an item with key greater than rightmost item's key.
             So, the function returns the item with maximum key at the moment of tree traversing.
 
             RCU \p synchronize method can be called. RCU should NOT be locked.
