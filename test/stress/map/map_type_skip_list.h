@@ -52,6 +52,22 @@ namespace map {
             : base_class()
         {}
 
+        std::pair<Key, bool> extract_min_key()
+        {
+            auto xp = base_class::extract_min();
+            if ( xp )
+                return std::make_pair( xp->first, true );
+            return std::make_pair( Key(), false );
+        }
+
+        std::pair<Key, bool> extract_max_key()
+        {
+            auto xp = base_class::extract_max();
+            if ( xp )
+                return std::make_pair( xp->first, true );
+            return std::make_pair( Key(), false );
+        }
+
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;

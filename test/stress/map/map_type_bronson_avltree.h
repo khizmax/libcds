@@ -48,9 +48,27 @@ namespace map {
         typedef cc::BronsonAVLTreeMap< GC, Key, T, Traits > base_class;
     public:
         template <typename Config>
-        BronsonAVLTreeMap( Config const& /*cfg*/)
+        BronsonAVLTreeMap( Config const& /*cfg*/ )
             : base_class()
         {}
+
+        std::pair<Key, bool> extract_min_key()
+        {
+            Key key;
+            typename base_class::exempt_ptr xp = base_class::extract_min( [&key]( Key const& k ) { key = k; } );
+            if ( xp )
+                return std::make_pair( key, true );
+            return std::make_pair( key, false );
+        }
+
+        std::pair<Key, bool> extract_max_key()
+        {
+            Key key;
+            typename base_class::exempt_ptr xp = base_class::extract_max( [&key]( Key const& k ) { key = k; } );
+            if ( xp )
+                return std::make_pair( key, true );
+            return std::make_pair( key, false );
+        }
 
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
