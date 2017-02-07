@@ -210,8 +210,7 @@ namespace cds { namespace gc { namespace dhp {
         for ( thread_record* hprec = pHead; hprec; hprec = pNext )
         {
             assert( hprec->m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
-                || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId
-                || !cds::OS::is_thread_alive( hprec->m_idOwner.load( atomics::memory_order_relaxed ) )
+                || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId )
             );
 
             retired_array& retired = hprec->retired_;
@@ -459,6 +458,9 @@ namespace cds { namespace gc { namespace dhp {
         const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
         for ( thread_record* hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ) )
         {
+            if ( hprec == static_cast<thread_record*>( pThis ))
+                continue;
+
             // If m_bFree == true then hprec->retired_ is empty - we don't need to see it
             if ( hprec->m_bFree.load( atomics::memory_order_acquire ) ) {
                 assert( hprec->retired_.empty() );
@@ -469,7 +471,7 @@ namespace cds { namespace gc { namespace dhp {
             // Several threads may work concurrently so we use atomic technique
             {
                 cds::OS::ThreadId curOwner = hprec->m_idOwner.load( atomics::memory_order_relaxed );
-                if ( curOwner == nullThreadId || !cds::OS::is_thread_alive( curOwner ) ) {
+                if ( curOwner == nullThreadId ) {
                     if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
                         continue;
                 }
@@ -478,7 +480,7 @@ namespace cds { namespace gc { namespace dhp {
             }
 
             // We own the thread record successfully. Now, we can see whether it has retired pointers.
-            // If it has ones then we move to pThis that is private for current thread.
+            // If it has ones then we move them to pThis that is private for current thread.
             retired_array& src = hprec->retired_;
             retired_array& dest = pThis->retired_;
 

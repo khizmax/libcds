@@ -48,16 +48,6 @@ namespace cds { namespace OS {
         {
             return ::GetCurrentThreadId();
         }
-
-        /// Tests whether the thread is alive
-        static inline bool is_thread_alive( ThreadId id )
-        {
-            HANDLE h = ::OpenThread( SYNCHRONIZE, FALSE, id );
-            if ( h == nullptr )
-                return false;
-            ::CloseHandle( h );
-            return true;
-        }
     }    // namespace Win32
 
     //@cond
@@ -66,7 +56,6 @@ namespace cds { namespace OS {
 #ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
     using Win32::ThreadId;
     using Win32::get_current_thread_id;
-    using Win32::is_thread_alive;
 #endif
     //@endcond
 
