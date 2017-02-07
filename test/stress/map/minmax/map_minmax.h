@@ -41,8 +41,8 @@ namespace map {
         static size_t s_nMapSize;             // max map size
         static size_t s_nPassCount;
 
-        //static size_t s_nFeldmanMap_HeadBits;
-        //static size_t s_nFeldmanMap_ArrayBits;
+        static size_t s_nFeldmanMap_HeadBits;
+        static size_t s_nFeldmanMap_ArrayBits;
 
         static size_t  s_nLoadFactor;  // current load factor
 
@@ -194,6 +194,22 @@ namespace map {
                         ++m_nDeleteMaxFailed;
 
                 } while ( fixture.m_nInsThreadCount.load( atomics::memory_order_acquire ) != 0 );
+
+                gp = rMap.extract_min();
+                if ( gp ) {
+                    if ( gp->first == keyMin )
+                        ++m_nDeleteMin;
+                }
+                else
+                    ++m_nDeleteMinFailed;
+
+                gp = rMap.extract_max();
+                if ( gp ) {
+                    if ( gp->first == keyMax )
+                        ++m_nDeleteMax;
+                }
+                else
+                    ++m_nDeleteMaxFailed;
             }
         };
 

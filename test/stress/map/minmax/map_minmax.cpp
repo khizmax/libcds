@@ -37,8 +37,8 @@ namespace map {
     size_t  Map_MinMax::s_nExtractThreadCount = 4;
     size_t  Map_MinMax::s_nPassCount = 1000;
 
-    //size_t Map_MinMax::s_nFeldmanMap_HeadBits = 8;
-    //size_t Map_MinMax::s_nFeldmanMap_ArrayBits = 8;
+    size_t Map_MinMax::s_nFeldmanMap_HeadBits = 8;
+    size_t Map_MinMax::s_nFeldmanMap_ArrayBits = 8;
 
     void Map_MinMax::SetUpTestCase()
     {
@@ -60,13 +60,13 @@ namespace map {
         if ( s_nPassCount == 0 )
             s_nPassCount = 100;
 
-        //s_nFeldmanMap_HeadBits = cfg.get_size_t( "FeldmanMapHeadBits", s_nFeldmanMap_HeadBits );
-        //if ( s_nFeldmanMap_HeadBits == 0 )
-        //    s_nFeldmanMap_HeadBits = 4;
+        s_nFeldmanMap_HeadBits = cfg.get_size_t( "FeldmanMapHeadBits", s_nFeldmanMap_HeadBits );
+        if ( s_nFeldmanMap_HeadBits == 0 )
+            s_nFeldmanMap_HeadBits = 4;
 
-        //s_nFeldmanMap_ArrayBits = cfg.get_size_t( "FeldmanMapArrayBits", s_nFeldmanMap_ArrayBits );
-        //if ( s_nFeldmanMap_ArrayBits == 0 )
-        //    s_nFeldmanMap_ArrayBits = 4;
+        s_nFeldmanMap_ArrayBits = cfg.get_size_t( "FeldmanMapArrayBits", s_nFeldmanMap_ArrayBits );
+        if ( s_nFeldmanMap_ArrayBits == 0 )
+            s_nFeldmanMap_ArrayBits = 4;
     }
 
 } // namespace map
