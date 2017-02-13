@@ -268,14 +268,11 @@ namespace cds {
 			WilliamsQueue()
 			{
 				counted_node_ptr dummy_node;
-				dummy_node_ptr = alloc_node();
-				dummy_node.ptr = dummy_node_ptr;
+				dummy_node.ptr = alloc_node();
 				dummy_node.external_count = 1;
 
 				m_Head.store(dummy_node);
 				m_Tail.store(dummy_node);
-				steps.store(0);
-				tag.store(0);
 			}
 
 			/// Destructor clears the queue
@@ -294,8 +291,19 @@ namespace cds {
 			/// Enqueues \p val value into the queue. Always returns \a true
 			bool enqueue(value_type const& val)
 			{
-				scoped_value_ptr new_data(new value_type(val));
+				scoped_value_ptr new_value_ptr(new value_type(val));
+				return enqueue_value_ptr(new_value_ptr);
+			}
 
+			/// Enqueues \p data, move semantics
+			bool enqueue(value_type&& data)
+			{
+				scoped_value_ptr new_value_ptr(new value_type(std::forward<value_type>(data)));
+				return enqueue_value_ptr(new_value_ptr);
+			}
+
+			bool enqueue_value_ptr(scoped_value_ptr& value_ptr)
+			{
 				counted_node_ptr new_next;
 				new_next.ptr = alloc_node();
 				new_next.external_count = 1;
@@ -306,7 +314,7 @@ namespace cds {
 				{
 					increase_external_count(m_Tail, old_tail);
 					value_type * old_value = nullptr;
-					if (old_tail.ptr->m_value.compare_exchange_strong(old_value, new_data.get()))
+					if (old_tail.ptr->m_value.compare_exchange_strong(old_value, value_ptr.get()))
 					{
 
 						counted_node_ptr old_next = { 0 };
@@ -315,8 +323,8 @@ namespace cds {
 							free_node(new_next.ptr);
 							new_next = old_next;
 						}
-						set_new_tail(old_tail, new_next, steps);
-						new_data.release();
+						set_new_tail(old_tail, new_next);
+						value_ptr.release();
 						break;
 					}
 					else
@@ -367,6 +375,12 @@ namespace cds {
 				return enqueue(val);
 			}
 
+			/// Synonym for \p enqueue( value_type&& ) function
+			bool push(value_type&& val)
+			{
+				return enqueue(std::move(val));
+			}
+
 			/// Synonym for \p enqueue_with() function
 			template <typename Func>
 			bool push_with(Func f)
@@ -382,7 +396,7 @@ namespace cds {
 			*/
 			bool dequeue(value_type& dest)
 			{
-				return dequeue_with([&dest](value_type* src) { if (src) dest = *src; });
+				return dequeue_with([&dest](value_type& src) { dest = src; });
 			}
 
 			/// Dequeues a value using a functor
@@ -416,7 +430,7 @@ namespace cds {
 						scoped_value_ptr res(p->m_value.load());
 						free_external_counter(old_head); 
 						--m_ItemCounter;
-						f(res.get());
+						f(*res.get());
 
 						return true;
 					}
