@@ -162,8 +162,7 @@ namespace cds { namespace gc { namespace hp {
         for ( thread_record* hprec = pHead; hprec; hprec = pNext )
         {
             assert( hprec->m_idOwner.load( atomics::memory_order_relaxed ) == nullThreadId
-                || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId )
-            );
+                || hprec->m_idOwner.load( atomics::memory_order_relaxed ) == mainThreadId );
 
             retired_array& arr = hprec->retired_;
             for ( retired_ptr* cur{ arr.first() }, *last{ arr.last() }; cur != last; ++cur ) {
