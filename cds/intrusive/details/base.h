@@ -282,15 +282,15 @@ namespace cds {
     If you develop your intrusive container based on <b>libcds</b> library framework, you should
     take in the account the following.
     The main idea of garbage collectors (GC) based on Hazard Pointer schema is protecting a shared pointer
-    by publishing it as a "hazard" one i.e. as a pointer that is changing at the current time and cannot be
-    deleted at this moment. In intrusive container paradigm, the pointer to the node of the container
-    and the pointer to the item stored in the container are not equal in the general case.
-    However, any pointer to the node should be castable to the appropriate pointer to the container's item.
-    In general, any item can be placed to some different intrusive containers simultaneously,
-    and each of those container holds a unique pointer to its node that refers to the same item.
+    by publishing it as a "hazard" i.e. as a pointer that is changing at the current time and cannot be
+    deleted at this moment. In intrusive container paradigm, the pointer to a node of the container
+    and the pointer to a item stored in the container are not equal in the general case.
+    However, any pointer to node should be castable to appropriate pointer to container's item.
+    In general, any item can be placed to two or more intrusive containers simultaneously,
+    and each of those container holds an unique pointer to its node that refers to the same item.
     When we protect a pointer, we want to protect an <b>item</b> pointer that is the invariant
-    for any container stored that item. In your intrusive container, instead of protecting by GC's guard a pointer to an node
-    you should convert it to the pointer to the item and then protect resulting item pointer.
+    for any container stored that item. In your intrusive container, instead of protecting by GC's guard a pointer to node
+    you should cast it to the pointer to item and then protect that item pointer.
     Otherwise an unpredictable result may occur.
 */
 namespace intrusive {
