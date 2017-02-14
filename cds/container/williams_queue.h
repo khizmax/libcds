@@ -209,7 +209,6 @@ namespace cds {
 					free_node(p);
 				}
 			}
-
 			static void increase_external_count(atomics::atomic<counted_node_ptr>& counter, counted_node_ptr& old_counter)
 			{
 				counted_node_ptr new_counter;
@@ -253,6 +252,46 @@ namespace cds {
 					free_external_counter(old_tail);
 				else
 					release_ref(current_tail_ptr);
+			}
+			bool enqueue_value_ptr(scoped_value_ptr& value_ptr)
+			{
+				counted_node_ptr new_next;
+				new_next.ptr = alloc_node();
+				new_next.external_count = 1;
+
+				counted_node_ptr old_tail = m_Tail.load();
+
+				while (true)
+				{
+					increase_external_count(m_Tail, old_tail);
+					value_type * old_value = nullptr;
+					if (old_tail.ptr->m_value.compare_exchange_strong(old_value, value_ptr.get()))
+					{
+
+						counted_node_ptr old_next = { 0 };
+						if (!old_tail.ptr->m_next.compare_exchange_strong(old_next, new_next))
+						{
+							free_node(new_next.ptr);
+							new_next = old_next;
+						}
+						set_new_tail(old_tail, new_next);
+						value_ptr.release();
+						break;
+					}
+					else
+					{
+						counted_node_ptr old_next = { 0 };
+						if (old_tail.ptr->m_next.compare_exchange_strong(old_next, new_next))
+						{
+							old_next = new_next;
+							new_next.ptr = alloc_node();
+						}
+						set_new_tail(old_tail, old_next);
+					}
+				}
+
+				++m_ItemCounter;
+				return true;
 			}
 			struct node_disposer
 			{
@@ -300,47 +339,6 @@ namespace cds {
 			{
 				scoped_value_ptr new_value_ptr(new value_type(std::forward<value_type>(data)));
 				return enqueue_value_ptr(new_value_ptr);
-			}
-
-			bool enqueue_value_ptr(scoped_value_ptr& value_ptr)
-			{
-				counted_node_ptr new_next;
-				new_next.ptr = alloc_node();
-				new_next.external_count = 1;
-
-				counted_node_ptr old_tail = m_Tail.load();
-
-				while (true)
-				{
-					increase_external_count(m_Tail, old_tail);
-					value_type * old_value = nullptr;
-					if (old_tail.ptr->m_value.compare_exchange_strong(old_value, value_ptr.get()))
-					{
-
-						counted_node_ptr old_next = { 0 };
-						if (!old_tail.ptr->m_next.compare_exchange_strong(old_next, new_next))
-						{
-							free_node(new_next.ptr);
-							new_next = old_next;
-						}
-						set_new_tail(old_tail, new_next);
-						value_ptr.release();
-						break;
-					}
-					else
-					{
-						counted_node_ptr old_next = { 0 };
-						if (old_tail.ptr->m_next.compare_exchange_strong(old_next, new_next))
-						{
-							old_next = new_next;
-							new_next.ptr = alloc_node();
-						}
-						set_new_tail(old_tail, old_next);
-					}
-				}
-
-				++m_ItemCounter;
-				return true;
 			}
 
 			/// Enqueues data to the queue using a functor

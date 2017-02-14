@@ -40,6 +40,7 @@
 #include <cds/container/fcqueue.h>
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
+#include <cds/container/williams_queue.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -335,6 +336,16 @@ namespace fc_details{
             >::type
         {};
         typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > RWQueue_mutex;
+
+		// WilliamsQueue
+		typedef cds::container::WilliamsQueue< Value > WilliamsQueue_default;
+
+		struct traits_WilliamsQueue_ic : public cds::container::williams_queue::traits
+		{
+			typedef cds::atomicity::item_counter item_counter;
+		};
+		typedef cds::container::WilliamsQueue< Value, traits_WilliamsQueue_ic > WilliamsQueue_ic;
+
 
         // FCQueue
         struct traits_FCQueue_stat:
@@ -728,6 +739,10 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin,      0 ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin_ic,   1 ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_mutex,     0 )
+
+#define CDSSTRESS_WilliamsQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_default,      0 ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_ic,   1 )
 
 #define CDSSTRESS_SegmentedQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin,            0 ) \
