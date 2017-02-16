@@ -145,7 +145,7 @@ static uint32 Hash32Len13to24(const char *s, size_t len) {
   uint32 d = Fetch32(s + (len >> 1));
   uint32 e = Fetch32(s);
   uint32 f = Fetch32(s + len - 4);
-  uint32 h = len;
+  uint32 h = static_cast<uint32>( len );
 
   return fmix(Mur(f, Mur(e, Mur(d, Mur(c, Mur(b, Mur(a, h)))))));
 }
@@ -158,11 +158,11 @@ static uint32 Hash32Len0to4(const char *s, size_t len) {
     b = b * c1 + v;
     c ^= b;
   }
-  return fmix(Mur(b, Mur(len, c)));
+  return fmix(Mur(b, Mur(static_cast<uint32>( len ), c)));
 }
 
 static uint32 Hash32Len5to12(const char *s, size_t len) {
-  uint32 a = len, b = len * 5, c = 9, d = b;
+  uint32 a = static_cast<uint32>( len ), b = static_cast<uint32>( len ) * 5, c = 9, d = b;
   a += Fetch32(s);
   b += Fetch32(s + len - 4);
   c += Fetch32(s + ((len >> 1) & 4));
@@ -177,7 +177,7 @@ uint32 CityHash32(const char *s, size_t len) {
   }
 
   // len > 24
-  uint32 h = len, g = c1 * len, f = g;
+  uint32 h = static_cast<uint32>( len ), g = static_cast<uint32>( c1 * len ), f = g;
   uint32 a0 = Rotate32(Fetch32(s + len - 4) * c1, 17) * c2;
   uint32 a1 = Rotate32(Fetch32(s + len - 8) * c1, 17) * c2;
   uint32 a2 = Rotate32(Fetch32(s + len - 16) * c1, 17) * c2;
@@ -282,7 +282,7 @@ static uint64 HashLen0to16(const char *s, size_t len) {
     uint8 b = s[len >> 1];
     uint8 c = s[len - 1];
     uint32 y = static_cast<uint32>(a) + (static_cast<uint32>(b) << 8);
-    uint32 z = len + (static_cast<uint32>(c) << 2);
+    uint32 z = static_cast<uint32>( len + (static_cast<uint32>(c) << 2));
     return ShiftMix(y * k2 ^ z * k0) * k2;
   }
   return k2;

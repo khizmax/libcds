@@ -116,25 +116,25 @@ namespace cds { namespace algo {
 #   endif
             uint_type result;
 
-            uint_type const nRest = c_nBitPerInt - m_offset % c_nBitPerInt;
+            size_t const nRest = c_nBitPerInt - m_offset % c_nBitPerInt;
             m_offset += nBits;
             if ( nBits < nRest ) {
-                result = *m_ptr << ( nRest - nBits );
-                result = result >> ( c_nBitPerInt - nBits );
+                result = static_cast<uint_type>( *m_ptr << ( nRest - nBits ));
+                result = static_cast<uint_type>( result >> ( c_nBitPerInt - nBits ));
             }
             else if ( nBits == nRest ) {
-                result = *m_ptr >> ( c_nBitPerInt - nRest );
+                result = static_cast<uint_type>( *m_ptr >> ( c_nBitPerInt - nRest ));
                 ++m_ptr;
                 assert( m_offset % c_nBitPerInt == 0 );
             }
             else {
-                uint_type const lsb = *m_ptr >> ( c_nBitPerInt - nRest );
+                uint_type const lsb = static_cast<uint_type>( *m_ptr >> ( c_nBitPerInt - nRest ));
                 nBits -= nRest;
                 ++m_ptr;
 
-                result = *m_ptr << ( c_nBitPerInt - nBits );
-                result = result >> ( c_nBitPerInt - nBits );
-                result = (result << nRest) + lsb;
+                result = static_cast<uint_type>( *m_ptr << ( c_nBitPerInt - nBits ));
+                result = static_cast<uint_type>( result >> ( c_nBitPerInt - nBits ));
+                result = static_cast<uint_type>( (result << nRest) + lsb );
             }
 
             assert( m_offset <= c_nBitPerHash );

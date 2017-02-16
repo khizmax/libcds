@@ -77,7 +77,7 @@ namespace {
             EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 EXPECT_EQ( a.exchange( n ), static_cast<integral_type>( 0 ));
                 EXPECT_EQ( a.load(), n );
                 EXPECT_EQ( a.exchange( (integral_type) 0 ), n );
@@ -86,7 +86,7 @@ namespace {
 
             integral_type prev = a.load();
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( a.compare_exchange_weak( expected, n));
@@ -102,7 +102,7 @@ namespace {
 
             prev = a;
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( a.compare_exchange_strong( expected, n));
@@ -131,7 +131,7 @@ namespace {
             for ( size_t nByte = 0; nByte < sizeof(integral_type); ++nByte )
             {
                 integral_type prev = a.load();
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
 
                 EXPECT_EQ( a.fetch_add(n), prev);
             }
@@ -140,7 +140,7 @@ namespace {
             for ( size_t nByte = sizeof(integral_type); nByte > 0; --nByte )
             {
                 integral_type prev = a.load();
-                integral_type n = integral_type(42) << ((nByte - 1) * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << ((nByte - 1) * 8));
 
                 EXPECT_EQ( a.fetch_sub(n), prev);
             }
@@ -150,7 +150,7 @@ namespace {
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
             {
                 integral_type prev = a.load()  ;;
-                integral_type mask = integral_type(1) << nBit;
+                integral_type mask = static_cast<integral_type>( integral_type(1) << nBit );
 
                 EXPECT_EQ( a.fetch_or( mask ), prev );
                 prev = a.load();
@@ -174,7 +174,7 @@ namespace {
             for ( size_t nByte = 0; nByte < sizeof(integral_type); ++nByte )
             {
                 integral_type prev = a;
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
 
                 EXPECT_EQ( (a += n), (prev + n));
             }
@@ -183,7 +183,7 @@ namespace {
             for ( size_t nByte = sizeof(integral_type); nByte > 0; --nByte )
             {
                 integral_type prev = a;
-                integral_type n = integral_type(42) << ((nByte - 1) * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << ((nByte - 1) * 8));
 
                 EXPECT_EQ( (a -= n),  prev - n );
             }
@@ -193,7 +193,7 @@ namespace {
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
             {
                 integral_type prev = a;
-                integral_type mask = integral_type(1) << nBit;
+                integral_type mask = static_cast<integral_type>( integral_type(1) << nBit );
 
                 EXPECT_EQ( (a |= mask ), (prev | mask ));
                 prev = a;
@@ -224,7 +224,7 @@ namespace {
             EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 EXPECT_EQ( a.exchange( n, order ), integral_type( 0 ));
                 EXPECT_EQ( a.load( oLoad ), n );
                 EXPECT_EQ( a.exchange( (integral_type) 0, order ), n );
@@ -233,7 +233,7 @@ namespace {
 
             integral_type prev = a.load( oLoad );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( a.compare_exchange_weak( expected, n, order, atomics::memory_order_relaxed));
@@ -249,7 +249,7 @@ namespace {
 
             prev = a.load( oLoad );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( a.compare_exchange_strong( expected, n, order, atomics::memory_order_relaxed));
@@ -281,7 +281,7 @@ namespace {
             for ( size_t nByte = 0; nByte < sizeof(integral_type); ++nByte )
             {
                 integral_type prev = a.load( oLoad );
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
 
                 EXPECT_EQ( a.fetch_add( n, order), prev);
             }
@@ -290,7 +290,7 @@ namespace {
             for ( size_t nByte = sizeof(integral_type); nByte > 0; --nByte )
             {
                 integral_type prev = a.load( oLoad );
-                integral_type n = integral_type(42) << ((nByte - 1) * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << ((nByte - 1) * 8));
 
                 EXPECT_EQ( a.fetch_sub( n, order ), prev);
             }
@@ -300,7 +300,7 @@ namespace {
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
             {
                 integral_type prev = a.load( oLoad )  ;;
-                integral_type mask = integral_type(1) << nBit;
+                integral_type mask = static_cast<integral_type>( integral_type(1) << nBit );
 
                 EXPECT_EQ( a.fetch_or( mask, order ), prev );
                 prev = a.load( oLoad );
@@ -474,7 +474,7 @@ namespace {
             char   arr[8];
             const char aSize = sizeof(arr)/sizeof(arr[0]);
             for ( char i = 0; i < aSize; ++i ) {
-                arr[unsigned(i)] = i + 1;
+                arr[static_cast<unsigned>( i )] = i + 1;
             }
 
             atomic_pointer  a;
@@ -571,7 +571,7 @@ namespace {
             integral_type   arr[8];
             const integral_type aSize = sizeof(arr)/sizeof(arr[0]);
             for ( integral_type i = 0; i < aSize; ++i ) {
-                arr[size_t(i)] = i + 1;
+                arr[static_cast<size_t>(i)] = i + 1;
             }
 
             atomic_pointer  a;

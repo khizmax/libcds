@@ -43,7 +43,7 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
     {
          long n = ::sysconf( _SC_NPROCESSORS_ONLN );
          if ( n > 0 )
-            s_nProcessorCount = n;
+            s_nProcessorCount = static_cast<unsigned>( n );
          else {
             try {
                 std::ifstream cpuinfo("/proc/cpuinfo");

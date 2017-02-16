@@ -194,10 +194,10 @@ namespace cds { namespace gc {
                     cur->clear();
 
                 // free all extended blocks
-                hp_allocator& alloc = hp_allocator::instance();
+                hp_allocator& a = hp_allocator::instance();
                 for ( guard_block* p = extended_list_; p; ) {
                     guard_block* next = p->next_;
-                    alloc.free( p );
+                    a.free( p );
                     p = next;
                 }
 

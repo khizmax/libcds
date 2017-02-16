@@ -70,20 +70,20 @@ namespace cds {
             template <typename... S>
             value_type *  New( S const&... src )
             {
-                return Construct( allocator_type::allocate(1), src... );
+                return Construct( allocator_type::allocate( 1, nullptr ), src... );
             }
 
             /// Analogue of <tt>operator new T( std::forward<Args>(args)... )</tt> (move semantics)
             template <typename... Args>
             value_type * MoveNew( Args&&... args )
             {
-                return MoveConstruct( allocator_type::allocate(1), std::forward<Args>(args)... );
+                return MoveConstruct( allocator_type::allocate( 1, nullptr ), std::forward<Args>(args)... );
             }
 
             /// Analogue of operator new T[\p nCount ]
             value_type * NewArray( size_t nCount )
             {
-                value_type * p = allocator_type::allocate( nCount );
+                value_type * p = allocator_type::allocate( nCount, nullptr );
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i );
                 return p;
@@ -96,7 +96,7 @@ namespace cds {
             template <typename S>
             value_type * NewArray( size_t nCount, S const& src )
             {
-                value_type * p = allocator_type::allocate( nCount );
+                value_type * p = allocator_type::allocate( nCount, nullptr );
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i, src );
                 return p;

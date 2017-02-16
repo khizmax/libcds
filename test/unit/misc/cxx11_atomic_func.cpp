@@ -87,7 +87,7 @@ namespace misc {
             EXPECT_EQ( atomics::atomic_load( &a ), integral_type( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 EXPECT_EQ( atomics::atomic_exchange( &a, n ), (integral_type) 0 );
                 EXPECT_EQ( atomics::atomic_load( &a ), n );
                 EXPECT_EQ( atomics::atomic_exchange( &a, (integral_type) 0 ), n );
@@ -96,7 +96,7 @@ namespace misc {
 
             integral_type prev = atomics::atomic_load( &a );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( atomics::atomic_compare_exchange_weak( &a, &expected, n));
@@ -113,7 +113,7 @@ namespace misc {
 
             prev = atomics::atomic_load( &a );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( atomics::atomic_compare_exchange_strong( &a, &expected, n));
@@ -142,7 +142,7 @@ namespace misc {
             for ( size_t nByte = 0; nByte < sizeof(integral_type); ++nByte )
             {
                 integral_type prev = atomics::atomic_load( &a );
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
 
                 EXPECT_EQ( atomics::atomic_fetch_add( &a, n ), prev );
             }
@@ -151,7 +151,7 @@ namespace misc {
             for ( size_t nByte = sizeof(integral_type); nByte > 0; --nByte )
             {
                 integral_type prev = atomics::atomic_load( &a );
-                integral_type n = integral_type(42) << ((nByte - 1) * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << ((nByte - 1) * 8));
 
                 EXPECT_EQ( atomics::atomic_fetch_sub( &a, n ), prev );
             }
@@ -161,7 +161,7 @@ namespace misc {
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
             {
                 integral_type prev = atomics::atomic_load( &a );
-                integral_type mask = integral_type(1) << nBit;
+                integral_type mask = static_cast<integral_type>( integral_type(1) << nBit );
 
                 EXPECT_EQ( atomics::atomic_fetch_or( &a, mask ), prev );
                 prev = atomics::atomic_load( &a );
@@ -192,7 +192,7 @@ namespace misc {
             EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 EXPECT_EQ( atomics::atomic_exchange_explicit( &a, n, order ), (integral_type) 0 );
                 EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), n );
                 EXPECT_EQ( atomics::atomic_exchange_explicit( &a, (integral_type) 0, order ), n );
@@ -201,7 +201,7 @@ namespace misc {
 
             integral_type prev = atomics::atomic_load_explicit( &a, oLoad );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( atomics::atomic_compare_exchange_weak_explicit( &a, &expected, n, order, atomics::memory_order_relaxed));
@@ -217,7 +217,7 @@ namespace misc {
 
             prev = atomics::atomic_load_explicit( &a, oLoad );
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
                 integral_type expected = prev;
 
                 EXPECT_TRUE( atomics::atomic_compare_exchange_strong_explicit( &a, &expected, n, order, atomics::memory_order_relaxed));
@@ -248,7 +248,7 @@ namespace misc {
             for ( size_t nByte = 0; nByte < sizeof(integral_type); ++nByte )
             {
                 integral_type prev = atomics::atomic_load_explicit( &a, oLoad );
-                integral_type n = integral_type(42) << (nByte * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << (nByte * 8));
 
                 EXPECT_EQ( atomics::atomic_fetch_add_explicit( &a, n, order), prev);
             }
@@ -257,7 +257,7 @@ namespace misc {
             for ( size_t nByte = sizeof(integral_type); nByte > 0; --nByte )
             {
                 integral_type prev = atomics::atomic_load_explicit( &a, oLoad );
-                integral_type n = integral_type(42) << ((nByte - 1) * 8);
+                integral_type n = static_cast<integral_type>( integral_type(42) << ((nByte - 1) * 8));
 
                 EXPECT_EQ( atomics::atomic_fetch_sub_explicit( &a, n, order ), prev);
             }
@@ -267,7 +267,7 @@ namespace misc {
             for ( size_t nBit = 0; nBit < sizeof(integral_type) * 8; ++nBit )
             {
                 integral_type prev = atomics::atomic_load_explicit( &a, oLoad )  ;;
-                integral_type mask = integral_type(1) << nBit;
+                integral_type mask = static_cast<integral_type>( integral_type(1) << nBit );
 
                 EXPECT_EQ( atomics::atomic_fetch_or_explicit( &a, mask, order ), prev );
                 prev = atomics::atomic_load_explicit( &a, oLoad );
@@ -439,7 +439,7 @@ namespace misc {
             integral_type   arr[8];
             const integral_type aSize = sizeof(arr)/sizeof(arr[0]);
             for ( integral_type i = 0; i < aSize; ++i ) {
-                arr[size_t(i)] = i + 1;
+                arr[static_cast<size_t>(i)] = i + 1;
             }
 
             atomic_pointer  a;
@@ -535,7 +535,7 @@ namespace misc {
             char   arr[8];
             const char aSize = sizeof(arr)/sizeof(arr[0]);
             for ( char i = 0; i < aSize; ++i ) {
-                arr[unsigned(i)] = i + 1;
+                arr[static_cast<size_t>(i)] = i + 1;
             }
 
             atomic_pointer  a;

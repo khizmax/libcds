@@ -51,7 +51,7 @@ namespace cds_test {
 
             explicit key_type2( int n )
                 : nKey( n )
-                , subkey( n )
+                , subkey( static_cast<uint16_t>( n ))
             {}
 
             explicit key_type2( size_t n )
@@ -61,7 +61,7 @@ namespace cds_test {
 
             explicit key_type2( std::string const& str )
                 : nKey( std::stoi( str ))
-                , subkey( nKey )
+                , subkey( static_cast<uint16_t>( nKey ))
             {}
 
             key_type2( key_type2 const& s )

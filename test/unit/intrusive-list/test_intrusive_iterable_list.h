@@ -253,24 +253,24 @@ namespace cds_test {
                     break;
                 case 1:
                     EXPECT_EQ( i.s.nInsertCall, 0 );
-                    EXPECT_TRUE( l.insert( i, []( value_type& i ) { ++i.s.nInsertCall; } ));
+                    EXPECT_TRUE( l.insert( i, []( value_type& v ) { ++v.s.nInsertCall; } ));
                     EXPECT_EQ( i.s.nInsertCall, 1 );
                     break;
                 case 2:
                     {
-                        std::pair<bool, bool> ret = l.update( i, []( value_type& i, value_type * old ) {
+                        std::pair<bool, bool> ret = l.update( i, []( value_type& v, value_type * old ) {
                             EXPECT_TRUE( old == nullptr );
-                            EXPECT_EQ( i.s.nUpdateNewCall, 0 );
-                            ++i.s.nUpdateNewCall;
+                            EXPECT_EQ( v.s.nUpdateNewCall, 0 );
+                            ++v.s.nUpdateNewCall;
                         }, false );
                         EXPECT_EQ( i.s.nUpdateNewCall, 0 );
                         EXPECT_EQ( ret.first, false );
                         EXPECT_EQ( ret.second, false );
 
-                        ret = l.update( i, []( value_type& i, value_type * old ) {
+                        ret = l.update( i, []( value_type& v, value_type * old ) {
                             EXPECT_TRUE( old == nullptr );
-                            EXPECT_EQ( i.s.nUpdateNewCall, 0 );
-                            ++i.s.nUpdateNewCall;
+                            EXPECT_EQ( v.s.nUpdateNewCall, 0 );
+                            ++v.s.nUpdateNewCall;
                         }, true );
                         EXPECT_EQ( i.s.nUpdateNewCall, 1 );
                         EXPECT_EQ( ret.first, true );
@@ -364,10 +364,10 @@ namespace cds_test {
 
             for ( auto& i : arr ) {
                 EXPECT_EQ( i.s.nUpdateExistsCall, 0 );
-                std::pair<bool, bool> ret = l.update( i, []( value_type& i, value_type * old ) {
+                std::pair<bool, bool> ret = l.update( i, []( value_type& v, value_type * old ) {
                     EXPECT_FALSE( old == nullptr );
-                    EXPECT_EQ( i.s.nUpdateExistsCall, 0 );
-                    ++i.s.nUpdateExistsCall;
+                    EXPECT_EQ( v.s.nUpdateExistsCall, 0 );
+                    ++v.s.nUpdateExistsCall;
                 });
                 EXPECT_TRUE( ret.first );
                 EXPECT_FALSE( ret.second );

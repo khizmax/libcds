@@ -212,7 +212,7 @@ namespace cds { namespace intrusive {
                 for ( node_type* p = m_pNode->next.load( memory_model::memory_order_relaxed ); p != m_pNode; p = p->next.load( memory_model::memory_order_relaxed ))
                 {
                     m_pNode = p;
-                    if ( m_Guard.protect( p->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
+                    if ( m_Guard.protect( p->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr())
                         return;
                 }
                 m_Guard.clear();

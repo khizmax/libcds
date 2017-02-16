@@ -72,7 +72,7 @@ namespace cds { namespace OS {
             {
                 native_timer_type ts;
                 current( ts );
-                double dblRet = ( ts.tv_sec - m_tmStart.tv_sec ) + ( ts.tv_nsec - m_tmStart.tv_nsec ) / 1.0E9;
+                double dblRet = double( ( ts.tv_sec - m_tmStart.tv_sec ) + ( ts.tv_nsec - m_tmStart.tv_nsec )) / 1.0E9;
                 m_tmStart = ts;
                 return dblRet;
             }
