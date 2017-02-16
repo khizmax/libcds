@@ -33,6 +33,7 @@
 
 #include <cds/details/allocator.h>
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
+#include <cds/details/throw_exception.h>
 
 namespace cds { namespace memory {
 
@@ -510,7 +511,7 @@ namespace cds { namespace memory {
                 }
 
                 // The pool is empty
-                throw std::bad_alloc();
+                CDS_THROW_EXCEPTION( std::bad_alloc() );
             }
 
         ok:

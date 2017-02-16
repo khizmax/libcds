@@ -34,6 +34,7 @@
 #include <system_error>
 #include <stdio.h>
 #include <cds/threading/details/_common.h>
+#include <cds/details/throw_exception.h>
 
 //@cond
 namespace cds { namespace threading {
@@ -77,8 +78,8 @@ namespace cds { namespace threading {
                 static void init()
                 {
                     if ( m_key == TLS_OUT_OF_INDEXES ) {
-                        if ( (m_key = ::TlsAlloc()) == TLS_OUT_OF_INDEXES )
-                            throw api_exception( ::GetLastError(), "TlsAlloc" );
+                        if ( ( m_key = ::TlsAlloc() ) == TLS_OUT_OF_INDEXES )
+                            CDS_THROW_EXCEPTION( api_exception( ::GetLastError(), "TlsAlloc" ));
                     }
                 }
 
@@ -86,7 +87,7 @@ namespace cds { namespace threading {
                 {
                     if ( m_key != TLS_OUT_OF_INDEXES ) {
                         if ( ::TlsFree( m_key ) == 0 )
-                            throw api_exception( ::GetLastError(), "TlsFree" );
+                            CDS_THROW_EXCEPTION( api_exception( ::GetLastError(), "TlsFree" ));
                         m_key = TLS_OUT_OF_INDEXES;
                     }
                 }
@@ -95,8 +96,8 @@ namespace cds { namespace threading {
                 {
                     api_error_code  nErr;
                     void * pData = ::TlsGetValue( m_key );
-                    if ( pData == nullptr && (nErr = ::GetLastError()) != ERROR_SUCCESS )
-                        throw api_exception( nErr, "TlsGetValue" );
+                    if ( pData == nullptr && ( nErr = ::GetLastError() ) != ERROR_SUCCESS )
+                        CDS_THROW_EXCEPTION( api_exception( nErr, "TlsGetValue" ));
                     return reinterpret_cast<ThreadData *>( pData );
                 }
 
@@ -104,7 +105,7 @@ namespace cds { namespace threading {
                 {
                     ThreadData * pData = new ThreadData;
                     if ( !::TlsSetValue( m_key, pData ))
-                        throw api_exception( ::GetLastError(), "TlsSetValue" );
+                        CDS_THROW_EXCEPTION( api_exception( ::GetLastError(), "TlsSetValue" ));
                 }
                 static void free()
                 {
@@ -186,7 +187,7 @@ namespace cds { namespace threading {
                 if ( pData )
                     pData->init();
                 else
-                    throw api_exception( api_error_code(-1), "cds::threading::wintls::Manager::attachThread" );
+                    CDS_THROW_EXCEPTION( api_exception( api_error_code(-1), "cds::threading::wintls::Manager::attachThread" ));
             }
 
             /// This method must be called in end of thread execution
@@ -206,7 +207,7 @@ namespace cds { namespace threading {
                         _threadData( do_detachThread );
                 }
                 else
-                    throw api_exception( api_error_code(-1), "cds::threading::winapi::Manager::detachThread" );
+                    CDS_THROW_EXCEPTION( api_exception( api_error_code(-1), "cds::threading::winapi::Manager::detachThread" ));
             }
 
             /// Returns ThreadData pointer for the current thread

@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <cds/threading/details/_common.h>
+#include <cds/details/throw_exception.h>
 
 //@cond
 namespace cds { namespace threading {
@@ -77,15 +78,15 @@ namespace cds { namespace threading {
                 static void init()
                 {
                     pthread_error_code  nErr;
-                    if ( (nErr = pthread_key_create( &m_key, key_destructor )) != 0 )
-                        throw pthread_exception( nErr, "pthread_key_create" );
+                    if ( ( nErr = pthread_key_create( &m_key, key_destructor ) ) != 0 )
+                        CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_key_create" ));
                 }
 
                 static void fini()
                 {
                     pthread_error_code  nErr;
-                    if ( (nErr = pthread_key_delete( m_key )) != 0 )
-                        throw pthread_exception( nErr, "pthread_key_delete" );
+                    if ( ( nErr = pthread_key_delete( m_key ) ) != 0 )
+                        CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_key_delete" ));
                 }
 
                 static ThreadData *    get()
@@ -97,8 +98,8 @@ namespace cds { namespace threading {
                 {
                     pthread_error_code  nErr;
                     ThreadData * pData = new ThreadData;
-                    if ( ( nErr = pthread_setspecific( m_key, pData )) != 0 )
-                        throw pthread_exception( nErr, "pthread_setspecific" );
+                    if ( ( nErr = pthread_setspecific( m_key, pData ) ) != 0 )
+                        CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_setspecific" ));
                 }
                 static void free()
                 {
@@ -188,7 +189,7 @@ namespace cds { namespace threading {
                     pData->init();
                 }
                 else
-                    throw pthread_exception( -1, "cds::threading::pthread::Manager::attachThread" );
+                    CDS_THROW_EXCEPTION( pthread_exception( -1, "cds::threading::pthread::Manager::attachThread" ));
             }
 
             /// This method must be called in end of thread execution
@@ -204,11 +205,11 @@ namespace cds { namespace threading {
                 assert( pData );
 
                 if ( pData ) {
-                    if ( pData->fini())
+                    if ( pData->fini() )
                         _threadData( do_detachThread );
                 }
                 else
-                    throw pthread_exception( -1, "cds::threading::pthread::Manager::detachThread" );
+                    CDS_THROW_EXCEPTION( pthread_exception( -1, "cds::threading::pthread::Manager::detachThread" ));
             }
 
             /// Returns ThreadData pointer for the current thread

@@ -48,9 +48,9 @@ namespace cds {
         If exception is disabled, \p %throw_exception() prints an exception message to
         standard output and call \p abort(). 
 
-        You may supply your own \p %cds::throw_exception() function;
+        You can supply your own \p %cds::throw_exception() function;
         for that you should specify \p -DCDS_USER_DEFINED_THROW_EXCEPTION
-        in compiler command line.
+        in compiler command line. 
 
         @note \p %throw_exception() never returns. If the user-defined \p %throw_exception() returns,
         the behavior is undefined.

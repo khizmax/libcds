@@ -13,6 +13,11 @@
       External API of gc::DHP class is changed: now only initial count 
       of hazard pointers can be specified in the constructor. Like new gc::HP,
       the new gc::DHP supports an external allocator.
+    - Changed: exception handling. Now, exceptions raise by invoking new 
+      cds::throw_exception() function. If you compile your code with exception disabled,
+      the function prints an exception message to stdout and calls abort()
+      instead of throwing. You can provide your own cds::throw_exception() function 
+      and compile libcds with -DCDS_USER_DEFINED_THROW_EXCEPTION.
     - Fixed a bug in BronsonAVLTreeMap::extract_min()/extract_max()/clear().
     - Added more flat-combining queue tests, thanks to Marsel Galimullin.
     - Changed cmake scripts to support MacOS and ARMv7/ARMv8 (64 bit),
