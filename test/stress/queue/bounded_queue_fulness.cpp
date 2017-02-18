@@ -146,10 +146,9 @@ namespace {
     };
 
 #undef CDSSTRESS_Queue_F
-#define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
+#define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_F( test_fixture, type_name ) \
     { \
-        /*if ( !check_detail_level( level )) return;*/ \
         typedef queue::Types< size_t >::type_name queue_type; \
         queue_type queue( s_nQueueSize ); \
         test( queue ); \

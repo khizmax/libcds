@@ -219,100 +219,127 @@ namespace set {
 } // namespace set
 
 
-#define CDSSTRESS_MichaelSet_case( fixture, test_case, michael_set_type, key_type, value_type, level ) \
+#define CDSSTRESS_MichaelSet_case( fixture, test_case, michael_set_type, key_type, value_type ) \
     TEST_P( fixture, michael_set_type ) \
     { \
-        if ( !check_detail_level( level )) return; \
         typedef set::set_type< tag_MichaelHashSet, key_type, value_type >::michael_set_type set_type; \
         test_case<set_type>(); \
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+
+#if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
+#   define CDSSTRESS_MichaelSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp,             key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_stat,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stat,  key_type, value_type ) \
+
+#   define CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stat,  key_type, value_type ) \
+
+#else
+#   define CDSSTRESS_MichaelSet_SHRCU_1( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type )
+#endif
+
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp,             key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp,             key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp_stat,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_stat,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less,            key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less,            key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_stat,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less_stat,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp_stat,   key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_stat,   key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stat,  key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_cmp,             key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHT_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_SHB_less_stat,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_cmp,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stat,  key_type, value_type ) \
+        CDSSTRESS_MichaelSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
 
 #   define CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp,        key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp,        key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stat,   key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stat,   key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less,       key_type, value_type, 1 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less,       key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stat,  key_type, value_type, 1 ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stat,  key_type, value_type ) \
+        CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
+#if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
+#   define CDSSTRESS_MichaelSet_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp,                 key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp,             key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_stat,             key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less,                 key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_stat,           key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_stat,       key_type, value_type ) \
+        \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_stat,   key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less,       key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_stat,      key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stat,  key_type, value_type ) \
+
+#   define CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stat,      key_type, value_type ) \
+
+#else
+#   define CDSSTRESS_MichaelSet_1( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type )
+#endif
+
 
 #define CDSSTRESS_MichaelSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp,                  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp,                 key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp_stat,             key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_stat,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_stat,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less,                 key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less,                key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_stat,            key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less_stat,           key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less_stat,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp,        key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp_stat,   key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_stat,   key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp_stat,   key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less,           key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less,       key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less_stat,      key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stat,  key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type )
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_cmp,                  key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_cmp,             key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_cmp,             key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_cmp_stat,            key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_cmp_stat,        key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_DHP_less,                key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPB_less,            key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_HP_less_stat,            key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPI_less_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_RCU_GPT_less_stat,       key_type, value_type ) \
+    \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_cmp,             key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_cmp,        key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_cmp,        key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_cmp_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_cmp_stat,   key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_DHP_less,           key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less,       key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_HP_less_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less_stat,  key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stat,  key_type, value_type ) \
+    \
+    CDSSTRESS_MichaelSet_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_MichaelIterableSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp,             key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stat,        key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less,            key_type, value_type, 1 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less,           key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stat,       key_type, value_type, 0 ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stat,      key_type, value_type, 1 ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp,             key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less,           key_type, value_type ) \
+    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type ) \
 
 #endif // #ifndef CDSUNIT_SET_TYPE_MICHAEL_H

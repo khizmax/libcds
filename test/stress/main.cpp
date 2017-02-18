@@ -55,9 +55,6 @@ int main( int argc, char **argv )
         // Read test config file
         cds_test::init_config( argc, argv );
 
-        // Get detail level for stress test
-        cds_test::stress_fixture::init_detail_level( argc, argv );
-
         // Init Google test
         ::testing::InitGoogleTest( &argc, argv );
 

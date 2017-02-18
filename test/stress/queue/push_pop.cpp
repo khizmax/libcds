@@ -356,10 +356,9 @@ namespace {
     CDSSTRESS_StdQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
-#define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
+#define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_F( test_fixture, type_name ) \
     { \
-        if ( !check_detail_level( level )) return; \
         typedef queue::Types< value_type >::type_name queue_type; \
         queue_type queue( s_nQueueSize ); \
         test( queue ); \
@@ -415,10 +414,9 @@ namespace {
         }
     };
 
-#define CDSSTRESS_Queue_F( test_fixture, type_name, level ) \
+#define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_P( test_fixture, type_name ) \
     { \
-        if ( !check_detail_level( level )) return; \
         typedef typename queue::Types<value_type>::type_name queue_type; \
         test< queue_type >(); \
     }

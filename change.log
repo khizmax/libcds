@@ -22,7 +22,11 @@
     - Added more flat-combining queue tests, thanks to Marsel Galimullin.
     - Changed cmake scripts to support MacOS and ARMv7/ARMv8 (64 bit),
       thanks to Michail Komarov (https://github.com/Nemo1369)
-
+    - Stress tests: removed command line parameter --detail-level and
+      envvar CDSTEST_DETAIL_LEVEL for reducing compile time and executable size.
+      To make full testset compile libcds with -DCDS_STRESS_TEST_LEVEL=N where
+      N is 1 or 2.
+ 
 2.2.0 04.01.2017
     General release
     - Changed: CMake is used for build libcds. Ancient build.sh has been removed

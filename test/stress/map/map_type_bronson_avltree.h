@@ -212,52 +212,59 @@ namespace map {
     }
 
 
-#define CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, bronson_map_type, key_type, value_type, level ) \
+#define CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, bronson_map_type, key_type, value_type ) \
     TEST_F( fixture, bronson_map_type ) \
     { \
-        if ( !check_detail_level( level )) return; \
         typedef map::map_type< tag_BronsonAVLTreeMap, key_type, value_type >::bronson_map_type map_type; \
         test_case<map_type>(); \
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less,                   key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less,                   key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_cmp_stat,               key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_cmp_stat,               key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple,       key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple,       key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat,  key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy,         key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy,         key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat,    key_type, value_type, 0 ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat,    key_type, value_type, 0 )
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less,                   key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less,                   key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_cmp_stat,               key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_cmp_stat,               key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple,       key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple,       key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat,  key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat,  key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy,         key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy,         key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat,    key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat,    key_type, value_type )
 
 #else
 #   define CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
+#if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
+#   define CDSSTRESS_BronsonAVLTreeMap_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_cmp_stat,               key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_simple,       key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat,  key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_lazy,         key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat,    key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_simple,       key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat,  key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy,         key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat,    key_type, value_type ) \
+
+#else
+#   define CDSSTRESS_BronsonAVLTreeMap_1( fixture, test_case, key_type, value_type )
+#endif
+
 #define CDSSTRESS_BronsonAVLTreeMap( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less,                   key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less,                   key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less,                   key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_cmp_stat,               key_type, value_type, 1 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_cmp_stat,               key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_cmp_stat,               key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_simple,       key_type, value_type, 1 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_simple,       key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_simple,       key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_simple_stat,  key_type, value_type, 1 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat,  key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_lazy,         key_type, value_type, 1 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy,         key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy,         key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat,    key_type, value_type, 1 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat,    key_type, value_type, 0 ) \
-    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat,    key_type, value_type, 0 ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpi_less,                   key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less,                   key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less,                   key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_cmp_stat,               key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_cmp_stat,               key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_simple,       key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat,  key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy,         key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat,    key_type, value_type ) \
+    CDSSTRESS_BronsonAVLTreeMap_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 
 }   // namespace map
