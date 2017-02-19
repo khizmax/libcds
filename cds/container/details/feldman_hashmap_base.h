@@ -152,6 +152,12 @@ namespace cds { namespace container {
             */
             static CDS_CONSTEXPR size_t const hash_size = 0;
 
+            /// Hash splitter
+            /**
+                @copydetails cds::intrusive::feldman_hashset::traits::hash_splitter
+            */
+            typedef cds::opt::none hash_splitter;
+
             /// Hash comparing functor
             /**
                 @copydetails cds::intrusive::feldman_hashset::traits::compare
