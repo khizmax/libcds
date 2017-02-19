@@ -77,6 +77,21 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        /// Hash splitter option
+        /**
+            @copydetails traits::hash_splitter
+        */
+        template <typename Splitter>
+        struct hash_splitter {
+            //@cond
+            template <typename Base> struct pack: public Base
+            {
+                typedef Splitter hash_splitter;
+            };
+            //@endcond
+        };
+
+
         /// \p FeldmanHashSet internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
         struct stat {
@@ -197,6 +212,13 @@ namespace cds { namespace intrusive {
             */
             static CDS_CONSTEXPR size_t const hash_size = 0;
 
+            /// Hash splitter
+            /**
+                This trait specifies hash bit-string splitter algorithm.
+                By default, \p cds::algo::split_bitstring< HashType, HashSize > is used
+            */
+            typedef cds::opt::none hash_splitter;
+
             /// Disposer for removing data nodes
             typedef cds::intrusive::opt::v::empty_disposer disposer;
 
@@ -262,6 +284,8 @@ namespace cds { namespace intrusive {
                 @copydetails traits::hash_accessor
             - \p feldman_hashset::hash_size - the size of hash value in bytes.
                 @copydetails traits::hash_size
+            - \p feldman_hashset::hash_splitter - a hash splitter algorithm
+                @copydetails traits::hash_splitter
             - \p opt::node_allocator - array node allocator.
                 @copydetails traits::node_allocator
             - \p opt::compare - hash comparison functor. No default functor is provided.
@@ -404,7 +428,11 @@ namespace cds { namespace intrusive {
             /// The size of hash_type in bytes, see \p traits::hash_size for explanation
             static CDS_CONSTEXPR size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : static_cast<size_t>( traits::hash_size );
 
-            typedef feldman_hashset::details::hash_splitter< hash_type, c_hash_size > hash_splitter;
+            typedef typename std::conditional<
+                std::is_same< typename traits::hash_splitter, cds::opt::none >::value,
+                feldman_hashset::details::hash_splitter< hash_type, c_hash_size >,
+                typename traits::hash_splitter
+            >::type hash_splitter;
 
             enum node_flags {
                 flag_array_converting = 1,   ///< the cell is converting from data node to an array node

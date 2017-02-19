@@ -37,7 +37,7 @@ namespace cds { namespace algo {
 
     /// Cuts a bit sequence from fixed-size bit-string
     /**
-        The splitter can be used as iterator over bit-string.
+        The splitter can be used as an iterator over bit-string.
         Each call of \p cut() or \p safe_cut() cuts the bit count specified
         and keeps the position inside bit-string for the next call.
 
@@ -48,7 +48,7 @@ namespace cds { namespace algo {
         - \p BitString - a fixed-sized type that interprets as bit string
         - \p BitStringSize - the size of \p BitString in bytes, default is <tt>sizeof( BitString )</tt>.
              You can specify 0 for default.
-        - \p UInt - an unsigned integer, return type of \p cut()
+        - \p UInt - an unsigned integer, return type for \p cut()
     */
     template <typename BitString, size_t BitStringSize = sizeof( BitString ), typename UInt = typename std::conditional< BitStringSize % sizeof(size_t) == 0, size_t, unsigned >::type >
     class split_bitstring
@@ -57,6 +57,9 @@ namespace cds { namespace algo {
         typedef BitString bitstring;    ///< Bit-string type
         typedef UInt      uint_type;    ///< Bit-string portion type
         static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
+
+        /// Minimum count of bits to be cut
+        static CDS_CONSTEXPR size_t const c_nMinBitCut = 1;
 
         //@cond
         static CDS_CONSTEXPR size_t const c_nHashSize   = (c_bitstring_size + sizeof(uint_type) - 1) / sizeof(uint_type);

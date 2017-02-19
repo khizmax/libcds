@@ -53,6 +53,13 @@ namespace cds { namespace container {
         template <size_t Size>
         using hash_size = cds::intrusive::feldman_hashset::hash_size< Size >;
 
+        /// Hash splitter
+        /**
+            @copydetails cds::intrusive::feldman_hashset::traits::hash_splitter
+        */
+        template <typename Splitter>
+        using hash_splitter = cds::intrusive::feldman_hashset::hash_splitter< Splitter >;
+
         /// \p FeldmanHashSet internal statistics, see cds::intrusive::feldman_hashset::stat
         template <typename EventCounter = cds::atomicity::event_counter>
         using stat = cds::intrusive::feldman_hashset::stat< EventCounter >;
@@ -81,6 +88,12 @@ namespace cds { namespace container {
                 @copydetails cds::intrusive::feldman_hashset::traits::hash_size
             */
             static CDS_CONSTEXPR size_t const hash_size = 0;
+
+            /// Hash splitter
+            /**
+                @copydetails cds::intrusive::feldman_hashset::traits::hash_splitter
+            */
+            typedef cds::opt::none hash_splitter;
 
             /// Hash comparing functor
             /**
@@ -141,6 +154,8 @@ namespace cds { namespace container {
                 @copydetails traits::hash_accessor
             - \p feldman_hashset::hash_size - the size of hash value in bytes.
                 @copydetails traits::hash_size
+            - \p feldman_hashset::hash_splitter - a hash splitter algorithm
+                @copydetails traits::hash_splitter
             - \p opt::allocator - item allocator
                 @copydetails traits::allocator
             - \p opt::node_allocator - array node allocator.
