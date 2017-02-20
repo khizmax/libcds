@@ -17,13 +17,8 @@ set(UNIT_ISET_FELDMAN_SOURCES
     intrusive_feldman_hashset_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_FELDMAN} ${UNIT_ISET_FELDMAN_SOURCES})
-target_link_libraries(${UNIT_ISET_FELDMAN} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${UNIT_ISET_FELDMAN} ${CDS_TEST_LIBRARIES})
+
 add_test(NAME ${UNIT_ISET_FELDMAN} COMMAND ${UNIT_ISET_FELDMAN} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # intrusive::MichaelHashSet<MichaelList>

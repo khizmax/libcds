@@ -16,13 +16,8 @@ set(UNIT_ILIST_MICHAEL_SOURCES
     intrusive_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_ILIST_MICHAEL} ${UNIT_ILIST_MICHAEL_SOURCES})
-target_link_libraries(${UNIT_ILIST_MICHAEL} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${UNIT_ILIST_MICHAEL} ${CDS_TEST_LIBRARIES})
+
 add_test(NAME ${UNIT_ILIST_MICHAEL} COMMAND ${UNIT_ILIST_MICHAEL} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # intrusive::LazyList

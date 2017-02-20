@@ -34,12 +34,6 @@ include_directories(
 )
 
 add_executable(${PACKAGE_NAME} ${CDSGTEST_QUEUE_SOURCES})
-target_link_libraries(${PACKAGE_NAME} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${PACKAGE_NAME} ${CDS_TEST_LIBRARIES})
 
 add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})

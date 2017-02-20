@@ -15,13 +15,8 @@ set(UNIT_SET_FELDMAN_SOURCES
     feldman_hashset_rcu_sht.cpp
 )
 add_executable(${UNIT_SET_FELDMAN} ${UNIT_SET_FELDMAN_SOURCES})
-target_link_libraries(${UNIT_SET_FELDMAN} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${UNIT_SET_FELDMAN} ${CDS_TEST_LIBRARIES})
+
 add_test(NAME ${UNIT_SET_FELDMAN} COMMAND ${UNIT_SET_FELDMAN} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # MichaelSet<MichaelList>
