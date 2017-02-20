@@ -34,13 +34,7 @@ set(UNIT_ILIST_LAZY_SOURCES
     intrusive_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_ILIST_LAZY} ${UNIT_ILIST_LAZY_SOURCES})
-target_link_libraries(${UNIT_ILIST_LAZY} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${UNIT_ILIST_LAZY} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_ILIST_LAZY} COMMAND ${UNIT_ILIST_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # intrusive::IterableList
@@ -51,13 +45,7 @@ set(UNIT_ILIST_ITERABLE_SOURCES
     intrusive_iterable_dhp.cpp
 )
 add_executable(${UNIT_ILIST_ITERABLE} ${UNIT_ILIST_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_ILIST_ITERABLE} 
-    ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+target_link_libraries(${UNIT_ILIST_ITERABLE} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_ILIST_ITERABLE} COMMAND ${UNIT_ILIST_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 
