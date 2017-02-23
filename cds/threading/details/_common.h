@@ -141,9 +141,6 @@ namespace cds {
 
             //@endcond
 
-            //cds::gc::HP::thread_gc_impl  * m_hpManager     ;   ///< Michael's Hazard Pointer GC thread-specific data
-            //cds::gc::DHP::thread_gc_impl * m_dhpManager    ;   ///< Dynamic Hazard Pointer GC thread-specific data
-
             size_t  m_nFakeProcessorNumber  ;   ///< fake "current processor" number
 
             //@cond

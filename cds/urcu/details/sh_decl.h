@@ -85,6 +85,7 @@ namespace cds { namespace urcu { namespace details {
     public:
         sh_thread_gc();
         ~sh_thread_gc();
+
     public:
         static void access_lock();
         static void access_unlock();
@@ -132,9 +133,9 @@ namespace cds { namespace urcu { namespace details {
         typedef sh_singleton_instance< rcu_tag >    rcu_instance;
 
     protected:
-        atomics::atomic<uint32_t>    m_nGlobalControl;
-        thread_list< rcu_tag >          m_ThreadList;
-        int const                       m_nSigNo;
+        atomics::atomic<uint32_t>   m_nGlobalControl;
+        thread_list< rcu_tag >      m_ThreadList;
+        int const                   m_nSigNo;
 
     protected:
         sh_singleton( int nSignal )

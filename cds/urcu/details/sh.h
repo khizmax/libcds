@@ -111,7 +111,6 @@ namespace cds { namespace urcu { namespace details {
         sigact.sa_sigaction = signal_handler;
         sigact.sa_flags = SA_SIGINFO;
         sigemptyset( &sigact.sa_mask );
-        //sigaddset( &sigact.sa_mask, m_nSigNo );
         sigaction( m_nSigNo, &sigact, nullptr );
 
         sigaddset( &sigact.sa_mask, m_nSigNo );
@@ -121,17 +120,6 @@ namespace cds { namespace urcu { namespace details {
     template <typename RCUtag>
     inline void sh_singleton<RCUtag>::clear_signal_handler()
     {}
-
-    template <typename RCUtag>
-    void sh_singleton<RCUtag>::signal_handler( int /*signo*/, siginfo_t * /*sigInfo*/, void * /*context*/ )
-    {
-        thread_record * pRec = cds::threading::getRCU<RCUtag>();
-        if ( pRec ) {
-            atomics::atomic_signal_fence( atomics::memory_order_acquire );
-            pRec->m_bNeedMemBar.store( false, atomics::memory_order_relaxed );
-            atomics::atomic_signal_fence( atomics::memory_order_release );
-        }
-    }
 
     template <typename RCUtag>
     inline void sh_singleton<RCUtag>::raise_signal( cds::OS::ThreadId tid )
