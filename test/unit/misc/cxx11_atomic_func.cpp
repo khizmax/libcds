@@ -37,13 +37,7 @@
 
 #include "cxx11_convert_memory_order.h"
 
-#if CDS_COMPILER == CDS_COMPILER_CLANG && !defined( _LIBCPP_VERSION )
-    // CLang (at least 3.6) without libc++ has no gcc-specific __atomic_is_lock_free function
-#   define EXPECT_ATOMIC_IS_LOCK_FREE( x )
-#else
-#   define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( atomics::atomic_is_lock_free( &x ));
-#endif
-
+#define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( atomics::atomic_is_lock_free( &x ));
 
 namespace misc {
 
