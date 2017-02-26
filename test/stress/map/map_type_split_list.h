@@ -669,103 +669,124 @@ namespace map {
         CDSSTRESS_SplitListMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SplitListMap_SHRCU_2( fixture, test_case, key_type, value_type ) \
 
-#   define CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
-
 #else
 #   define CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 1
-#   define CDSSTRESS_SplitListMap_2( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_SplitListMap_HP_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_cmp_seqcst,       key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_cmp_seqcst,      key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp_seqcst,          key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp_seqcst,         key_type, value_type ) \
+
+#   define CDSSTRESS_SplitListMap_RCU_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_cmp_seqcst,  key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_cmp_seqcst,  key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_cmp_seqcst,  key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp_seqcst,          key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp_seqcst,         key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_cmp_seqcst,     key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_cmp_seqcst,     key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_cmp_seqcst,     key_type, value_type ) \
 
+#   define CDSSTRESS_SplitListMap_2( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_SplitListMap_HP_2( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_SplitListMap_RCU_2( fixture, test_case, key_type, value_type ) \
+
+
 #else
+#   define CDSSTRESS_SplitListMap_HP_2( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SplitListMap_RCU_2( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_SplitListMap_2( fixture, test_case, key_type, value_type )
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
-#   define CDSSTRESS_SplitListMap_1( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_SplitListMap_HP_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_cmp,             key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_cmp,         key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_cmp_stat,         key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_cmp,               key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_less,            key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less,              key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less_stat,        key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp,                key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp_stat,            key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_cmp,                  key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_less,               key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less,                 key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less_stat,           key_type, value_type ) \
+
+#   define CDSSTRESS_SplitListMap_RCU_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_cmp,         key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_cmp_stat,    key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_cmp_stat,    key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_cmp,               key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_cmp,          key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_cmp,          key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_less,            key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_less,        key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less,              key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_less,         key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_less,         key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less_stat,        key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_less_stat,    key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp,                key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_cmp,            key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp_stat,            key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_cmp_stat,       key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_cmp_stat,       key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_cmp,                  key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_cmp,             key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_cmp,             key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_less,               key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_less,           key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less,                 key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less,            key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less,            key_type, value_type ) \
-        CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less_stat,           key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less_stat,       key_type, value_type ) \
 
+#   define CDSSTRESS_SplitListMap_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_SplitListMap_HP_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_SplitListMap_RCU_1( fixture, test_case, key_type, value_type ) \
+
 #else
+#   define CDSSTRESS_SplitListMap_HP_1( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SplitListMap_RCU_1( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_SplitListMap_1( fixture, test_case, key_type, value_type )
 #endif
 
 
-#define CDSSTRESS_SplitListMap( fixture, test_case, key_type, value_type ) \
+#define CDSSTRESS_SplitListMap_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_cmp,              key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_dyn_cmp_stat,        key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_cmp,              key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_less,             key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less_stat,         key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less,             key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp,                 key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp_stat,           key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_cmp,                 key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_less,                key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less,                key_type, value_type ) \
+    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less_stat,            key_type, value_type ) \
+    CDSSTRESS_SplitListMap_HP_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_HP_2( fixture, test_case, key_type, value_type ) \
+
+#define CDSSTRESS_SplitListMap_RCU( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_cmp,         key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_cmp,         key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_dyn_cmp_stat,    key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_cmp,              key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_cmp,          key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_dyn_less,             key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_dyn_less,        key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_dyn_less,        key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_HP_st_less_stat,         key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_DHP_st_less,             key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPB_st_less,         key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPI_st_less_stat,    key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Michael_RCU_GPT_st_less_stat,    key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_cmp,                 key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_dyn_cmp_stat,           key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_cmp,            key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_cmp,            key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_dyn_cmp_stat,       key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_cmp,                 key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_cmp,             key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_dyn_less,                key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_dyn_less,           key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_dyn_less,           key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_DHP_st_less,                key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less,            key_type, value_type ) \
-    CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_HP_st_less_stat,            key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less_stat,       key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less_stat,       key_type, value_type ) \
-    CDSSTRESS_SplitListMap_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListMap_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type )
+    CDSSTRESS_SplitListMap_RCU_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_RCU_2( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
+#define CDSSTRESS_SplitListMap( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_HP( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SplitListMap_RCU( fixture, test_case, key_type, value_type ) \
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
 #   define CDSSTRESS_SplitListIterableMap_1( fixture, test_case, key_type, value_type ) \
@@ -789,7 +810,6 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_DHP_st_less,             key_type, value_type ) \
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Iterable_HP_st_less_stat,         key_type, value_type ) \
     CDSSTRESS_SplitListIterableMap_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListIterableMap_SHRCU( fixture, test_case, key_type, value_type )
 
 
 #define CDSSTRESS_SplitListMap_nogc( fixture, test_case, key_type, value_type ) \

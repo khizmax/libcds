@@ -130,5 +130,5 @@ namespace map {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Map_InsDelFind_LF, ::testing::ValuesIn( Map_InsDelFind_LF::get_load_factors()));
+    INSTANTIATE_TEST_CASE_P( _, Map_InsDelFind_LF, ::testing::ValuesIn( Map_InsDelFind_LF::get_load_factors()));
 } // namespace map

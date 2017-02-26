@@ -29,11 +29,10 @@
 */
 
 #include "map_insdelfind.h"
-#include "map_type_split_list.h"
+#include "map_type_ellen_bintree.h"
 
 namespace map {
 
-    CDSSTRESS_SplitListMap( Map_InsDelFind_LF, run_test, size_t, size_t )
-    CDSSTRESS_SplitListIterableMap( Map_InsDelFind_LF, run_test, size_t, size_t )
+    CDSSTRESS_EllenBinTreeMap_RCU( Map_InsDelFind, run_test, size_t, size_t )
 
 } // namespace map

@@ -33,6 +33,6 @@
 
 namespace map {
 
-    CDSSTRESS_MichaelMap( Map_InsDelFind_LF, run_test, size_t, size_t )
+    CDSSTRESS_MichaelMap_RCU( Map_InsDelFind_LF, run_test, size_t, size_t )
 
 } // namespace map

@@ -29,10 +29,10 @@
 */
 
 #include "map_insdelfind.h"
-#include "map_type_feldman_hashmap.h"
+#include "map_type_split_list.h"
 
 namespace map {
 
-    CDSSTRESS_FeldmanHashMap_fixed( Map_InsDelFind, run_test, size_t, size_t )
+    CDSSTRESS_SplitListMap_RCU( Map_InsDelFind_LF, run_test, size_t, size_t )
 
 } // namespace map

@@ -29,10 +29,10 @@
 */
 
 #include "map_insdelfind.h"
-#include "map_type_skip_list.h"
+#include "map_type_feldman_hashmap.h"
 
 namespace map {
 
-    CDSSTRESS_SkipListMap( Map_InsDelFind, run_test, size_t, size_t )
+    CDSSTRESS_FeldmanHashMap_fixed_RCU( Map_InsDelFind, run_test, size_t, size_t )
 
 } // namespace map

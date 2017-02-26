@@ -29,10 +29,10 @@
 */
 
 #include "map_insdelfind.h"
-#include "map_type_ellen_bintree.h"
+#include "map_type_michael.h"
 
 namespace map {
 
-    CDSSTRESS_EllenBinTreeMap( Map_InsDelFind, run_test, size_t, size_t )
+    CDSSTRESS_MichaelMap_HP( Map_InsDelFind_LF, run_test, size_t, size_t )
 
 } // namespace map
