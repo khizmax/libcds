@@ -26,6 +26,7 @@ my $cxx=get_prop("cxx") or $compiler;
 my $cc=get_prop("cc") or $compiler;
 my $cxxflags=get_prop("cxxflags");
 my $ldflags=get_prop("ldflags");
+my $cmake_exe_ldflags=get_prop("exe-ldflags");
 my $ext_lib=get_prop("extlib");
 my $ld_lib_path=get_prop("ld-lib-path");
 
@@ -54,6 +55,7 @@ print $out " -DCMAKE_BUILD_TYPE=$cmake_build \\\n";
 print $out " -DCMAKE_C_COMPILER=$comp_root/$cc \\\n";
 print $out " -DCMAKE_CXX_COMPILER=$comp_root/$cxx \\\n";
 print $out " -DCMAKE_CXX_FLAGS=\"$cxxflags\" \\\n" if $cxxflags;
+print $out " -DCMAKE_EXE_LINKER_FLAGS=\"$cmake_exe_ldflags\" \\\n" if $cmake_exe_ldflags;
 print $out " -DCDS_BIN_DIR=\$BIN_ROOT \\\n";
 print $out " -DWITH_TESTS=ON \\\n";
 print $out " -DWITH_ASAN=ON \\\n" if $build eq 'asan';

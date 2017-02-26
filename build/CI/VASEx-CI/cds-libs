@@ -11,7 +11,7 @@ gtest-include:          $GTEST_ROOT/googletest/include
 gcc-4.8-root:           $GCC48_ROOT/bin
 gcc-4.8-cxx:            g++-4.8
 gcc-4.8-cc:             gcc-4.8
-gcc-4.8-ldflags:        -L$GCC48_ROOT/lib -Wl,-rpath=$GCC48_ROOT/lib
+gcc-4.8-exe-ldflags:    -L$GCC48_ROOT/lib -Wl,-rpath=$GCC48_ROOT/lib
 gcc-4.8-boost:          $BOOST_ROOT
 gcc-4.8-64-boost-lib:   stage64-gcc4.8/lib
 gcc-4.8-gtest:          $GTEST_ROOT
@@ -23,7 +23,7 @@ gcc-4.8-64-gtest-lib:   $GTEST_ROOT/lib-gcc4.8/libgtest.a
 gcc-4.9-root:           $GCC49_ROOT/bin
 gcc-4.9-cxx:            g++-4.9
 gcc-4.9-cc:             gcc-4.9
-gcc-4.9-ldflags:        -Wl,-rpath=$GCC49_ROOT/lib64
+gcc-4.9-exe-ldflags:    -Wl,-rpath=$GCC49_ROOT/lib64
 gcc-4.9-boost:          $BOOST_ROOT
 gcc-4.9-64-boost-lib:   stage64-gcc4.9/lib
 gcc-4.9-gtest:          $GTEST_ROOT
@@ -35,7 +35,7 @@ gcc-5-root:           $GCC5_ROOT/bin
 gcc-5-cxx:            g++-5
 gcc-5-cc:             gcc-5
 gcc-5-boost:          $BOOST_ROOT
-gcc-5-ldflags:        -Wl,-rpath=$GCC5_ROOT/lib64
+gcc-5-exe-ldflags:    -Wl,-rpath=$GCC5_ROOT/lib64
 gcc-5-64-boost-lib:   stage64-gcc5/lib
 gcc-5-64-asan-boost-lib:   stage64-gcc5-asan
 gcc-5-64-tsan-boost-lib:   stage64-gcc5-tsan
@@ -48,7 +48,7 @@ gcc-6-root:           $GCC6_ROOT/bin
 gcc-6-cxx:            g++-6
 gcc-6-cc:             gcc-6
 gcc-6-boost:          $BOOST_ROOT
-gcc-6-ldflags:        -Wl,-rpath=$GCC6_ROOT/lib64
+gcc-6-exe-ldflags:    -Wl,-rpath=$GCC6_ROOT/lib64
 gcc-6-64-boost-lib:   stage64-gcc6/lib
 gcc-6-64-asan-boost-lib:   stage64-gcc6-asan
 gcc-6-64-tsan-boost-lib:   stage64-gcc6-tsan
@@ -62,6 +62,7 @@ clang-3.6-ld-lib-path:    $GCC5_ROOT/lib64
 clang-3.6-cxx:            clang++
 clang-3.6-cc:             clang
 clang-3.6-cxxflags:       -Wdocumentation
+clang-3.6-exe-ldflags:    -L$GCC5_ROOT/lib64 -latomic -Wl,-rpath=$GCC5_ROOT/lib64
 clang-3.6-boost:          $BOOST_ROOT
 clang-3.6-64-boost-lib:   stage64-clang3.6/lib
 clang-3.6-gtest:          $GTEST_ROOT
@@ -73,7 +74,7 @@ clang-3.7-root:           $CLANG37_ROOT/bin
 clang-3.7-cxx:            clang++
 clang-3.7-cc:             clang
 clang-3.7-cxxflags:       -stdlib=libc++ -Wdocumentation
-clang-3.7-ldflags:        -L$CLANG37_ROOT/lib -Wl,-rpath=$CLANG37_ROOT/lib -lc++abi
+clang-3.7-exe-ldflags:    -L$CLANG37_ROOT/lib -Wl,-rpath=$CLANG37_ROOT/lib -lc++abi
 clang-3.7-boost:          $BOOST_ROOT
 clang-3.7-64-boost-lib:   stage64-clang3.7/lib
 clang-3.7-gtest:          $GTEST_ROOT
@@ -86,7 +87,7 @@ clang-3.8-root:           $CLANG38_ROOT/bin
 clang-3.8-cxx:            clang++
 clang-3.8-cc:             clang
 clang-3.8-cxxflags:       -stdlib=libc++ -Wdocumentation
-clang-3.8-ldflags:        -L$CLANG38_ROOT/lib -Wl,-rpath=$CLANG38_ROOT/lib
+clang-3.8-exe-ldflags:    -L$CLANG38_ROOT/lib -Wl,-rpath=$CLANG38_ROOT/lib
 clang-3.8-boost:          $BOOST_ROOT
 clang-3.8-64-boost-lib:   stage64-clang3.8/lib
 clang-3.8-gtest:          $GTEST_ROOT
@@ -99,7 +100,7 @@ clang-3.9-root:           $CLANG39_ROOT/bin
 clang-3.9-cxx:            clang++
 clang-3.9-cc:             clang
 clang-3.9-cxxflags:       -stdlib=libc++ -Wdocumentation
-clang-3.9-ldflags:        -L$CLANG39_ROOT/lib -Wl,-rpath=$CLANG39_ROOT/lib
+clang-3.9-exe-ldflags:    -L$CLANG39_ROOT/lib -Wl,-rpath=$CLANG39_ROOT/lib
 clang-3.9-boost:          $BOOST_ROOT
 clang-3.9-64-boost-lib:   stage64-clang3.9/lib
 clang-3.9-64-asan-boost-lib:   stage64-clang3.9-asan
