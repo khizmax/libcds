@@ -36,7 +36,7 @@
     // CLang (at least 3.6) without libc++ has no gcc-specific __atomic_is_lock_free function
 #   define EXPECT_ATOMIC_IS_LOCK_FREE( x )
 #else
-#   define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( a.is_lock_free() )
+#   define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( x.is_lock_free() )
 #endif
 
 

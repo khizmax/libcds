@@ -37,6 +37,14 @@
 
 #include "cxx11_convert_memory_order.h"
 
+#if CDS_COMPILER == CDS_COMPILER_CLANG && !defined( _LIBCPP_VERSION )
+    // CLang (at least 3.6) without libc++ has no gcc-specific __atomic_is_lock_free function
+#   define EXPECT_ATOMIC_IS_LOCK_FREE( x )
+#else
+#   define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( atomics::atomic_is_lock_free( &x ));
+#endif
+
+
 namespace misc {
 
     class cxx11_atomic_func: public ::testing::Test
@@ -81,9 +89,8 @@ namespace misc {
         {
             typedef Integral    integral_type;
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             atomics::atomic_store( &a, (integral_type) 0 );
-            //EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( atomics::atomic_load( &a ), integral_type( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
@@ -186,9 +193,8 @@ namespace misc {
             const atomics::memory_order oLoad = convert_to_load_order( order );
             const atomics::memory_order oStore = convert_to_store_order( order );
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             atomics::atomic_store_explicit( &a, (integral_type) 0, oStore );
-            //EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( atomics::atomic_load_explicit( &a, oLoad ), (integral_type) 0 );
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
@@ -318,7 +324,7 @@ namespace misc {
         template <class AtomicBool>
         void do_test_atomic_bool(AtomicBool& a)
         {
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             atomics::atomic_store( &a, false );
             EXPECT_FALSE( a );
             EXPECT_FALSE( atomics::atomic_load( &a ));
@@ -355,7 +361,7 @@ namespace misc {
             const atomics::memory_order oStore = convert_to_store_order( order );
             const atomics::memory_order oExchange = convert_to_exchange_order( order );
 
-            EXPECT_TRUE( atomics::atomic_is_lock_free( &a ));
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             atomics::atomic_store_explicit( &a, false, oStore );
             EXPECT_FALSE( a == false );
             EXPECT_FALSE( atomics::atomic_load_explicit( &a, oLoad ));
