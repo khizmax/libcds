@@ -32,6 +32,14 @@
 #include <cds/algo/atomic.h>
 #include "cxx11_convert_memory_order.h"
 
+#if CDS_COMPILER == CDS_COMPILER_CLANG && !defined( _LIBCPP_VERSION )
+    // CLang (at least 3.6) without libc++ has no gcc-specific __atomic_is_lock_free function
+#   define EXPECT_ATOMIC_IS_LOCK_FREE( x )
+#else
+#   define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( a.is_lock_free() )
+#endif
+
+
 namespace {
     class cxx11_atomic_class: public ::testing::Test
     {
@@ -71,9 +79,8 @@ namespace {
         {
             typedef Integral    integral_type;
 
-            EXPECT_TRUE( a.is_lock_free());
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             a.store( (integral_type) 0 );
-            //EXPECT_EQ( a, static_cast<integral_type>( 0 ));
             EXPECT_EQ( a.load(), static_cast<integral_type>( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
@@ -218,9 +225,8 @@ namespace {
             const atomics::memory_order oLoad = convert_to_load_order( order );
             const atomics::memory_order oStore = convert_to_store_order( order );
 
-            EXPECT_TRUE( a.is_lock_free());
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             a.store((integral_type) 0, oStore );
-            //EXPECT_EQ( a, integral_type( 0 ));
             EXPECT_EQ( a.load( oLoad ), integral_type( 0 ));
 
             for ( size_t nByte = 0; nByte < sizeof(Integral); ++nByte ) {
@@ -355,7 +361,7 @@ namespace {
         template <class AtomicBool>
         void do_test_atomic_bool( AtomicBool& a )
         {
-            EXPECT_TRUE( a.is_lock_free());
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             a.store( false );
             EXPECT_FALSE( a );
             EXPECT_FALSE( a.load());
@@ -392,7 +398,7 @@ namespace {
             const atomics::memory_order oStore = convert_to_store_order( order );
             const atomics::memory_order oExchange = convert_to_exchange_order( order );
 
-            EXPECT_TRUE( a.is_lock_free());
+            EXPECT_ATOMIC_IS_LOCK_FREE( a );
             a.store( false, oStore );
             EXPECT_FALSE( a );
             EXPECT_FALSE( a.load( oLoad ));
