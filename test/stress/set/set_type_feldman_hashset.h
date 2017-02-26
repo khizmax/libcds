@@ -421,7 +421,6 @@ namespace set {
 #define CDSSTRESS_FeldmanHashSet_stdhash( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_stdhash_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_stdhash_RCU( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_stdhash_rcu_gpi( fixture, test_case, key_type, value_type ) \
 
 #if CDS_BUILD_BITS == 64
 #   define CDSSTRESS_FeldmanHashSet_city_rcu_gpi( fixture, test_case, key_type, value_type ) \
@@ -454,7 +453,6 @@ namespace set {
 #   define CDSSTRESS_FeldmanHashSet_city( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_city_HP( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_city_RCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_city_rcu_gpi( fixture, test_case, key_type, value_type ) \
 
 
 #else
