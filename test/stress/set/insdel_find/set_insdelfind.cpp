@@ -110,5 +110,5 @@ namespace set {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Set_InsDelFind_LF, ::testing::ValuesIn( Set_InsDelFind_LF::get_load_factors()));
+    INSTANTIATE_TEST_CASE_P( _, Set_InsDelFind_LF, ::testing::ValuesIn( Set_InsDelFind_LF::get_load_factors()));
 } // namespace set

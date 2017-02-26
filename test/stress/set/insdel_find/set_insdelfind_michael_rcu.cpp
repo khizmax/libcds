@@ -29,11 +29,10 @@
 */
 
 #include "set_insdelfind.h"
-#include "set_type_split_list.h"
+#include "set_type_michael.h"
 
 namespace set {
 
-    CDSSTRESS_SplitListSet( Set_InsDelFind_LF, run_test, size_t, size_t )
-    CDSSTRESS_SplitListIterableSet( Set_InsDelFind_LF, run_test, size_t, size_t )
+    CDSSTRESS_MichaelSet_RCU( Set_InsDelFind_LF, run_test, size_t, size_t )
 
 } // namespace set

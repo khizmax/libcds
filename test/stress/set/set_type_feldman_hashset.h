@@ -382,36 +382,45 @@ namespace set {
 #endif
 
 
-#define CDSSTRESS_FeldmanHashSet_fixed( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed,             key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed,            key_type, value_type ) \
+#define CDSSTRESS_FeldmanHashSet_fixed_RCU( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_fixed,        key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_fixed,        key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_fixed,        key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed_stat,        key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed_stat,       key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_fixed_stat,   key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_fixed_stat,   key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_fixed_stat,   key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_fixed_SHRCU( fixture, test_case, key_type, value_type )
+    CDSSTRESS_FeldmanHashSet_fixed_SHRCU( fixture, test_case, key_type, value_type ) \
+
+#define CDSSTRESS_FeldmanHashSet_fixed_HP( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed,             key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed,            key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed_stat,        key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_fixed_stat,       key_type, value_type ) \
+
+#define CDSSTRESS_FeldmanHashSet_fixed( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_fixed_HP( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_fixed_RCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_FeldmanHashSet_stdhash_rcu_gpi( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_stdhash,      key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_stdhash_stat, key_type, value_type ) \
 
-#define CDSSTRESS_FeldmanHashSet_stdhash_quick( fixture, test_case, key_type, value_type ) \
+#define CDSSTRESS_FeldmanHashSet_stdhash_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_stdhash,           key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_stdhash,          key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_stdhash,      key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_stdhash,      key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_stdhash_stat,      key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_stdhash_stat,     key_type, value_type ) \
+
+#define CDSSTRESS_FeldmanHashSet_stdhash_RCU( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_stdhash,      key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_stdhash,      key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_stdhash_stat, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_stdhash_stat, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_stdhash_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_FeldmanHashSet_stdhash( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_FeldmanHashSet_stdhash_quick( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_stdhash_HP( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_FeldmanHashSet_stdhash_RCU( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_stdhash_rcu_gpi( fixture, test_case, key_type, value_type ) \
 
 #if CDS_BUILD_BITS == 64
@@ -421,33 +430,37 @@ namespace set {
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_city128,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpi_city128_stat, key_type, value_type ) \
 
-#   define CDSSTRESS_FeldmanHashSet_city_quick( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_FeldmanHashSet_city_HP( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_city64,            key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_city64,           key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city64,       key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city64,       key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_city64_stat,       key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_city64_stat,      key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city64_stat,  key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city64_stat,  key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_city128,           key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_city128,          key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city128,      key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city128,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_city128_stat,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_dhp_city128_stat,     key_type, value_type ) \
+
+#   define CDSSTRESS_FeldmanHashSet_city_RCU( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city64,       key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city64,       key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city64_stat,  key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city64_stat,  key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city128,      key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city128,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_city128_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_city128_stat, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_city_SHRCU( fixture, test_case, key_type, value_type )
 
 #   define CDSSTRESS_FeldmanHashSet_city( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_city_quick( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_city_HP( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_FeldmanHashSet_city_RCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_city_rcu_gpi( fixture, test_case, key_type, value_type ) \
 
 
 #else
 #   define CDSSTRESS_FeldmanHashSet_city_rcu_gpi( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_FeldmanHashSet_city_quick( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_FeldmanHashSet_city_HP( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_FeldmanHashSet_city_RCU( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_FeldmanHashSet_city( fixture, test_case, key_type, value_type )
 #endif
 

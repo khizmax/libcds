@@ -29,10 +29,10 @@
 */
 
 #include "set_insdelfind.h"
-#include "set_type_feldman_hashset.h"
+#include "set_type_skip_list.h"
 
 namespace set {
 
-    CDSSTRESS_FeldmanHashSet_fixed( Set_InsDelFind, run_test, size_t, size_t )
+    CDSSTRESS_SkipListSet_HP( Set_InsDelFind, run_test, size_t, size_t )
 
 } // namespace set

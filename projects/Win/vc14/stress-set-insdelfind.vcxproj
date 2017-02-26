@@ -33,15 +33,27 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_ellentree.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_feldman_hashset.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_michael.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_skip.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_split.cpp">
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_ellentree_hp.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_ellentree_rcu.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_feldman_hashset_hp.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_feldman_hashset_rcu.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_michael_hp.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_michael_rcu.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_skip_hp.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_skip_rcu.cpp" />
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_split_hp.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\stress\set\insdel_find\set_insdelfind_split_rcu.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">4503</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>

@@ -33,6 +33,6 @@
 
 namespace set {
 
-    CDSSTRESS_EllenBinTreeSet( Set_InsDelFind, run_test, size_t, size_t )
+    CDSSTRESS_EllenBinTreeSet_RCU( Set_InsDelFind, run_test, size_t, size_t )
 
 } // namespace set

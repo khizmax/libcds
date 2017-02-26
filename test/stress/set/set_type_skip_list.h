@@ -276,68 +276,82 @@ namespace set {
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 1
-#   define CDSSTRESS_SkipListSet_2( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_SkipListSet_HP_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_pascal_seqcst,      key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_pascal_seqcst,     key_type, value_type ) \
+
+#   define CDSSTRESS_SkipListSet_RCU_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_less_pascal_seqcst, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_pascal_seqcst, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_less_pascal_seqcst, key_type, value_type ) \
 
 #else
-#   define CDSSTRESS_SkipListSet_2( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SkipListSet_HP_2( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SkipListSet_RCU_2( fixture, test_case, key_type, value_type )
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
-#   define CDSSTRESS_SkipListSet_1( fixture, test_case, key_type, value_type ) \
+#   define CDSSTRESS_SkipListSet_HP_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_pascal,            key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_pascal,        key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_pascal_stat,        key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_pascal,              key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_pascal_stat,        key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_xorshift,          key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_xorshift_stat,      key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_xorshift,            key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_xorshift_stat,      key_type, value_type ) \
+
+#   define CDSSTRESS_SkipListSet_RCU_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_pascal,        key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_less_pascal_stat,   key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_less_pascal_stat,   key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_pascal,              key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_cmp_pascal,         key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_pascal,         key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_pascal_stat,        key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_cmp_pascal_stat,    key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_xorshift,          key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_xorshift,      key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_xorshift_stat,      key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_less_xorshift_stat, key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_less_xorshift_stat, key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_xorshift,            key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_cmp_xorshift,       key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_xorshift,       key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_xorshift_stat,      key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_cmp_xorshift_stat,  key_type, value_type ) \
 
 #else
-#   define CDSSTRESS_SkipListSet_1( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SkipListSet_HP_1( fixture, test_case, key_type, value_type )
+#   define CDSSTRESS_SkipListSet_RCU_1( fixture, test_case, key_type, value_type )
 #endif
 
 
-#define CDSSTRESS_SkipListSet( fixture, test_case, key_type, value_type ) \
+#define CDSSTRESS_SkipListSet_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_pascal,             key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_pascal_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_pascal,             key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_pascal_stat,         key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_xorshift,           key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_xorshift_stat,     key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_xorshift,           key_type, value_type ) \
+    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_xorshift_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListSet_HP_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_HP_2( fixture, test_case, key_type, value_type ) \
+
+#define CDSSTRESS_SkipListSet_RCU( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_less_pascal,        key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_less_pascal,        key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_pascal_stat,       key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_pascal_stat,   key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_pascal,             key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_cmp_pascal,         key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_pascal_stat,         key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_cmp_pascal_stat,    key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_pascal_stat,    key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_less_xorshift,           key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_less_xorshift,      key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_less_xorshift,      key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_less_xorshift_stat,     key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_less_xorshift_stat, key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_dhp_cmp_xorshift,           key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_cmp_xorshift,       key_type, value_type ) \
-    CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_hp_cmp_xorshift_stat,       key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_cmp_xorshift_stat,  key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_xorshift_stat,  key_type, value_type ) \
-    CDSSTRESS_SkipListSet_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListSet_2( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_RCU_1( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_RCU_2( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_SHRCU( fixture, test_case, key_type, value_type ) \
+
+#define CDSSTRESS_SkipListSet( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_HP( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_SkipListSet_RCU( fixture, test_case, key_type, value_type ) \
 
 #endif // #ifndef CDSUNIT_SET_TYPE_SKIP_LIST_H
