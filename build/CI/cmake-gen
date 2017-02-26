@@ -1,0 +1,115 @@
+#! /usr/bin/perl
+
+my $compiler=shift;
+my $bitness =shift;
+my $build   =shift;
+$build="rel" unless $build;
+
+my $cmake_build="RELEASE";
+$cmake_build="DEBUG" if $build eq 'dbg';
+
+my $cds_libs="cds-libs";
+
+# get generic props
+my $workspace=get_gen_prop("workspace") || "$HOME";
+my $cds_source=get_gen_prop("libcds-source") || "../libcds";
+my $make_jobs=get_gen_prop("make-job") || 2;
+
+# get compiler-specific props
+my $comp_root=get_prop("root");
+my $boost=get_prop( "boost" );
+my $boost_libs=get_prop( "boost-lib" );
+my $gtest=get_prop("gtest");
+my $gtest_lib=get_prop( "gtest-lib");
+my $gtest_inc=get_prop("gtest-include") || get_gen_prop("gtest-include");
+my $cxx=get_prop("cxx") or $compiler;
+my $cc=get_prop("cc") or $compiler;
+my $cxxflags=get_prop("cxxflags");
+my $ldflags=get_prop("ldflags");
+my $ext_lib=get_prop("extlib");
+my $ld_lib_path=get_prop("ld-lib-path");
+
+
+my $filename="cds-$build-$compiler-$bitness";
+open( my $out, ">", $filename )  or die "Cannot open cds-$build-$compiler-$bitness";
+
+print $out "#! /bin/sh\n\n";
+#print $out "PATH=$comp_root:\$PATH\n" if $comp_root;
+#print $out "BOOST_ROOT=$boost\n";
+print $out "root=$workspace\n";
+print $out "CDS_SOURCE=\$root/$cds_source\n";
+print $out "OBJ_ROOT=\$root/obj\n";
+print $out "BIN_ROOT=\$root/bin\n";
+print $out "GTEST_ROOT=$gtest\n" if $gtest;
+print $out "\n";
+print $out "rm -fr \$OBJ_ROOT\n";
+print $out "rm -fr \$BIN_ROOT\n";
+print $out "mkdir -p \$OBJ_ROOT\n";
+print $out "#cp -f run-ctest-rel \$OBJ_ROOT/run-ctest\n" if $build eq 'rel';
+print $out "#cp -f run-ctest-dbg \$OBJ_ROOT/run-ctest\n" unless $build eq 'rel';
+print $out "cd \$OBJ_ROOT\n";
+print $out "\n";
+#print $out "PATH=$comp_root:\$PATH \\\n" if $comp_root;
+print $out "LD_LIBRARY_PATH=$ld_lib_path:\$LD_LIBRARY_PATH \\\n" if $ld_lib_path;
+#print $out "CXX=$cxx \\\n";
+#print $out "CC=$cc \\\n";
+#print $out "CXXFLAGS=\"$cxxflags\" \\\n" if $cxxflags;
+print $out "LDFLAGS=\"$ldflags\" \\\n" if $ldflags;
+#print $out "GTEST_ROOT=\$GTEST_ROOT/$gtest_libs \\\n";
+print $out "cmake -G \"Unix Makefiles\" \\\n";
+print $out " -DCMAKE_BUILD_TYPE=$cmake_build \\\n";
+print $out " -DCMAKE_C_COMPILER=$comp_root/$cc \\\n";
+print $out " -DCMAKE_CXX_COMPILER=$comp_root/$cxx \\\n";
+print $out " -DCMAKE_CXX_FLAGS=\"$cxxflags\" \\\n" if $cxxflags;
+print $out " -DCDS_BIN_DIR=\$BIN_ROOT \\\n";
+print $out " -DWITH_TESTS=ON \\\n";
+print $out " -DWITH_ASAN=ON \\\n" if $build eq 'asan';
+print $out " -DWITH_TSAN=ON \\\n" if $build eq 'tsan';
+print $out " -DBOOSTROOT=$boost \\\n";
+print $out " -DBOOST_LIBRARYDIR=\$BOOST_ROOT/$boost_libs \\\n" if $boost_libs;
+print $out " -DGTEST_INCLUDE_DIRS=$gtest_inc \\\n" if $gtest_inc;
+print $out " -DGTEST_LIBRARY=$gtest_lib \\\n" if $gtest_lib;
+print $out " -DEXTERNAL_SYSTEM_LIBS=\"$ext_lib\" \\\n" if $ext_lib;
+print $out " \$CDS_SOURCE && \\\n";
+print $out "make -j $make_jobs \$* \n";
+
+close $out;
+chmod 0755, $filename;
+
+sub get_prop($@)
+{
+   my $what=shift;
+   my $key="$compiler-$bitness-$build-$what:";
+
+   my $grep = `grep -P $key $cds_libs`;
+   if ( $grep ) {
+      my @ret = $grep =~ /^$key\s+(\S.*\S*)\s+/;
+      return $ret[0] if @ret;
+   }
+
+   $key = "$compiler-$bitness-$what:";
+   my $grep = `grep -P $key $cds_libs`;
+   if ( $grep ) {
+      my @ret = $grep =~ /^$key\s+(\S.*\S*)\s+/;
+      return $ret[0] if @ret;
+   }
+
+   $key = "$compiler-$what:";
+   my $grep = `grep -P $key $cds_libs`;
+   if ( $grep ) {
+      my @ret = $grep =~ /^$key\s+(\S.*\S*)\s+/;
+      return $ret[0] if @ret;
+   }
+}
+
+sub get_gen_prop($@)
+{
+   my $key=shift;
+   $key = "$key:";
+
+   my $grep = `grep -P $key $cds_libs`;
+   if ( $grep ) {
+      my @ret = $grep =~ /^$key\s+(\S.*\S*)\s+/;
+      return $ret[0] if @ret;
+   }
+}

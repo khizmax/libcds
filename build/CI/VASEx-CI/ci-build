@@ -1,0 +1,56 @@
+#! /bin/bash
+
+# Useful envvars:
+# CI_SCRIPT_PATH - path where to find scripts
+# TOOLSET - toolset: x64-gcc-5, x64-clang-3.9 and so on
+# BUILD_TYPE - build type: 'dbg', 'rel', 'asan', 'tsan'
+# WORKSPACE - path where to build
+
+env|sort
+
+case "$TOOLSET" in
+    "x64-gcc-4.8")
+	echo "GCC-4.8 '$BUILD_TYPE', toolset root: $GCC48_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.8-64
+	exit $?
+	;;
+    "x64-gcc-4.9")
+	echo "GCC-4.9 '$BUILD_TYPE', toolset root: $GCC49_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.9-64
+	exit $?
+	;;
+    "x64-gcc-5")
+	echo "GCC-5 '$BUILD_TYPE', toolset root: $GCC5_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-5-64
+	exit $?
+	;;
+    "x64-gcc-6")
+	echo "GCC-6 '$BUILD_TYPE', toolset root: $GCC6_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-6-64
+	exit $?
+	;;
+    "x64-clang-3.6")
+	echo "clang-3.6 '$BUILD_TYPE', toolset root: $CLANG36_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.6-64
+	exit $?
+	;;
+    "x64-clang-3.7")
+	echo "clang-3.7 '$BUILD_TYPE', toolset root: $CLANG37_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.7-64
+	exit $?
+	;;
+    "x64-clang-3.8")
+	echo "clang-3.8 '$BUILD_TYPE', toolset root: $CLANG38_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.8-64
+	exit $?
+	;;
+    "x64-clang-3.9")
+	echo "clang-3.9 '$BUILD_TYPE', toolset root: $CLANG39_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.9-64
+	exit $?
+	;;
+    * )
+	echo "Undefined toolset '$TOOLSET'"
+	exit 1
+	;;
+esac

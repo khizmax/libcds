@@ -1,0 +1,24 @@
+#! /bin/sh
+
+./cmake-gen gcc-4.8 64 dbg
+./cmake-gen gcc-4.8 64 rel
+./cmake-gen gcc-4.9 64 dbg
+./cmake-gen gcc-4.9 64 rel
+./cmake-gen gcc-5 64 dbg
+./cmake-gen gcc-5 64 rel
+./cmake-gen gcc-5 64 tsan
+./cmake-gen gcc-5 64 asan
+./cmake-gen gcc-6 64 dbg
+./cmake-gen gcc-6 64 rel
+./cmake-gen gcc-6 64 tsan
+./cmake-gen gcc-6 64 asan
+./cmake-gen clang-3.6 64 dbg
+./cmake-gen clang-3.6 64 rel
+./cmake-gen clang-3.7 64 dbg
+./cmake-gen clang-3.7 64 rel
+./cmake-gen clang-3.8 64 dbg
+./cmake-gen clang-3.8 64 rel
+./cmake-gen clang-3.9 64 dbg
+./cmake-gen clang-3.9 64 rel
+./cmake-gen clang-3.9 64 asan
+./cmake-gen clang-3.9 64 tsan
