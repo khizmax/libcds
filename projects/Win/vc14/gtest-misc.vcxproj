@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
+    <ClCompile Include="..\..\..\test\unit\misc\asan_errors.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\bitop.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\cxx11_atomic_class.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\cxx11_atomic_func.cpp" />
