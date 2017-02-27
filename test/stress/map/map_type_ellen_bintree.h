@@ -294,11 +294,19 @@ namespace map {
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+#   if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
+#       define CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
+            CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht,        key_type, value_type ) \
+            CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht_stat,   key_type, value_type ) \
+
+#   else
+#       define CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type )
+#   endif
+
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb,        key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht,        key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb_stat,   key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht_stat,   key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type )
