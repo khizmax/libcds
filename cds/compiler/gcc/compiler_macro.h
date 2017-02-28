@@ -133,7 +133,7 @@
 #    define CDS_BUILD_BITS        32
 #    define CDS_PROCESSOR__NAME   "ARM v7"
 #    define CDS_PROCESSOR__NICK   "arm7"
-#elif defined(__arm__) && __ARM_ARCH >= 8
+#elif ( defined(__arm__)  || defined(__aarch64__)) && __ARM_ARCH >= 8
 #    define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_ARM8
 #    define CDS_BUILD_BITS        64
 #    define CDS_PROCESSOR__NAME   "ARM v8"
