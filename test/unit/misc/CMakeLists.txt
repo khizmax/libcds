@@ -2,7 +2,6 @@ set(PACKAGE_NAME unit-misc)
 
 set(CDSGTEST_MISC_SOURCES
     ../main.cpp
-    asan_errors.cpp
     bitop.cpp
     cxx11_atomic_class.cpp
     cxx11_atomic_func.cpp
