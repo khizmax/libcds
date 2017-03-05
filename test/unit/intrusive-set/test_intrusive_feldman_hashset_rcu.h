@@ -255,7 +255,7 @@ TYPED_TEST_P( IntrusiveFeldmanHashSet, byte_cut )
     typedef ci::FeldmanHashSet< typename TestFixture::rcu_type, typename TestFixture::int_item, traits > set_type;
 
     set_type s( 8, 8 );
-    test( s );
+    this->test( s );
 }
 
 TYPED_TEST_P( IntrusiveFeldmanHashSet, byte_cut_explicit_hash_size )
@@ -275,7 +275,7 @@ TYPED_TEST_P( IntrusiveFeldmanHashSet, byte_cut_explicit_hash_size )
     typedef ci::FeldmanHashSet< typename TestFixture::rcu_type, typename TestFixture::int_item2, traits > set_type;
 
     set_type s( 8, 8 );
-    test( s );
+    this->test( s );
 }
 
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as

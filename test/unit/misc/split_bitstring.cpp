@@ -698,7 +698,7 @@ namespace {
 
             // split by hex digit
             for ( unsigned count = 4; count < sizeof( Int ) * 8; count += 4 ) {
-                EXPECT_EQ( splitter.cut( 4 ), count / 4 - 1 );
+                EXPECT_EQ( splitter.cut( 4 ), static_cast<Int>( count / 4 - 1 ));
             }
 
             // random cut
