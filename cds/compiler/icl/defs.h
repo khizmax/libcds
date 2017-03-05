@@ -161,6 +161,9 @@
 #   endif
 #endif
 
+// Sanitizer attributes (not supported)
+#define CDS_SUPPRESS_SANITIZE( ... )
+
 #include <cds/compiler/icl/compiler_barriers.h>
 
 //@endcond

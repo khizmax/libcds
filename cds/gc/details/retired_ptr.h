@@ -90,7 +90,7 @@ namespace cds { namespace gc {
             }
 
             /// Invokes destructor function for the pointer
-            void free()
+            void free() CDS_SUPPRESS_SANITIZE( "function" )
             {
                 assert( m_funcFree );
                 assert( m_p );

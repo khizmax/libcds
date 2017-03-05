@@ -175,6 +175,9 @@
 #   define CDS_ARCH_LITTLE_ENDIAN
 #endif
 
+// Sanitizer attributes (not supported)
+#define CDS_SUPPRESS_SANITIZE( ... )
+
 #include <cds/compiler/vc/compiler_barriers.h>
 
 //@endcond

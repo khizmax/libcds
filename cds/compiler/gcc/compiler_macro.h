@@ -174,5 +174,13 @@
 #   endif
 #endif
 
+// Sanitizer attributes
+// Example: CDS_DISABLE_SANITIZE( "function" )
+#ifdef CDS_ADDRESS_SANITIZER_ENABLED
+#   define CDS_SUPPRESS_SANITIZE( ... ) __attribute__(( no_sanitize( __VA_ARGS__ ) ))
+#else
+#   define CDS_SUPPRESS_SANITIZE( ... )
+#endif
+
 
 #endif // #ifndef CDSLIB_COMPILER_GCC_COMPILER_MACRO_H

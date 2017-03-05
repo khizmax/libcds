@@ -28,7 +28,7 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef CDS_ASAN_ENABLED
+#ifdef CDS_ADDRESS_SANITIZER_ENABLED
 
 #include <gtest/gtest.h>
 
@@ -76,4 +76,4 @@ namespace {
     }
 } // namespace
 
-#endif // #ifdef CDS_ASAN_ENABLED
+#endif // #ifdef CDS_ADDRESS_SANITIZER_ENABLED

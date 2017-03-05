@@ -116,6 +116,13 @@
 #   define CDS_THREAD_SANITIZER_ENABLED
 #endif
 
+#if defined(__has_feature) && __has_feature(address_sanitizer)
+#   ifndef CDS_ADDRESS_SANITIZER_ENABLED
+#       define CDS_ADDRESS_SANITIZER_ENABLED
+#   endif
+#endif
+
+
 // *************************************************
 // Alignment macro
 

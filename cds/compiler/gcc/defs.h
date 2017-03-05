@@ -125,6 +125,7 @@
 #   endif
 #endif
 
+
 #include <cds/compiler/gcc/compiler_barriers.h>
 
 #endif // #ifndef CDSLIB_COMPILER_GCC_DEFS_H
