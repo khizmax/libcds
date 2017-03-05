@@ -54,7 +54,7 @@ namespace fc_test {
             , nWriterNo(other.nWriterNo)
         {
             for(size_t i = 0; i < buffer_size; ++i)
-                pop_buff[i] =  static_cast<int>(std::sqrt(other.pop_buff[i]*rand()));
+                pop_buff[i] =  static_cast<int>(std::sqrt( static_cast<int>( pop_buff[i] * rand())));
         }
 
         void set_array(size_t new_size) 
