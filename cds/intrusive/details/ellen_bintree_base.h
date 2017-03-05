@@ -105,7 +105,7 @@ namespace cds { namespace intrusive {
         };
 
         //@cond
-        struct basic_node
+        struct alignas( void* ) basic_node
         {
             enum flags {
                 internal        = 1,    ///< set for internal node
