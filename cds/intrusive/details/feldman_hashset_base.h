@@ -514,7 +514,7 @@ namespace cds { namespace intrusive {
                         assert(slot.ptr() != nullptr);
                         assert( !pos.splitter.eos());
                         pos.nSlot = pos.splitter.cut( static_cast<unsigned>( metrics().array_node_size_log ));
-                        assert( pos.nSlot < metrics().array_node_size );
+                        assert( static_cast<size_t>( pos.nSlot ) < metrics().array_node_size );
                         pos.pArr = to_array(slot.ptr());
                         ++pos.nHeight;
                     }
