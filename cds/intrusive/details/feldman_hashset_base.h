@@ -479,7 +479,7 @@ namespace cds { namespace intrusive {
                     splitter.reset();
                     pArr = arr.head();
                     nSlot = splitter.cut( static_cast<unsigned>( arr.metrics().head_node_size_log ));
-                    assert( nSlot < arr.metrics().head_node_size );
+                    assert( static_cast<size_t>( nSlot ) < arr.metrics().head_node_size );
                     nHeight = 1;
                 }
             };
