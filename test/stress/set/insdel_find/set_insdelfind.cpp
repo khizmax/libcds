@@ -47,6 +47,7 @@ namespace set {
     size_t Set_InsDelFind::s_nFeldmanSet_ArrayBits = 4;
 
     size_t Set_InsDelFind::s_nLoadFactor = 2;
+    Set_InsDelFind::actions Set_InsDelFind::s_arrShuffle[Set_InsDelFind::c_nShuffleSize];
 
     void Set_InsDelFind::SetUpTestCase()
     {
@@ -93,6 +94,18 @@ namespace set {
         s_nFeldmanSet_ArrayBits = cfg.get_size_t( "FeldmanMapArrayBits", s_nFeldmanSet_ArrayBits );
         if ( s_nFeldmanSet_ArrayBits == 0 )
             s_nFeldmanSet_ArrayBits = 2;
+
+        actions * pFirst = s_arrShuffle;
+        actions * pLast = s_arrShuffle + s_nInsertPercentage;
+        std::fill( pFirst, pLast, do_insert );
+        pFirst = pLast;
+        pLast += s_nDeletePercentage;
+        std::fill( pFirst, pLast, do_delete );
+        pFirst = pLast;
+        pLast = s_arrShuffle + sizeof( s_arrShuffle ) / sizeof( s_arrShuffle[0] );
+        if ( pFirst < pLast )
+            std::fill( pFirst, pLast, do_find );
+        shuffle( s_arrShuffle, pLast );
     }
 
     std::vector<size_t> Set_InsDelFind_LF::get_load_factors()

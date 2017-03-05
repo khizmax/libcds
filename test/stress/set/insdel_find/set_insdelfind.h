@@ -62,7 +62,7 @@ namespace set {
             do_delete
         };
         static const unsigned int c_nShuffleSize = 100;
-        actions m_arrShuffle[c_nShuffleSize];
+        static actions s_arrShuffle[c_nShuffleSize];
 
     protected:
         typedef size_t  key_type;
@@ -103,7 +103,6 @@ namespace set {
                 Set& rSet = m_Set;
                 Set_InsDelFind& fixture = pool().template fixture<Set_InsDelFind>();
 
-                actions * pAct = fixture.m_arrShuffle;
                 unsigned int i = 0;
                 size_t const nNormalize = size_t(-1) / ( fixture.s_nSetSize * 2);
 
@@ -111,7 +110,7 @@ namespace set {
                 while ( !time_elapsed()) {
                     nRand = cds::bitop::RandXorShift(nRand);
                     size_t n = nRand / nNormalize;
-                    switch ( pAct[i] ) {
+                    switch ( s_arrShuffle[i] ) {
                     case do_find:
                         if ( rSet.contains( n ))
                             ++m_nFindSuccess;
