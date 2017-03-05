@@ -29,6 +29,7 @@ my $ldflags=get_prop("ldflags");
 my $cmake_exe_ldflags=get_prop("exe-ldflags");
 my $ext_lib=get_prop("extlib");
 my $ld_lib_path=get_prop("ld-lib-path");
+my $cmake_flags=get_prop("cmake-flags");
 
 
 my $filename="cds-$build-$compiler-$bitness";
@@ -65,6 +66,7 @@ print $out " -DBOOST_LIBRARYDIR=\$BOOST_ROOT/$boost_libs \\\n" if $boost_libs;
 print $out " -DGTEST_INCLUDE_DIRS=$gtest_inc \\\n" if $gtest_inc;
 print $out " -DGTEST_LIBRARY=$gtest_lib \\\n" if $gtest_lib;
 print $out " -DEXTERNAL_SYSTEM_LIBS=\"$ext_lib\" \\\n" if $ext_lib;
+print $out " $cmake_flags \\\n" if $cmake_flags;
 print $out " \$CDS_SOURCE && \\\n";
 print $out "make -j $make_jobs \$* \n";
 

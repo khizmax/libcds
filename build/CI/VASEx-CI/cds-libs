@@ -37,8 +37,8 @@ gcc-5-cc:             gcc-5
 gcc-5-boost:          $BOOST_ROOT
 gcc-5-exe-ldflags:    -Wl,-rpath=$GCC5_ROOT/lib64
 gcc-5-64-boost-lib:   stage64-gcc5/lib
-gcc-5-64-asan-boost-lib:   stage64-gcc5-asan
-gcc-5-64-tsan-boost-lib:   stage64-gcc5-tsan
+gcc-5-64-asan-boost-lib:   stage64-gcc5-asan/lib
+gcc-5-64-tsan-boost-lib:   stage64-gcc5-tsan/lib
 gcc-5-gtest:          $GTEST_ROOT
 gcc-5-64-gtest-lib:   $GTEST_ROOT/lib-gcc5/libgtest.a
 
@@ -50,8 +50,8 @@ gcc-6-cc:             gcc-6
 gcc-6-boost:          $BOOST_ROOT
 gcc-6-exe-ldflags:    -Wl,-rpath=$GCC6_ROOT/lib64
 gcc-6-64-boost-lib:   stage64-gcc6/lib
-gcc-6-64-asan-boost-lib:   stage64-gcc6-asan
-gcc-6-64-tsan-boost-lib:   stage64-gcc6-tsan
+gcc-6-64-asan-boost-lib:   stage64-gcc6-asan/lib
+gcc-6-64-tsan-boost-lib:   stage64-gcc6-tsan/lib
 gcc-6-gtest:          $GTEST_ROOT
 gcc-6-64-gtest-lib:   $GTEST_ROOT/lib-gcc6/libgtest.a
 
@@ -79,7 +79,7 @@ clang-3.7-boost:          $BOOST_ROOT
 clang-3.7-64-boost-lib:   stage64-clang3.7/lib
 clang-3.7-gtest:          $GTEST_ROOT
 clang-3.7-64-gtest-lib:   $GTEST_ROOT/lib-clang3.7/libgtest.a
-
+clang-3.7-cmake-flags:    -DCMAKE_C_COMPILER_WORKS=1 -DCMAKE_CXX_COMPILER_WORKS=1
 
 ########################################
 # clang-3.8
@@ -103,8 +103,8 @@ clang-3.9-cxxflags:       -stdlib=libc++ -Wdocumentation
 clang-3.9-exe-ldflags:    -L$CLANG39_ROOT/lib -Wl,-rpath=$CLANG39_ROOT/lib
 clang-3.9-boost:          $BOOST_ROOT
 clang-3.9-64-boost-lib:   stage64-clang3.9/lib
-clang-3.9-64-asan-boost-lib:   stage64-clang3.9-asan
-clang-3.9-64-tsan-boost-lib:   stage64-clang3.9-tsan
+clang-3.9-64-asan-boost-lib:   stage64-clang3.9-asan/lib
+clang-3.9-64-tsan-boost-lib:   stage64-clang3.9-tsan/lib
 clang-3.9-gtest:          $GTEST_ROOT
 clang-3.9-64-gtest-lib:   $GTEST_ROOT/lib-clang3.9/libgtest.a
 
