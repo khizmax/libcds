@@ -93,8 +93,6 @@
 
 #define  __attribute__( _x )
 
-#define  CDS_STDCALL    __stdcall
-
 #ifdef CDS_BUILD_LIB
 #   define CDS_EXPORT_API          __declspec(dllexport)
 #else
@@ -170,6 +168,12 @@
 
 // double-width CAS support
 //#define CDS_DCAS_SUPPORT
+
+// Byte order
+//  It seems, MSVC works only on little-endian architecture?..
+#if !defined(CDS_ARCH_LITTLE_ENDIAN) && !defined(CDS_ARCH_BIG_ENDIAN)
+#   define CDS_ARCH_LITTLE_ENDIAN
+#endif
 
 #include <cds/compiler/vc/compiler_barriers.h>
 

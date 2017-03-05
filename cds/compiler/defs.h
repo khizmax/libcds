@@ -57,10 +57,6 @@
 #   error Unknown value of CDS_COMPILER macro
 #endif
 
-#ifndef CDS_STDCALL
-#   define CDS_STDCALL
-#endif
-
 #ifndef CDS_EXPORT_API
 #   define CDS_EXPORT_API
 #endif

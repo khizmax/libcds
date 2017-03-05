@@ -215,7 +215,8 @@ namespace cds { namespace intrusive {
             /// Hash splitter
             /**
                 This trait specifies hash bit-string splitter algorithm.
-                By default, \p cds::algo::split_bitstring< HashType, HashSize > is used
+                By default, \p cds::algo::number_splitter is used if \p HashType is a number,
+                \p cds::algo::split_bitstring otherwise.
             */
             typedef cds::opt::none hash_splitter;
 
@@ -430,7 +431,7 @@ namespace cds { namespace intrusive {
 
             typedef typename std::conditional<
                 std::is_same< typename traits::hash_splitter, cds::opt::none >::value,
-                feldman_hashset::details::hash_splitter< hash_type, c_hash_size >,
+                typename cds::algo::select_splitter< hash_type, c_hash_size >::type,
                 typename traits::hash_splitter
             >::type hash_splitter;
 
@@ -464,7 +465,7 @@ namespace cds { namespace intrusive {
             struct traverse_data {
                 hash_splitter splitter;
                 array_node * pArr;
-                size_t nSlot;
+                typename hash_splitter::uint_type nSlot;
                 size_t nHeight;
 
                 traverse_data( hash_type const& hash, multilevel_array& arr )
@@ -477,7 +478,8 @@ namespace cds { namespace intrusive {
                 {
                     splitter.reset();
                     pArr = arr.head();
-                    nSlot = splitter.cut( arr.metrics().head_node_size_log );
+                    nSlot = splitter.cut( static_cast<unsigned>( arr.metrics().head_node_size_log ));
+                    assert( nSlot < arr.metrics().head_node_size );
                     nHeight = 1;
                 }
             };
@@ -491,7 +493,10 @@ namespace cds { namespace intrusive {
             multilevel_array(size_t head_bits, size_t array_bits )
                 : m_Metrics(feldman_hashset::details::metrics::make( head_bits, array_bits, c_hash_size ))
                 , m_Head( alloc_head_node())
-            {}
+            {
+                assert( hash_splitter::is_correct( static_cast<unsigned>( metrics().head_node_size_log )));
+                assert( hash_splitter::is_correct( static_cast<unsigned>( metrics().array_node_size_log )));
+            }
 
             ~multilevel_array()
             {
@@ -504,11 +509,11 @@ namespace cds { namespace intrusive {
                 back_off bkoff;
                 while (true) {
                     node_ptr slot = pos.pArr->nodes[pos.nSlot].load(memory_model::memory_order_acquire);
-                    if (slot.bits() == flag_array_node) {
+                    if ( slot.bits() == flag_array_node ) {
                         // array node, go down the tree
                         assert(slot.ptr() != nullptr);
                         assert( !pos.splitter.eos());
-                        pos.nSlot = pos.splitter.cut( metrics().array_node_size_log );
+                        pos.nSlot = pos.splitter.cut( static_cast<unsigned>( metrics().array_node_size_log ));
                         assert( pos.nSlot < metrics().array_node_size );
                         pos.pArr = to_array(slot.ptr());
                         ++pos.nHeight;
@@ -594,9 +599,9 @@ namespace cds { namespace intrusive {
                 return alloc_array_node(array_node_size(), pParent, idxParent);
             }
 
-            static void free_array_node( array_node * parr, size_t nSize )
+            static void free_array_node( array_node * parr, size_t /*nSize*/ )
             {
-                cxx_array_node_allocator().Delete( parr, nSize );
+                cxx_array_node_allocator().Delete( parr, 1 );
             }
 
             union converter {
@@ -645,6 +650,7 @@ namespace cds { namespace intrusive {
 
             bool expand_slot( traverse_data& pos, node_ptr current)
             {
+                assert( !pos.splitter.eos() );
                 return expand_slot( pos.pArr, pos.nSlot, current, pos.splitter.bit_offset());
             }
 
@@ -665,7 +671,8 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                size_t idx = hash_splitter( hash_accessor()(*current.ptr()), nOffset ).cut( m_Metrics.array_node_size_log );
+                typename hash_splitter::uint_type idx = hash_splitter( hash_accessor()(*current.ptr()), nOffset ).cut( 
+                    static_cast<unsigned>( m_Metrics.array_node_size_log ));
                 pArr->nodes[idx].store(current, memory_model::memory_order_release);
 
                 cur = cur | flag_array_converting;

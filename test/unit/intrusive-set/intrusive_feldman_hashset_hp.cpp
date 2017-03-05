@@ -163,4 +163,42 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveFeldmanHashSet_HP, byte_cut )
+    {
+        struct traits: public ci::feldman_hashset::traits
+        {
+            typedef base_class::hash_accessor hash_accessor;
+            typedef cds::algo::byte_splitter< int > hash_splitter;
+            typedef cmp compare;
+            typedef std::less<int> less;
+            typedef mock_disposer disposer;
+            typedef simple_item_counter item_counter;
+        };
+
+        typedef ci::FeldmanHashSet< gc_type, int_item, traits > set_type;
+
+        set_type s( 8, 8 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveFeldmanHashSet_HP, byte_cut_explicit_hash_size )
+    {
+        struct traits: public ci::feldman_hashset::traits
+        {
+            typedef base_class::hash_accessor2 hash_accessor;
+            typedef cds::algo::byte_splitter< key_val > hash_splitter;
+            enum: size_t {
+                hash_size = sizeof( std::declval<key_val>().nKey )
+            };
+            typedef base_class::cmp2 compare;
+            typedef mock_disposer disposer;
+            typedef ci::feldman_hashset::stat<> stat;
+        };
+
+        typedef ci::FeldmanHashSet< gc_type, int_item2, traits > set_type;
+
+        set_type s( 8, 8 );
+        test( s );
+    }
+
 } // namespace

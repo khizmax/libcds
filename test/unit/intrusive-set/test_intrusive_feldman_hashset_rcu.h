@@ -242,10 +242,46 @@ TYPED_TEST_P( IntrusiveFeldmanHashSet, explicit_hash_size )
     this->test( s );
 }
 
+TYPED_TEST_P( IntrusiveFeldmanHashSet, byte_cut )
+{
+    struct traits: public ci::feldman_hashset::traits
+    {
+        typedef typename TestFixture::hash_accessor hash_accessor;
+        typedef cds::algo::byte_splitter< int > hash_splitter;
+        typedef typename TestFixture::cmp compare;
+        typedef typename TestFixture::mock_disposer disposer;
+    };
+
+    typedef ci::FeldmanHashSet< typename TestFixture::rcu_type, typename TestFixture::int_item, traits > set_type;
+
+    set_type s( 8, 8 );
+    test( s );
+}
+
+TYPED_TEST_P( IntrusiveFeldmanHashSet, byte_cut_explicit_hash_size )
+{
+    struct traits: public ci::feldman_hashset::traits
+    {
+        typedef typename TestFixture::hash_accessor2 hash_accessor;
+        typedef cds::algo::byte_splitter< typename TestFixture::key_val > hash_splitter;
+        enum: size_t {
+            hash_size = sizeof( std::declval<typename TestFixture::key_val>().nKey )
+        };
+        typedef typename TestFixture::cmp2 compare;
+        typedef typename TestFixture::mock_disposer disposer;
+        typedef ci::feldman_hashset::stat<> stat;
+    };
+
+    typedef ci::FeldmanHashSet< typename TestFixture::rcu_type, typename TestFixture::int_item2, traits > set_type;
+
+    set_type s( 8, 8 );
+    test( s );
+}
+
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No test named <test_name> can be found in this test case"
 REGISTER_TYPED_TEST_CASE_P( IntrusiveFeldmanHashSet,
-    compare, less, cmpmix, backoff, stat, explicit_hash_size
+    compare, less, cmpmix, backoff, stat, explicit_hash_size, byte_cut, byte_cut_explicit_hash_size
     );
 
 

@@ -173,4 +173,36 @@ namespace {
         test( s );
     }
 
+    TEST_F( FeldmanHashSet_DHP, byte_cut )
+    {
+        typedef cc::FeldmanHashSet< gc_type, int_item,
+            typename cc::feldman_hashset::make_traits<
+            cc::feldman_hashset::hash_accessor< get_hash >
+            , cc::feldman_hashset::hash_splitter< cds::algo::byte_splitter<int>>
+            , cds::opt::compare< cmp >
+            >::type
+        > set_type;
+
+        set_type s( 8, 8 );
+        test( s );
+    }
+
+    TEST_F( FeldmanHashSet_DHP, byte_cut_explicit_hash_size )
+    {
+        struct set_traits: public cc::feldman_hashset::traits
+        {
+            typedef get_hash2 hash_accessor;
+            enum: size_t {
+                hash_size = sizeof( std::declval<key_val>().nKey )
+            };
+            typedef cds::algo::byte_splitter< key_val, hash_size > hash_splitter;
+            typedef cmp2 compare;
+            typedef cc::feldman_hashset::stat<> stat;
+        };
+        typedef cc::FeldmanHashSet< gc_type, int_item2, set_traits > set_type;
+
+        set_type s( 8, 8 );
+        test( s );
+    }
+
 } // namespace

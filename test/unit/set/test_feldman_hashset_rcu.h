@@ -301,10 +301,50 @@ namespace {
         this->test( s );
     }
 
+    TYPED_TEST_P( FeldmanHashSet, byte_cut )
+    {
+        typedef typename TestFixture::rcu_type rcu_type;
+        typedef typename TestFixture::int_item int_item;
+        typedef typename TestFixture::get_hash get_hash;
+
+        typedef cc::FeldmanHashSet< rcu_type, int_item,
+            typename cc::feldman_hashset::make_traits<
+                cc::feldman_hashset::hash_accessor< get_hash >
+                , cc::feldman_hashset::hash_splitter< cds::algo::byte_splitter< int >>
+                , cds::opt::less< std::less<int> >
+            >::type
+        > set_type;
+
+        set_type s( 8, 8 );
+        this->test( s );
+    }
+
+    TYPED_TEST_P( FeldmanHashSet, byte_cut_explicit_hash_size )
+    {
+        typedef typename TestFixture::rcu_type rcu_type;
+        typedef typename TestFixture::int_item2 int_item;
+        typedef typename TestFixture::get_hash2 get_hash2;
+
+        struct set_traits: public cc::feldman_hashset::traits
+        {
+            enum: size_t {
+                hash_size = sizeof( std::declval<int_item>().nKey )
+            };
+            typedef cds::algo::byte_splitter< typename TestFixture::key_val, hash_size > hash_splitter;
+            typedef get_hash2 hash_accessor;
+            typedef typename TestFixture::cmp2 compare;
+            typedef cc::feldman_hashset::stat<> stat;
+        };
+        typedef cc::FeldmanHashSet< rcu_type, int_item, set_traits > set_type;
+
+        set_type s( 8, 8 );
+        this->test( s );
+    }
+
     // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
     // "No test named <test_name> can be found in this test case"
     REGISTER_TYPED_TEST_CASE_P( FeldmanHashSet,
-        defaulted, compare, less, cmpmix, item_counting, backoff, stat, explicit_hash_size
+        defaulted, compare, less, cmpmix, item_counting, backoff, stat, explicit_hash_size, byte_cut, byte_cut_explicit_hash_size
         );
 } // namespace
 

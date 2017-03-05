@@ -61,6 +61,13 @@ namespace cds { namespace container {
         template <size_t Size>
         using hash_size = cds::intrusive::feldman_hashset::hash_size< Size >;
 
+        /// Hash splitter option
+        /**
+            @copydetails cds::container::feldman_hashmap::traits::hash_splitter
+        */
+        template <typename Splitter>
+        using hash_splitter = cds::intrusive::feldman_hashset::hash_splitter< Splitter >;
+
 
         /// \p FeldmanHashMap traits
         struct traits

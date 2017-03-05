@@ -83,13 +83,6 @@
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
 #   define  __attribute__( _x )
-#   define  CDS_STDCALL    __stdcall
-#else
-#   if CDS_PROCESSOR_ARCH == CDS_PROCESSOR_X86
-#       define CDS_STDCALL __attribute__((stdcall))
-#   else
-#       define CDS_STDCALL
-#   endif
 #endif
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
@@ -151,6 +144,22 @@
 #   endif
 #endif
 
+// Byte order
+#if !defined(CDS_ARCH_LITTLE_ENDIAN) && !defined(CDS_ARCH_BIG_ENDIAN)
+#   if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
+#       define CDS_ARCH_LITTLE_ENDIAN
+#   else
+#       ifdef __BYTE_ORDER__
+#           if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#               define CDS_ARCH_LITTLE_ENDIAN
+#           elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#               define CDS_ARCH_BIG_ENDIAN
+#           endif
+#       else
+#           warning "Undefined byte order for current architecture (no __BYTE_ORDER__ preprocessor definition)"
+#       endif
+#   endif
+#endif
 
 #include <cds/compiler/icl/compiler_barriers.h>
 

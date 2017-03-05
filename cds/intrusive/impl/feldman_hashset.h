@@ -640,8 +640,12 @@ namespace cds { namespace intrusive {
                         return false;
                     }
 
-                    // the slot must be expanded
-                    base_class::expand_slot( pos, slot );
+                    if ( !pos.splitter.eos() ) {
+                        // the slot must be expanded
+                        base_class::expand_slot( pos, slot );
+                    }
+                    else
+                        return false;
                 }
                 else {
                     // the slot is empty, try to insert data node
@@ -1215,8 +1219,12 @@ namespace cds { namespace intrusive {
                     }
 
                     if ( bInsert ) {
-                        // the slot must be expanded
-                        base_class::expand_slot( pos, slot );
+                        if ( !pos.splitter.eos() ) {
+                            // the slot must be expanded
+                            base_class::expand_slot( pos, slot );
+                        }
+                        else
+                            return std::make_pair( false, false );
                     }
                     else {
                         stats().onUpdateFailed();

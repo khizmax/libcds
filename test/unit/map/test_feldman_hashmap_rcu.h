@@ -297,10 +297,50 @@ namespace {
         this->test( m );
     }
 
+    TYPED_TEST_P( FeldmanHashMap, byte_cut )
+    {
+        typedef typename TestFixture::rcu_type   rcu_type;
+        typedef typename TestFixture::key_type   key_type;
+        typedef typename TestFixture::value_type value_type;
+
+        typedef cc::FeldmanHashMap< rcu_type, key_type, value_type,
+            typename cc::feldman_hashmap::make_traits<
+                cds::opt::compare< typename TestFixture::cmp >
+                , cc::feldman_hashmap::hash_splitter< cds::algo::byte_splitter< key_type >>
+            >::type
+        > map_type;
+
+        map_type m( 8, 8 );
+        this->test( m );
+    }
+
+    TYPED_TEST_P( FeldmanHashMap, byte_cut_explicit_key_size )
+    {
+        typedef typename TestFixture::rcu_type   rcu_type;
+        typedef typename TestFixture::key_type2  key_type2;
+        typedef typename TestFixture::value_type value_type;
+
+        struct map_traits: public cc::feldman_hashmap::traits
+        {
+            enum: size_t {
+                hash_size = sizeof( int ) + sizeof( uint16_t )
+            };
+            typedef cds::algo::byte_splitter< key_type2, hash_size > hash_splitter;
+            typedef typename TestFixture::hash2 hash;
+            typedef typename TestFixture::less2 less;
+            typedef cc::feldman_hashmap::stat<> stat;
+        };
+        typedef cc::FeldmanHashMap< rcu_type, key_type2, value_type, map_traits > map_type;
+
+        map_type m( 8, 8 );
+        this->test( m );
+    }
+
+
     // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
     // "No test named <test_name> can be found in this test case"
     REGISTER_TYPED_TEST_CASE_P( FeldmanHashMap,
-        defaulted, compare, less, cmpmix, backoff, stat, explicit_key_size
+        defaulted, compare, less, cmpmix, backoff, stat, explicit_key_size, byte_cut, byte_cut_explicit_key_size
         );
 } // namespace
 

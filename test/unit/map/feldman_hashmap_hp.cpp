@@ -158,4 +158,39 @@ namespace {
         test( m );
     }
 
+    TEST_F( FeldmanHashMap_HP, byte_cut )
+    {
+        typedef cc::FeldmanHashMap< gc_type, key_type, value_type,
+            typename cc::feldman_hashmap::make_traits<
+                cds::opt::compare< cmp >
+                , cc::feldman_hashmap::hash_splitter< cds::algo::byte_splitter< key_type >>
+            >::type
+        > map_type;
+
+        map_type m( 8, 8 );
+        EXPECT_EQ( m.head_size(), static_cast<size_t>( 1 << 8 ));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>( 1 << 8 ));
+        test( m );
+    }
+
+    TEST_F( FeldmanHashMap_HP, byte_cut_explicit_key_size )
+    {
+        struct map_traits: public cc::feldman_hashmap::traits
+        {
+            enum: size_t {
+                hash_size = sizeof(int) + sizeof( uint16_t)
+            };
+            typedef cds::algo::byte_splitter< key_type2, hash_size > hash_splitter;
+            typedef hash2 hash;
+            typedef less2 less;
+            typedef cc::feldman_hashmap::stat<> stat;
+        };
+        typedef cc::FeldmanHashMap< gc_type, key_type2, value_type, map_traits > map_type;
+
+        map_type m( 8, 8 );
+        EXPECT_EQ( m.head_size(), static_cast<size_t>(1 << 8));
+        EXPECT_EQ( m.array_node_size(), static_cast<size_t>(1 << 8));
+        test( m );
+    }
+
 } // namespace
