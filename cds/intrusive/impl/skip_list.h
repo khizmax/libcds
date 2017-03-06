@@ -1141,9 +1141,10 @@ namespace cds { namespace intrusive {
             return node_traits::to_value_ptr( p.ptr());
         }
 
-        static void dispose_node( value_type * pVal )
+        static void dispose_node( void* p )
         {
-            assert( pVal != nullptr );
+            assert( p != nullptr );
+            value_type* pVal = reinterpret_cast<value_type*>( p );
             typename node_builder::node_disposer()( node_traits::to_node_ptr( pVal ));
             disposer()( pVal );
         }

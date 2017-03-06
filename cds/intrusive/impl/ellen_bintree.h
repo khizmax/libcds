@@ -243,9 +243,9 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        static void free_leaf_node( value_type * p )
+        static void free_leaf_node( void* p )
         {
-            disposer()( p );
+            disposer()( reinterpret_cast<value_type*>( p ));
         }
 
         internal_node * alloc_internal_node() const
@@ -255,9 +255,9 @@ namespace cds { namespace intrusive {
             return pNode;
         }
 
-        static void free_internal_node( internal_node * pNode )
+        static void free_internal_node( void* pNode )
         {
-            cxx_node_allocator().Delete( pNode );
+            cxx_node_allocator().Delete( reinterpret_cast<internal_node*>( pNode ));
         }
 
         struct internal_node_deleter {
@@ -275,9 +275,9 @@ namespace cds { namespace intrusive {
             return cxx_update_desc_allocator().New();
         }
 
-        static void free_update_desc( update_desc * pDesc )
+        static void free_update_desc( void* pDesc )
         {
-            cxx_update_desc_allocator().Delete( pDesc );
+            cxx_update_desc_allocator().Delete( reinterpret_cast<update_desc*>( pDesc ));
         }
 
         void retire_node( tree_node * pNode ) const

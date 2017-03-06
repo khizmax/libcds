@@ -37,9 +37,9 @@ namespace cds { namespace details {
     template <class Functor, typename T>
     struct static_functor
     {
-        static void call( T * p )
+        static void call( void* p )
         {
-            Functor()( p );
+            Functor()( reinterpret_cast<T*>( p ));
         }
     };
 

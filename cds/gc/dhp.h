@@ -1381,7 +1381,7 @@ namespace cds { namespace gc {
             \p func is a disposer: when \p p can be safely removed, \p func is called.
         */
         template <typename T>
-        static void retire( T * p, void (* func)(T *))
+        static void retire( T * p, void (* func)(void *))
         {
             dhp::thread_data* rec = dhp::smr::tls();
             if ( !rec->retired_.push( dhp::retired_ptr( p, func ) ) )
@@ -1438,7 +1438,7 @@ namespace cds { namespace gc {
             \endcode
         */
         template <class Disposer, typename T>
-        static void retire( T * p )
+        static void retire( T* p )
         {
             if ( !dhp::smr::tls()->retired_.push( dhp::retired_ptr( p, cds::details::static_functor<Disposer, T>::call )))
                 scan();

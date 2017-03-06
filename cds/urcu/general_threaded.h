@@ -103,9 +103,9 @@ namespace cds { namespace urcu {
             If the buffer is full, \ref synchronize function is invoked.
         */
         template <typename T>
-        static void retire_ptr( T * p, void (* pFunc)(T *))
+        static void retire_ptr( T* p, free_retired_ptr_func pFunc )
         {
-            retired_ptr rp( reinterpret_cast<void *>( p ), reinterpret_cast<free_retired_ptr_func>( pFunc ));
+            retired_ptr rp( p, pFunc );
             retire_ptr( rp );
         }
 
@@ -114,7 +114,7 @@ namespace cds { namespace urcu {
             If the buffer is full, \ref synchronize function is invoked.
         */
         template <typename Disposer, typename T>
-        static void retire_ptr( T * p )
+        static void retire_ptr( T* p )
         {
             retire_ptr( p, cds::details::static_functor<Disposer, T>::call );
         }

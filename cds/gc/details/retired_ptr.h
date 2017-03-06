@@ -76,10 +76,17 @@ namespace cds { namespace gc {
 
             /// Typecasting ctor
             template <typename T>
+            retired_ptr( T* p, free_retired_ptr_func func) CDS_NOEXCEPT
+                : m_p( reinterpret_cast<pointer>(p))
+                , m_funcFree( func )
+            {}
+/*
+            template <typename T>
             retired_ptr( T * p, void (* pFreeFunc)(T *)) CDS_NOEXCEPT
                 : m_p( reinterpret_cast<pointer>(p))
                 , m_funcFree( reinterpret_cast< free_retired_ptr_func >( pFreeFunc ))
             {}
+*/
 
             /// Assignment operator
             retired_ptr& operator =( retired_ptr const& s) CDS_NOEXCEPT
@@ -90,7 +97,7 @@ namespace cds { namespace gc {
             }
 
             /// Invokes destructor function for the pointer
-            void free() CDS_SUPPRESS_SANITIZE( "function" )
+            void free()
             {
                 assert( m_funcFree );
                 assert( m_p );

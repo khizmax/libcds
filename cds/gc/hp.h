@@ -1374,7 +1374,7 @@ namespace cds { namespace gc {
             \p func is a disposer: when \p p can be safely removed, \p func is called.
         */
         template <typename T>
-        static void retire( T * p, void( *func )( T * ))
+        static void retire( T * p, void( *func )( void * ))
         {
             hp::thread_data* rec = hp::smr::tls();
             if ( !rec->retired_.push( hp::retired_ptr( p, func )))
