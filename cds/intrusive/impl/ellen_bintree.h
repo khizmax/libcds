@@ -261,9 +261,9 @@ namespace cds { namespace intrusive {
         }
 
         struct internal_node_deleter {
-            void operator()( internal_node * p) const
+            void operator()( internal_node* p) const
             {
-                free_internal_node( p );
+                cxx_node_allocator().Delete( p );
             }
         };
 
