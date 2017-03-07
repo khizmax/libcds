@@ -428,6 +428,7 @@ namespace {
 
             uint64_t res;
 
+#if CDS_BUILD_BITS == 64
             {
                 typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
                 split_bitstring splitter( src );
@@ -453,6 +454,7 @@ namespace {
                 ASSERT_TRUE( splitter.eos() );
                 ASSERT_TRUE( !splitter );
             }
+#endif
 
             typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
             split_bitstring splitter( src );
@@ -486,7 +488,11 @@ namespace {
                 for ( size_t i = 0; i < int48_size * 8; ++i ) {
                     ASSERT_FALSE( splitter.eos() );
                     ASSERT_FALSE( !splitter );
+#if CDS_BUILD_BITS == 64
                     res |= splitter.cut( 1 ) << i;
+#else
+                    res |= static_cast<decltype(res)>( splitter.cut( 1 )) << i;
+#endif
                 }
                 ASSERT_TRUE( splitter.eos() );
                 ASSERT_TRUE( !splitter );
@@ -511,7 +517,11 @@ namespace {
                         ASSERT_FALSE( splitter.eos() );
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
+#if CDS_BUILD_BITS == 64
                         res |= splitter.safe_cut( bits ) << shift;
+#else
+                        res |= static_cast<decltype(res)>( splitter.safe_cut( bits )) << shift;
+#endif
                         shift += bits;
                     }
                     ASSERT_TRUE( splitter.eos() );
@@ -533,6 +543,7 @@ namespace {
 
             uint64_t res;
 
+#if CDS_BUILD_BITS == 64
             {
                 typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
                 split_bitstring splitter( src );
@@ -558,6 +569,7 @@ namespace {
                 ASSERT_TRUE( splitter.eos() );
                 ASSERT_TRUE( !splitter );
             }
+#endif
 
             typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
             split_bitstring splitter( src );
@@ -591,7 +603,11 @@ namespace {
                 for ( size_t i = 0; i < int48_size * 8; ++i ) {
                     ASSERT_FALSE( splitter.eos() );
                     ASSERT_FALSE( !splitter );
+#if CDS_BUILD_BITS == 64
                     res = ( res << 1 ) | ( splitter.cut( 1 ) );
+#else
+                    res = ( res << 1 ) | static_cast<decltype(res)>( splitter.cut( 1 ) );
+#endif
                 }
                 ASSERT_TRUE( splitter.eos() );
                 ASSERT_TRUE( !splitter );
@@ -618,7 +634,11 @@ namespace {
                         size_t shift = splitter.rest_count();
                         if ( shift > bits )
                             shift = bits;
+#if CDS_BUILD_BITS == 64
                         res = ( res << shift ) | splitter.safe_cut( bits );
+#else
+                        res = ( res << shift ) | static_cast<decltype(res)>( splitter.safe_cut( bits ));
+#endif
                     }
                     ASSERT_TRUE( splitter.eos() );
                     ASSERT_TRUE( !splitter );
