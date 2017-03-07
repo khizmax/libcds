@@ -53,8 +53,9 @@ namespace fc_test {
             , nNo(other.nNo)
             , nWriterNo(other.nWriterNo)
         {
+            // This is an imitation of heavy copy ctor
             for(size_t i = 0; i < buffer_size; ++i)
-                pop_buff[i] =  static_cast<int>(std::sqrt( static_cast<int>( pop_buff[i] * rand())));
+                pop_buff[i] = static_cast<int>( std::sqrt( std::abs( static_cast<double>( pop_buff[i] ) * rand())));
         }
 
         void set_array(size_t new_size) 
