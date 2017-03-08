@@ -36,10 +36,11 @@
 #define CDS_COMPILER_VERSION    _MSC_VER
 
 // Compiler name
-// Supported compilers: MS VC 2013
+// Supported compilers: MS VC 2013 +
 // C++ compiler versions:
-#define CDS_COMPILER_MSVC12 1800    // 2013 vc12
-#define CDS_COMPILER_MSVC14 1900    // 2015 vc14
+#define CDS_COMPILER_MSVC12     1800    // 2013 vc12
+#define CDS_COMPILER_MSVC14     1900    // 2015 vc14
+#define CDS_COMPILER_MSVC14_1   1910    // 2017 vc14.1
 
 #if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
 #   error "Only MS Visual C++ 12 (2013) Update 4 and above is supported"
@@ -53,6 +54,10 @@
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2015"
 #   define  CDS_COMPILER__NICK  "vc14"
 #   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv140"
+#elif _MSC_VER == 1910
+#   define  CDS_COMPILER__NAME  "MS Visual C++ 2017"
+#   define  CDS_COMPILER__NICK  "vc141"
+#   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv141"
 #else
 #   define  CDS_COMPILER__NAME  "MS Visual C++"
 #   define  CDS_COMPILER__NICK  "msvc"
