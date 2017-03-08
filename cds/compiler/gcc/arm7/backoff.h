@@ -28,33 +28,25 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CDSLIB_COMPILER_GCC_X86_BACKOFF_H
-#define CDSLIB_COMPILER_GCC_X86_BACKOFF_H
+#ifndef CDSLIB_COMPILER_GCC_ARM7_BACKOFF_H
+#define CDSLIB_COMPILER_GCC_ARM7_BACKOFF_H
 
 //@cond none
 
 namespace cds { namespace backoff {
-    namespace gcc { namespace x86 {
-
-#       define CDS_backoff_nop_defined
-        static inline void backoff_nop()
-        {
-            asm volatile ( "nop;" );
-        }
+    namespace gcc { namespace arm7 {
 
 #       define CDS_backoff_hint_defined
         static inline void backoff_hint()
         {
-            asm volatile ( "pause;" );
+            asm volatile( "yield" ::: "memory" );
         }
-
-
-    }} // namespace gcc::x86
+    }} // namespace gcc::arm7
 
     namespace platform {
-        using namespace gcc::x86;
+        using namespace gcc::arm7;
     }
 }}  // namespace cds::backoff
 
 //@endcond
-#endif  // #ifndef CDSLIB_COMPILER_GCC_X86_BACKOFF_H
+#endif  // #ifndef CDSLIB_COMPILER_GCC_ARM7_BACKOFF_H

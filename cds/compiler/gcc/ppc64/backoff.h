@@ -36,6 +36,13 @@
 namespace cds { namespace backoff {
     namespace gcc { namespace ppc64 {
 
+#       define CDS_backoff_hint_defined
+        static inline void backoff_hint()
+        {
+            // Provide a hint that performance will probably be improved
+            // if shared resources dedicated to the executing processor are released for use by other processors
+            asm volatile( "or 27,27,27   # yield" );
+        }
     }} // namespace gcc::ppc64
 
     namespace platform {

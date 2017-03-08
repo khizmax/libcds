@@ -129,8 +129,8 @@ namespace cds {
             //@cond
             void operator ()() const CDS_NOEXCEPT
             {
-#            ifdef CDS_backoff_pause_defined
-                platform::backoff_pause();
+#            ifdef CDS_backoff_hint_defined
+                platform::backoff_hint();
 #            endif
             }
 

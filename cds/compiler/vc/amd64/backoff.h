@@ -32,15 +32,15 @@
 #define CDSLIB_COMPILER_VC_AMD64_BACKOFF_H
 
 //@cond none
+#include <intrin.h>
 
 namespace cds { namespace backoff {
     namespace vc { namespace amd64 {
 
-#       define CDS_backoff_pause_defined
-        static inline void backoff_pause( unsigned int nLoop = 0x000003FF )
+#       define CDS_backoff_hint_defined
+        static inline void backoff_hint()
         {
-            for ( unsigned int i = 0; i < nLoop; i++ )
-                __nop();
+            _mm_pause();
         }
 
 #       define CDS_backoff_nop_defined

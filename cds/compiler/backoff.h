@@ -52,8 +52,10 @@
 #       include <cds/compiler/gcc/sparc/backoff.h>
 #   elif CDS_PROCESSOR_ARCH == CDS_PROCESSOR_PPC64
 #       include <cds/compiler/gcc/ppc64/backoff.h>
-//#   elif CDS_PROCESSOR_ARCH == CDS_PROCESSOR_ARM7
-//#       include <cds/compiler/gcc/arm7/backoff.h>
+#   elif CDS_PROCESSOR_ARCH == CDS_PROCESSOR_ARM7
+#       include <cds/compiler/gcc/arm7/backoff.h>
+#   elif CDS_PROCESSOR_ARCH == CDS_PROCESSOR_ARM8
+#       include <cds/compiler/gcc/arm8/backoff.h>
 #   endif
 #else
 #   error "Undefined compiler"

@@ -32,18 +32,15 @@
 #define CDSLIB_COMPILER_VC_X86_BACKOFF_H
 
 //@cond none
+#include <intrin.h>
 
 namespace cds { namespace backoff {
     namespace vc { namespace x86 {
 
-#       define CDS_backoff_pause_defined
-        static inline void backoff_pause( unsigned int nLoop = 0x000003FF )
+#       define CDS_backoff_hint_defined
+        static inline void backoff_hint()
         {
-            __asm {
-                and ecx, nLoop;
-                cmovz ecx, nLoop;
-                rep nop;
-            }
+            _mm_pause();
         }
 
 #       define CDS_backoff_nop_defined

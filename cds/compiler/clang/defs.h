@@ -31,12 +31,6 @@
 #ifndef CDSLIB_COMPILER_CLANG_DEFS_H
 #define CDSLIB_COMPILER_CLANG_DEFS_H
 
-/*
-    Known issues:
-        Error compiling 64bit boost.atomic on clang 3.4 - 3.5, see https://svn.boost.org/trac/boost/ticket/9610
-        Solution: use boost 1.56 +
-*/
-
 // Compiler version
 #define CDS_COMPILER_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 
@@ -44,8 +38,8 @@
 #define  CDS_COMPILER__NAME    ("clang " __clang_version__)
 #define  CDS_COMPILER__NICK    "clang"
 
-#if CDS_COMPILER_VERSION < 30300
-#   error "Compiler version error. Clang version 3.3.0 and above is supported"
+#if CDS_COMPILER_VERSION < 30600
+#   error "Compiler version error. Clang version 3.6.0 and above is supported"
 #endif
 
 #if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC) && CDS_COMPILER_VERSION < 30700

@@ -147,6 +147,12 @@
     <Filter Include="Header Files\cds\container\impl">
       <UniqueIdentifier>{0a2328b4-ff6f-4afb-8de0-9884ae172fa9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\arm8">
+      <UniqueIdentifier>{151e21e7-1535-430a-a7d1-676b93d8162c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cds\compiler\gcc\arm7">
+      <UniqueIdentifier>{754f330c-8443-4012-b05b-41b3eba647f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\dllmain.cpp">
@@ -1245,6 +1251,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cds\details\throw_exception.h">
       <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\arm8\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\arm8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\arm7\backoff.h">
+      <Filter>Header Files\cds\compiler\gcc\arm7</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
