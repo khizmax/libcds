@@ -552,9 +552,13 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        static void free_leaf_node( value_type * p )
+        static void free_leaf_node( value_type* p )
         {
             disposer()( p );
+        }
+        static void free_leaf_node_void( void* p )
+        {
+            free_leaf_node( reinterpret_cast<value_type*>( p ));
         }
 
         internal_node * alloc_internal_node() const
@@ -565,9 +569,13 @@ namespace cds { namespace intrusive {
             return pNode;
         }
 
-        static void free_internal_node( internal_node * pNode )
+        static void free_internal_node( internal_node* pNode )
         {
             cxx_node_allocator().Delete( pNode );
+        }
+        static void free_internal_node_void( void* pNode )
+        {
+            free_internal_node( reinterpret_cast<internal_node*>( pNode ));
         }
 
         struct internal_node_deleter {
@@ -585,9 +593,13 @@ namespace cds { namespace intrusive {
             return cxx_update_desc_allocator().New();
         }
 
-        static void free_update_desc( update_desc * pDesc )
+        static void free_update_desc( update_desc* pDesc )
         {
             cxx_update_desc_allocator().Delete( pDesc );
+        }
+        static void free_update_desc_void( void* pDesc )
+        {
+            free_update_desc( reinterpret_cast<update_desc*>( pDesc ) );
         }
 
         class retired_list
@@ -615,21 +627,19 @@ namespace cds { namespace intrusive {
                 cds::urcu::retired_ptr operator *()
                 {
                     if ( m_pUpdate ) {
-                        return cds::urcu::retired_ptr( reinterpret_cast<void *>( m_pUpdate ),
-                            reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ));
+                        return cds::urcu::retired_ptr( reinterpret_cast<void *>( m_pUpdate ), free_update_desc_void );
                     }
                     if ( m_pNode ) {
                         if ( m_pNode->is_leaf()) {
                             return cds::urcu::retired_ptr( reinterpret_cast<void *>( node_traits::to_value_ptr( static_cast<leaf_node *>( m_pNode ))),
-                                reinterpret_cast< cds::urcu::free_retired_ptr_func>( free_leaf_node ));
+                                free_leaf_node_void );
                         }
                         else {
                             return cds::urcu::retired_ptr( reinterpret_cast<void *>( static_cast<internal_node *>( m_pNode )),
-                                reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_internal_node ));
+                                free_internal_node_void );
                         }
                     }
-                    return cds::urcu::retired_ptr( nullptr,
-                        reinterpret_cast<cds::urcu::free_retired_ptr_func>( free_update_desc ));
+                    return cds::urcu::retired_ptr( nullptr, free_update_desc_void );
                 }
 
                 void operator ++()
