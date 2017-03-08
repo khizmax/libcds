@@ -121,7 +121,7 @@ namespace cds { namespace intrusive {
             typedef cds::sync::spin lock_type;
 
             /// Back-off strategy
-            typedef backoff::yield      back_off;
+            typedef backoff::Default    back_off;
 
             /// Internal statistics
             /**

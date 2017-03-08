@@ -66,8 +66,7 @@ namespace cds { namespace container {
 
             /// Move policy
             /**
-                The move policy used in \p MSPriorityQueue::pop functions
-                to move item's value.
+                The move policy used in \p MSPriorityQueue::pop() function to move item's value.
                 Default is \p opt::v::assignment_move_policy.
             */
             typedef cds::opt::v::assignment_move_policy  move_policy;
