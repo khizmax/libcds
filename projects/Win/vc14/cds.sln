@@ -408,6 +408,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-set-del3", "stress-s
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress-map-minmax", "stress-map-minmax.vcxproj", "{A0BC5155-F91B-4F89-B775-BB09A54EDB73}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A34CED07-A442-4FA1-81C4-F8B9CD3C832B} = {A34CED07-A442-4FA1-81C4-F8B9CD3C832B}
+		{408FE9BC-44F0-4E6A-89FA-D6F952584239} = {408FE9BC-44F0-4E6A-89FA-D6F952584239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
