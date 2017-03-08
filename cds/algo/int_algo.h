@@ -34,7 +34,6 @@
 #include <cds/algo/bitop.h>
 
 namespace cds { namespace beans {
-#if CDS_BUILD_BITS == 64
     /// Returns largest previous integer for <tt>log2( n )</tt>
     static inline size_t log2floor( size_t n )
     {
@@ -98,7 +97,7 @@ namespace cds { namespace beans {
         return is_power2(n) ? log2floor(n) : 0;
     }
 
-#elif CDS_BUILD_BITS == 32
+#if CDS_BUILD_BITS == 32
     //@cond
     // 64bit specializations
 
@@ -166,7 +165,7 @@ namespace cds { namespace beans {
     }
 
     //@endcond
-#endif
+#endif //#if CDS_BUILD_BITS == 32
 
 }}   // namespace cds::beans
 
