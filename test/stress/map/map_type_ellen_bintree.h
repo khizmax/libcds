@@ -322,6 +322,7 @@ namespace map {
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi,        key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_yield,  key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpi_stat,   key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_EllenBinTreeMap_HP_1( fixture, test_case, key_type, value_type )
@@ -341,7 +342,6 @@ namespace map {
     CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpb_stat,   key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt_stat,   key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_RCU_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_EllenBinTreeMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_HP( fixture, test_case, key_type, value_type ) \

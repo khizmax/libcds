@@ -314,6 +314,7 @@ namespace set {
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpi_cmp_xorshift,       key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_xorshift,       key_type, value_type ) \
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpb_cmp_xorshift_stat,  key_type, value_type ) \
+    CDSSTRESS_SkipListSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_SkipListSet_HP_1( fixture, test_case, key_type, value_type )
@@ -348,7 +349,6 @@ namespace set {
     CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_gpt_cmp_xorshift_stat,  key_type, value_type ) \
     CDSSTRESS_SkipListSet_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_RCU_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_SkipListSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListSet_HP( fixture, test_case, key_type, value_type ) \

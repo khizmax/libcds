@@ -345,6 +345,7 @@ namespace map {
         CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_xorshift,       key_type, value_type ) \
         CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift,       key_type, value_type ) \
         CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_xorshift_stat,  key_type, value_type ) \
+        CDSSTRESS_SkipListMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #   define CDSSTRESS_SkipListMap_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListMap_HP_1( fixture, test_case, key_type, value_type ) \
@@ -384,7 +385,6 @@ namespace map {
     CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift_stat,  key_type, value_type ) \
     CDSSTRESS_SkipListMap_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListMap_RCU_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_SkipListMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListMap_HP( fixture, test_case, key_type, value_type ) \

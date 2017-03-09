@@ -733,6 +733,7 @@ namespace map {
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less,            key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less,            key_type, value_type ) \
         CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less_stat,       key_type, value_type ) \
+        CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #   define CDSSTRESS_SplitListMap_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SplitListMap_HP_1( fixture, test_case, key_type, value_type ) \
@@ -782,7 +783,6 @@ namespace map {
     CDSSTRESS_SplitListMap_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less_stat,       key_type, value_type ) \
     CDSSTRESS_SplitListMap_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListMap_RCU_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_SplitListMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListMap_HP( fixture, test_case, key_type, value_type ) \

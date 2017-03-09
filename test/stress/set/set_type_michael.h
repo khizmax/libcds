@@ -299,6 +299,8 @@ namespace set {
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPI_less,       key_type, value_type ) \
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less,       key_type, value_type ) \
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPB_less_stat,  key_type, value_type ) \
+        \
+        CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #   define CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp,            key_type, value_type ) \
@@ -343,7 +345,6 @@ namespace set {
     CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_GPT_less_stat,  key_type, value_type ) \
     \
     CDSSTRESS_MichaelSet_RCU_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_MichaelSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelSet_HP( fixture, test_case, key_type, value_type ) \

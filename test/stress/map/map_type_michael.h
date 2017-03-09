@@ -352,6 +352,8 @@ namespace map {
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPB_cmp,            key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPI_less,           key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_RCU_GPT_less,           key_type, value_type ) \
+        \
+        CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #   define  CDSSTRESS_MichaelMap_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
@@ -395,7 +397,6 @@ namespace map {
     \
     CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_RCU_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelMap_SHRCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_MichaelMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_HP( fixture, test_case, key_type, value_type ) \

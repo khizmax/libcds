@@ -528,9 +528,9 @@ namespace cds { namespace intrusive {
 
                 Update descriptor is helping data structure with short lifetime and it is good candidate
                 for pooling. The number of simultaneously existing descriptors is bounded and it is
-                limited the number of threads working with the tree.
+                limited by number of threads working with the tree.
                 Therefore, a bounded lock-free container like \p cds::container::VyukovMPMCCycleQueue
-                is good choice for the free-list of update descriptors,
+                is a good choice for the free-list of update descriptors,
                 see \p cds::memory::vyukov_queue_pool free-list implementation.
 
                 Also notice that size of update descriptor is constant and not dependent on the type of data

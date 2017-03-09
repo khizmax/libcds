@@ -344,13 +344,14 @@ namespace set {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
 #   define CDSSTRESS_EllenBinTreeSet_HP_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_hp,       key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_dhp,      key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_rcu_gpb,  key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_hp,       key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_dhp,      key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_yield_rcu_gpb,  key_type, value_type ) \
 
 #   define CDSSTRESS_EllenBinTreeSet_RCU_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi,        key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi_stat,   key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi,        key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpi_stat,   key_type, value_type ) \
+        CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #else
 #   define CDSSTRESS_EllenBinTreeSet_HP_1( fixture, test_case, key_type, value_type )
@@ -370,7 +371,6 @@ namespace set {
     CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpb_stat,   key_type, value_type ) \
     CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_gpt_stat,   key_type, value_type ) \
     CDSSTRESS_EllenBinTreeSet_RCU_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_EllenBinTreeSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_EllenBinTreeSet_HP( fixture, test_case, key_type, value_type ) \

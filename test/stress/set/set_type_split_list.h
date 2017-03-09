@@ -685,6 +685,9 @@ namespace set {
         CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less,            key_type, value_type ) \
         CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Lazy_RCU_GPI_st_less_stat,       key_type, value_type ) \
         CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Lazy_RCU_GPT_st_less_stat,       key_type, value_type ) \
+        \
+        CDSSTRESS_SplitListSet_SHRCU( fixture, test_case, key_type, value_type )
+
 
 #else
 #   define CDSSTRESS_SplitListSet_HP_1( fixture, test_case, key_type, value_type )
@@ -730,7 +733,6 @@ namespace set {
     CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Lazy_RCU_GPB_st_less_stat,       key_type, value_type ) \
     CDSSTRESS_SplitListSet_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListSet_RCU_2( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListSet_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_SplitListSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListSet_HP( fixture, test_case, key_type, value_type ) \

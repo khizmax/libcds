@@ -249,6 +249,7 @@ namespace map {
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_simple_stat,  key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy,         key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat,    key_type, value_type ) \
+        CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #else
 #   define CDSSTRESS_BronsonAVLTreeMap_1( fixture, test_case, key_type, value_type )
@@ -265,7 +266,6 @@ namespace map {
     CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpt_less_pool_lazy,         key_type, value_type ) \
     CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat,    key_type, value_type ) \
     CDSSTRESS_BronsonAVLTreeMap_1( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type )
 
 }   // namespace map
 
