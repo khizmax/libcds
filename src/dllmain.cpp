@@ -53,6 +53,14 @@ static HINSTANCE            s_DllInstance = nullptr;
 static unsigned int     s_nProcessorCount = 1;
 static unsigned int     s_nProcessorGroupCount = 1;
 
+static inline void* get_proc_addr( char const* module, char const* func )
+{
+    HMODULE h = GetModuleHandle( module );
+    if ( !h )
+        return nullptr;
+    return GetProcAddress( h, func );
+}
+
 // Array of processor - cell relationship
 // Array size is s_nProcessorCount
 // s_arrProcessorCellRelationship[i] is the cell (the processor group) number for i-th processor
@@ -78,7 +86,7 @@ static void discover_topology()
     s_nProcessorCount = 1;
     s_nProcessorGroupCount = 1;
 
-    glpi = (LPFN_GLPI) GetProcAddress( GetModuleHandle("kernel32"), "GetLogicalProcessorInformation" );
+    glpi = (LPFN_GLPI) get_proc_addr( "kernel32", "GetLogicalProcessorInformation" );
     if ( glpi == nullptr ) {
         return;
     }
@@ -194,9 +202,9 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
 
     static void prepare_current_processor_call()
     {
-        s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) GetProcAddress( GetModuleHandle("kernel32"), "GetCurrentProcessorNumber" );
+        s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) get_proc_addr( "kernel32", "GetCurrentProcessorNumber" );
         if ( s_fnGetCurrentProcessorNumber == nullptr )
-            s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) GetProcAddress( GetModuleHandle("ntdll"), "NtGetCurrentProcessorNumber" );
+            s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) get_proc_addr( "ntdll", "NtGetCurrentProcessorNumber" );
     }
 
     namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
