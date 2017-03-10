@@ -60,7 +60,7 @@ namespace map {
 
         s_nThreadCount = cfg.get_size_t( "ThreadCount", s_nThreadCount );
         if ( s_nThreadCount == 0 )
-            s_nThreadCount = std::thread::hardware_concurrency() * 2;
+            s_nThreadCount = std::min( 16u, std::thread::hardware_concurrency() * 2 );
 
         s_nMaxLoadFactor = cfg.get_size_t( "MaxLoadFactor", s_nMaxLoadFactor );
         if ( s_nMaxLoadFactor == 0 )

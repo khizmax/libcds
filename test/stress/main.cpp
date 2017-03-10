@@ -55,6 +55,8 @@ int main( int argc, char **argv )
         // Read test config file
         cds_test::init_config( argc, argv );
 
+        std::cout << "Hardware concurrency: " << std::thread::hardware_concurrency() << "\n";
+
         // Init Google test
         ::testing::InitGoogleTest( &argc, argv );
 
