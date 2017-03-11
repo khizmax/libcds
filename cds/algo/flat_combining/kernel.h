@@ -422,7 +422,7 @@ namespace cds { namespace algo {
 
             /// Marks \p rec as executed
             /**
-                This function should be called by container if \p batch_combine mode is used.
+                This function should be called by container if \p batch_combine() mode is used.
                 For usual combining (see \p combine()) this function is excess.
             */
             void operation_done( publication_record& rec )
