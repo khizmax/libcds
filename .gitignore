@@ -1,9 +1,7 @@
 /doc
 /sandbox
-/tests/cppunit/*.o
 *.o
 *.d
-/tests/data/dictionary.txt
 /bin
 /obj
 /projects/Win/vc14/cds.sdf

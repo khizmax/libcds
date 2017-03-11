@@ -47,7 +47,7 @@ namespace set {
     {
         typedef cc::FeldmanHashSet< GC, T, Traits > base_class;
 
-        template <typename G>
+        template <typename GC>
         struct get_extracted_ptr
         {
             typedef typename base_class::guarded_ptr extracted_ptr;
@@ -95,6 +95,34 @@ namespace set {
         bool contains( Q const& key )
         {
             return base_class::contains( hasher()(key));
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+        get_begin()
+        {
+            return base_class::begin();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+        get_end()
+        {
+            return base_class::end();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::reverse_iterator>::value, Iterator>::type
+        get_begin()
+        {
+            return base_class::rbegin();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::reverse_iterator>::value, Iterator>::type
+        get_end()
+        {
+            return base_class::rend();
         }
 
         // for testing
