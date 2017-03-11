@@ -22,6 +22,3 @@ race:cds/container/impl/bronson_avltree_map_rcu.h
 #TODO: MSPriorityQueue - temporary suppressed. Must be researched later
 # Seems, TSan don't see spinlock blocking. How to learn TSan to see non-traditional locking algo?..
 race:cds::intrusive::MSPriorityQueue
-
-#TODO: gc::DHP must be reimplemented ASAP
-race:cds::gc::dhp::GarbageCollector::scan
