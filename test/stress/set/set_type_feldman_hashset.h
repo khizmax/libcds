@@ -47,7 +47,8 @@ namespace set {
     {
         typedef cc::FeldmanHashSet< GC, T, Traits > base_class;
 
-        template <typename GC>
+        
+        template <typename GC2>
         struct get_extracted_ptr
         {
             typedef typename base_class::guarded_ptr extracted_ptr;
@@ -418,7 +419,7 @@ namespace set {
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpb_fixed_stat,   key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_gpt_fixed_stat,   key_type, value_type ) \
 
-    //CDSSTRESS_FeldmanHashSet_fixed_SHRCU( fixture, test_case, key_type, value_type ) \
+  //CDSSTRESS_FeldmanHashSet_fixed_SHRCU( fixture, test_case, key_type, value_type )
 
 #define CDSSTRESS_FeldmanHashSet_fixed_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_hp_fixed,             key_type, value_type ) \

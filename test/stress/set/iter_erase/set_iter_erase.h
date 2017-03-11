@@ -362,12 +362,11 @@ namespace set {
             {
                 Set& rSet = m_Set;
 
-                size_t const nInsThreadCount = s_nInsThreadCount;
                 Set_Iter_Del3& fixture = pool().template fixture<Set_Iter_Del3>();
 
                 do {
-                    auto itEnd = rSet.get_end<Iterator>();
-                    for ( auto it = rSet.get_begin<Iterator>(); it != itEnd; ++it ) {
+                    auto itEnd = rSet.template get_end<Iterator>();
+                    for ( auto it = rSet.template get_begin<Iterator>(); it != itEnd; ++it ) {
                         if ( it->key.nKey & 3 ) {
                             if ( rSet.erase_at( it ))
                                 ++m_nDeleteSuccess;
