@@ -58,6 +58,34 @@ namespace map {
             : base_class( cfg.s_nFeldmanMap_HeadBits, cfg.s_nFeldmanMap_ArrayBits )
         {}
 
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+            get_begin()
+        {
+            return base_class::begin();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+            get_end()
+        {
+            return base_class::end();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::reverse_iterator>::value, Iterator>::type
+            get_begin()
+        {
+            return base_class::rbegin();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::reverse_iterator>::value, Iterator>::type
+            get_end()
+        {
+            return base_class::rend();
+        }
+
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
