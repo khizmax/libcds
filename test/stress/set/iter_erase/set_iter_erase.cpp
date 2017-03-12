@@ -32,28 +32,23 @@
 
 namespace set {
 
-    size_t  Set_Iter_Del3::s_nSetSize = 1000000;
+    size_t  Set_Iter_Del3::s_nSetSize = 5000;
     size_t  Set_Iter_Del3::s_nInsThreadCount = 4;
     size_t  Set_Iter_Del3::s_nDelThreadCount = 4;
     size_t  Set_Iter_Del3::s_nExtractThreadCount = 4;
     size_t  Set_Iter_Del3::s_nFindThreadCount = 2;
-    size_t  Set_Iter_Del3::s_nMaxLoadFactor = 8;
-    size_t  Set_Iter_Del3::s_nInsertPassCount = 100;
+    size_t  Set_Iter_Del3::s_nMaxLoadFactor = 4;
+    size_t  Set_Iter_Del3::s_nInsertPassCount = 1000;
 
-    size_t  Set_Iter_Del3::s_nCuckooInitialSize = 1024;
-    size_t  Set_Iter_Del3::s_nCuckooProbesetSize = 16;
-    size_t  Set_Iter_Del3::s_nCuckooProbesetThreshold = 0;
-
-    size_t Set_Iter_Del3::s_nFeldmanSet_HeadBits = 10;
-    size_t Set_Iter_Del3::s_nFeldmanSet_ArrayBits = 4;
-
+    size_t Set_Iter_Del3::s_nFeldmanSet_HeadBits = 8;
+    size_t Set_Iter_Del3::s_nFeldmanSet_ArrayBits = 8;
 
     size_t Set_Iter_Del3::s_nLoadFactor = 1;
     std::vector<size_t> Set_Iter_Del3::m_arrData;
 
     void Set_Iter_Del3::SetUpTestCase()
     {
-        cds_test::config const& cfg = get_config( "map_delodd" );
+        cds_test::config const& cfg = get_config( "map_iter_erase" );
 
         s_nSetSize = cfg.get_size_t( "MapSize", s_nSetSize );
         if ( s_nSetSize < 1000 )
@@ -73,25 +68,15 @@ namespace set {
 
         s_nInsertPassCount = cfg.get_size_t( "PassCount", s_nInsertPassCount );
         if ( s_nInsertPassCount == 0 )
-            s_nInsertPassCount = 100;
-
-        s_nCuckooInitialSize = cfg.get_size_t( "CuckooInitialSize", s_nCuckooInitialSize );
-        if ( s_nCuckooInitialSize < 256 )
-            s_nCuckooInitialSize = 256;
-
-        s_nCuckooProbesetSize = cfg.get_size_t( "CuckooProbesetSize", s_nCuckooProbesetSize );
-        if ( s_nCuckooProbesetSize < 8 )
-            s_nCuckooProbesetSize = 8;
-
-        s_nCuckooProbesetThreshold = cfg.get_size_t( "CuckooProbesetThreshold", s_nCuckooProbesetThreshold );
+            s_nInsertPassCount = 1000;
 
         s_nFeldmanSet_HeadBits = cfg.get_size_t( "FeldmanMapHeadBits", s_nFeldmanSet_HeadBits );
         if ( s_nFeldmanSet_HeadBits == 0 )
-            s_nFeldmanSet_HeadBits = 2;
+            s_nFeldmanSet_HeadBits = 8;
 
         s_nFeldmanSet_ArrayBits = cfg.get_size_t( "FeldmanMapArrayBits", s_nFeldmanSet_ArrayBits );
         if ( s_nFeldmanSet_ArrayBits == 0 )
-            s_nFeldmanSet_ArrayBits = 2;
+            s_nFeldmanSet_ArrayBits = 8;
 
         m_arrData.resize( s_nSetSize );
         for ( size_t i = 0; i < s_nSetSize; ++i )
@@ -106,7 +91,7 @@ namespace set {
 
     std::vector<size_t> Set_Iter_Del3_LF::get_load_factors()
     {
-        cds_test::config const& cfg = get_config( "map_delodd" );
+        cds_test::config const& cfg = get_config( "map_iter_erase" );
 
         s_nMaxLoadFactor = cfg.get_size_t( "MaxLoadFactor", s_nMaxLoadFactor );
         if ( s_nMaxLoadFactor == 0 )

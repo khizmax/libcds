@@ -125,10 +125,6 @@ namespace set {
         static size_t s_nInsertPassCount;
         static size_t s_nFindThreadCount;      // find thread count
 
-        static size_t s_nCuckooInitialSize;    // initial size for CuckooSet
-        static size_t s_nCuckooProbesetSize;   // CuckooSet probeset size (only for list-based probeset)
-        static size_t s_nCuckooProbesetThreshold; // CUckooSet probeset threshold (0 - use default)
-
         static size_t s_nFeldmanSet_HeadBits;
         static size_t s_nFeldmanSet_ArrayBits;
 
@@ -853,9 +849,6 @@ namespace set {
 
         template <class Set>
         void run_feldman();
-
-        template <class Set>
-        void run_feldman_reverse();
     };
 
     class Set_Iter_Del3_reverse: public Set_Iter_Del3
