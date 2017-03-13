@@ -18,6 +18,8 @@
       the function prints an exception message to stdout and calls abort()
       instead of throwing. You can provide your own cds::throw_exception() function 
       and compile libcds with -DCDS_USER_DEFINED_THROW_EXCEPTION.
+    - Added: erase_at( iterator ) function to MichaelHashSet/Map and SplitListSet/Map
+      based on IterableList
     - Fixed a bug in BronsonAVLTreeMap::extract_min()/extract_max()/clear().
     - Added more flat-combining queue tests, thanks to Marsel Galimullin.
     - Changed cmake scripts to support MacOS and ARMv7/ARMv8 (64 bit),
