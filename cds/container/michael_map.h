@@ -203,7 +203,7 @@ namespace cds { namespace container {
         //@cond
         /// Forward iterator
         template <bool IsConst>
-        class iterator_type: private cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >
+        class iterator_type: protected cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >
         {
             typedef cds::intrusive::michael_set::details::iterator< internal_bucket_type, IsConst >  base_class;
             friend class MichaelHashMap;
@@ -275,13 +275,13 @@ namespace cds { namespace container {
 
             /// Equality operator
             template <bool C>
-            bool operator ==(iterator_type<C> const& i )
+            bool operator ==(iterator_type<C> const& i ) const
             {
                 return base_class::operator ==( i );
             }
             /// Equality operator
             template <bool C>
-            bool operator !=(iterator_type<C> const& i )
+            bool operator !=(iterator_type<C> const& i ) const
             {
                 return !( *this == i );
             }
@@ -672,6 +672,34 @@ namespace cds { namespace container {
             if ( bRet )
                 --m_ItemCounter;
             return bRet;
+        }
+
+        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based map)
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+            The function can return \p false if the node the iterator points to has already been deleted
+            by other thread.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+
+            @note \p %erase_at() is supported only for \p %MichaelHashMap based on \p IterableList.
+        */
+#ifdef CDS_DOXYGEN_INVOKED
+        bool erase_at( iterator const& iter )
+#else
+        template <typename Iterator>
+        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
+        erase_at( Iterator const& iter )
+#endif
+        {
+            assert( iter != end() );
+            assert( iter.bucket() != nullptr );
+
+            if ( iter.bucket()->erase_at( iter.underlying_iterator())) {
+                --m_ItemCounter;
+                return true;
+            }
+            return false;
         }
 
         /// Extracts the item with specified \p key

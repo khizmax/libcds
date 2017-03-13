@@ -33,10 +33,8 @@
     <ClInclude Include="..\..\..\test\unit\list\test_kv_iterable_list_hp.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_kv_list.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_kv_list_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\list\test_kv_list_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_list.h" />
     <ClInclude Include="..\..\..\test\unit\list\test_list_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\list\test_list_rcu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\unit\list\iterable_dhp.cpp" />

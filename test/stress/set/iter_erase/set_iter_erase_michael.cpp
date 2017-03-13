@@ -32,9 +32,7 @@
 #include "set_type_michael.h"
 
 namespace set {
-    //TODO: add erase_at() to IterableList and MichaelHashSet
-#if 0
+
     CDSSTRESS_MichaelIterableSet( Set_Iter_Del3_LF, run_test_extract, key_thread, size_t )
-#endif
 
 } // namespace set

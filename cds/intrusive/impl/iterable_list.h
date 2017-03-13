@@ -204,7 +204,7 @@ namespace cds { namespace intrusive {
             friend class IterableList;
 
         protected:
-            node_type const*          m_pNode;
+            node_type*    m_pNode;
             typename gc::Guard  m_Guard; // data guard
 
             void next()
@@ -218,20 +218,25 @@ namespace cds { namespace intrusive {
                 m_Guard.clear();
             }
 
-            explicit iterator_type( node_type const* pNode )
+            explicit iterator_type( node_type* pNode )
                 : m_pNode( pNode )
             {
                 if ( !m_Guard.protect( pNode->data, []( marked_data_ptr p ) { return p.ptr(); }).ptr())
                     next();
             }
 
-            iterator_type( node_type const* pNode, value_type* pVal )
+            iterator_type( node_type* pNode, value_type* pVal )
                 : m_pNode( pNode )
             {
                 if ( m_pNode ) {
                     assert( pVal != nullptr );
                     m_Guard.assign( pVal );
                 }
+            }
+
+            value_type* data() const
+            {
+                return m_Guard.template get<value_type>();
             }
 
         public:
@@ -250,13 +255,15 @@ namespace cds { namespace intrusive {
 
             value_ptr operator ->() const
             {
-                return m_Guard.template get<value_type>();
+                return data();
+                //return m_Guard.template get<value_type>();
             }
 
             value_ref operator *() const
             {
                 assert( m_Guard.get_native() != nullptr );
-                return *m_Guard.template get<value_type>();
+                return *data();
+                //return *m_Guard.template get<value_type>();
             }
 
             /// Pre-increment
@@ -335,8 +342,8 @@ namespace cds { namespace intrusive {
                     assert( &(*it1) == &(*it2));
             \endcode
             can throw assertion. The point is that the iterator stores the value of element which can be modified later by other thread.
-            The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after such changing.
-            Other iterator can observe modified value of the element.
+            The guard inside the iterator prevents recycling that value so the iterator's value remains valid even after changing.
+            Other iterator may observe modified value of the element.
         */
         typedef iterator_type<false>    iterator;
         /// Const forward iterator
@@ -370,25 +377,25 @@ namespace cds { namespace intrusive {
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator cbegin() const
         {
-            return const_iterator( &m_Head );
+            return const_iterator( const_cast<node_type*>( &m_Head ));
         }
 
         /// Returns a forward const iterator addressing the first element in a list
         const_iterator begin() const
         {
-            return const_iterator( &m_Head );
+            return const_iterator( const_cast<node_type*>( &m_Head ));
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator end() const
         {
-            return const_iterator( &m_Tail );
+            return const_iterator( const_cast<node_type*>( &m_Tail ));
         }
 
         /// Returns an const iterator that addresses the location succeeding the last element in a list
         const_iterator cend() const
         {
-            return const_iterator( &m_Tail );
+            return const_iterator( const_cast<node_type*>( &m_Tail ));
         }
     //@}
 
@@ -578,6 +585,28 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             return erase_at( &m_Head, key, cds::opt::details::make_comparator_from_less<Less>(), f );
+        }
+
+        /// Deletes the item pointed by iterator \p iter
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+            The function can return \p false if the node the iterator points to has already been deleted
+            by other thread.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+        */
+        bool erase_at( iterator const& iter )
+        {
+            assert( iter != end() );
+
+            marked_data_ptr val( iter.data() );
+            if ( iter.m_pNode->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+                --m_ItemCounter;
+                retire_data( val.ptr() );
+                m_Stat.onEraseSuccess();
+                return true;
+            }
+            return false;
         }
 
         /// Extracts the item from the list with specified \p key
@@ -981,7 +1010,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( node_type* pHead, const Q& val, Compare cmp, Func f, position& pos )
+        bool erase_at( node_type* pHead, Q const& val, Compare cmp, Func f, position& pos )
         {
             back_off bkoff;
             while ( search( pHead, val, pos, cmp )) {
@@ -1002,7 +1031,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_at( node_type* pHead, const Q& val, Compare cmp, Func f )
+        bool erase_at( node_type* pHead, Q const& val, Compare cmp, Func f )
         {
             position pos;
             return erase_at( pHead, val, cmp, f, pos );
@@ -1077,7 +1106,7 @@ namespace cds { namespace intrusive {
             }
 
             m_Stat.onFindFailed();
-            return iterator( &m_Tail );
+            return iterator( const_cast<node_type*>( &m_Tail ));
         }
 
         template <typename Q, typename Compare>

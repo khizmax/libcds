@@ -32,9 +32,7 @@
 #include "map_type_michael.h"
 
 namespace map {
-    //TODO add erase_at() to MichaelHashMap based on IterableList
-#if 0
-    CDSSTRESS_MichaelMap( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
-#endif
+
+    CDSSTRESS_MichaelMap_Iterable( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
 
 } // namespace map

@@ -32,8 +32,7 @@
 #include "map_type_split_list.h"
 
 namespace map {
-    //TODO: add erase_at() to SplitList based on IterableList
-#if 0
+
     CDSSTRESS_SplitListIterableMap( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
-#endif
+
 } // namespace map

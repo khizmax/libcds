@@ -32,8 +32,7 @@
 #include "set_type_split_list.h"
 
 namespace set {
-    //TODO: Add erase_at to IterableList and SplitList based on it
-#if 0
+
     CDSSTRESS_SplitListIterableSet( Set_Iter_Del3_LF, run_test_extract, key_thread, size_t )
-#endif
+
 } // namespace set

@@ -51,6 +51,20 @@ namespace map {
             : base_class( cfg.s_nMapSize, cfg.s_nLoadFactor )
         {}
 
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+        get_begin()
+        {
+            return base_class::begin();
+        }
+
+        template <typename Iterator>
+        typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
+        get_end()
+        {
+            return base_class::end();
+        }
+
         // for testing
         static CDS_CONSTEXPR bool const c_bExtractSupported = true;
         static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
@@ -328,7 +342,14 @@ namespace map {
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
-#   define  CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
+
+#   define CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp,            key_type, value_type ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stat,        key_type, value_type ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less,            key_type, value_type ) \
+        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less_stat,      key_type, value_type ) \
+
+#   define CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp,                     key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stat,                 key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_less,                     key_type, value_type ) \
@@ -338,11 +359,6 @@ namespace map {
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_cmp_stat,            key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less,                key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_stat,          key_type, value_type ) \
-        \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp,            key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stat,        key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less,            key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less_stat,      key_type, value_type ) \
 
 #   define  CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPB_cmp,                 key_type, value_type ) \
@@ -360,11 +376,18 @@ namespace map {
         CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type ) \
 
 #else
+#   define CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_1( fixture, test_case, key_type, value_type )
 #endif
 
+#define CDSSTRESS_MichaelMap_Iterable( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp,             key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less,           key_type, value_type ) \
+    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less_stat,       key_type, value_type ) \
+    CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_MichaelMap_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp,                      key_type, value_type ) \
@@ -377,11 +400,7 @@ namespace map {
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less,               key_type, value_type ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stat,           key_type, value_type ) \
     \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stat,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less_stat,       key_type, value_type ) \
-    \
+    CDSSTRESS_MichaelMap_Iterable( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_HP_2( fixture, test_case, key_type, value_type ) \
 

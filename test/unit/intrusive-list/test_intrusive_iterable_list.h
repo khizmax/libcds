@@ -529,7 +529,23 @@ namespace cds_test {
                 ++key;
             }
 
-            l.clear();
+            // Erase by iterator
+            key = 0;
+            for ( auto it = l.begin(); it != l.end(); ++it ) {
+                EXPECT_EQ( it->nKey, key );
+                EXPECT_EQ( ( *it ).nKey, key );
+
+                EXPECT_TRUE( l.erase_at( it ) );
+
+                EXPECT_EQ( it->nKey, key );
+                EXPECT_EQ( ( *it ).nKey, key );
+
+                EXPECT_FALSE( l.erase_at( it ) );
+                ++key;
+            }
+            EXPECT_TRUE( l.empty() );
+            EXPECT_CONTAINER_SIZE( l, 0 );
+
             List::gc::force_dispose();
             for ( auto const& i : arr ) {
                 EXPECT_EQ( i.s.nDisposeCount, 1 );

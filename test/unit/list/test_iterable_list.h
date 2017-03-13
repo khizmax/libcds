@@ -394,7 +394,12 @@ namespace cds_test {
             }
             EXPECT_EQ( static_cast<size_t>(key), nSize );
 
-            l.clear();
+            // erase_at()
+            for ( auto it = l.begin(); it != l.end(); ++it ) {
+                EXPECT_TRUE( l.erase_at( it ));
+                EXPECT_FALSE( l.erase_at( it ));
+            }
+
             ASSERT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
         }

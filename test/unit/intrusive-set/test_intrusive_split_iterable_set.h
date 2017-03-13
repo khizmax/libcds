@@ -396,8 +396,11 @@ namespace cds_test {
                 EXPECT_EQ( i.nFindCount, 1u );
             }
 
-            // clear test
-            s.clear();
+            // erase_at() test
+            for ( auto it = s.begin(); it != s.end(); ++it ) {
+                EXPECT_TRUE( s.erase_at( it ));
+                EXPECT_FALSE( s.erase_at( it ));
+            }
 
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0u );

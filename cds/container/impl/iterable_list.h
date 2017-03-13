@@ -524,6 +524,19 @@ namespace cds { namespace container {
             return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
         }
 
+        /// Deletes the item pointed by iterator \p iter
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+            The function can return \p false if the node the iterator points to has already been deleted
+            by other thread.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+        */
+        bool erase_at( iterator const& iter )
+        {
+            return base_class::erase_at( iter );
+        }
+
         /// Extracts the item from the list with specified \p key
         /**
             The function searches an item with key equal to \p key,

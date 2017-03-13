@@ -542,6 +542,27 @@ namespace cds { namespace container {
             return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>(), f );
         }
 
+        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based map)
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+            The function can return \p false if the node the iterator points to has already been deleted
+            by other thread.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+
+            @note \p %erase_at() is supported only for \p %SplitListMap based on \p IterableList.
+        */
+#ifdef CDS_DOXYGEN_INVOKED
+        bool erase_at( iterator const& iter )
+#else
+        template <typename Iterator>
+        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
+        erase_at( Iterator const& iter )
+#endif
+        {
+            return base_class::erase_at( iter );
+        }
+
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_SplitListMap_hp_extract
             The function searches an item with key equal to \p key,

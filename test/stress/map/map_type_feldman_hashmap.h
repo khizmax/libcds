@@ -60,14 +60,14 @@ namespace map {
 
         template <typename Iterator>
         typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
-            get_begin()
+        get_begin()
         {
             return base_class::begin();
         }
 
         template <typename Iterator>
         typename std::enable_if< std::is_same< Iterator, typename base_class::iterator>::value, Iterator>::type
-            get_end()
+        get_end()
         {
             return base_class::end();
         }

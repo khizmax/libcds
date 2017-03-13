@@ -38,7 +38,7 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::DHP gc_type;
 
-    class SplitListIterableMap_DHP : public cds_test::michael_iterable_map
+    class SplitListIterableMap_DHP : public cds_test::michael_iterable_hp
     {
     protected:
         typedef cds_test::michael_iterable_map base_class;

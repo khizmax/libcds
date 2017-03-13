@@ -351,6 +351,16 @@ namespace cds { namespace intrusive {
                 return base_class::unlink_at( h, val );
             }
 
+            template <typename Iterator>
+            typename std::enable_if<
+                std::is_same< Iterator, typename ordered_list::iterator>::value && is_iterable_list< ordered_list >::value,
+                bool
+            >::type
+            erase_at( Iterator iter )
+            {
+                return base_class::erase_at( iter );
+            }
+
             template <typename Q, typename Compare, typename Func>
             bool erase_at( aux_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp, Func f )
             {
@@ -433,10 +443,13 @@ namespace cds { namespace intrusive {
         //@cond
         template <bool IsConst>
         class iterator_type
-            :public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
+            : public split_list::details::iterator_type<node_traits, ordered_list, IsConst>
         {
             typedef split_list::details::iterator_type<node_traits, ordered_list, IsConst> iterator_base_class;
             typedef typename iterator_base_class::list_iterator list_iterator;
+
+            friend class SplitListSet;
+
         public:
             iterator_type()
                 : iterator_base_class()
@@ -828,6 +841,34 @@ namespace cds { namespace intrusive {
         {
             CDS_UNUSED( pred );
             return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
+        }
+
+        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based set)
+        /**
+            Returns \p true if the operation is successful, \p false otherwise.
+            The function can return \p false if the node the iterator points to has already been deleted
+            by other thread.
+
+            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
+
+            @note \p %erase_at() is supported only for \p %SplitListSet based on \p IterableList.
+        */
+#ifdef CDS_DOXYGEN_INVOKED
+        bool erase_at( iterator const& iter )
+#else
+        template <typename Iterator>
+        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
+        erase_at( Iterator const& iter )
+#endif
+        {
+            assert( iter != end() );
+
+            if ( m_List.erase_at( iter.underlying_iterator())) {
+                --m_ItemCounter;
+                m_Stat.onEraseSuccess();
+                return true;
+            }
+            return false;
         }
 
         /// Extracts the item with specified \p key

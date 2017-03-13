@@ -204,6 +204,11 @@ namespace cds { namespace intrusive {
                     return m_pCurBucket != m_pEndBucket ? m_pCurBucket : nullptr;
                 }
 
+                list_iterator const& underlying_iterator() const
+                {
+                    return m_itList;
+                }
+
                 template <bool C>
                 bool operator ==(iterator<bucket_type, C> const& i) const
                 {
@@ -214,7 +219,6 @@ namespace cds { namespace intrusive {
                 {
                     return !( *this == i );
                 }
-
             };
         }
         //@endcond

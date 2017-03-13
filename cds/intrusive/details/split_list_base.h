@@ -1232,6 +1232,12 @@ namespace cds { namespace intrusive {
                 {
                     return m_itCur != i.m_itCur;
                 }
+
+            protected:
+                list_iterator const& underlying_iterator() const
+                {
+                    return m_itCur;
+                }
             };
         }   // namespace details
         //@endcond

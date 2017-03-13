@@ -133,6 +133,19 @@ namespace cds_test {
             }
             EXPECT_TRUE( m.empty());
             EXPECT_CONTAINER_SIZE( m, 0u );
+
+            // erase_at()
+            for ( auto const& i : arrKeys )
+                EXPECT_TRUE( m.insert( i ) );
+            EXPECT_FALSE( m.empty() );
+            EXPECT_CONTAINER_SIZE( m, kkSize );
+
+            for ( auto it = m.begin(); it != m.end(); ++it ) {
+                EXPECT_TRUE( m.erase_at( it ));
+                EXPECT_FALSE( m.erase_at( it ));
+            }
+            EXPECT_TRUE( m.empty() );
+            EXPECT_CONTAINER_SIZE( m, 0u );
         }
     };
 
