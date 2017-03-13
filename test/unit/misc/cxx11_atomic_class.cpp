@@ -788,7 +788,7 @@ namespace {
         test_atomic_integral_volatile<unsigned long long>();
     }
 
-#if !( CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 40000 )
+#if !( CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 50000 )
     //clang error with atomic<void*> fetch_add/fetch_sub
     TEST_F( cxx11_atomic_class, atomic_pointer_void )
     {
