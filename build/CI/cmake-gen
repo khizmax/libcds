@@ -31,7 +31,6 @@ my $ext_lib=get_prop("extlib");
 my $ld_lib_path=get_prop("ld-lib-path");
 my $cmake_flags=get_prop("cmake-flags");
 
-
 my $filename="cds-$build-$compiler-$bitness";
 open( my $out, ">", $filename )  or die "Cannot open cds-$build-$compiler-$bitness";
 

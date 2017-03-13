@@ -49,6 +49,11 @@ case "$TOOLSET" in
 	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.9-64
 	EXIT_CODE=$?
 	;;
+    "x64-clang-4")
+	echo "clang-4 '$BUILD_TYPE', toolset root: $CLANG4_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-4-64
+	EXIT_CODE=$?
+	;;
     * )
 	echo "Undefined toolset '$TOOLSET'"
 	exit 1

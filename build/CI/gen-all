@@ -22,3 +22,7 @@
 ./cmake-gen clang-3.9 64 rel
 ./cmake-gen clang-3.9 64 asan
 ./cmake-gen clang-3.9 64 tsan
+./cmake-gen clang-4 64 dbg
+./cmake-gen clang-4 64 rel
+./cmake-gen clang-4 64 asan
+./cmake-gen clang-4 64 tsan

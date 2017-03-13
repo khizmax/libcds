@@ -11,7 +11,7 @@ gtest-include:          $GTEST_ROOT/googletest/include
 gcc-4.8-root:           $GCC48_ROOT/bin
 gcc-4.8-cxx:            g++-4.8
 gcc-4.8-cc:             gcc-4.8
-gcc-4.8-exe-ldflags:    -L$GCC48_ROOT/lib -Wl,-rpath=$GCC48_ROOT/lib
+gcc-4.8-exe-ldflags:    -L$GCC48_ROOT/lib64 -Wl,-rpath=$GCC48_ROOT/lib64
 gcc-4.8-extlib:         rt
 gcc-4.8-boost:          $BOOST_ROOT
 gcc-4.8-64-boost-lib:   stage64-gcc4.8/lib
@@ -80,8 +80,8 @@ clang-3.7-ld-lib-path:    $GCC6_ROOT/lib64
 clang-3.7-cxx:            clang++
 clang-3.7-cc:             clang
 clang-3.7-cxxflags:       -stdlib=libc++ -Wdocumentation
-clang-3.7-exe-ldflags:    -L$CLANG37_ROOT/lib -Wl,-rpath=$CLANG37_ROOT/lib
-clang-3.7-extlib:         rt c++abi
+clang-3.7-exe-ldflags:    -L$CLANG37_ROOT/lib -Wl,-rpath=$CLANG37_ROOT/lib -lc++abi
+clang-3.7-extlib:         rt
 clang-3.7-boost:          $BOOST_ROOT
 clang-3.7-64-boost-lib:   stage64-clang3.7/lib
 clang-3.7-gtest:          $GTEST_ROOT
@@ -120,6 +120,21 @@ clang-3.9-64-tsan-boost-lib:   stage64-clang3.9-tsan/lib
 clang-3.9-gtest:          $GTEST_ROOT
 clang-3.9-64-gtest-lib:   $GTEST_ROOT/lib-clang3.9/libgtest.a
 
+
+########################################
+# clang-4
+clang-4-root:           $CLANG4_ROOT/bin
+clang-4-cxx:            clang++
+clang-4-cc:             clang
+clang-4-cxxflags:       -stdlib=libc++ -Wdocumentation
+clang-4-exe-ldflags:    -L$CLANG4_ROOT/lib -Wl,-rpath=$CLANG4_ROOT/lib
+clang-4-extlib:         rt
+clang-4-boost:          $BOOST_ROOT
+clang-4-64-boost-lib:   stage64-clang4/lib
+clang-4-64-asan-boost-lib:   stage64-clang4-asan/lib
+clang-4-64-tsan-boost-lib:   stage64-clang4-tsan/lib
+clang-4-gtest:          $GTEST_ROOT
+clang-4-64-gtest-lib:   $GTEST_ROOT/lib-clang4/libgtest.a
 
 
 
