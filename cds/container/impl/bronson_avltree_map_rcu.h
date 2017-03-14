@@ -1881,14 +1881,11 @@ namespace cds { namespace container {
             pNode->parent( pLeft, memory_model::memory_order_release );
             assert( check_node_ordering( pLeft, pNode ) < 0 );
 
-            if ( pParentLeft == pNode ) {
+            if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pLeft, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pLeft ) > 0 );
-            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pLeft, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pLeft ) < 0 );
             }
             pLeft->parent( pParent, memory_model::memory_order_release );
 
@@ -1955,14 +1952,11 @@ namespace cds { namespace container {
             pNode->parent( pRight, memory_model::memory_order_release );
             assert( check_node_ordering( pRight, pNode ) > 0 );
 
-            if ( pParentLeft == pNode ) {
+            if ( pParentLeft == pNode )
                 pParent->m_pLeft.store( pRight, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pRight ) > 0 );
-            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pRight, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pRight ) < 0 );
             }
             pRight->parent( pParent, memory_model::memory_order_release );
 
@@ -2029,14 +2023,11 @@ namespace cds { namespace container {
             pNode->parent( pLRight, memory_model::memory_order_release );
             assert( check_node_ordering( pLRight, pNode ) < 0 );
 
-            if ( pPL == pNode ) {
+            if ( pPL == pNode )
                 pParent->m_pLeft.store( pLRight, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pLRight ) > 0 );
-            }
             else {
                 assert( child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pLRight, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pLRight ) < 0 );
             }
             pLRight->parent( pParent, memory_model::memory_order_release );
 
@@ -2118,14 +2109,11 @@ namespace cds { namespace container {
             pNode->parent( pRLeft, memory_model::memory_order_release );
             assert( check_node_ordering( pRLeft, pNode ) > 0 );
 
-            if ( pPL == pNode ) {
+            if ( pPL == pNode )
                 pParent->m_pLeft.store( pRLeft, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pRLeft ) > 0 );
-            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
                 pParent->m_pRight.store( pRLeft, memory_model::memory_order_release );
-                assert( check_node_ordering( pParent, pRLeft ) < 0 );
             }
             pRLeft->parent( pParent, memory_model::memory_order_release );
 
