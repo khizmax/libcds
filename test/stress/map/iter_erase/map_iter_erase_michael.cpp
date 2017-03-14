@@ -33,6 +33,7 @@
 
 namespace map {
 
-    CDSSTRESS_MichaelMap_Iterable( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
+    // Test is too long
+    // CDSSTRESS_MichaelMap_Iterable( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
 
 } // namespace map
