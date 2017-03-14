@@ -644,7 +644,7 @@ namespace cds { namespace container {
         erase_at( Iterator const& iter )
 #endif
         {
-            return base_class::erase_at( static_cast<iterator::iterator_base_class const&>( iter ));
+            return base_class::erase_at( static_cast<typename iterator::iterator_base_class const&>( iter ));
         }
 
 
