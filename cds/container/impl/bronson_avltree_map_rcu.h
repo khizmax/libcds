@@ -1755,53 +1755,51 @@ namespace cds { namespace container {
             // pNode->pLeft is too large, we will rotate-right.
             // If pLeft->pRight is taller than pLeft->pLeft, then we will first rotate-left pLeft.
 
-            {
-                assert( pLeft != nullptr );
-                node_scoped_lock l( m_Monitor, *pLeft );
-                if ( pNode->m_pLeft.load( memory_model::memory_order_relaxed ) != pLeft )
-                    return pNode; // retry for pNode
+            assert( pLeft != nullptr );
+            node_scoped_lock l( m_Monitor, *pLeft );
+            if ( pNode->m_pLeft.load( memory_model::memory_order_relaxed ) != pLeft )
+                return pNode; // retry for pNode
 
-                assert( check_node_ordering( pNode, pLeft ) > 0 );
+            assert( check_node_ordering( pNode, pLeft ) > 0 );
 
-                int hL = height( pLeft, memory_model::memory_order_acquire );
-                if ( hL - hR <= 1 )
-                    return pNode; // retry
+            int hL = height( pLeft, memory_model::memory_order_acquire );
+            if ( hL - hR <= 1 )
+                return pNode; // retry
 
-                node_type * pLRight = child( pLeft, right_child, memory_model::memory_order_relaxed );
-                int hLR = height_null( pLRight, memory_model::memory_order_acquire );
-                node_type * pLLeft = child( pLeft, left_child, memory_model::memory_order_relaxed );
-                int hLL = height_null( pLLeft, memory_model::memory_order_acquire );
+            node_type * pLRight = child( pLeft, right_child, memory_model::memory_order_relaxed );
+            int hLR = height_null( pLRight, memory_model::memory_order_acquire );
+            node_type * pLLeft = child( pLeft, left_child, memory_model::memory_order_relaxed );
+            int hLL = height_null( pLLeft, memory_model::memory_order_acquire );
 
-                if ( hLL > hLR ) {
-                    // rotate right
-                    return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
-                }
-                else {
-                    if ( pLRight ) {
-                        node_scoped_lock lr( m_Monitor, *pLRight );
-                        if ( pLeft->m_pRight.load( memory_model::memory_order_acquire ) != pLRight )
-                            return pNode; // retry
-
-                        assert( check_node_ordering( pLeft, pLRight ) < 0 );
-
-                        hLR = height( pLRight, memory_model::memory_order_acquire );
-                        if ( hLL > hLR )
-                            return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
-
-                        int hLRL = height_null( child( pLRight, left_child, memory_model::memory_order_relaxed ), memory_model::memory_order_acquire);
-                        int balance = hLL - hLRL;
-                        if ( balance >= -1 && balance <= 1 && !((hLL == 0 || hLRL == 0) && !pLeft->is_valued(memory_model::memory_order_relaxed))) {
-                            // nParent.child.left won't be damaged after a double rotation
-                            return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
-                        }
-                    }
-                    else
+            if ( pLRight ) {
+                {
+                    node_scoped_lock lr( m_Monitor, *pLRight );
+                    if ( pLeft->m_pRight.load( memory_model::memory_order_acquire ) != pLRight )
                         return pNode; // retry
 
-                    // focus on pLeft, if necessary pNode will be balanced later
-                    return rebalance_to_left_locked( pNode, pLeft, pLRight, hLL );
+                    assert( check_node_ordering( pLeft, pLRight ) < 0 );
+
+                    hLR = height( pLRight, memory_model::memory_order_acquire );
+                    if ( hLL > hLR )
+                        return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
+
+                    int hLRL = height_null( child( pLRight, left_child, memory_model::memory_order_relaxed ), memory_model::memory_order_acquire );
+                    int balance = hLL - hLRL;
+                    if ( balance >= -1 && balance <= 1 && !( ( hLL == 0 || hLRL == 0 ) && !pLeft->is_valued( memory_model::memory_order_relaxed ) ) ) {
+                        // nParent.child.left won't be damaged after a double rotation
+                        return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
+                    }
                 }
+
+                // focus on pLeft, if necessary pNode will be balanced later
+                return rebalance_to_left_locked( pNode, pLeft, pLRight, hLL );
             }
+            else if ( hLL > hLR ) {
+                // rotate right
+                return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
+            }
+            
+            return pNode; // retry
         }
 
         node_type * rebalance_to_left_locked( node_type * pParent, node_type * pNode, node_type * pRight, int hL )
@@ -1811,26 +1809,24 @@ namespace cds { namespace container {
                  || child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
 
             // pParent and pNode is locked yet
-            {
-                assert( pRight != nullptr );
-                node_scoped_lock l( m_Monitor, *pRight );
-                if ( pNode->m_pRight.load( memory_model::memory_order_relaxed ) != pRight )
-                    return pNode; // retry for pNode
+            assert( pRight != nullptr );
+            node_scoped_lock l( m_Monitor, *pRight );
+            if ( pNode->m_pRight.load( memory_model::memory_order_relaxed ) != pRight )
+                return pNode; // retry for pNode
 
-                assert( check_node_ordering( pNode, pRight ) < 0 );
+            assert( check_node_ordering( pNode, pRight ) < 0 );
 
-                int hR = height( pRight, memory_model::memory_order_acquire );
-                if ( hL - hR >= -1 )
-                    return pNode; // retry
+            int hR = height( pRight, memory_model::memory_order_acquire );
+            if ( hL - hR >= -1 )
+                return pNode; // retry
 
-                node_type * pRLeft = child( pRight, left_child, memory_model::memory_order_relaxed );
-                int hRL = height_null( pRLeft, memory_model::memory_order_acquire );
-                node_type * pRRight = child( pRight, right_child, memory_model::memory_order_relaxed );
-                int hRR = height_null( pRRight, memory_model::memory_order_acquire );
-                if ( hRR > hRL )
-                    return rotate_left_locked( pParent, pNode, hL, pRight, pRLeft, hRL, hRR );
+            node_type * pRLeft = child( pRight, left_child, memory_model::memory_order_relaxed );
+            int hRL = height_null( pRLeft, memory_model::memory_order_acquire );
+            node_type * pRRight = child( pRight, right_child, memory_model::memory_order_relaxed );
+            int hRR = height_null( pRRight, memory_model::memory_order_acquire );
 
-                if ( pRLeft ) {
+            if ( pRLeft ) {
+                {
                     node_scoped_lock lrl( m_Monitor, *pRLeft );
                     if ( pRight->m_pLeft.load( memory_model::memory_order_acquire ) != pRLeft )
                         return pNode; // retry
@@ -1844,13 +1840,16 @@ namespace cds { namespace container {
                     node_type * pRLRight = child( pRLeft, right_child, memory_model::memory_order_relaxed );
                     int hRLR = height_null( pRLRight, memory_model::memory_order_acquire );
                     int balance = hRR - hRLR;
-                    if ( balance >= -1 && balance <= 1 && !((hRR == 0 || hRLR == 0) && !pRight->is_valued( memory_model::memory_order_relaxed )))
-                         return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
+                    if ( balance >= -1 && balance <= 1 && !( ( hRR == 0 || hRLR == 0 ) && !pRight->is_valued( memory_model::memory_order_relaxed ) ) )
+                        return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
                 }
-                else
-                    return pNode; // retry
+
                 return rebalance_to_right_locked( pNode, pRight, pRLeft, hRR );
             }
+            else if ( hRR > hRL )
+                return rotate_left_locked( pParent, pNode, hL, pRight, pRLeft, hRL, hRR );
+
+            return pNode;   // retry
         }
 
         static void begin_change( node_type * pNode, version_type version )
@@ -1873,8 +1872,10 @@ namespace cds { namespace container {
             begin_change( pNode, nodeVersion );
 
             pNode->m_pLeft.store( pLRight, memory_model::memory_order_release );
-            if ( pLRight != nullptr )
-                pLRight->parent( pNode, memory_model::memory_order_release  );
+            if ( pLRight != nullptr ) {
+                pLRight->parent( pNode, memory_model::memory_order_release );
+                assert( check_node_ordering( pNode, pLRight ) > 0 );
+            }
 
             pLeft->m_pRight.store( pNode, memory_model::memory_order_release );
             pNode->parent( pLeft, memory_model::memory_order_release );
