@@ -32,7 +32,7 @@
 #include "map_type_split_list.h"
 
 namespace map {
-
-    CDSSTRESS_SplitListIterableMap( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
+    // Too long
+    //CDSSTRESS_SplitListIterableMap( Map_Iter_Del3_LF, run_test_extract, key_thread, size_t )
 
 } // namespace map

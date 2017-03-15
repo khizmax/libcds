@@ -32,7 +32,7 @@
 #include "set_type_split_list.h"
 
 namespace set {
-
-    CDSSTRESS_SplitListIterableSet( Set_Iter_Del3_LF, run_test_extract, key_thread, size_t )
+    // Too long
+    //CDSSTRESS_SplitListIterableSet( Set_Iter_Del3_LF, run_test_extract, key_thread, size_t )
 
 } // namespace set
