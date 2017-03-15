@@ -37,6 +37,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\misc\bitop.cpp" />
+    <ClCompile Include="..\..\..\test\unit\misc\bit_reversal.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\cxx11_atomic_class.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\cxx11_atomic_func.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\find_option.cpp" />

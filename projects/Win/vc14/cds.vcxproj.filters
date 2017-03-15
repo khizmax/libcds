@@ -1258,5 +1258,8 @@
     <ClInclude Include="..\..\..\cds\compiler\gcc\arm8\backoff.h">
       <Filter>Header Files\cds\compiler\gcc\arm8</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\algo\bit_reversal.h">
+      <Filter>Header Files\cds\algo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
