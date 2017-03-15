@@ -251,4 +251,70 @@ namespace {
         test( s );
     }
 
+    TEST_F( SplitListMichaelSet_DHP, bit_reversal_swar )
+    {
+        struct set_traits: public cc::split_list::traits
+        {
+            typedef cc::michael_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::algo::bit_reversal::swar bit_reversal;
+
+            struct ordered_list_traits: public cc::michael_list::traits
+            {
+                typedef cmp compare;
+                typedef base_class::less less;
+                typedef cds::backoff::empty back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( SplitListMichaelSet_DHP, bit_reversal_lookup )
+    {
+        struct set_traits: public cc::split_list::traits
+        {
+            typedef cc::michael_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::algo::bit_reversal::lookup bit_reversal;
+
+            struct ordered_list_traits: public cc::michael_list::traits
+            {
+                typedef cmp compare;
+                typedef base_class::less less;
+                typedef cds::backoff::empty back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( SplitListMichaelSet_DHP, bit_reversal_muldiv )
+    {
+        struct set_traits: public cc::split_list::traits
+        {
+            typedef cc::michael_list_tag ordered_list;
+            typedef hash_int hash;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cds::algo::bit_reversal::muldiv bit_reversal;
+
+            struct ordered_list_traits: public cc::michael_list::traits
+            {
+                typedef cmp compare;
+                typedef base_class::less less;
+                typedef cds::backoff::empty back_off;
+            };
+        };
+        typedef cc::SplitListSet< gc_type, int_item, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
 } // namespace

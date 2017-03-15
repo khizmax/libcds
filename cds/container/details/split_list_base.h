@@ -53,6 +53,10 @@ namespace cds { namespace container {
         template <bool Value>
         using dynamic_bucket_table = cds::intrusive::split_list::dynamic_bucket_table<Value>;
 
+        /// @copydoc cds::intrusive::split_list::bit_reversal
+        template <typename Type>
+        using bit_reversal = cds::intrusive::split_list::bit_reversal<Type>;
+
         using cds::intrusive::split_list::static_bucket_table;
         using cds::intrusive::split_list::expandable_bucket_table;
 
@@ -110,7 +114,7 @@ namespace cds { namespace container {
         //@endcond
 
 
-        /// SplitListSet traits
+        /// \p SplitListSet traits
         struct traits: public intrusive::split_list::traits
         {
             // Ordered list implementation

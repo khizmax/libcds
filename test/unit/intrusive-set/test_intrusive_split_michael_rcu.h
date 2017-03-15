@@ -234,6 +234,91 @@ TYPED_TEST_P( IntrusiveSplitMichaelSet, base_free_list )
     this->test( s );
 }
 
+TYPED_TEST_P( IntrusiveSplitMichaelSet, base_bit_reverse_swar )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::base_item_type base_item_type;
+    typedef typename TestFixture::mock_disposer mock_disposer;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct list_traits: public ci::michael_list::traits
+    {
+        typedef ci::michael_list::base_hook< ci::opt::gc<rcu_type>> hook;
+        typedef typename TestFixture::template less<base_item_type> less;
+        typedef mock_disposer disposer;
+    };
+    typedef ci::MichaelList< rcu_type, base_item_type, list_traits > bucket_type;
+
+    struct set_traits: public ci::split_list::traits
+    {
+        typedef hash_int hash;
+        typedef typename TestFixture::simple_item_counter item_counter;
+        typedef ci::split_list::stat<> stat;
+        typedef cds::algo::bit_reversal::swar bit_reversal;
+    };
+    typedef ci::SplitListSet< rcu_type, bucket_type, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 2 );
+    this->test( s );
+}
+
+TYPED_TEST_P( IntrusiveSplitMichaelSet, base_bit_reverse_lookup )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::base_item_type base_item_type;
+    typedef typename TestFixture::mock_disposer mock_disposer;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct list_traits: public ci::michael_list::traits
+    {
+        typedef ci::michael_list::base_hook< ci::opt::gc<rcu_type>> hook;
+        typedef typename TestFixture::template less<base_item_type> less;
+        typedef mock_disposer disposer;
+    };
+    typedef ci::MichaelList< rcu_type, base_item_type, list_traits > bucket_type;
+
+    struct set_traits: public ci::split_list::traits
+    {
+        typedef hash_int hash;
+        typedef typename TestFixture::simple_item_counter item_counter;
+        typedef ci::split_list::stat<> stat;
+        typedef cds::algo::bit_reversal::lookup bit_reversal;
+    };
+    typedef ci::SplitListSet< rcu_type, bucket_type, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 2 );
+    this->test( s );
+}
+
+TYPED_TEST_P( IntrusiveSplitMichaelSet, base_bit_reverse_muldiv )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::base_item_type base_item_type;
+    typedef typename TestFixture::mock_disposer mock_disposer;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct list_traits: public ci::michael_list::traits
+    {
+        typedef ci::michael_list::base_hook< ci::opt::gc<rcu_type>> hook;
+        typedef typename TestFixture::template less<base_item_type> less;
+        typedef mock_disposer disposer;
+    };
+    typedef ci::MichaelList< rcu_type, base_item_type, list_traits > bucket_type;
+
+    struct set_traits: public ci::split_list::traits
+    {
+        typedef hash_int hash;
+        typedef typename TestFixture::simple_item_counter item_counter;
+        typedef ci::split_list::stat<> stat;
+        typedef cds::algo::bit_reversal::muldiv bit_reversal;
+    };
+    typedef ci::SplitListSet< rcu_type, bucket_type, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 2 );
+    this->test( s );
+}
+
+
 TYPED_TEST_P( IntrusiveSplitMichaelSet, member_cmp )
 {
     typedef typename TestFixture::rcu_type rcu_type;
@@ -412,7 +497,7 @@ TYPED_TEST_P( IntrusiveSplitMichaelSet, member_free_list )
 // GCC 5: All test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No test named <test_name> can be found in this test case"
 REGISTER_TYPED_TEST_CASE_P( IntrusiveSplitMichaelSet,
-    base_cmp, base_less, base_cmpmix, base_static_bucket_table, base_static_bucket_table_free_list, base_free_list, member_cmp, member_less, member_cmpmix, member_static_bucket_table, member_static_bucket_table_free_list, member_free_list
+    base_cmp, base_less, base_cmpmix, base_static_bucket_table, base_static_bucket_table_free_list, base_free_list, base_bit_reverse_swar, base_bit_reverse_lookup, base_bit_reverse_muldiv, member_cmp, member_less, member_cmpmix, member_static_bucket_table, member_static_bucket_table_free_list, member_free_list
 );
 
 

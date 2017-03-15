@@ -33,6 +33,7 @@
 
 #include <cds/intrusive/details/base.h>
 #include <cds/algo/atomic.h>
+#include <cds/algo/bit_reversal.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>
 #include <cds/algo/bitop.h>
@@ -212,6 +213,22 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        /// Option to control bit reversal algorithm
+        /**
+            Bit reversal is a significant part of split-list.
+            \p Type can be one of predefined algorithm in \p cds::algo::bit_reversal namespace.
+        */
+        template <typename Type>
+        struct bit_reversal {
+            //@cond
+            template <typename Base>
+            struct pack: public Base
+            {
+                typedef Type bit_reversal;
+            };
+            //@endcond
+        };
+
         /// SplitListSet traits
         struct traits
         {
@@ -222,6 +239,17 @@ namespace cds { namespace intrusive {
                 By default, \p std::hash is used.
             */
             typedef opt::none       hash;
+
+            /// Bit reversal algorithm
+            /**
+                Bit reversal is a significant part of split-list.
+                There are several predefined algorithm in \p cds::algo::bit_reversal namespace,
+                \p cds::algo::bit_reversal::lookup is the best general purpose one.
+
+                There are more efficient bit reversal algoritm for particular processor architecture,
+                for example, based on x86 SIMD/AVX instruction set, see <a href="http://stackoverflow.com/questions/746171/best-algorithm-for-bit-reversal-from-msb-lsb-to-lsb-msb-in-c">here</a>
+            */
+            typedef cds::algo::bit_reversal::lookup bit_reversal;
 
             /// Item counter
             /**
@@ -309,6 +337,8 @@ namespace cds { namespace intrusive {
         /**
             Available \p Options:
             - \p opt::hash - mandatory option, specifies hash functor.
+            - \p split_list::bit_reversal - bit reversal algorithm, see \p traits::bit_reversal for explanation
+                default is \p cds::algo::bit_reversal::lookup
             - \p opt::item_counter - optional, specifies item counting policy. See \p traits::item_counter
                 for default type.
             - \p opt::memory_model - C++ memory model for atomic operations.
@@ -1244,21 +1274,16 @@ namespace cds { namespace intrusive {
 
         //@cond
         // Helper functions
-
-        /// Reverses bit order in \p nHash
-        static inline size_t reverse_bits( size_t nHash )
-        {
-            return bitop::RBO( nHash );
-        }
-
+        template <typename BitReversalAlgo>
         static inline size_t regular_hash( size_t nHash )
         {
-            return reverse_bits( nHash ) | size_t(1);
+            return BitReversalAlgo()( nHash ) | size_t(1);
         }
 
+        template <typename BitReversalAlgo>
         static inline size_t dummy_hash( size_t nHash )
         {
-            return reverse_bits( nHash ) & ~size_t(1);
+            return BitReversalAlgo()( nHash ) & ~size_t(1);
         }
         //@endcond
 

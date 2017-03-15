@@ -284,11 +284,84 @@ TYPED_TEST_P( SplitListMichaelSet, static_bucket_table_free_list )
     this->test( s );
 }
 
+TYPED_TEST_P( SplitListMichaelSet, bit_reversal_swar )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+    typedef typename TestFixture::hash_int hash_int;
+
+    typedef cc::SplitListSet< rcu_type, int_item,
+        typename cc::split_list::make_traits<
+            cc::split_list::ordered_list< cc::michael_list_tag >
+            , cds::opt::hash< hash_int >
+            , cc::split_list::bit_reversal< cds::algo::bit_reversal::swar >
+            , cc::split_list::ordered_list_traits<
+                typename cc::michael_list::make_traits<
+                    cds::opt::less< typename TestFixture::less >
+                    , cds::opt::compare< typename TestFixture::cmp >
+                >::type
+            >
+        >::type
+    > set_type;
+
+    set_type s( TestFixture::kSize, 2 );
+    this->test( s );
+}
+
+TYPED_TEST_P( SplitListMichaelSet, bit_reversal_lookup )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct set_traits: public cc::split_list::traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash_int hash;
+        typedef cds::algo::bit_reversal::lookup bit_reversal;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+            typedef typename TestFixture::less less;
+            typedef cds::backoff::empty back_off;
+        };
+    };
+    typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 8 );
+    this->test( s );
+}
+
+TYPED_TEST_P( SplitListMichaelSet, bit_reversal_muldiv )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+    typedef typename TestFixture::hash_int hash_int;
+
+    struct set_traits: public cc::split_list::traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash_int hash;
+        typedef cds::algo::bit_reversal::muldiv bit_reversal;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+            typedef typename TestFixture::less less;
+            typedef cds::backoff::empty back_off;
+        };
+    };
+    typedef cc::SplitListSet< rcu_type, int_item, set_traits > set_type;
+
+    set_type s( TestFixture::kSize, 8 );
+    this->test( s );
+}
 
 // GCC 5: All this->test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No this->test named <test_name> can be found in this this->test case"
 REGISTER_TYPED_TEST_CASE_P( SplitListMichaelSet,
-    compare, less, cmpmix, item_counting, stat, back_off, static_bucket_table, free_list, static_bucket_table_free_list
+    compare, less, cmpmix, item_counting, stat, back_off, static_bucket_table, free_list, static_bucket_table_free_list, bit_reversal_swar, bit_reversal_lookup, bit_reversal_muldiv
 );
 
 

@@ -292,8 +292,81 @@ TYPED_TEST_P( SplitListMichaelMap, static_bucket_table_free_list )
     this->test( m );
 }
 
+TYPED_TEST_P( SplitListMichaelMap, bit_reversal_swar )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+    typedef typename TestFixture::hash1      hash1;
+
+    struct map_traits: public cc::split_list::traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash1 hash;
+        typedef cds::algo::bit_reversal::swar bit_reversal;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+        };
+    };
+    typedef cc::SplitListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m( TestFixture::kSize, 2 );
+    this->test( m );
+}
+
+TYPED_TEST_P( SplitListMichaelMap, bit_reversal_lookup )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+    typedef typename TestFixture::hash1      hash1;
+
+    struct map_traits: public cc::split_list::traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash1 hash;
+        typedef cds::algo::bit_reversal::lookup bit_reversal;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+        };
+    };
+    typedef cc::SplitListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m( TestFixture::kSize, 2 );
+    this->test( m );
+}
+
+TYPED_TEST_P( SplitListMichaelMap, bit_reversal_muldiv )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+    typedef typename TestFixture::hash1      hash1;
+
+    struct map_traits: public cc::split_list::traits
+    {
+        typedef cc::michael_list_tag ordered_list;
+        typedef hash1 hash;
+        typedef cds::algo::bit_reversal::muldiv bit_reversal;
+
+        struct ordered_list_traits: public cc::michael_list::traits
+        {
+            typedef typename TestFixture::cmp compare;
+        };
+    };
+    typedef cc::SplitListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m( TestFixture::kSize, 2 );
+    this->test( m );
+}
+
+
 REGISTER_TYPED_TEST_CASE_P( SplitListMichaelMap,
-    compare, less, cmpmix, item_counting, stat, back_off, free_list, static_bucket_table, static_bucket_table_free_list
+    compare, less, cmpmix, item_counting, stat, back_off, free_list, static_bucket_table, static_bucket_table_free_list, bit_reversal_swar, bit_reversal_lookup, bit_reversal_muldiv
 );
 
 

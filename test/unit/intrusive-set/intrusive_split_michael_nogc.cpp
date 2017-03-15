@@ -196,6 +196,76 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveSplitListSet_NoGC, base_bit_reversal_swar )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            typedef cds::algo::bit_reversal::swar bit_reversal;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_NoGC, base_bit_reversal_lookup )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            typedef cds::algo::bit_reversal::lookup bit_reversal;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+    TEST_F( IntrusiveSplitListSet_NoGC, base_bit_reversal_muldiv )
+    {
+        struct list_traits: public ci::michael_list::traits
+        {
+            typedef ci::michael_list::base_hook< ci::opt::gc<gc_type>> hook;
+            typedef cmp<base_item_type> compare;
+            typedef mock_disposer disposer;
+        };
+        typedef ci::MichaelList< gc_type, base_item_type, list_traits > bucket_type;
+
+        struct set_traits: public ci::split_list::traits
+        {
+            typedef hash_int hash;
+            typedef simple_item_counter item_counter;
+            typedef ci::split_list::stat<> stat;
+            typedef cds::algo::bit_reversal::muldiv bit_reversal;
+        };
+        typedef ci::SplitListSet< gc_type, bucket_type, set_traits > set_type;
+
+        set_type s( kSize, 2 );
+        test( s );
+    }
+
+
     TEST_F( IntrusiveSplitListSet_NoGC, member_cmp )
     {
         typedef ci::MichaelList< gc_type

@@ -383,6 +383,7 @@
     <ClInclude Include="..\..\..\cds\algo\backoff_strategy.h" />
     <ClInclude Include="..\..\..\cds\algo\base.h" />
     <ClInclude Include="..\..\..\cds\algo\bitop.h" />
+    <ClInclude Include="..\..\..\cds\algo\bit_reversal.h" />
     <ClInclude Include="..\..\..\cds\algo\flat_combining\defs.h" />
     <ClInclude Include="..\..\..\cds\algo\flat_combining\kernel.h" />
     <ClInclude Include="..\..\..\cds\algo\flat_combining\wait_strategy.h" />

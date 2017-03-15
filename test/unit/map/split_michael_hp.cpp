@@ -253,4 +253,61 @@ namespace {
         test( m );
     }
 
+    TEST_F( SplitListMichaelMap_HP, bit_reversal_swar )
+    {
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
+            typename cc::split_list::make_traits<
+                cc::split_list::ordered_list< cc::michael_list_tag >
+                ,cc::split_list::bit_reversal< cds::algo::bit_reversal::swar >
+                , cds::opt::hash< hash1 >
+                , cc::split_list::ordered_list_traits<
+                    typename cc::michael_list::make_traits<
+                        cds::opt::compare< cmp >
+                    >::type
+                >
+            >::type
+        > map_type;
+
+        map_type m( kSize, 2 );
+        test( m );
+    }
+
+    TEST_F( SplitListMichaelMap_HP, bit_reversal_lookup )
+    {
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
+            typename cc::split_list::make_traits<
+                cc::split_list::ordered_list< cc::michael_list_tag >
+                ,cc::split_list::bit_reversal< cds::algo::bit_reversal::lookup >
+                , cds::opt::hash< hash1 >
+                , cc::split_list::ordered_list_traits<
+                    typename cc::michael_list::make_traits<
+                        cds::opt::compare< cmp >
+                    >::type
+                >
+            >::type
+        > map_type;
+
+        map_type m( kSize, 2 );
+        test( m );
+    }
+
+    TEST_F( SplitListMichaelMap_HP, bit_reversal_muldiv )
+    {
+        typedef cc::SplitListMap< gc_type, key_type, value_type,
+            typename cc::split_list::make_traits<
+                cc::split_list::ordered_list< cc::michael_list_tag >
+                ,cc::split_list::bit_reversal< cds::algo::bit_reversal::muldiv >
+                , cds::opt::hash< hash1 >
+                , cc::split_list::ordered_list_traits<
+                    typename cc::michael_list::make_traits<
+                        cds::opt::compare< cmp >
+                    >::type
+                >
+            >::type
+        > map_type;
+
+        map_type m( kSize, 2 );
+        test( m );
+    }
+
 } // namespace

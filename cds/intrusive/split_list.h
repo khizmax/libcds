@@ -273,6 +273,7 @@ namespace cds { namespace intrusive {
         /// Hash functor for \p %value_type and all its derivatives you use
         typedef typename cds::opt::v::hash_selector< typename traits::hash >::type hash;
 
+        typedef typename traits::bit_reversal      bit_reversal; ///< Bit reversal algorithm, see \p split_list::traits::bit_reversal
         typedef typename traits::item_counter      item_counter; ///< Item counter type
         typedef typename traits::back_off          back_off;     ///< back-off strategy for spinning
         typedef typename traits::memory_model      memory_model; ///< Memory ordering. See \p cds::opt::memory_model option
@@ -589,7 +590,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
+            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash<bit_reversal>( nHash );
 
             if ( m_List.insert_at( pHead, val )) {
                 inc_item_count();
@@ -627,7 +628,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
+            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash<bit_reversal>( nHash );
 
             if ( m_List.insert_at( pHead, val, f )) {
                 inc_item_count();
@@ -685,7 +686,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
+            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash<bit_reversal>( nHash );
 
             std::pair<bool, bool> bRet = m_List.update_at( pHead, val, func, bAllowInsert );
             if ( bRet.first && bRet.second ) {
@@ -732,7 +733,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
-            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash( nHash );
+            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash<bit_reversal>( nHash );
 
             std::pair<bool, bool> bRet = m_List.upsert_at( pHead, val, bAllowInsert );
             if ( bRet.first && bRet.second ) {
@@ -1213,7 +1214,7 @@ namespace cds { namespace intrusive {
                 if ( pBucket )
                     return pBucket;
 
-                pBucket = alloc_aux_node( split_list::dummy_hash( nBucket ));
+                pBucket = alloc_aux_node( split_list::dummy_hash<bit_reversal>( nBucket ));
                 if ( pBucket ) {
                     if ( m_List.insert_aux_node( pParentBucket, pBucket )) {
                         m_Buckets.bucket( nBucket, pBucket );
@@ -1265,7 +1266,7 @@ namespace cds { namespace intrusive {
                 "cds::atomicity::empty_item_counter is not allowed as a item counter");
 
             // Initialize bucket 0
-            aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash(0)*/ );
+            aux_node_type * pNode = alloc_aux_node( 0 /*split_list::dummy_hash<bit_reversal>(0)*/ );
             assert( pNode != nullptr );
 
             // insert_aux_node cannot return false for empty list
@@ -1305,7 +1306,7 @@ namespace cds { namespace intrusive {
         bool find_( Q& val, Compare cmp, Func f )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1319,7 +1320,7 @@ namespace cds { namespace intrusive {
         bool find_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1330,7 +1331,7 @@ namespace cds { namespace intrusive {
         iterator find_iterator_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1341,7 +1342,7 @@ namespace cds { namespace intrusive {
         guarded_ptr get_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1366,7 +1367,7 @@ namespace cds { namespace intrusive {
         bool erase_( Q const& val, Compare cmp, Func f )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1383,7 +1384,7 @@ namespace cds { namespace intrusive {
         bool erase_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const>  sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 
@@ -1400,7 +1401,7 @@ namespace cds { namespace intrusive {
         guarded_ptr extract_( Q const& val, Compare cmp )
         {
             size_t nHash = hash_value( val );
-            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash( nHash ));
+            split_list::details::search_value_type<Q const> sv( val, split_list::regular_hash<bit_reversal>( nHash ));
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
 

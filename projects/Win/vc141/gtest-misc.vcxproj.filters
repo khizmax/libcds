@@ -38,6 +38,9 @@
     <ClCompile Include="..\..\..\test\unit\misc\asan_errors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\misc\bit_reversal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\misc\cxx11_convert_memory_order.h">
