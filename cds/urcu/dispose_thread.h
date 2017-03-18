@@ -82,15 +82,15 @@ namespace cds { namespace urcu {
         condvar_type    m_cvDataReady;
 
         // Task for thread (dispose cycle)
-        atomics::atomic<buffer_type *>  m_pBuffer;
-        uint64_t volatile      m_nCurEpoch;
+        atomics::atomic<buffer_type *>  m_pBuffer{ nullptr };
+        uint64_t m_nCurEpoch = 0;
 
         // Quit flag
-        atomics::atomic<bool>  m_bQuit;
+        bool    m_bQuit = false;
 
         // disposing pass sync
-        condvar_type           m_cvReady;
-        atomics::atomic<bool>  m_bReady;
+        condvar_type        m_cvReady;
+        bool                m_bReady = false;
         //@endcond
 
     private: // methods called from disposing thread
@@ -106,7 +106,7 @@ namespace cds { namespace urcu {
                 // signal that we are ready to dispose
                 {
                     unique_lock lock( m_Mutex );
-                    m_bReady.store( true, atomics::memory_order_relaxed );
+                    m_bReady = true;
                 }
                 m_cvReady.notify_one();
 
@@ -118,9 +118,9 @@ namespace cds { namespace urcu {
                         m_cvDataReady.wait( lock );
 
                     // New work is ready
-                    m_bReady.store( false, atomics::memory_order_relaxed ); // we are busy
+                    m_bReady = false; // we are busy
 
-                    bQuit = m_bQuit.load( atomics::memory_order_relaxed );
+                    bQuit = m_bQuit;
                     nCurEpoch = m_nCurEpoch;
                     m_pBuffer.store( nullptr, atomics::memory_order_relaxed );
                 }
@@ -147,10 +147,7 @@ namespace cds { namespace urcu {
     public:
         //@cond
         dispose_thread()
-            : m_pBuffer( nullptr )
-            , m_nCurEpoch(0)
-            , m_bQuit( false )
-            , m_bReady( false )
+            //: m_pBuffer( nullptr )
         {}
         //@endcond
 
@@ -178,13 +175,13 @@ namespace cds { namespace urcu {
                 unique_lock lock( m_Mutex );
 
                 // wait while retiring pass done
-                while ( !m_bReady.load( atomics::memory_order_relaxed ))
+                while ( !m_bReady )
                     m_cvReady.wait( lock );
 
                 // give a new work and set stop flag
                 m_nCurEpoch = nCurEpoch;
                 m_pBuffer.store( &buf, atomics::memory_order_relaxed );
-                m_bQuit.store( true, atomics::memory_order_relaxed );
+                m_bQuit = true;
             }
             m_cvDataReady.notify_one();
 
@@ -208,11 +205,11 @@ namespace cds { namespace urcu {
                 unique_lock lock( m_Mutex );
 
                 // wait while disposing pass done
-                while ( !m_bReady.load( atomics::memory_order_relaxed ))
+                while ( !m_bReady )
                     m_cvReady.wait( lock );
 
                 // new work
-                m_bReady.store( false, atomics::memory_order_relaxed );
+                m_bReady = false;
                 m_nCurEpoch = nCurEpoch;
                 m_pBuffer.store( &buf, atomics::memory_order_relaxed );
             }
@@ -220,7 +217,7 @@ namespace cds { namespace urcu {
 
             if ( bSync ) {
                 unique_lock lock( m_Mutex );
-                while ( !m_bReady.load( atomics::memory_order_relaxed ))
+                while ( !m_bReady )
                     m_cvReady.wait( lock );
             }
         }
