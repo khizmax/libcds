@@ -54,8 +54,6 @@ namespace cds { namespace threading {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
             if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed() )
                 m_pSHBRCU = cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::attach_thread();
-            if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed() )
-                m_pSHTRCU = cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::attach_thread();
 #endif
         }
     }
@@ -84,10 +82,6 @@ namespace cds { namespace threading {
             if ( cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::isUsed() ) {
                 cds::urcu::details::singleton<cds::urcu::signal_buffered_tag>::detach_thread( m_pSHBRCU );
                 m_pSHBRCU = nullptr;
-            }
-            if ( cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::isUsed() ) {
-                cds::urcu::details::singleton<cds::urcu::signal_threaded_tag>::detach_thread( m_pSHTRCU );
-                m_pSHTRCU = nullptr;
             }
 #endif
             return true;

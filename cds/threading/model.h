@@ -69,12 +69,6 @@ namespace cds { namespace threading {
         ThreadData * p = Manager::thread_data();
         return p ? p->m_pSHBRCU : nullptr;
     }
-    template<>
-    inline cds::urcu::details::thread_data<cds::urcu::signal_threaded_tag> * getRCU<cds::urcu::signal_threaded_tag>()
-    {
-        ThreadData * p = Manager::thread_data();
-        return p ? p->m_pSHTRCU : nullptr;
-    }
 #endif
 
     static inline cds::algo::elimination::record& elimination_record()

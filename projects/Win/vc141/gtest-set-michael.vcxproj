@@ -49,7 +49,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\set\michael_michael_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_michael_michael_rcu.h" />

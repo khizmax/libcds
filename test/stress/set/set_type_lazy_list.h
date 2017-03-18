@@ -58,7 +58,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_cmp > LazyList_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_cmp > LazyList_RCU_SHB_cmp;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_cmp > LazyList_RCU_SHT_cmp;
 #endif
 
         struct traits_LazyList_cmp_stat : public traits_LazyList_cmp
@@ -72,7 +71,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_cmp_stat > LazyList_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_cmp_stat > LazyList_RCU_SHB_cmp_stat;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_cmp_stat > LazyList_RCU_SHT_cmp_stat;
 #endif
 
         struct traits_LazyList_cmp_seqcst :
@@ -88,7 +86,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_cmp_seqcst > LazyList_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_cmp_seqcst > LazyList_RCU_SHB_cmp_seqcst;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_cmp_seqcst > LazyList_RCU_SHT_cmp_seqcst;
 #endif
 
         struct traits_LazyList_less:
@@ -103,7 +100,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_less > LazyList_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_less > LazyList_RCU_SHB_less;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_less > LazyList_RCU_SHT_less;
 #endif
 
         struct traits_LazyList_less_stat: public traits_LazyList_less
@@ -117,7 +113,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_less_stat > LazyList_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_less_stat > LazyList_RCU_SHB_less_stat;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_less_stat > LazyList_RCU_SHT_less_stat;
 #endif
 
         struct traits_LazyList_less_seqcst :
@@ -133,7 +128,6 @@ namespace set {
         typedef cc::LazyList< rcu_gpt, key_val, traits_LazyList_less_seqcst > LazyList_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyList< rcu_shb, key_val, traits_LazyList_less_seqcst > LazyList_RCU_SHB_less_seqcst;
-        typedef cc::LazyList< rcu_sht, key_val, traits_LazyList_less_seqcst > LazyList_RCU_SHT_less_seqcst;
 #endif
 
     };

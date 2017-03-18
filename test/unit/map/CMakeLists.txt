@@ -12,7 +12,6 @@ set(UNIT_MAP_FELDMAN_SOURCES
     feldman_hashset_rcu_gpi.cpp
     feldman_hashset_rcu_gpt.cpp
     feldman_hashset_rcu_shb.cpp
-    feldman_hashset_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_FELDMAN} ${UNIT_MAP_FELDMAN_SOURCES})
 target_link_libraries(${UNIT_MAP_FELDMAN} ${CDS_TEST_LIBRARIES})
@@ -30,7 +29,6 @@ set(UNIT_MAP_MICHAEL_SOURCES
     michael_michael_rcu_gpi.cpp
     michael_michael_rcu_gpt.cpp
     michael_michael_rcu_shb.cpp
-    michael_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_MICHAEL} ${UNIT_MAP_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_MAP_MICHAEL} ${CDS_TEST_LIBRARIES})
@@ -60,7 +58,6 @@ set(UNIT_MAP_MICHAEL_LAZY_SOURCES
     michael_lazy_rcu_gpi.cpp
     michael_lazy_rcu_gpt.cpp
     michael_lazy_rcu_shb.cpp
-    michael_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_MICHAEL_LAZY} ${UNIT_MAP_MICHAEL_LAZY_SOURCES})
 target_link_libraries(${UNIT_MAP_MICHAEL_LAZY} ${CDS_TEST_LIBRARIES})
@@ -77,7 +74,6 @@ set(UNIT_MAP_SKIP_LIST_SOURCES
     skiplist_rcu_gpi.cpp
     skiplist_rcu_gpt.cpp
     skiplist_rcu_shb.cpp
-    skiplist_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_SKIP_LIST} ${UNIT_MAP_SKIP_LIST_SOURCES})
 target_link_libraries(${UNIT_MAP_SKIP_LIST} ${CDS_TEST_LIBRARIES})
@@ -94,7 +90,6 @@ set(UNIT_MAP_SPLIT_MICHAEL_SOURCES
     split_michael_rcu_gpi.cpp
     split_michael_rcu_gpt.cpp
     split_michael_rcu_shb.cpp
-    split_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_SPLIT_MICHAEL} ${UNIT_MAP_SPLIT_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_MAP_SPLIT_MICHAEL} ${CDS_TEST_LIBRARIES})
@@ -122,7 +117,6 @@ set(UNIT_MAP_SPLIT_LAZY_SOURCES
     split_lazy_rcu_gpi.cpp
     split_lazy_rcu_gpt.cpp
     split_lazy_rcu_shb.cpp
-    split_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_MAP_SPLIT_LAZY} ${UNIT_MAP_SPLIT_LAZY_SOURCES})
 target_link_libraries(${UNIT_MAP_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})

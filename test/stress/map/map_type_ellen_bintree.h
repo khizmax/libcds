@@ -115,11 +115,6 @@ namespace map {
                 typedef cc::ellen_bintree::internal_node< Key, leaf_node >          internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
-            struct sht {
-                typedef cc::ellen_bintree::map_node<rcu_sht, Key, Value>            leaf_node;
-                typedef cc::ellen_bintree::internal_node< Key, leaf_node >          internal_node;
-                typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
-            };
 #endif
         };
 
@@ -159,11 +154,6 @@ namespace map {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
         typedef EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_shb > EllenBinTreeMap_rcu_shb;
-
-        struct traits_EllenBinTreeMap_sht : traits_EllenBinTreeMap {
-            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
-        };
-        typedef EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_sht > EllenBinTreeMap_rcu_sht;
 #endif
 
         struct traits_EllenBinTreeMap_yield : public traits_EllenBinTreeMap
@@ -233,12 +223,6 @@ namespace map {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
         typedef EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_stat_shb > EllenBinTreeMap_rcu_shb_stat;
-
-        struct traits_EllenBinTreeMap_stat_sht : public traits_EllenBinTreeMap_stat
-        {
-            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
-        };
-        typedef EllenBinTreeMap< rcu_sht, Key, Value, traits_EllenBinTreeMap_stat_sht > EllenBinTreeMap_rcu_sht_stat;
 #endif
     };
 
@@ -294,19 +278,9 @@ namespace map {
     }
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#   if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
-#       define CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
-            CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht,        key_type, value_type ) \
-            CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_sht_stat,   key_type, value_type ) \
-
-#   else
-#       define CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type )
-#   endif
-
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb,        key_type, value_type ) \
         CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_shb_stat,   key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_EllenBinTreeMap_SHRCU( fixture, test_case, key_type, value_type )

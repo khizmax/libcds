@@ -129,11 +129,6 @@ namespace set {
                 typedef cc::ellen_bintree::internal_node< key_type, leaf_node >     internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
-            struct sht {
-                typedef cc::ellen_bintree::node<rcu_sht, key_val>                   leaf_node;
-                typedef cc::ellen_bintree::internal_node< key_type, leaf_node >     internal_node;
-                typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
-            };
 #endif
         };
 
@@ -180,12 +175,6 @@ namespace set {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
         typedef EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_shb > EllenBinTreeSet_rcu_shb;
-
-        struct traits_EllenBinTreeSet_sht : public traits_EllenBinTreeSet
-        {
-            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
-        };
-        typedef EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_sht > EllenBinTreeSet_rcu_sht;
 #endif
 
         //
@@ -258,12 +247,6 @@ namespace set {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::shb::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
         typedef EllenBinTreeSet< rcu_shb, key_type, key_val, traits_EllenBinTreeSet_stat_shb > EllenBinTreeSet_rcu_shb_stat;
-
-        struct traits_EllenBinTreeSet_stat_sht : public traits_EllenBinTreeSet_stat
-        {
-            typedef cds::memory::pool_allocator< typename ellen_bintree_props::sht::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
-        };
-        typedef EllenBinTreeSet< rcu_sht, key_type, key_val, traits_EllenBinTreeSet_stat_sht > EllenBinTreeSet_rcu_sht_stat;
 #endif
 
     };
@@ -299,16 +282,6 @@ namespace set {
         //typedef EllenBinTreeSet<GC, Key, T, Traits> set_type;
         GC::force_dispose();
         ellen_bintree_check::check_stat( s.statistics());
-/*
-        bool const threaded_rcu = std::is_same<typename set_type::rcu_tag, cds::urcu::general_threaded_tag >::value
-#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-            || std::is_same<typename set_type::rcu_tag, signal_threaded_tag >::value
-#endif
-;
-        if ( !threaded_rcu ) {
-            EXPECT_EQ( ellen_bintree_pool::internal_node_counter::m_nAlloc.get(), ellen_bintree_pool::internal_node_counter::m_nFree.get());
-        }
-*/
     }
 
     template <typename GC, typename Key, typename T, typename Traits>
@@ -334,9 +307,8 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_shb,      key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_sht,      key_type, value_type ) \
         CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_shb_stat, key_type, value_type ) \
-        CDSSTRESS_EllenBinTreeSet_case( fixture, test_case, EllenBinTreeSet_rcu_sht_stat, key_type, value_type )
+
 #else
 #   define CDSSTRESS_EllenBinTreeSet_SHRCU( fixture, test_case, key_type, value_type )
 #endif

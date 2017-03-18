@@ -267,10 +267,6 @@ namespace {
     CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_shb_max_stat )
     CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_shb_min )
     CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_shb_min_stat )
-    CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_sht_max )
-    CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_sht_max_stat )
-    CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_sht_min )
-    CDSSTRESS_PriorityQueue( pqueue_pop, EllenBinTree_RCU_sht_min_stat )
 #endif
 
     CDSSTRESS_PriorityQueue( pqueue_pop, SkipList_HP_max )
@@ -290,8 +286,6 @@ namespace {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     CDSSTRESS_PriorityQueue( pqueue_pop, SkipList_RCU_shb_max )
     CDSSTRESS_PriorityQueue( pqueue_pop, SkipList_RCU_shb_min )
-    CDSSTRESS_PriorityQueue( pqueue_pop, SkipList_RCU_sht_max )
-    CDSSTRESS_PriorityQueue( pqueue_pop, SkipList_RCU_sht_min )
 #endif
 
     CDSSTRESS_PriorityQueue( pqueue_pop, StdPQueue_vector_spin )

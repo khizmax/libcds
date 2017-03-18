@@ -58,7 +58,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_cmp > MichaelList_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_cmp > MichaelList_RCU_SHB_cmp;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_cmp > MichaelList_RCU_SHT_cmp;
 #endif
 
         struct traits_MichaelList_cmp_stat: public traits_MichaelList_cmp
@@ -72,7 +71,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_cmp_stat > MichaelList_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_cmp_stat > MichaelList_RCU_SHB_cmp_stat;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_cmp_stat > MichaelList_RCU_SHT_cmp_stat;
 #endif
 
         struct traits_MichaelList_cmp_seqcst : public traits_MichaelList_cmp
@@ -86,7 +84,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_cmp_seqcst > MichaelList_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_cmp_seqcst > MichaelList_RCU_SHB_cmp_seqcst;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_cmp_seqcst > MichaelList_RCU_SHT_cmp_seqcst;
 #endif
 
         struct traits_MichaelList_less :
@@ -101,7 +98,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_less > MichaelList_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_less > MichaelList_RCU_SHB_less;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_less > MichaelList_RCU_SHT_less;
 #endif
 
         struct traits_MichaelList_less_stat : public traits_MichaelList_less
@@ -115,7 +111,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_less_stat > MichaelList_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_less_stat > MichaelList_RCU_SHB_less_stat;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_less_stat > MichaelList_RCU_SHT_less_stat;
 #endif
 
         struct traits_MichaelList_less_seqcst :
@@ -131,7 +126,6 @@ namespace set {
         typedef cc::MichaelList< rcu_gpt, key_val, traits_MichaelList_less_seqcst > MichaelList_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelList< rcu_shb, key_val, traits_MichaelList_less_seqcst > MichaelList_RCU_SHB_less_seqcst;
-        typedef cc::MichaelList< rcu_sht, key_val, traits_MichaelList_less_seqcst > MichaelList_RCU_SHT_less_seqcst;
 #endif
 
     };

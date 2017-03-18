@@ -55,7 +55,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_gpb.cpp">
@@ -83,7 +82,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_update_desc_pool.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_hp.cpp" />
@@ -112,7 +110,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\tree\test_ellen_bintree_map_rcu.h" />

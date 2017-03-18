@@ -14,7 +14,6 @@ set(UNIT_ISET_FELDMAN_SOURCES
     intrusive_feldman_hashset_rcu_gpi.cpp
     intrusive_feldman_hashset_rcu_gpt.cpp
     intrusive_feldman_hashset_rcu_shb.cpp
-    intrusive_feldman_hashset_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_FELDMAN} ${UNIT_ISET_FELDMAN_SOURCES})
 target_link_libraries(${UNIT_ISET_FELDMAN} ${CDS_TEST_LIBRARIES})
@@ -32,7 +31,6 @@ set(UNIT_ISET_MICHAEL_SOURCES
     intrusive_michael_michael_rcu_gpi.cpp
     intrusive_michael_michael_rcu_gpt.cpp
     intrusive_michael_michael_rcu_shb.cpp
-    intrusive_michael_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_MICHAEL} ${UNIT_ISET_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_ISET_MICHAEL} ${CDS_TEST_LIBRARIES})
@@ -49,7 +47,6 @@ set(UNIT_ISET_MICHAEL_LAZY_SOURCES
     intrusive_michael_lazy_rcu_gpi.cpp
     intrusive_michael_lazy_rcu_gpt.cpp
     intrusive_michael_lazy_rcu_shb.cpp
-    intrusive_michael_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_MICHAEL_LAZY} ${UNIT_ISET_MICHAEL_LAZY_SOURCES})
 target_link_libraries(${UNIT_ISET_MICHAEL_LAZY} ${CDS_TEST_LIBRARIES})
@@ -77,7 +74,6 @@ set(UNIT_ISET_SKIP_SOURCES
     intrusive_skiplist_rcu_gpi.cpp
     intrusive_skiplist_rcu_gpt.cpp
     intrusive_skiplist_rcu_shb.cpp
-    intrusive_skiplist_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_SKIP} ${UNIT_ISET_SKIP_SOURCES})
 target_link_libraries(${UNIT_ISET_SKIP} ${CDS_TEST_LIBRARIES})
@@ -94,7 +90,6 @@ set(UNIT_ISET_SPLIT_MICHAEL_SOURCES
     intrusive_split_michael_rcu_gpi.cpp
     intrusive_split_michael_rcu_gpt.cpp
     intrusive_split_michael_rcu_shb.cpp
-    intrusive_split_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_SPLIT_MICHAEL} ${UNIT_ISET_SPLIT_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_ISET_SPLIT_MICHAEL} ${CDS_TEST_LIBRARIES})
@@ -111,7 +106,6 @@ set(UNIT_ISET_SPLIT_LAZY_SOURCES
     intrusive_split_lazy_rcu_gpi.cpp
     intrusive_split_lazy_rcu_gpt.cpp
     intrusive_split_lazy_rcu_shb.cpp
-    intrusive_split_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_ISET_SPLIT_LAZY} ${UNIT_ISET_SPLIT_LAZY_SOURCES})
 target_link_libraries(${UNIT_ISET_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})

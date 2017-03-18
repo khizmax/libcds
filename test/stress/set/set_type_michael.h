@@ -102,7 +102,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp, traits_MichaelSet > MichaelSet_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp, traits_MichaelSet > MichaelSet_RCU_SHB_cmp;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp, traits_MichaelSet > MichaelSet_RCU_SHT_cmp;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_cmp_stat, traits_MichaelSet > MichaelSet_HP_cmp_stat;
@@ -112,7 +111,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stat, traits_MichaelSet > MichaelSet_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stat, traits_MichaelSet > MichaelSet_RCU_SHB_cmp_stat;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stat, traits_MichaelSet > MichaelSet_RCU_SHT_cmp_stat;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less, traits_MichaelSet > MichaelSet_HP_less;
@@ -122,7 +120,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less, traits_MichaelSet > MichaelSet_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less, traits_MichaelSet > MichaelSet_RCU_SHB_less;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less, traits_MichaelSet > MichaelSet_RCU_SHT_less;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_stat, traits_MichaelSet > MichaelSet_HP_less_stat;
@@ -132,7 +129,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stat, traits_MichaelSet > MichaelSet_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stat, traits_MichaelSet > MichaelSet_RCU_SHB_less_stat;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stat, traits_MichaelSet > MichaelSet_RCU_SHT_less_stat;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ml::MichaelList_HP_less_seqcst, traits_MichaelSet > MichaelSet_HP_less_seqcst;
@@ -142,7 +138,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_seqcst, traits_MichaelSet > MichaelSet_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ml::MichaelList_RCU_SHB_less_seqcst, traits_MichaelSet > MichaelSet_RCU_SHB_less_seqcst;
-        typedef MichaelHashSet< rcu_sht, typename ml::MichaelList_RCU_SHT_less_seqcst, traits_MichaelSet > MichaelSet_RCU_SHT_less_seqcst;
 #endif
 
 
@@ -158,7 +153,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_cmp;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_cmp;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_HP_cmp_stat;
@@ -168,7 +162,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_cmp_stat;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_cmp_stat;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less, traits_MichaelSet > MichaelSet_Lazy_HP_less;
@@ -178,7 +171,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_stat, traits_MichaelSet > MichaelSet_Lazy_HP_less_stat;
@@ -188,7 +180,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less_stat;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_stat, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less_stat;
 #endif
 
         typedef MichaelHashSet< cds::gc::HP, typename ll::LazyList_HP_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_HP_less_seqcst;
@@ -198,7 +189,6 @@ namespace set {
         typedef MichaelHashSet< rcu_gpt, typename ll::LazyList_RCU_GPT_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less_seqcst;
-        typedef MichaelHashSet< rcu_sht, typename ll::LazyList_RCU_SHT_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_SHT_less_seqcst;
 #endif
 
 

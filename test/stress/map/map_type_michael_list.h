@@ -61,7 +61,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp > MichaelList_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp > MichaelList_RCU_SHB_cmp;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp > MichaelList_RCU_SHT_cmp;
 #endif
 
         struct traits_MichaelList_cmp_stat : public traits_MichaelList_cmp
@@ -76,7 +75,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp_stat > MichaelList_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp_stat > MichaelList_RCU_SHB_cmp_stat;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp_stat > MichaelList_RCU_SHT_cmp_stat;
 #endif
 
         struct traits_MichaelList_cmp_seqcst :
@@ -93,7 +91,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_cmp_seqcst > MichaelList_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_cmp_seqcst > MichaelList_RCU_SHB_cmp_seqcst;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_cmp_seqcst > MichaelList_RCU_SHT_cmp_seqcst;
 #endif
 
         struct traits_MichaelList_less :
@@ -109,7 +106,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less > MichaelList_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less > MichaelList_RCU_SHB_less;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less > MichaelList_RCU_SHT_less;
 #endif
 
         struct traits_MichaelList_less_stat: public traits_MichaelList_less
@@ -124,7 +120,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less_stat > MichaelList_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less_stat > MichaelList_RCU_SHB_less_stat;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less_stat > MichaelList_RCU_SHT_less_stat;
 #endif
 
         struct traits_MichaelList_less_seqcst :
@@ -141,7 +136,6 @@ namespace map {
         typedef cc::MichaelKVList< rcu_gpt, Key, Value, traits_MichaelList_less_seqcst > MichaelList_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::MichaelKVList< rcu_shb, Key, Value, traits_MichaelList_less_seqcst > MichaelList_RCU_SHB_less_seqcst;
-        typedef cc::MichaelKVList< rcu_sht, Key, Value, traits_MichaelList_less_seqcst > MichaelList_RCU_SHT_less_seqcst;
 #endif
 
     };

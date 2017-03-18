@@ -34,7 +34,6 @@
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\set\feldman_hashset_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\set\test_feldman_hashset.h" />

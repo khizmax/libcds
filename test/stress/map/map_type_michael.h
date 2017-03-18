@@ -100,7 +100,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_cmp_stat, traits_MichaelMap_hash > MichaelMap_HP_cmp_stat;
@@ -111,7 +110,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp_stat;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_less, traits_MichaelMap_hash > MichaelMap_HP_less;
@@ -122,7 +120,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_less, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_less, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_less, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_less_stat, traits_MichaelMap_hash > MichaelMap_HP_less_stat;
@@ -133,7 +130,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_stat, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_less_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_stat;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_less_stat, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_HP_cmp_seqcst;
@@ -144,7 +140,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHB_cmp_seqcst;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHT_cmp_seqcst;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ml::MichaelList_HP_less_seqcst, traits_MichaelMap_hash > MichaelMap_HP_less_seqcst;
@@ -155,7 +150,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ml::MichaelList_RCU_GPT_less_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ml::MichaelList_RCU_SHB_less_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHB_less_seqcst;
-        typedef MichaelHashMap< rcu_sht, typename ml::MichaelList_RCU_SHT_less_seqcst, traits_MichaelMap_hash > MichaelMap_RCU_SHT_less_seqcst;
 #endif
 
 
@@ -171,7 +165,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_cmp, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_cmp, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_cmp_stat, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_stat;
@@ -182,7 +175,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_stat;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::nogc, typename ll::LazyList_NOGC_unord, traits_MichaelMap_hash > MichaelMap_Lazy_NOGC_unord;
@@ -195,7 +187,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_less, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_less_stat, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_stat;
@@ -206,7 +197,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_less_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_stat;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less_stat, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_stat;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_HP_cmp_seqcst;
@@ -217,7 +207,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_cmp_seqcst;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_cmp_seqcst;
 #endif
 
         typedef MichaelHashMap< cds::gc::HP, typename ll::LazyList_HP_less_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_HP_less_seqcst;
@@ -228,7 +217,6 @@ namespace map {
         typedef MichaelHashMap< rcu_gpt, typename ll::LazyList_RCU_GPT_less_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_seqcst;
-        typedef MichaelHashMap< rcu_sht, typename ll::LazyList_RCU_SHT_less_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHT_less_seqcst;
 #endif
 
 

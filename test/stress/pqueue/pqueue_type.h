@@ -35,7 +35,6 @@
 #include <cds/urcu/general_buffered.h>
 #include <cds/urcu/general_threaded.h>
 #include <cds/urcu/signal_buffered.h>
-#include <cds/urcu/signal_threaded.h>
 
 #include <cds/container/mspriority_queue.h>
 #include <cds/container/fcpriority_queue.h>
@@ -357,7 +356,6 @@ namespace pqueue {
         typedef cds::urcu::gc< cds::urcu::general_threaded<> >  rcu_gpt;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cds::urcu::gc< cds::urcu::signal_buffered<> >  rcu_shb;
-        typedef cds::urcu::gc< cds::urcu::signal_threaded<> >  rcu_sht;
 #endif
 
 
@@ -437,7 +435,6 @@ namespace pqueue {
         typedef details::EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_gpt_max;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_shb_max;
-        typedef details::EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_max > EllenBinTree_RCU_sht_max;
 #endif
 
         struct traits_EllenBinTree_max_stat :
@@ -454,7 +451,6 @@ namespace pqueue {
         typedef details::EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_gpt_max_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_shb_max_stat;
-        typedef details::EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_max_stat > EllenBinTree_RCU_sht_max_stat;
 #endif
 
         struct traits_EllenBinTree_min :
@@ -470,7 +466,6 @@ namespace pqueue {
         typedef details::EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_gpt_min;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_shb_min;
-        typedef details::EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_min, false > EllenBinTree_RCU_sht_min;
 #endif
 
         struct traits_EllenBinTree_min_stat :
@@ -487,7 +482,6 @@ namespace pqueue {
         typedef details::EllenBinTreePQueue< rcu_gpt, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_gpt_min_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::EllenBinTreePQueue< rcu_shb, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_shb_min_stat;
-        typedef details::EllenBinTreePQueue< rcu_sht, typename Value::key_type, Value, traits_EllenBinTree_min_stat, false > EllenBinTree_RCU_sht_min_stat;
 #endif
 
         // Priority queue based on SkipListSet
@@ -503,7 +497,6 @@ namespace pqueue {
         typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max > SkipList_RCU_gpt_max;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max > SkipList_RCU_shb_max;
-        typedef details::SkipListPQueue< rcu_sht, Value, traits_SkipList_max > SkipList_RCU_sht_max;
 #endif
 
         struct traits_SkipList_max_stat :
@@ -519,7 +512,6 @@ namespace pqueue {
         typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max_stat > SkipList_RCU_gpt_max_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max_stat > SkipList_RCU_shb_max_stat;
-        typedef details::SkipListPQueue< rcu_sht, Value, traits_SkipList_max_stat > SkipList_RCU_sht_max_stat;
 #endif
 
         struct traits_SkipList_min :
@@ -534,7 +526,6 @@ namespace pqueue {
         typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min, false > SkipList_RCU_gpt_min;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min, false > SkipList_RCU_shb_min;
-        typedef details::SkipListPQueue< rcu_sht, Value, traits_SkipList_min, false > SkipList_RCU_sht_min;
 #endif
 
         struct traits_SkipList_min_stat :
@@ -550,7 +541,6 @@ namespace pqueue {
         typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpt_min_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min_stat, false > SkipList_RCU_shb_min_stat;
-        typedef details::SkipListPQueue< rcu_sht, Value, traits_SkipList_min_stat, false > SkipList_RCU_sht_min_stat;
 #endif
 
 

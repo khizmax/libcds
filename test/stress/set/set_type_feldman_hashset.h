@@ -195,7 +195,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<std::hash<key_type>>, default_traits >    FeldmanHashSet_rcu_gpt_stdhash;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<std::hash<key_type>>, default_traits >    FeldmanHashSet_rcu_shb_stdhash;
-        typedef FeldmanHashSet< rcu_sht, key_val<std::hash<key_type>>, default_traits >    FeldmanHashSet_rcu_sht_stdhash;
 #endif
 
         struct traits_FeldmanHashSet_stat: public cc::feldman_hashset::make_traits<
@@ -211,7 +210,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<std::hash<key_type>>, traits_FeldmanHashSet_stat >    FeldmanHashSet_rcu_gpt_stdhash_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<std::hash<key_type>>, traits_FeldmanHashSet_stat >    FeldmanHashSet_rcu_shb_stdhash_stat;
-        typedef FeldmanHashSet< rcu_sht, key_val<std::hash<key_type>>, traits_FeldmanHashSet_stat >    FeldmanHashSet_rcu_sht_stdhash_stat;
 #endif
 
         // CityHash
@@ -227,7 +225,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64 >    FeldmanHashSet_rcu_gpt_city64;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64 >    FeldmanHashSet_rcu_shb_city64;
-        typedef FeldmanHashSet< rcu_sht, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64 >    FeldmanHashSet_rcu_sht_city64;
 #endif
 
         struct traits_FeldmanHashSet_city64_stat : public traits_FeldmanHashSet_city64
@@ -241,7 +238,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64_stat >    FeldmanHashSet_rcu_gpt_city64_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64_stat >    FeldmanHashSet_rcu_shb_city64_stat;
-        typedef FeldmanHashSet< rcu_sht, key_val<::cds_test::city64>, traits_FeldmanHashSet_city64_stat >    FeldmanHashSet_rcu_sht_city64_stat;
 #endif
 
         struct traits_FeldmanHashSet_city128 : public default_traits
@@ -255,7 +251,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128 >    FeldmanHashSet_rcu_gpt_city128;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128 >    FeldmanHashSet_rcu_shb_city128;
-        typedef FeldmanHashSet< rcu_sht, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128 >    FeldmanHashSet_rcu_sht_city128;
 #endif
 
         struct traits_FeldmanHashSet_city128_stat : public traits_FeldmanHashSet_city128
@@ -269,7 +264,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128_stat >    FeldmanHashSet_rcu_gpt_city128_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128_stat >    FeldmanHashSet_rcu_shb_city128_stat;
-        typedef FeldmanHashSet< rcu_sht, key_val<::cds_test::city128>, traits_FeldmanHashSet_city128_stat >    FeldmanHashSet_rcu_sht_city128_stat;
 #endif
 
 #endif // #if CDS_BUILD_BITS == 64
@@ -344,7 +338,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    FeldmanHashSet_rcu_gpt_fixed;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    FeldmanHashSet_rcu_shb_fixed;
-        typedef FeldmanHashSet< rcu_sht, typename fixed_sized_key::key_val, typename fixed_sized_key::traits >    FeldmanHashSet_rcu_sht_fixed;
 #endif
 
         typedef FeldmanHashSet< cds::gc::HP, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    FeldmanHashSet_hp_fixed_stat;
@@ -354,7 +347,6 @@ namespace set {
         typedef FeldmanHashSet< rcu_gpt, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    FeldmanHashSet_rcu_gpt_fixed_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef FeldmanHashSet< rcu_shb, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    FeldmanHashSet_rcu_shb_fixed_stat;
-        typedef FeldmanHashSet< rcu_sht, typename fixed_sized_key::key_val, typename fixed_sized_key::traits_stat >    FeldmanHashSet_rcu_sht_fixed_stat;
 #endif
 
     };
@@ -380,26 +372,19 @@ namespace set {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_FeldmanHashSet_fixed_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_fixed,      key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_fixed,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_fixed_stat, key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_fixed_stat, key_type, value_type )
 
 #   define CDSSTRESS_FeldmanHashSet_stdhash_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_stdhash,      key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_stdhash,      key_type, value_type ) \
         CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_stdhash_stat, key_type, value_type ) \
-        CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_stdhash_stat, key_type, value_type )
 
 #   if CDS_BUILD_BITS == 64
 #       define CDSSTRESS_FeldmanHashSet_city_SHRCU( fixture, test_case, key_type, value_type ) \
             CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_city64,       key_type, value_type ) \
-            CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_city64,       key_type, value_type ) \
             CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_city64_stat,  key_type, value_type ) \
-            CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_city64_stat,  key_type, value_type ) \
             CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_city128,      key_type, value_type ) \
-            CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_city128,      key_type, value_type ) \
             CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_shb_city128_stat, key_type, value_type ) \
-            CDSSTRESS_FeldmanHashSet_case( fixture, test_case, FeldmanHashSet_rcu_sht_city128_stat, key_type, value_type )
+
 #   else
 #       define CDSSTRESS_FeldmanHashSet_city_SHRCU( fixture, test_case, key_type, value_type )
 #   endif

@@ -38,7 +38,6 @@
 #   include <cds/urcu/general_buffered.h>
 #   include <cds/urcu/general_threaded.h>
 #   include <cds/urcu/signal_buffered.h>
-#   include <cds/urcu/signal_threaded.h>
 #endif
 
 #ifdef CDS_ENABLE_HPSTAT
@@ -90,9 +89,6 @@ int main( int argc, char **argv )
 #   ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cds::urcu::gc< cds::urcu::signal_buffered<> >    rcu_shb;
         rcu_shb   shbRCU( rcu_buffer_size, SIGUSR1 );
-
-        typedef cds::urcu::gc< cds::urcu::signal_threaded<> >    rcu_sht;
-        rcu_sht   shtRCU( rcu_buffer_size, SIGUSR2 );
 #   endif
 #endif // CDSUNIT_USE_URCU
 

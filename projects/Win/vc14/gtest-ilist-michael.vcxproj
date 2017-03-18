@@ -34,7 +34,6 @@
     <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_michael_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
   </ItemGroup>
   <ItemGroup>

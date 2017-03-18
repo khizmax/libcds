@@ -80,7 +80,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_less_pascal > SkipListSet_rcu_gpt_less_pascal;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_less_pascal > SkipListSet_rcu_shb_less_pascal;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_less_pascal > SkipListSet_rcu_sht_less_pascal;
 #endif
 
         class traits_SkipListSet_less_pascal_seqcst: public cc::skip_list::make_traits <
@@ -97,7 +96,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_less_pascal_seqcst > SkipListSet_rcu_gpt_less_pascal_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_less_pascal_seqcst > SkipListSet_rcu_shb_less_pascal_seqcst;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_less_pascal_seqcst > SkipListSet_rcu_sht_less_pascal_seqcst;
 #endif
 
         class traits_SkipListSet_less_pascal_stat: public cc::skip_list::make_traits <
@@ -114,7 +112,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_less_pascal_stat > SkipListSet_rcu_gpt_less_pascal_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_less_pascal_stat > SkipListSet_rcu_shb_less_pascal_stat;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_less_pascal_stat > SkipListSet_rcu_sht_less_pascal_stat;
 #endif
 
         class traits_SkipListSet_cmp_pascal: public cc::skip_list::make_traits <
@@ -130,7 +127,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_cmp_pascal > SkipListSet_rcu_gpt_cmp_pascal;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_cmp_pascal > SkipListSet_rcu_shb_cmp_pascal;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_cmp_pascal > SkipListSet_rcu_sht_cmp_pascal;
 #endif
 
         class traits_SkipListSet_cmp_pascal_stat: public cc::skip_list::make_traits <
@@ -147,7 +143,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_cmp_pascal_stat > SkipListSet_rcu_gpt_cmp_pascal_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_cmp_pascal_stat > SkipListSet_rcu_shb_cmp_pascal_stat;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_cmp_pascal_stat > SkipListSet_rcu_sht_cmp_pascal_stat;
 #endif
 
         class traits_SkipListSet_less_xorshift: public cc::skip_list::make_traits <
@@ -163,7 +158,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_less_xorshift > SkipListSet_rcu_gpt_less_xorshift;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_less_xorshift > SkipListSet_rcu_shb_less_xorshift;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_less_xorshift > SkipListSet_rcu_sht_less_xorshift;
 #endif
 
         class traits_SkipListSet_less_xorshift_stat: public cc::skip_list::make_traits <
@@ -180,7 +174,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_less_xorshift_stat > SkipListSet_rcu_gpt_less_xorshift_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_less_xorshift_stat > SkipListSet_rcu_shb_less_xorshift_stat;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_less_xorshift_stat > SkipListSet_rcu_sht_less_xorshift_stat;
 #endif
 
         class traits_SkipListSet_cmp_xorshift: public cc::skip_list::make_traits <
@@ -196,7 +189,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_cmp_xorshift > SkipListSet_rcu_gpt_cmp_xorshift;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_cmp_xorshift > SkipListSet_rcu_shb_cmp_xorshift;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_cmp_xorshift > SkipListSet_rcu_sht_cmp_xorshift;
 #endif
 
         class traits_SkipListSet_cmp_xorshift_stat: public cc::skip_list::make_traits <
@@ -213,7 +205,6 @@ namespace set {
         typedef SkipListSet< rcu_gpt, key_val, traits_SkipListSet_cmp_xorshift_stat > SkipListSet_rcu_gpt_cmp_xorshift_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SkipListSet< rcu_shb, key_val, traits_SkipListSet_cmp_xorshift_stat > SkipListSet_rcu_shb_cmp_xorshift_stat;
-        typedef SkipListSet< rcu_sht, key_val, traits_SkipListSet_cmp_xorshift_stat > SkipListSet_rcu_sht_cmp_xorshift_stat;
 #endif
     };
 
@@ -237,7 +228,6 @@ namespace set {
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 1
 #   define CDSSTRESS_SkipListSet_SHRCU_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_less_pascal_seqcst, key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_less_pascal_seqcst, key_type, value_type) \
 
 #else
 #   define CDSSTRESS_SkipListSet_SHRCU_2( fixture, test_case, key_type, value_type )
@@ -245,13 +235,9 @@ namespace set {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
 #   define CDSSTRESS_SkipListSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_less_pascal,        key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_less_pascal_stat,   key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_cmp_pascal,         key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_cmp_pascal_stat,    key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_less_xorshift,      key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_less_xorshift_stat, key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_cmp_xorshift,       key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_cmp_xorshift_stat,  key_type, value_type) \
 
 #else
@@ -261,13 +247,9 @@ namespace set {
 
 #   define CDSSTRESS_SkipListSet_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_less_pascal,        key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_less_pascal_stat,   key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_cmp_pascal,         key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_cmp_pascal_stat,    key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_less_xorshift,      key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_less_xorshift_stat, key_type, value_type) \
         CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_shb_cmp_xorshift,       key_type, value_type) \
-        CDSSTRESS_SkipListSet_case( fixture, test_case, SkipListSet_rcu_sht_cmp_xorshift_stat,  key_type, value_type) \
         CDSSTRESS_SkipListSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListSet_SHRCU_2( fixture, test_case, key_type, value_type ) \
 

@@ -862,16 +862,10 @@
     <ClInclude Include="..\..\..\cds\urcu\details\sig_buffered.h">
       <Filter>Header Files\cds\urcu\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\urcu\details\sig_threaded.h">
-      <Filter>Header Files\cds\urcu\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\urcu\dispose_thread.h">
       <Filter>Header Files\cds\urcu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h">
-      <Filter>Header Files\cds\urcu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h">
       <Filter>Header Files\cds\urcu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\details\ellen_bintree_base.h">

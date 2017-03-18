@@ -594,7 +594,6 @@
     <ClInclude Include="..\..\..\cds\urcu\details\sh.h" />
     <ClInclude Include="..\..\..\cds\urcu\details\sh_decl.h" />
     <ClInclude Include="..\..\..\cds\urcu\details\sig_buffered.h" />
-    <ClInclude Include="..\..\..\cds\urcu\details\sig_threaded.h" />
     <ClInclude Include="..\..\..\cds\urcu\exempt_ptr.h" />
     <ClInclude Include="..\..\..\cds\urcu\dispose_thread.h" />
     <ClInclude Include="..\..\..\cds\urcu\general_buffered.h" />
@@ -603,7 +602,6 @@
     <ClInclude Include="..\..\..\cds\urcu\options.h" />
     <ClInclude Include="..\..\..\cds\urcu\raw_ptr.h" />
     <ClInclude Include="..\..\..\cds\urcu\signal_buffered.h" />
-    <ClInclude Include="..\..\..\cds\urcu\signal_threaded.h" />
     <ClInclude Include="..\..\..\cds\init.h" />
     <ClInclude Include="..\..\..\cds\version.h" />
     <ClInclude Include="..\..\..\cds\details\aligned_allocator.h" />

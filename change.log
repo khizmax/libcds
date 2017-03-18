@@ -21,6 +21,8 @@
     - Added: erase_at( iterator ) function to MichaelHashSet/Map and SplitListSet/Map
       based on IterableList
     - Fixed a bug in BronsonAVLTreeMap::extract_min()/extract_max()/clear().
+    - Removed: signal-handled threaded uRCU (cds::urcu::signal_threaded) due
+      bad performance
     - Added more flat-combining queue tests, thanks to Marsel Galimullin.
     - Changed cmake scripts to support MacOS and ARMv7/ARMv8 (64 bit),
       thanks to Michail Komarov (https://github.com/Nemo1369)

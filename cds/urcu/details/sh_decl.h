@@ -56,7 +56,6 @@ namespace cds { namespace urcu { namespace details {
     }
 
     CDS_SHURCU_DECLARE_THREAD_DATA( signal_buffered_tag );
-    CDS_SHURCU_DECLARE_THREAD_DATA( signal_threaded_tag );
 
 #   undef CDS_SHURCU_DECLARE_THREAD_DATA
 
@@ -67,7 +66,6 @@ namespace cds { namespace urcu { namespace details {
     };
 #if CDS_COMPILER != CDS_COMPILER_MSVC
     template<> CDS_EXPORT_API singleton_vtbl * sh_singleton_instance< signal_buffered_tag >::s_pRCU;
-    template<> CDS_EXPORT_API singleton_vtbl * sh_singleton_instance< signal_threaded_tag >::s_pRCU;
 #endif
 
     template <typename SigRCUtag>
@@ -117,7 +115,6 @@ namespace cds { namespace urcu { namespace details {
 #   define CDS_SH_RCU_DECLARE_THREAD_GC( tag_ ) template <> class thread_gc<tag_>: public sh_thread_gc<tag_> {}
 
     CDS_SH_RCU_DECLARE_THREAD_GC( signal_buffered_tag  );
-    CDS_SH_RCU_DECLARE_THREAD_GC( signal_threaded_tag );
 
 #   undef CDS_SH_RCU_DECLARE_THREAD_GC
 
@@ -222,7 +219,6 @@ namespace cds { namespace urcu { namespace details {
     }
 
     CDS_SIGRCU_DECLARE_SINGLETON( signal_buffered_tag  );
-    CDS_SIGRCU_DECLARE_SINGLETON( signal_threaded_tag );
 
 #   undef CDS_SIGRCU_DECLARE_SINGLETON
 

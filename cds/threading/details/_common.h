@@ -136,7 +136,6 @@ namespace cds {
             cds::urcu::details::thread_data< cds::urcu::general_threaded_tag > *    m_pGPTRCU;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
             cds::urcu::details::thread_data< cds::urcu::signal_buffered_tag > *    m_pSHBRCU;
-            cds::urcu::details::thread_data< cds::urcu::signal_threaded_tag > *    m_pSHTRCU;
 #endif
 
             //@endcond
@@ -162,7 +161,6 @@ namespace cds {
                 , m_pGPTRCU( nullptr )
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
                 , m_pSHBRCU( nullptr )
-                , m_pSHTRCU( nullptr )
 #endif
                 , m_nFakeProcessorNumber( s_nLastUsedProcNo.fetch_add(1, atomics::memory_order_relaxed) % s_nProcCount )
                 , m_nAttachCount(0)
@@ -175,7 +173,6 @@ namespace cds {
                 assert( m_pGPTRCU == nullptr );
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
                 assert( m_pSHBRCU == nullptr );
-                assert( m_pSHTRCU == nullptr );
 #endif
             }
 

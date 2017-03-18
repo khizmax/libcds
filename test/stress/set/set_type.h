@@ -35,7 +35,6 @@
 #include <cds/urcu/general_buffered.h>
 #include <cds/urcu/general_threaded.h>
 #include <cds/urcu/signal_buffered.h>
-#include <cds/urcu/signal_threaded.h>
 
 #include <cds/opt/hash.h>
 #include <cds/sync/spinlock.h>
@@ -51,7 +50,6 @@ namespace set {
     typedef cds::urcu::gc< cds::urcu::general_threaded_stripped >  rcu_gpt;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
     typedef cds::urcu::gc< cds::urcu::signal_buffered_stripped >  rcu_shb;
-    typedef cds::urcu::gc< cds::urcu::signal_threaded_stripped >  rcu_sht;
 #endif
 
     template <typename Key>

@@ -38,9 +38,6 @@
     <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_shb.cpp">
       <Filter>Source Files\intrusive.EllenBinTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\intrusive_ellenbintree_rcu_sht.cpp">
-      <Filter>Source Files\intrusive.EllenBinTree</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_shb.cpp">
-      <Filter>Source Files\EllenBinTreeSet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_rcu_sht.cpp">
       <Filter>Source Files\EllenBinTreeSet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_set_dhp.cpp">
@@ -84,9 +78,6 @@
       <Filter>Source Files\EllenBinTreeMap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_shb.cpp">
-      <Filter>Source Files\EllenBinTreeMap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\test\unit\tree\ellen_bintree_map_rcu_sht.cpp">
       <Filter>Source Files\EllenBinTreeMap</Filter>
     </ClCompile>
   </ItemGroup>

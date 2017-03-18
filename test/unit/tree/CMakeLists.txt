@@ -8,12 +8,10 @@ set(CDSGTEST_TREE_SOURCES
     bronson_avltree_map_rcu_gpi.cpp
     bronson_avltree_map_rcu_gpt.cpp
     bronson_avltree_map_rcu_shb.cpp
-    bronson_avltree_map_rcu_sht.cpp
     bronson_avltree_map_ptr_rcu_gpb.cpp
     bronson_avltree_map_ptr_rcu_gpi.cpp
     bronson_avltree_map_ptr_rcu_gpt.cpp
     bronson_avltree_map_ptr_rcu_shb.cpp
-    bronson_avltree_map_ptr_rcu_sht.cpp
     ellen_bintree_update_desc_pool.cpp
     ellen_bintree_map_hp.cpp
     ellen_bintree_map_dhp.cpp
@@ -21,21 +19,18 @@ set(CDSGTEST_TREE_SOURCES
     ellen_bintree_map_rcu_gpi.cpp
     ellen_bintree_map_rcu_gpt.cpp
     ellen_bintree_map_rcu_shb.cpp
-    ellen_bintree_map_rcu_sht.cpp
     ellen_bintree_set_dhp.cpp
     ellen_bintree_set_hp.cpp
     ellen_bintree_set_rcu_gpb.cpp
     ellen_bintree_set_rcu_gpi.cpp
     ellen_bintree_set_rcu_gpt.cpp
     ellen_bintree_set_rcu_shb.cpp
-    ellen_bintree_set_rcu_sht.cpp
     intrusive_ellenbintree_hp.cpp
     intrusive_ellenbintree_dhp.cpp
     intrusive_ellenbintree_rcu_gpb.cpp
     intrusive_ellenbintree_rcu_gpi.cpp
     intrusive_ellenbintree_rcu_gpt.cpp
     intrusive_ellenbintree_rcu_shb.cpp
-    intrusive_ellenbintree_rcu_sht.cpp
 )
 
 include_directories(

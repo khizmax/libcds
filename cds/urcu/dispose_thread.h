@@ -40,13 +40,13 @@
 
 namespace cds { namespace urcu {
 
-    /// Reclamation thread for \p general_threaded and \p signal_threaded URCU
+    /// Reclamation thread for \p general_threaded URCU
     /**
         The object of this class contains a reclamation thread object and
         necessary synchronization object(s). The object manages reclamation thread
         and defines a set of messages (i.e. methods) to communicate with the thread.
 
-        Template argument \p Buffer defines the buffer type of \ref general_threaded (or \ref signal_threaded) URCU.
+        Template argument \p Buffer defines the buffer type of \ref general_threaded URCU.
     */
     template <class Buffer>
     class dispose_thread

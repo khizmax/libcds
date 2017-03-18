@@ -107,10 +107,8 @@ namespace cds {
           design, thus being appropriate for use within a general-purpose library, but it has
           relatively higher read-side overhead. The \p libcds contains several implementations of general-purpose
           %RCU: \ref general_instant, \ref general_buffered, \ref general_threaded.
-        - The signal-handling %RCU presents an implementation having low read-side overhead and
+        - \ref signal_buffered: the signal-handling %RCU presents an implementation having low read-side overhead and
           requiring only that the application give up one POSIX signal to %RCU update processing.
-          The \p libcds contains several implementations if signal-handling %RCU: \ref signal_buffered,
-          \ref signal_threaded.
 
         @note The signal-handled %RCU is defined only for UNIX-like systems, not for Windows.
 
@@ -122,7 +120,6 @@ namespace cds {
         - \ref general_buffered - general purpose RCU with deferred (buffered) reclamation
         - \ref general_threaded - general purpose RCU with special reclamation thread
         - \ref signal_buffered - signal-handling RCU with deferred (buffered) reclamation
-        - \ref signal_threaded - signal-handling RCU with special reclamation thread
 
         You cannot create an object of any of those classes directly.
         Instead, you should use wrapper classes.
@@ -140,8 +137,6 @@ namespace cds {
             include file <tt><cds/urcu/general_threaded.h></tt>
         - \ref cds_urcu_signal_buffered_gc "gc<signal_buffered>" - signal-handling RCU with deferred (buffered) reclamation
             include file <tt><cds/urcu/signal_buffered.h></tt>
-        - \ref cds_urcu_signal_threaded_gc "gc<signal_threaded>" - signal-handling RCU with special reclamation thread
-            include file <tt><cds/urcu/signal_threaded.h></tt>
 
         Any RCU-related container in \p libcds expects that its \p RCU template parameter is one of those wrapper.
 
@@ -152,7 +147,6 @@ namespace cds {
         - \ref general_buffered_tag - for \ref general_buffered
         - \ref general_threaded_tag - for \ref general_threaded
         - \ref signal_buffered_tag - for \ref signal_buffered
-        - \ref signal_threaded_tag - for \ref signal_threaded
 
         @anchor cds_urcu_performance
         <b>Performance</b>
@@ -162,7 +156,6 @@ namespace cds {
         - <tt>gc<general_buffered></tt> - high
         - <tt>gc<general_threaded></tt>
         - <tt>gc<signal_buffered></tt>
-        - <tt>gc<signal_threaded></tt>
         - <tt>gc<general_instant></tt> - low
 
         This estimation is very rough and depends on many factors:
@@ -178,11 +171,6 @@ namespace cds {
         Since each RCU type is a template class the creation of two object of one RCU type class
         with different template arguments is an error and is not supported.
         However, it is correct when your RCU objects relates to different RCU types.
-
-        @note If you want to use \p %signal_buffered and \p %signal_threaded RCU in your application simultaneously,
-        you should specify different signal number for each signal-handled RCU type on construction time,
-        for example, \p SIGUSR1 and \p SIGUSR2 respectively. By default, both signal-handled RCU implementation
-        share \p SIGUSR1 signal and cannot be applied together.
 
         In \p libcds, many GC-based ordered list, set and map template classes have %RCU-related specializations
         that hide the %RCU specific details.
@@ -273,11 +261,6 @@ namespace cds {
         /// Tag for signal_buffered URCU
         struct signal_buffered_tag: public signal_handling_rcu {
                 typedef signal_handling_rcu     rcu_class ; ///< The URCU type
-        };
-
-        /// Tag for signal_threaded URCU
-        struct signal_threaded_tag: public signal_handling_rcu {
-            typedef signal_handling_rcu     rcu_class ; ///< The URCU type
         };
 #   endif
 

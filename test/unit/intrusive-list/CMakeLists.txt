@@ -13,7 +13,6 @@ set(UNIT_ILIST_MICHAEL_SOURCES
     intrusive_michael_rcu_gpi.cpp
     intrusive_michael_rcu_gpt.cpp
     intrusive_michael_rcu_shb.cpp
-    intrusive_michael_rcu_sht.cpp
 )
 add_executable(${UNIT_ILIST_MICHAEL} ${UNIT_ILIST_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_ILIST_MICHAEL} ${CDS_TEST_LIBRARIES})
@@ -31,7 +30,6 @@ set(UNIT_ILIST_LAZY_SOURCES
     intrusive_lazy_rcu_gpi.cpp
     intrusive_lazy_rcu_gpt.cpp
     intrusive_lazy_rcu_shb.cpp
-    intrusive_lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_ILIST_LAZY} ${UNIT_ILIST_LAZY_SOURCES})
 target_link_libraries(${UNIT_ILIST_LAZY} ${CDS_TEST_LIBRARIES})

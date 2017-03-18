@@ -27,7 +27,6 @@ set(UNIT_LIST_LAZY_SOURCES
     kv_lazy_rcu_gpi.cpp
     kv_lazy_rcu_gpt.cpp
     kv_lazy_rcu_shb.cpp
-    kv_lazy_rcu_sht.cpp
     lazy_hp.cpp
     lazy_dhp.cpp
     lazy_nogc.cpp
@@ -35,7 +34,6 @@ set(UNIT_LIST_LAZY_SOURCES
     lazy_rcu_gpi.cpp
     lazy_rcu_gpt.cpp
     lazy_rcu_shb.cpp
-    lazy_rcu_sht.cpp
 )
 add_executable(${UNIT_LIST_LAZY} ${UNIT_LIST_LAZY_SOURCES})
 target_link_libraries(${UNIT_LIST_LAZY} ${CDS_TEST_LIBRARIES})
@@ -52,7 +50,6 @@ set(UNIT_LIST_MICHAEL_SOURCES
     kv_michael_rcu_gpi.cpp
     kv_michael_rcu_gpt.cpp
     kv_michael_rcu_shb.cpp
-    kv_michael_rcu_sht.cpp
     michael_hp.cpp
     michael_dhp.cpp
     michael_nogc.cpp
@@ -60,7 +57,6 @@ set(UNIT_LIST_MICHAEL_SOURCES
     michael_rcu_gpi.cpp
     michael_rcu_gpt.cpp
     michael_rcu_shb.cpp
-    michael_rcu_sht.cpp
 )
 add_executable(${UNIT_LIST_MICHAEL} ${UNIT_LIST_MICHAEL_SOURCES})
 target_link_libraries(${UNIT_LIST_MICHAEL} ${CDS_TEST_LIBRARIES})

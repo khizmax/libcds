@@ -114,7 +114,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_GPT_dyn_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_SHB_dyn_cmp;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp > SplitList_Michael_RCU_SHT_dyn_cmp;
 #endif
 
         struct traits_SplitList_Michael_dyn_cmp_swar: public traits_SplitList_Michael_dyn_cmp
@@ -128,7 +127,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp_swar > SplitList_Michael_RCU_GPT_dyn_cmp_swar;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp_swar > SplitList_Michael_RCU_SHB_dyn_cmp_swar;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp_swar > SplitList_Michael_RCU_SHT_dyn_cmp_swar;
 #endif
 
         struct traits_SplitList_Michael_dyn_cmp_stat :
@@ -151,7 +149,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_GPT_dyn_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_SHB_dyn_cmp_stat;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp_stat > SplitList_Michael_RCU_SHT_dyn_cmp_stat;
 #endif
 
         struct traits_SplitList_Michael_dyn_cmp_seqcst :
@@ -174,7 +171,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_GPT_dyn_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_SHB_dyn_cmp_seqcst;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_cmp_seqcst > SplitList_Michael_RCU_SHT_dyn_cmp_seqcst;
 #endif
 
         struct traits_SplitList_Michael_st_cmp :
@@ -196,7 +192,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_GPT_st_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_SHB_st_cmp;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_cmp > SplitList_Michael_RCU_SHT_st_cmp;
 #endif
 
         //HP + less
@@ -218,7 +213,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_GPT_dyn_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_SHB_dyn_less;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_dyn_less > SplitList_Michael_RCU_SHT_dyn_less;
 #endif
 
         struct traits_SplitList_Michael_st_less :
@@ -240,7 +234,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_GPT_st_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_SHB_st_less;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_less > SplitList_Michael_RCU_SHT_st_less;
 #endif
 
         struct traits_SplitList_Michael_st_less_stat :
@@ -264,7 +257,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_GPT_st_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHB_st_less_stat;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Michael_st_less_stat > SplitList_Michael_RCU_SHT_st_less_stat;
 #endif
 
         // ***************************************************************************
@@ -288,7 +280,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_GPT_dyn_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHB_dyn_cmp;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHT_dyn_cmp;
 #endif
 
         struct traits_SplitList_Lazy_dyn_cmp_stat : public traits_SplitList_Lazy_dyn_cmp
@@ -306,7 +297,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp_stat > SplitList_Lazy_RCU_GPT_dyn_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHB_dyn_cmp_stat;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp > SplitList_Lazy_RCU_SHT_dyn_cmp_stat;
 #endif
 
         struct traits_SplitList_Lazy_dyn_cmp_seqcst :
@@ -329,7 +319,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_GPT_dyn_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_SHB_dyn_cmp_seqcst;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_cmp_seqcst > SplitList_Lazy_RCU_SHT_dyn_cmp_seqcst;
 #endif
 
         struct traits_SplitList_Lazy_st_cmp :
@@ -351,7 +340,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_GPT_st_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_SHB_st_cmp;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_cmp > SplitList_Lazy_RCU_SHT_st_cmp;
 #endif
 
         struct traits_SplitList_Lazy_dyn_less :
@@ -372,7 +360,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_GPT_dyn_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHB_dyn_less;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_dyn_less > SplitList_Lazy_RCU_SHT_dyn_less;
 #endif
 
         struct traits_SplitList_Lazy_st_less :
@@ -394,7 +381,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_GPT_st_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_SHB_st_less;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_less > SplitList_Lazy_RCU_SHT_st_less;
 #endif
 
         struct traits_SplitList_Lazy_st_less_stat : public traits_SplitList_Lazy_st_less
@@ -412,7 +398,6 @@ namespace set {
         typedef SplitListSet< rcu_gpt, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_GPT_st_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHB_st_less_stat;
-        typedef SplitListSet< rcu_sht, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHT_st_less_stat;
 #endif
 
         // ***************************************************************************

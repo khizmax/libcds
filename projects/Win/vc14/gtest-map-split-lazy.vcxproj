@@ -77,7 +77,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\map\split_lazy_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\test_map.h" />

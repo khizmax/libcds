@@ -62,7 +62,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp > LazyList_RCU_GPT_cmp;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp > LazyList_RCU_SHB_cmp;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp > LazyList_RCU_SHT_cmp;
 #endif
 
         struct traits_LazyList_cmp_stat: public traits_LazyList_cmp
@@ -77,7 +76,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_GPT_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_SHB_cmp_stat;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_stat > LazyList_RCU_SHT_cmp_stat;
 #endif
 
         struct traits_LazyList_unord :
@@ -102,7 +100,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_GPT_cmp_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_SHB_cmp_seqcst;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_cmp_seqcst > LazyList_RCU_SHT_cmp_seqcst;
 #endif
 
         struct traits_LazyList_less :
@@ -118,7 +115,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less > LazyList_RCU_GPT_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less > LazyList_RCU_SHB_less;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less > LazyList_RCU_SHT_less;
 #endif
 
         struct traits_LazyList_less_stat: public traits_LazyList_less
@@ -133,7 +129,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_stat > LazyList_RCU_GPT_less_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_stat > LazyList_RCU_SHB_less_stat;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_stat > LazyList_RCU_SHT_less_stat;
 #endif
 
         struct traits_LazyList_less_seqcst :
@@ -150,7 +145,6 @@ namespace map {
         typedef cc::LazyKVList< rcu_gpt, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_GPT_less_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef cc::LazyKVList< rcu_shb, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_SHB_less_seqcst;
-        typedef cc::LazyKVList< rcu_sht, Key, Value, traits_LazyList_less_seqcst > LazyList_RCU_SHT_less_seqcst;
 #endif
 
     };

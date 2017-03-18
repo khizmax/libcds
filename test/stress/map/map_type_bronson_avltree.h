@@ -101,7 +101,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpt_less;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_shb_less;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_sht_less;
 #endif
         struct BronsonAVLTreeMap_cmp_stat: public
             cc::bronson_avltree::make_traits<
@@ -116,7 +115,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_gpt_cmp_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_shb_cmp_stat;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_cmp_stat > BronsonAVLTreeMap_rcu_sht_cmp_stat;
 #endif
 
         struct BronsonAVLTreeMap_less_pool_simple: public BronsonAVLTreeMap_less
@@ -128,7 +126,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_gpt_less_pool_simple;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_shb_less_pool_simple;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_simple > BronsonAVLTreeMap_rcu_sht_less_pool_simple;
 #endif
         struct BronsonAVLTreeMap_less_pool_simple_stat : public BronsonAVLTreeMap_less
         {
@@ -140,7 +137,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_simple_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_simple_stat > BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat;
 #endif
         struct BronsonAVLTreeMap_less_pool_lazy: public BronsonAVLTreeMap_less
         {
@@ -152,7 +148,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpt_less_pool_lazy;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_shb_less_pool_lazy;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_sht_less_pool_lazy;
 #endif
         struct BronsonAVLTreeMap_less_pool_lazy_stat : public BronsonAVLTreeMap_less
         {
@@ -165,7 +160,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_lazy_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat;
 #endif
         struct BronsonAVLTreeMap_less_pool_bounded: public BronsonAVLTreeMap_less
         {
@@ -177,7 +171,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpt_less_pool_bounded;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_shb_less_pool_bounded;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_sht_less_pool_bounded;
 #endif
         struct BronsonAVLTreeMap_less_pool_bounded_stat : public BronsonAVLTreeMap_less
         {
@@ -190,7 +183,6 @@ namespace map {
         typedef BronsonAVLTreeMap< rcu_gpt, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpt_less_pool_bounded_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef BronsonAVLTreeMap< rcu_shb, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_shb_less_pool_bounded_stat;
-        typedef BronsonAVLTreeMap< rcu_sht, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_sht_less_pool_bounded_stat;
 #endif
     };
 
@@ -222,17 +214,11 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #   define CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less,                   key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less,                   key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_cmp_stat,               key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_cmp_stat,               key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple,       key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple,       key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_simple_stat,  key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_simple_stat,  key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy,         key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy,         key_type, value_type ) \
         CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_shb_less_pool_lazy_stat,    key_type, value_type ) \
-        CDSSTRESS_BronsonAVLTreeMap_case( fixture, test_case, BronsonAVLTreeMap_rcu_sht_less_pool_lazy_stat,    key_type, value_type )
 
 #else
 #   define CDSSTRESS_BronsonAVLTreeMap_SHRCU( fixture, test_case, key_type, value_type )

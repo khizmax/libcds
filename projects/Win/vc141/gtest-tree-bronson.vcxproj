@@ -32,12 +32,10 @@
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_ptr_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpb.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpi.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_gpt.cpp" />
     <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\tree\bronson_avltree_map_rcu_sht.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\tree\test_bronson_avltree_map.h" />

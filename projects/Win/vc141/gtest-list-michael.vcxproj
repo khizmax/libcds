@@ -60,7 +60,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\list\kv_michael_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\michael_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\michael_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\list\michael_nogc.cpp" />
@@ -82,7 +81,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4503</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\list\michael_rcu_shb.cpp" />
-    <ClCompile Include="..\..\..\test\unit\list\michael_rcu_sht.cpp" />
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
