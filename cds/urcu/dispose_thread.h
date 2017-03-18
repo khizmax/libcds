@@ -144,13 +144,6 @@ namespace cds { namespace urcu {
         }
         //@endcond
 
-    public:
-        //@cond
-        dispose_thread()
-            //: m_pBuffer( nullptr )
-        {}
-        //@endcond
-
     public: // methods called from any thread
         /// Start reclamation thread
         /**
