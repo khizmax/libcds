@@ -32,8 +32,11 @@
 
 #if CDS_OS_TYPE == CDS_OS_LINUX
 
+#include <thread>
+/*
 #include <unistd.h>
 #include <fstream>
+*/
 
 namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
 
@@ -41,6 +44,8 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
 
     void topology::init()
     {
+        s_nProcessorCount = std::thread::hardware_concurrency();
+/*
          long n = ::sysconf( _SC_NPROCESSORS_ONLN );
          if ( n > 0 )
             s_nProcessorCount = static_cast<unsigned>( n );
@@ -64,6 +69,7 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
                 s_nProcessorCount = 1;
             }
          }
+*/
     }
 
     void topology::fini()
