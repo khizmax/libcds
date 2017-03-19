@@ -99,7 +99,9 @@ namespace cds { namespace urcu {
         typedef base_class::thread_gc   thread_gc ;     ///< Access lock class
         typedef typename thread_gc::scoped_lock scoped_lock ; ///< Access lock class
 
-        static bool const c_bBuffered = true ; ///< This RCU buffers disposed elements
+        //@cond
+        static bool const c_bBuffered = true ; ///< Bufferized RCU
+        //@endcond
 
     protected:
         //@cond
@@ -206,7 +208,7 @@ namespace cds { namespace urcu {
             to wait for the end of grace period and then
             a message is sent to the reclamation thread.
         */
-        virtual void retire_ptr( retired_ptr& p )
+        virtual void retire_ptr( retired_ptr& p ) override
         {
             if ( p.m_p )
                 push_buffer( epoch_retired_ptr( p, m_nCurEpoch.load( atomics::memory_order_acquire )));

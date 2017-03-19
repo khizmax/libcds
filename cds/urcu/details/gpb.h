@@ -86,7 +86,9 @@ namespace cds { namespace urcu {
         typedef base_class::thread_gc thread_gc ;   ///< Thread-side RCU part
         typedef typename thread_gc::scoped_lock scoped_lock ; ///< Access lock class
 
-        static bool const c_bBuffered = true ; ///< This RCU buffers disposed elements
+        //@cond
+        static bool const c_bBuffered = true ; ///< Bufferized RCU
+        //@endcond
 
     protected:
         //@cond
@@ -146,7 +148,7 @@ namespace cds { namespace urcu {
             }
         }
 
-        // Return: true - synchronize has been called, false - otherwise
+        // Return: \p true - synchronize has been called, \p false - otherwise
         bool push_buffer( epoch_retired_ptr&& ep )
         {
             bool bPushed = m_Buffer.push( ep );
@@ -191,7 +193,7 @@ namespace cds { namespace urcu {
             When the buffer becomes full \ref synchronize function is called
             to wait for the end of grace period and then to free all pointers from the buffer.
         */
-        virtual void retire_ptr( retired_ptr& p )
+        virtual void retire_ptr( retired_ptr& p ) override
         {
             if ( p.m_p )
                 push_buffer( epoch_retired_ptr( p, m_nCurEpoch.load( atomics::memory_order_relaxed )));

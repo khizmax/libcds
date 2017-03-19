@@ -72,7 +72,9 @@ namespace cds { namespace urcu {
         typedef typename base_class::thread_gc  thread_gc ;   ///< Thread-side RCU part
         typedef typename thread_gc::scoped_lock scoped_lock ; ///< Access lock class
 
-        static bool const c_bBuffered = false ; ///< This RCU does not buffer disposed elements
+        //@cond
+        static bool const c_bBuffered = false ; ///< No buffers
+        //@endcond
 
     protected:
         //@cond
@@ -137,7 +139,7 @@ namespace cds { namespace urcu {
             The method calls \p synchronize() to wait for the end of grace period
             and calls \p p disposer.
         */
-        virtual void retire_ptr( retired_ptr& p )
+        virtual void retire_ptr( retired_ptr& p ) override
         {
             synchronize();
             if ( p.m_p )
