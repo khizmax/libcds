@@ -82,7 +82,7 @@ namespace cds { namespace urcu {
         condvar_type    m_cvDataReady;
 
         // Task for thread (dispose cycle)
-        atomics::atomic<buffer_type *>  m_pBuffer{ nullptr };
+        atomics::atomic<buffer_type *>  m_pBuffer;
         uint64_t m_nCurEpoch = 0;
 
         // Quit flag
@@ -145,6 +145,12 @@ namespace cds { namespace urcu {
         //@endcond
 
     public: // methods called from any thread
+        //@cond
+        dispose_thread()
+            : m_pBuffer( nullptr )
+        {}
+        //@endcond
+
         /// Start reclamation thread
         /**
             This function is called by \ref general_threaded object to start
