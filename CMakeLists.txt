@@ -18,6 +18,7 @@ option(WITH_TESTS_COVERAGE "Analyze test coverage using gcov (only for gcc)" OFF
 option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 option(WITH_ASAN "Build AddressSantinizer instrumented code" OFF)
 option(WITH_TSAN "Build ThreadSantinizer instrumented code" OFF)
+option(WITH_BREAKPAD "Use google breakpad to generate minidump for tests" OFF)
 set(CMAKE_TARGET_ARCHITECTURE "" CACHE string "Target build architecture")
 
 find_package(Threads)
@@ -77,6 +78,32 @@ if(WITH_TESTS_COVERAGE)
         message(WARNING "Compiler is not GNU gcc! Test coverage couldn't be analyzed")
     endif()
 endif(WITH_TESTS_COVERAGE)
+
+if(WITH_BREAKPAD)
+    if( NOT ${BREAKPAD_INCLUDE_DIR})
+        if(${BREAKPAD_ROOT})
+            set(BREAKPAD_INCLUDE_DIR "${BREAKPAD_ROOT}/include")
+        endif()
+    endif()
+
+    if( NOT ${BREAKPAD_LIBRARY_DIR})
+        if(${BREAKPAD_ROOT})
+            set(BREAKPAD_LIBRARY_DIR "${BREAKPAD_ROOT}/lib")
+        endif()
+    endif()
+    
+    if( NOT ${BREAKPAD_INCLUDE_DIR} OR NOT ${BREAKPAD_LIBRARY_DIR})
+        message(FATAL_ERROR 
+            "Could not find breakpad include or library dir."
+            "Specify -DBREAKPAD_ROOT in command line"
+            "or BREAKPAD_INCLUDE_DIR (usually $BREAKPAD_ROOT/include)"
+            "and BREAKPAD_LIBRARY_DIR (usually $BREAKPAD_ROOT/lib)"
+        )
+    endif()
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${BREAKPAD_INCLUDE_DIR}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${BREAKPAD_LIBRARY_DIR} -lbreakpad_client")
+endif(WITH_BREAKPAD)
 
 set(CDS_SHARED_LIBRARY ${PROJECT_NAME})
 set(CDS_STATIC_LIBRARY ${PROJECT_NAME}-s)
