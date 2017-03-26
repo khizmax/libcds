@@ -34,6 +34,7 @@
 #include <cds/container/treiber_stack.h>
 #include <cds/container/fcstack.h>
 #include <cds/container/fcdeque.h>
+#include <cds/container/williams_lock_free_stack.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -420,6 +421,16 @@ namespace stack {
         typedef details::StdStack< T, std::stack< T, std::list<T> >, std::mutex >  StdStack_List_Mutex;
         typedef details::StdStack< T, std::stack< T, std::list<T> >, cds::sync::spin > StdStack_List_Spin;
 
+        // WilliamsStack
+        typedef cds::container::WilliamsStack< T > WilliamsStack_default;
+
+        struct traits_WilliamsStack_item_counter :
+                public cds::container::williams_stack::make_traits<
+                cds::opt::item_counter<cds::atomicity::empty_item_counter>
+                >::type
+        {};
+
+        typedef cds::container::WilliamsStack< T, traits_WilliamsStack_item_counter> WilliamsStack_item_counter;
     };
 } // namespace stack
 
@@ -571,5 +582,8 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, StdStack_List_Mutex   ) \
     CDSSTRESS_Stack_F( test_fixture, StdStack_List_Spin    )
 
+#define CDSSTRESS_WilliamsStack( test_fixture ) \
+    CDSSTRESS_Stack_F( test_fixture, WilliamsStack_default  ) \
+    CDSSTRESS_Stack_F( test_fixture, WilliamsStack_item_counter  )
 
 #endif // #ifndef CDSSTRESS_STACK_TYPES_H
