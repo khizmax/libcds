@@ -40,12 +40,12 @@ namespace cds {
 /// Intrusive containers
 /**
     @ingroup cds_intrusive_containers
-    The namespace cds::intrusive contains intrusive lock-free containers.
+    The namespace \p cds::intrusive contains intrusive lock-free containers.
     The idea comes from \p boost::intrusive library, see http://boost.org/doc/ as a good introduction to intrusive approach.
     The intrusive containers of libcds library is developed as close to \p boost::intrusive
 
     In terms of lock-free approach, the main advantage of intrusive containers is
-    that no memory allocation is performed to maintain container items.
+    that no memory allocation is performed to maintain container elements.
     However, additional requirements are imposed for types and values that can be stored in intrusive container.
     See the container documentation for details.
 
