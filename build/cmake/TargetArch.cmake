@@ -29,6 +29,12 @@ set(archdetect_c_code "
     #else
         #error cmake_ARCH arm
     #endif
+#elif defined(__aarch64__)
+    #if defined(__ARM_ARCH) && __ARM_ARCH == 8
+        #error cmake_ARCH armv8
+    #else
+        #error cmake_ARCH arm64
+    #endif
 #elif defined(__i386) || defined(__i386__) || defined(_M_IX86)
     #error cmake_ARCH i386
 #elif defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(_M_X64)
