@@ -122,6 +122,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 message("Build type -- ${CMAKE_BUILD_TYPE}")
 message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message("System: ${CMAKE_SYSTEM_NAME} version: ${CMAKE_SYSTEM_VERSION}")
 message("Target architecture: ${CMAKE_TARGET_ARCHITECTURE}")
 if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
     message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
@@ -134,6 +135,9 @@ else()
     message("Boost: Using CMake-fied boost")
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 

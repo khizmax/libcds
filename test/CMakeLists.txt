@@ -2,7 +2,7 @@
 if (NOT GTEST_INCLUDE_DIRS)
    find_package(GTest REQUIRED)
 endif()
-message("GTest: ${GTEST_INCLUDE_DIRS}, lib: ${GTEST_LIBRARY}")
+message("GTest: ${GTEST_INCLUDE_DIRS}, lib: ${GTEST_LIBRARIES}")
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -11,7 +11,7 @@ include_directories(
 
 set(CDS_TEST_LIBRARIES
     ${CDS_SHARED_LIBRARY}
-    ${GTEST_LIBRARY}
+    ${GTEST_LIBRARIES}
     ${Boost_THREAD_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
