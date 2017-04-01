@@ -61,10 +61,10 @@ namespace cds { namespace gc {
         //@cond
         struct guard_block: public cds::intrusive::FreeListImpl::node
         {
-            guard_block*    next_;  // next block in the thread list
+            atomics::atomic<guard_block*>  next_block_;  // next block in the thread list
 
             guard_block()
-                : next_( nullptr )
+                : next_block_( nullptr )
             {}
 
             guard* first()
@@ -113,7 +113,6 @@ namespace cds { namespace gc {
         public:
             thread_hp_storage( guard* arr, size_t nSize ) CDS_NOEXCEPT
                 : free_head_( arr )
-                , extended_list_( nullptr )
                 , array_( arr )
                 , initial_capacity_( nSize )
 #       ifdef CDS_ENABLE_HPSTAT
@@ -124,6 +123,7 @@ namespace cds { namespace gc {
             {
                 // Initialize guards
                 new( arr ) guard[nSize];
+                extended_list_.store( nullptr, atomics::memory_order_release );
             }
 
             thread_hp_storage() = delete;
@@ -195,18 +195,18 @@ namespace cds { namespace gc {
 
                 // free all extended blocks
                 hp_allocator& a = hp_allocator::instance();
-                for ( guard_block* p = extended_list_; p; ) {
-                    guard_block* next = p->next_;
+                for ( guard_block* p = extended_list_.load( atomics::memory_order_relaxed ); p; ) {
+                    guard_block* next = p->next_block_.load( atomics::memory_order_relaxed );
                     a.free( p );
                     p = next;
                 }
 
-                extended_list_ = nullptr;
+                extended_list_.store( nullptr, atomics::memory_order_release );
             }
 
             void init()
             {
-                assert( extended_list_ == nullptr );
+                assert( extended_list_.load(atomics::memory_order_relaxed) == nullptr );
 
                 guard* p = array_;
                 for ( guard* pEnd = p + initial_capacity_ - 1; p != pEnd; ++p )
@@ -221,15 +221,15 @@ namespace cds { namespace gc {
                 assert( free_head_ == nullptr );
 
                 guard_block* block = hp_allocator::instance().alloc();
-                block->next_ = extended_list_;
-                extended_list_ = block;
+                block->next_block_.store( extended_list_.load( atomics::memory_order_relaxed ), atomics::memory_order_release );
+                extended_list_.store( block, atomics::memory_order_release );
                 free_head_ = block->first();
                 CDS_HPSTAT( ++extend_call_count_ );
             }
 
         private:
             guard*          free_head_;        ///< Head of free guard list
-            guard_block*    extended_list_;    ///< Head of extended guard blocks allocated for the thread
+            atomics::atomic<guard_block*> extended_list_;    ///< Head of extended guard blocks allocated for the thread
             guard* const    array_;            ///< initial HP array
             size_t const    initial_capacity_; ///< Capacity of \p array_
 #       ifdef CDS_ENABLE_HPSTAT

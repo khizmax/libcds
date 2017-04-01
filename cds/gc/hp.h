@@ -267,14 +267,16 @@ namespace cds { namespace gc {
 
             size_t size() const CDS_NOEXCEPT
             {
-                return current_ - retired_;
+                return current_.load(atomics::memory_order_relaxed) - retired_;
             }
 
             bool push( retired_ptr&& p ) CDS_NOEXCEPT
             {
-                *current_ = p;
+                retired_ptr* cur = current_.load( atomics::memory_order_relaxed );
+                *cur = p;
                 CDS_HPSTAT( ++retire_call_count_ );
-                return ++current_ < last_;
+                current_.store( cur + 1, atomics::memory_order_relaxed );
+                return cur + 1 < last_;
             }
 
             retired_ptr* first() const CDS_NOEXCEPT
@@ -284,17 +286,22 @@ namespace cds { namespace gc {
 
             retired_ptr* last() const CDS_NOEXCEPT
             {
-                return current_;
+                return current_.load( atomics::memory_order_relaxed );
             }
 
             void reset( size_t nSize ) CDS_NOEXCEPT
             {
-                current_ = first() + nSize;
+                current_.store( first() + nSize, atomics::memory_order_relaxed );
+            }
+
+            void interthread_clear()
+            {
+                current_.exchange( first(), atomics::memory_order_acq_rel );
             }
 
             bool full() const CDS_NOEXCEPT
             {
-                return current_ == last_;
+                return current_.load( atomics::memory_order_relaxed ) == last_;
             }
 
             static size_t calc_array_size( size_t capacity )
@@ -303,9 +310,9 @@ namespace cds { namespace gc {
             }
 
         private:
-            retired_ptr*            current_;
-            retired_ptr* const      last_;
-            retired_ptr* const      retired_;
+            atomics::atomic<retired_ptr*> current_;
+            retired_ptr* const            last_;
+            retired_ptr* const            retired_;
 #       ifdef CDS_ENABLE_HPSTAT
         public:
             size_t  retire_call_count_;

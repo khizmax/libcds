@@ -103,6 +103,8 @@ namespace cds { namespace gc { namespace hp {
 
         thread_record( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
             : thread_data( guards, guard_count, retired_arr, retired_capacity )
+            , m_pNextNode( nullptr )
+            , m_idOwner( cds::OS::c_NullThreadId )
             , m_bFree( false )
         {}
     };
@@ -140,23 +142,24 @@ namespace cds { namespace gc { namespace hp {
     }
 
     CDS_EXPORT_API smr::smr( size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
-        : thread_list_( nullptr )
-        , hazard_ptr_count_( nHazardPtrCount == 0 ? defaults::c_nHazardPointerPerThread : nHazardPtrCount )
+        : hazard_ptr_count_( nHazardPtrCount == 0 ? defaults::c_nHazardPointerPerThread : nHazardPtrCount )
         , max_thread_count_( nMaxThreadCount == 0 ? defaults::c_nMaxThreadCount : nMaxThreadCount )
         , max_retired_ptr_count_( calc_retired_size( nMaxRetiredPtrCount, hazard_ptr_count_, max_thread_count_ ))
         , scan_type_( nScanType )
         , scan_func_( nScanType == classic ? &smr::classic_scan : &smr::inplace_scan )
-    {}
+    {
+        thread_list_.store( nullptr, atomics::memory_order_release );
+    }
 
     CDS_EXPORT_API smr::~smr()
     {
         CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
         CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id();)
 
-        CDS_HPSTAT( statistics( s_postmortem_stat ));
+        CDS_HPSTAT( statistics( s_postmortem_stat ) );
 
         thread_record* pHead = thread_list_.load( atomics::memory_order_relaxed );
-        thread_list_.store( nullptr, atomics::memory_order_relaxed );
+        thread_list_.store( nullptr, atomics::memory_order_release );
 
         thread_record* pNext = nullptr;
         for ( thread_record* hprec = pHead; hprec; hprec = pNext )
@@ -204,10 +207,13 @@ namespace cds { namespace gc { namespace hp {
             +--------------------------+
         */
 
-        char* mem = reinterpret_cast<char*>( s_alloc_memory( nSize ));
-        return new( mem ) thread_record( 
-            reinterpret_cast<guard*>( mem + sizeof( thread_record )), get_hazard_ptr_count(),
-            reinterpret_cast<retired_ptr*>( mem + sizeof( thread_record ) + guard_array_size ), get_max_retired_ptr_count()
+        uint8_t* mem = reinterpret_cast<uint8_t*>( s_alloc_memory( nSize ));
+
+        return new( mem ) thread_record(
+            reinterpret_cast<guard*>( mem + sizeof( thread_record )),
+            get_hazard_ptr_count(),
+            reinterpret_cast<retired_ptr*>( mem + sizeof( thread_record ) + guard_array_size ),
+            get_max_retired_ptr_count()
         );
     }
 
@@ -223,16 +229,14 @@ namespace cds { namespace gc { namespace hp {
 
     CDS_EXPORT_API smr::thread_record* smr::alloc_thread_data()
     {
-        //CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_AllocHPRec )
-
         thread_record * hprec;
         const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
         const cds::OS::ThreadId curThreadId = cds::OS::get_current_thread_id();
 
         // First try to reuse a free (non-active) HP record
-        for ( hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ) ) {
+        for ( hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_acquire )) {
             cds::OS::ThreadId thId = nullThreadId;
-            if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_relaxed, atomics::memory_order_relaxed ) )
+            if ( !hprec->m_idOwner.compare_exchange_strong( thId, curThreadId, atomics::memory_order_relaxed, atomics::memory_order_relaxed ))
                 continue;
             hprec->m_bFree.store( false, atomics::memory_order_release );
             return hprec;
@@ -243,9 +247,9 @@ namespace cds { namespace gc { namespace hp {
         hprec = create_thread_data();
         hprec->m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
 
-        thread_record* pOldHead = thread_list_.load( atomics::memory_order_relaxed );
+        thread_record* pOldHead = thread_list_.load( atomics::memory_order_acquire );
         do {
-            hprec->m_pNextNode.store( pOldHead, atomics::memory_order_relaxed );
+            hprec->m_pNextNode.store( pOldHead, atomics::memory_order_release );
         } while ( !thread_list_.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_acquire ) );
 
         return hprec;
@@ -315,7 +319,7 @@ namespace cds { namespace gc { namespace hp {
             }
         }
 
-        CDS_HPSTAT( ++pRec->scan_count_ );
+        CDS_HPSTAT( ++pThreadRec->scan_count_ );
 
         // Sort retired pointer array
         std::sort( first_retired, last_retired, retired_ptr::less );
@@ -383,7 +387,7 @@ namespace cds { namespace gc { namespace hp {
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
 
-        CDS_HPSTAT( ++pRec->scan_count_ );
+        CDS_HPSTAT( ++pThreadRec->scan_count_ );
 
         std::vector< void*, allocator<void*>>   plist;
         plist.reserve( get_max_thread_count() * get_hazard_ptr_count());
@@ -477,9 +481,8 @@ namespace cds { namespace gc { namespace hp {
                     scan( pThis );
             }
 
-            src.reset( 0 );
-
-            hprec->m_bFree.store( true, atomics::memory_order_relaxed );
+            src.interthread_clear();
+            hprec->m_bFree.store( true, atomics::memory_order_release );
             hprec->m_idOwner.store( nullThreadId, atomics::memory_order_release );
 
             scan( pThis );
@@ -492,6 +495,7 @@ namespace cds { namespace gc { namespace hp {
 #   ifdef CDS_ENABLE_HPSTAT
         for ( thread_record* hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ) )
         {
+            CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
             ++st.thread_rec_count;
             st.guard_allocated += hprec->hazards_.alloc_guard_count_;
             st.guard_freed     += hprec->hazards_.free_guard_count_;
@@ -499,6 +503,7 @@ namespace cds { namespace gc { namespace hp {
             st.free_count      += hprec->free_count_;
             st.scan_count      += hprec->scan_count_;
             st.help_scan_count += hprec->help_scan_count_;
+            CDS_TSAN_ANNOTATE_IGNORE_READS_END;
         }
 #   endif
     }
