@@ -247,7 +247,7 @@ namespace cds { namespace gc { namespace hp {
         hprec = create_thread_data();
         hprec->m_idOwner.store( curThreadId, atomics::memory_order_relaxed );
 
-        thread_record* pOldHead = thread_list_.load( atomics::memory_order_acquire );
+        thread_record* pOldHead = thread_list_.load( atomics::memory_order_relaxed );
         do {
             hprec->m_pNextNode.store( pOldHead, atomics::memory_order_release );
         } while ( !thread_list_.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_acquire ) );
