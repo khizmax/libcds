@@ -105,9 +105,8 @@ namespace cds { namespace intrusive {
 
             operation()
                 : pVal( nullptr )
-            {
-                nStatus.store( 0 /*op_free*/, atomics::memory_order_release );
-            }
+                , nStatus( 0 /*op_free*/ )
+            {}
         };
         //@endcond
 
@@ -213,7 +212,7 @@ namespace cds { namespace intrusive {
             /// Enable elimination back-off; by default, it is disabled
             static CDS_CONSTEXPR const bool enable_elimination = false;
 
-            /// Back-off strategy to wait for elimination, default is cds::backoff::delay<>
+            /// Back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             typedef cds::backoff::delay<>          elimination_backoff;
 
             /// Buffer type for elimination array
@@ -374,7 +373,7 @@ namespace cds { namespace intrusive {
 
                 enum operation_status {
                     op_free = 0,
-                    op_busy = 1,
+                    op_waiting = 1,
                     op_collided = 2
                 };
 
@@ -418,7 +417,7 @@ namespace cds { namespace intrusive {
                 bool backoff( operation_desc& op, Stat& stat )
                 {
                     elimination_backoff_type bkoff;
-                    op.nStatus.store( op_busy, atomics::memory_order_release );
+                    op.nStatus.store( op_waiting, atomics::memory_order_relaxed );
 
                     elimination_rec * myRec = cds::algo::elimination::init_record( op );
 
@@ -430,10 +429,12 @@ namespace cds { namespace intrusive {
                             operation_desc * himOp = static_cast<operation_desc *>( himRec->pOp );
                             assert( himOp );
                             if ( himOp->idOp != op.idOp ) {
+
                                 if ( op.idOp == treiber_stack::op_push )
                                     himOp->pVal = op.pVal;
                                 else
                                     op.pVal = himOp->pVal;
+
                                 slot.pRec = nullptr;
                                 himOp->nStatus.store( op_collided, atomics::memory_order_release );
                                 slot.lock.unlock();
@@ -442,21 +443,22 @@ namespace cds { namespace intrusive {
                                 stat.onActiveCollision( op.idOp );
                                 return true;
                             }
-                            himOp->nStatus.store( op_free, atomics::memory_order_release );
+                            //himOp->nStatus.store( op_free, atomics::memory_order_release );
                         }
                         slot.pRec = myRec;
                         slot.lock.unlock();
                     }
 
                     // Wait for colliding operation
-                    bkoff( [&op]() CDS_NOEXCEPT -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_busy; } );
+                    bkoff( [&op]() CDS_NOEXCEPT -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_waiting; } );
+
                     {
                         slot_scoped_lock l( slot.lock );
                         if ( slot.pRec == myRec )
                             slot.pRec = nullptr;
                     }
 
-                    bool bCollided = op.nStatus.load( atomics::memory_order_acquire ) == op_collided;
+                    bool bCollided = op.nStatus.load( atomics::memory_order_relaxed ) == op_collided;
 
                     if ( !bCollided )
                         stat.onEliminationFailed();
@@ -487,7 +489,7 @@ namespace cds { namespace intrusive {
 
         @note Hendler's et al paper describes a lock-free implementation of elimination back-off which is quite complex.
         The main difficulty is the managing life-time of elimination record.
-        Our implementation uses simplified lock-based (spin-based) approach which allows
+        This implementation uses simplified lock-based (spin-based) approach which allows
         the elimination record allocation on thread's stack.
         This approach demonstrates sufficient performance under high load.
 
@@ -744,10 +746,10 @@ namespace cds { namespace intrusive {
                 op.pVal = &val;
             }
 
-            node_type * t = m_Top.load(memory_model::memory_order_relaxed);
+            node_type * t = m_Top.load( memory_model::memory_order_relaxed );
             while ( true ) {
                 pNew->m_pNext.store( t, memory_model::memory_order_relaxed );
-                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, atomics::memory_order_relaxed )) {
+                if ( m_Top.compare_exchange_weak( t, pNew, memory_model::memory_order_release, atomics::memory_order_acquire )) {
                     ++m_ItemCounter;
                     m_stat.onPush();
                     return true;
