@@ -129,6 +129,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 else()
     message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
+message("Exe flags: ${CMAKE_EXE_LINKER_FLAGS}")
+
 if(Boost_FOUND)
     message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
 else()
