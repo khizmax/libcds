@@ -107,7 +107,9 @@
 // *************************************************
 // Features
 #if defined(__has_feature) && __has_feature(thread_sanitizer)
-#   define CDS_THREAD_SANITIZER_ENABLED
+#   ifndef CDS_THREAD_SANITIZER_ENABLED
+#       define CDS_THREAD_SANITIZER_ENABLED
+#   endif
 #endif
 
 #if defined(__has_feature) && __has_feature(address_sanitizer)
