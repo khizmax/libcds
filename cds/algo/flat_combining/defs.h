@@ -66,11 +66,12 @@ namespace cds { namespace algo { namespace flat_combining {
         /// Initializes publication record
         publication_record()
             : nRequest( req_EmptyRecord )
-            , nState( inactive )
             , nAge( 0 )
             , pNext( nullptr )
             , pNextAllocated( nullptr )
-        {}
+        {
+            nState.store( inactive, atomics::memory_order_release );
+        }
 
         /// Returns the value of \p nRequest field
         unsigned int op( atomics::memory_order mo = atomics::memory_order_relaxed ) const

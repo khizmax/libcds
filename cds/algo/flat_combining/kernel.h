@@ -324,9 +324,9 @@ namespace cds { namespace algo {
 
                     // Insert in allocated list
                     assert( m_pAllocatedHead != nullptr );
-                    publication_record* p = m_pAllocatedHead->pNextAllocated.load( memory_model::memory_order_acquire );
+                    publication_record* p = m_pAllocatedHead->pNextAllocated.load( memory_model::memory_order_relaxed );
                     do {
-                        pRec->pNextAllocated.store( p, memory_model::memory_order_relaxed );
+                        pRec->pNextAllocated.store( p, memory_model::memory_order_release );
                     } while ( !m_pAllocatedHead->pNextAllocated.compare_exchange_weak( p, pRec, memory_model::memory_order_release, atomics::memory_order_acquire ));
 
                     publish( pRec );
@@ -602,10 +602,10 @@ namespace cds { namespace algo {
 
                 // Insert record to publication list
                 if ( m_pHead != static_cast<publication_record *>(pRec)) {
-                    publication_record * p = m_pHead->pNext.load(memory_model::memory_order_relaxed);
+                    publication_record * p = m_pHead->pNext.load( memory_model::memory_order_relaxed );
                     if ( p != static_cast<publication_record *>( pRec )) {
                         do {
-                            pRec->pNext.store( p, memory_model::memory_order_relaxed );
+                            pRec->pNext.store( p, memory_model::memory_order_release );
                             // Failed CAS changes p
                         } while ( !m_pHead->pNext.compare_exchange_weak( p, static_cast<publication_record *>(pRec),
                             memory_model::memory_order_release, atomics::memory_order_acquire ));
