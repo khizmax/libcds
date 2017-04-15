@@ -61,9 +61,10 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pPrev ;   ///< Pointer to previous node
 
             CDS_CONSTEXPR node() CDS_NOEXCEPT
-                : m_pNext( nullptr )
-                , m_pPrev( nullptr )
-            {}
+            {
+                m_pNext.store( nullptr, atomics::memory_order_relaxed );
+                m_pPrev.store( nullptr, atomics::memory_order_release );
+            }
         };
 
         //@cond
@@ -611,8 +612,8 @@ namespace cds { namespace intrusive {
             back_off bkoff;
 
             guards.assign( 1, &val );
-            node_type * pTail = guards.protect( 0, m_pTail, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);} );   // Read the tail
             while( true ) {
+                node_type * pTail = guards.protect( 0, m_pTail, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p ); } );   // Read the tail
                 pNew->m_pNext.store( pTail, memory_model::memory_order_relaxed );
                 if ( m_pTail.compare_exchange_strong( pTail, pNew, memory_model::memory_order_release, atomics::memory_order_acquire )) { // Try to CAS the tail
                     pTail->m_pPrev.store( pNew, memory_model::memory_order_release ); // Success, write prev
@@ -620,7 +621,6 @@ namespace cds { namespace intrusive {
                     m_Stat.onEnqueue();
                     break;     // Enqueue done!
                 }
-                guards.assign( 0, node_traits::to_value_ptr( pTail ));  // pTail has been changed by CAS above
                 m_Stat.onEnqueueRace();
                 bkoff();
             }

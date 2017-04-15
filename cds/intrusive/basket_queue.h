@@ -66,8 +66,9 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
             node()
-                : m_pNext( nullptr )
-            {}
+            {
+                m_pNext.store( marked_ptr(), atomics::memory_order_release );
+            }
         };
 
         using cds::intrusive::single_link::default_hook;
@@ -663,12 +664,12 @@ namespace cds { namespace intrusive {
             while ( true ) {
                 t = guard.protect( m_pTail, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 
-                marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_acquire );
+                marked_ptr pNext = t->m_pNext.load(memory_model::memory_order_relaxed );
 
                 if ( pNext.ptr() == nullptr ) {
                     pNew->m_pNext.store( marked_ptr(), memory_model::memory_order_relaxed );
                     if ( t->m_pNext.compare_exchange_weak( pNext, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed )) {
-                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_acquire ))
+                        if ( !m_pTail.compare_exchange_strong( t, marked_ptr(pNew), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                             m_Stat.onAdvanceTailFailed();
                         break;
                     }
@@ -681,7 +682,7 @@ namespace cds { namespace intrusive {
                     pNext = gNext.protect( t->m_pNext, []( marked_ptr p ) -> value_type * { return node_traits::to_value_ptr( p.ptr());});
 
                     // add to the basket
-                    if ( m_pTail.load(memory_model::memory_order_acquire) == t
+                    if ( m_pTail.load( memory_model::memory_order_relaxed ) == t
                          && t->m_pNext.load( memory_model::memory_order_relaxed) == pNext
                          && !pNext.bits())
                     {
@@ -700,9 +701,7 @@ namespace cds { namespace intrusive {
                     typename gc::template GuardArray<2> g;
                     g.assign( 0, node_traits::to_value_ptr( pNext.ptr()));
                     if ( m_pTail.load( memory_model::memory_order_acquire ) != t
-
                       || t->m_pNext.load( memory_model::memory_order_relaxed ) != pNext )
-
                     {
                         m_Stat.onEnqueueRace();
                         bkoff();
@@ -711,14 +710,14 @@ namespace cds { namespace intrusive {
 
                     marked_ptr p;
                     bool bTailOk = true;
-                    while ( (p = pNext->m_pNext.load( memory_model::memory_order_relaxed )).ptr() != nullptr )
+                    while ( (p = pNext->m_pNext.load( memory_model::memory_order_acquire )).ptr() != nullptr )
                     {
-                        bTailOk = m_pTail.load( memory_model::memory_order_acquire ) == t;
+                        bTailOk = m_pTail.load( memory_model::memory_order_relaxed ) == t;
                         if ( !bTailOk )
                             break;
 
                         g.assign( 1, node_traits::to_value_ptr( p.ptr()));
-                        if ( pNext->m_pNext.load(memory_model::memory_order_acquire) != p )
+                        if ( pNext->m_pNext.load( memory_model::memory_order_relaxed ) != p )
                             continue;
                         pNext = p;
                         g.assign( 0, g.template get<value_type>( 1 ));
