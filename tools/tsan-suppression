@@ -1,7 +1,7 @@
 # Run-time flags: envvar TSAN_OPTIONS="';' delimited option list"
 # Useful options (full list see https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags):
 #   suppressions=<supression_file_name>
-#   verosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
+#   verbosity=n Verbosity level (0 - silent, 1 - a bit of output, 2+ - more output).
 #   history_size=[0..7], default 2
 #   detect_deadlocks=0 - some data structs in libcds tests use a lot of node-level mutexes.
 #                        TSan has the hardcoded limit =16 for the number of mutex per thread.
