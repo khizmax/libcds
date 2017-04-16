@@ -63,7 +63,7 @@ print $out " -DWITH_TSAN=ON \\\n" if $build eq 'tsan';
 print $out " -DBOOST_ROOT=$boost \\\n";
 print $out " -DBOOST_LIBRARYDIR=\$BOOST_ROOT/$boost_libs \\\n" if $boost_libs;
 print $out " -DGTEST_INCLUDE_DIRS=$gtest_inc \\\n" if $gtest_inc;
-print $out " -DGTEST_LIBRARY=$gtest_lib \\\n" if $gtest_lib;
+print $out " -DGTEST_LIBRARIES=$gtest_lib \\\n" if $gtest_lib;
 print $out " -DEXTERNAL_SYSTEM_LIBS=\"$ext_lib\" \\\n" if $ext_lib;
 print $out " $cmake_flags \\\n" if $cmake_flags;
 print $out " \$CDS_SOURCE && \\\n";
