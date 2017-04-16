@@ -219,7 +219,7 @@ namespace cds {
     */
     namespace urcu {
 
-#   if CDS_OS_INTERFACE == CDS_OSI_UNIX || defined(CDS_DOXYGEN_INVOKED)
+#   if (CDS_OS_INTERFACE == CDS_OSI_UNIX || defined(CDS_DOXYGEN_INVOKED)) && !defined(CDS_THREAD_SANITIZER_ENABLED)
 #       define CDS_URCU_SIGNAL_HANDLING_ENABLED 1
 #   endif
 
