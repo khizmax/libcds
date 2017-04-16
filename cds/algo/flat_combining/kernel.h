@@ -708,7 +708,7 @@ namespace cds { namespace algo {
                 while ( p ) {
                     switch ( p->nState.load( memory_model::memory_order_acquire )) {
                     case active:
-                        if ( p->op() >= req_Operation ) {
+                        if ( p->op( memory_model::memory_order_acquire ) >= req_Operation ) {
                             p->nAge.store( nCurAge, memory_model::memory_order_relaxed );
                             owner.fc_apply( static_cast<publication_record_type*>( p ));
                             operation_done( *p );
@@ -748,7 +748,7 @@ namespace cds { namespace algo {
                     compact_list( nCurAge );
             }
 
-            bool wait_for_combining( publication_record_type * pRec )
+            bool wait_for_combining( publication_record_type* pRec )
             {
                 m_waitStrategy.prepare( *pRec );
                 m_Stat.onPassiveWait();
@@ -863,5 +863,38 @@ namespace cds { namespace algo {
 
     } // namespace flat_combining
 }} // namespace cds::algo
+
+/*
+  CppMem model  (http://svr-pes20-cppmem.cl.cam.ac.uk/cppmem/)
+
+  // Combiner thread - slave (waiting) thread
+int main() {
+      atomic_int y = 0;  // pRec->op
+      int x = 0;         // pRec->data
+   {{{
+      { // slave thread (not combiner)
+        // Op data
+        x = 1;
+        // Annotate request (op)
+        y.store(1, release);
+        // Wait while request done
+        y.load(acquire).readsvalue(2);
+        // Read result
+        r2=x;
+      }
+   |||
+      { // Combiner thread
+        // Read request (op)
+        r1=y.load(acquire).readsvalue(1);
+        // Execute request - change request data
+        x = 2;
+        // store "request processed" flag (pRec->op := req_Response)
+        y.store(2, release);
+      }
+   }}};
+   return 0;
+}
+
+*/
 
 #endif // #ifndef CDSLIB_ALGO_FLAT_COMBINING_KERNEL_H
