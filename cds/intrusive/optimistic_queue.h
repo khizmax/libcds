@@ -60,7 +60,7 @@ namespace cds { namespace intrusive {
             atomic_node_ptr m_pNext ;   ///< Pointer to next node
             atomic_node_ptr m_pPrev ;   ///< Pointer to previous node
 
-            CDS_CONSTEXPR node() CDS_NOEXCEPT
+            node() CDS_NOEXCEPT
             {
                 m_pNext.store( nullptr, atomics::memory_order_relaxed );
                 m_pPrev.store( nullptr, atomics::memory_order_release );
