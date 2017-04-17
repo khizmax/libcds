@@ -119,8 +119,9 @@ namespace cds { namespace intrusive {
 
             /// Constructs leaf (bIntrenal == false) or internal (bInternal == true) node
             explicit basic_node( bool bInternal )
-                : m_nFlags( bInternal ? internal : 0 )
-            {}
+            {
+                m_nFlags.store( bInternal ? internal: 0, atomics::memory_order_release );
+            }
 
             /// Checks if the node is a leaf
             bool is_leaf() const
@@ -168,6 +169,7 @@ namespace cds { namespace intrusive {
             typedef basic_node base_class;
 
             typedef GC              gc       ;   ///< Garbage collector
+
             /// Constructs leaf (bIntrenal == false) or internal (bInternal == true) node
             explicit base_node( bool bInternal )
                 : base_class( bInternal )
@@ -241,8 +243,9 @@ namespace cds { namespace intrusive {
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
                 , m_pUpdate( update_ptr())
-                , m_nEmptyUpdate(0)
-            {}
+            {
+                m_nEmptyUpdate.store( 0, atomics::memory_order_release );
+            }
 
             //@cond
             update_ptr null_update_desc()
