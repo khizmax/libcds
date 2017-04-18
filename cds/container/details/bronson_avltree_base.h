@@ -76,8 +76,9 @@ namespace cds { namespace container {
                 , m_pParent( nullptr )
                 , m_pLeft( nullptr )
                 , m_pRight( nullptr )
-                , m_pValue( nullptr )
-            {}
+            {
+                m_pValue.store( nullptr, atomics::memory_order_release );
+            }
 
             link_node( int nHeight, version_type version, node_type * pParent, node_type * pLeft, node_type * pRight )
                 : m_nHeight( nHeight )
@@ -85,8 +86,9 @@ namespace cds { namespace container {
                 , m_pParent( pParent )
                 , m_pLeft( pLeft )
                 , m_pRight( pRight )
-                , m_pValue( nullptr )
-            {}
+            {
+                m_pValue.store( nullptr, atomics::memory_order_release );
+            }
 
             node_type * parent( atomics::memory_order order ) const
             {
