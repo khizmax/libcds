@@ -34,6 +34,7 @@
 #include <cds/urcu/details/base.h>
 #include <cds/details/static_functor.h>
 #include <cds/details/lib.h>
+#include <cds/user_setup/cache_line.h>
 
 //@cond
 namespace cds { namespace urcu { namespace details {
@@ -45,6 +46,7 @@ namespace cds { namespace urcu { namespace details {
     template <> struct thread_data<tag_> { \
         atomics::atomic<uint32_t>        m_nAccessControl ; \
         thread_list_record< thread_data >   m_list ; \
+        char pad_[cds::c_nCacheLineSize]; \
         thread_data(): m_nAccessControl(0) {} \
         explicit thread_data( OS::ThreadId owner ): m_nAccessControl(0), m_list(owner) {} \
         ~thread_data() {} \
