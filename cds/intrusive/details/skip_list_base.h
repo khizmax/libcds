@@ -78,8 +78,9 @@ namespace cds { namespace intrusive {
                 : m_pNext( nullptr )
                 , m_nHeight( 1 )
                 , m_arrNext( nullptr )
-                , m_nUnlink( 1 )
-            {}
+            {
+                m_nUnlink.store( 1, atomics::memory_order_release );
+            }
 
 
             /// Constructs a node's tower of height \p nHeight
@@ -121,7 +122,13 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr));
 
-                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                if ( nLevel ) {
+                    // TSan: data race between m_arrNext[ nLevel - 1 ] and make_tower()
+                    // In fact, m_arrNext is a const array that is never changed
+                    CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &m_arrNext[ nLevel - 1 ] );
+                    return m_arrNext[nLevel - 1];
+                }
+                return m_pNext;
             }
 
             /// Access to element of next pointer array (const version)
@@ -130,7 +137,11 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
-                return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
+                if ( nLevel ) {
+                    CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &m_arrNext[nLevel - 1] );
+                    return m_arrNext[nLevel - 1];
+                }
+                return m_pNext;
             }
 
             /// Access to element of next pointer array (synonym for \p next() function)

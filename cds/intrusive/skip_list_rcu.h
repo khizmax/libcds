@@ -76,8 +76,9 @@ namespace cds { namespace intrusive {
                 , m_pDelChain( nullptr )
                 , m_nHeight(1)
                 , m_arrNext( nullptr )
-                , m_nUnlink(1)
-            {}
+            {
+                m_nUnlink.store( 1, atomics::memory_order_release );
+            }
 
             /// Constructs a node of height \p nHeight
             void make_tower( unsigned int nHeight, atomic_marked_ptr * nextTower )
@@ -117,15 +118,7 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || (nLevel > 0 && m_arrNext != nullptr));
 
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                // TSan false positive: m_arrNext is read-only array
-                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
-                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
-                return r;
-#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-#           endif
             }
 
             /// Access to element of next pointer array (const version)
@@ -134,15 +127,7 @@ namespace cds { namespace intrusive {
                 assert( nLevel < height());
                 assert( nLevel == 0 || nLevel > 0 && m_arrNext != nullptr );
 
-#           ifdef CDS_THREAD_SANITIZER_ENABLED
-                // TSan false positive: m_arrNext is read-only array
-                CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
-                atomic_marked_ptr& r = nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-                CDS_TSAN_ANNOTATE_IGNORE_READS_END;
-                return r;
-#           else
                 return nLevel ? m_arrNext[ nLevel - 1] : m_pNext;
-#           endif
             }
 
             /// Access to element of next pointer array (same as \ref next function)

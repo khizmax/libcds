@@ -170,23 +170,30 @@ namespace cds { namespace container {
                 {
                     return c_nNodeSize + (nHeight - 1) * c_nTowerItemSize;
                 }
+
                 static unsigned char * alloc_space( unsigned int nHeight )
                 {
+                    unsigned char * pMem;
+                    size_t const sz = node_size( nHeight );
+
                     if ( nHeight > 1 ) {
-                        unsigned char * pMem = tower_allocator_type().allocate( node_size(nHeight));
+                        pMem = tower_allocator_type().allocate( sz );
 
                         // check proper alignments
                         assert( (((uintptr_t) pMem) & (alignof(node_type) - 1)) == 0 );
                         assert( (((uintptr_t) (pMem + c_nNodeSize)) & (alignof(node_tower_item) - 1)) == 0 );
                         return pMem;
                     }
+                    else
+                        pMem = reinterpret_cast<unsigned char *>( node_allocator_type().allocate( 1 ) );
 
-                    return reinterpret_cast<unsigned char *>( node_allocator_type().allocate(1));
+                    return pMem;
                 }
 
                 static void free_space( unsigned char * p, unsigned int nHeight )
                 {
                     assert( p != nullptr );
+
                     if ( nHeight == 1 )
                         node_allocator_type().deallocate( reinterpret_cast<node_type *>(p), 1 );
                     else

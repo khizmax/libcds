@@ -51,7 +51,12 @@
                                                     CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;\
                                                     CDS_TSAN_ANNOTATE_IGNORE_READS_END
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz ) AnnotateNewMemory( __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
+
+// Publish/unpublish - DEPRECATED
+#if 0
 #   define CDS_TSAN_ANNOTATE_PUBLISH_MEMORY_RANGE( addr, sz ) AnnotatePublishMemoryRange( __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
+#   define CDS_TSAN_ANNOTATE_UNPUBLISH_MEMORY_RANGE( addr, sz ) AnnotateUnpublishMemoryRange( __FILE__, __LINE__, reinterpret_cast<void *>(addr), sz )
+#endif
 
 #   define CDS_TSAN_ANNOTATE_MUTEX_CREATE( addr )    AnnotateRWLockCreate( __FILE__, __LINE__, reinterpret_cast<void *>(addr))
 #   define CDS_TSAN_ANNOTATE_MUTEX_DESTROY( addr )   AnnotateRWLockDestroy( __FILE__, __LINE__, reinterpret_cast<void *>(addr))
@@ -70,7 +75,10 @@
         void AnnotateIgnoreWritesBegin(const char *f, int l);
         void AnnotateIgnoreWritesEnd(const char *f, int l);
 
+#if 0
         void AnnotatePublishMemoryRange( const char *f, int l, void * mem, size_t size );
+        void AnnotateUnpublishMemoryRange( const char *f, int l, void * addr, size_t size );
+#endif
         void AnnotateNewMemory( const char *f, int l, void * mem, size_t size );
 
         void AnnotateRWLockCreate( const char *f, int l, void* m );
@@ -91,7 +99,10 @@
 #   define CDS_TSAN_ANNOTATE_IGNORE_RW_BEGIN
 #   define CDS_TSAN_ANNOTATE_IGNORE_RW_END
 
+#if 0
 #   define CDS_TSAN_ANNOTATE_PUBLISH_MEMORY_RANGE( addr, sz )
+#   define CDS_TSAN_ANNOTATE_UNPUBLISH_MEMORY_RANGE( addr, sz )
+#endif
 #   define CDS_TSAN_ANNOTATE_NEW_MEMORY( addr, sz )
 
 #   define CDS_TSAN_ANNOTATE_MUTEX_CREATE( addr )

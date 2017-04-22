@@ -1411,7 +1411,7 @@ namespace cds { namespace intrusive {
             // Insert at level 0
             {
                 marked_node_ptr p( pos.pSucc[0] );
-                pNode->next( 0 ).store( p, memory_model::memory_order_relaxed );
+                pNode->next( 0 ).store( p, memory_model::memory_order_release );
                 if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
                     return false;
 
@@ -1427,7 +1427,7 @@ namespace cds { namespace intrusive {
                     // Set pNode->next
                     // pNode->next can have "logical deleted" flag if another thread is removing pNode right now
                     if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
-                        memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
+                        memory_model::memory_order_release, atomics::memory_order_acquire ))
                     {
                         // pNode has been marked as removed while we are inserting it
                         // Stop inserting
