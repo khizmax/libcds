@@ -177,7 +177,7 @@ namespace {
         test( m );
     }
 
-    TEST_F( SkipListMap_NoGC, random_level_generator )
+    TEST_F( SkipListMap_NoGC, xorshift32 )
     {
         struct map_traits: public cc::skip_list::traits
         {
@@ -185,7 +185,87 @@ namespace {
             typedef base_class::less less;
             typedef cds::atomicity::item_counter item_counter;
             typedef cc::skip_list::stat<> stat;
-            typedef cc::skip_list::xorshift random_level_generator;
+            typedef cc::skip_list::xorshift32 random_level_generator;
+        };
+        typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m;
+        test( m );
+    }
+
+    TEST_F( SkipListMap_NoGC, xorshift24 )
+    {
+        struct map_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::xorshift24 random_level_generator;
+        };
+        typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m;
+        test( m );
+    }
+
+    TEST_F( SkipListMap_NoGC, xorshift16 )
+    {
+        struct map_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::xorshift16 random_level_generator;
+        };
+        typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m;
+        test( m );
+    }
+
+    TEST_F( SkipListMap_NoGC, turbo32 )
+    {
+        struct map_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo32 random_level_generator;
+        };
+        typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m;
+        test( m );
+    }
+
+    TEST_F( SkipListMap_NoGC, turbo24 )
+    {
+        struct map_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
+
+        map_type m;
+        test( m );
+    }
+
+    TEST_F( SkipListMap_NoGC, turbo16 )
+    {
+        struct map_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo16 random_level_generator;
         };
         typedef cc::SkipListMap< gc_type, key_type, value_type, map_traits > map_type;
 

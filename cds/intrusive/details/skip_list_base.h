@@ -275,13 +275,14 @@ namespace cds { namespace intrusive {
                 The generator produces a number from range <tt>[0 .. c_nUpperBound)</tt> (upper bound excluded).
                 \p c_nUpperBound must be no more than 32.
             - <tt>random_generator()</tt> - the constructor of generator object initialises the generator instance (its internal state).
-            - <tt>unsigned int operator()()</tt> - the main generating function. Returns random level from range 0..31.
+            - <tt>unsigned int operator()()</tt> - the main generating function. Returns random level from range <tt>[0 .. c_nUpperBound - 1]</tt>
+               
 
             Stateful generators are supported.
 
             Available \p Type implementations:
-            - \p skip_list::xorshift
-            - \p skip_list::turbo_pascal
+            - \p skip_list::xor_shift
+            - \p skip_list::turbo
         */
         template <typename Type>
         struct random_level_generator {
@@ -296,24 +297,29 @@ namespace cds { namespace intrusive {
 
         /// Xor-shift random level generator
         /**
-            The simplest of the generators described in George
-            Marsaglia's "Xorshift RNGs" paper.  This is not a high-quality
-            generator but is acceptable for skip-list.
+            The simplest of the generators described in George Marsaglia's "Xorshift RNGs" paper.
+            This is not a high-quality generator but is acceptable for skip-list.
 
-            The random generator should return numbers from range [0..31].
+            The random generator should return numbers from range [0 .. MaxHeight - 1].
 
             From Doug Lea's ConcurrentSkipListMap.java.
         */
-        class xorshift {
+        template <unsigned MaxHeight>
+        class xor_shift {
             //@cond
             atomics::atomic<unsigned int>    m_nSeed;
+
+            static_assert( MaxHeight > 1, "MaxHeight" );
+            static_assert( MaxHeight <= c_nHeightLimit, "MaxHeight is too large" );
+            static unsigned int const c_nBitMask = (1u << ( MaxHeight - 1 )) - 1;
             //@endcond
+
         public:
             /// The upper bound of generator's return value. The generator produces random number in range <tt>[0..c_nUpperBound)</tt>
-            static unsigned int const c_nUpperBound = c_nHeightLimit;
+            static unsigned int const c_nUpperBound = MaxHeight;
 
             /// Initializes the generator instance
-            xorshift()
+            xor_shift()
             {
                 m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), atomics::memory_order_relaxed );
             }
@@ -339,11 +345,26 @@ namespace cds { namespace intrusive {
                 x ^= x >> 17;
                 x ^= x << 5;
                 m_nSeed.store( x, atomics::memory_order_relaxed );
-                unsigned int nLevel = ((x & 0x00000001) != 0) ? 0 : cds::bitop::LSB( (~(x >> 1)) & 0x7FFFFFFF );
+                unsigned int nLevel = ((x & 0x00000001) != 0) ? 0 : cds::bitop::LSB( (~(x >> 1)) & c_nBitMask );
+
                 assert( nLevel < c_nUpperBound );
                 return nLevel;
             }
         };
+
+        /// Xor-shift random level generator, max height 32
+        typedef xor_shift<c_nHeightLimit> xorshift32;
+
+        //@cond
+        // For backward compatibility
+        typedef xorshift32 xorshift;
+        //@endcond
+
+        /// \ref xor_shift generator, max height 24
+        typedef xor_shift< 24 > xorshift24;
+
+        /// \ref xor_shift generator, max height = 16
+        typedef xor_shift< 16 > xorshift16;
 
         /// Turbo-pascal random level generator
         /**
@@ -353,17 +374,22 @@ namespace cds { namespace intrusive {
 
             From Doug Lea's ConcurrentSkipListMap.java.
         */
-        class turbo_pascal
+        template <unsigned MaxHeight>
+        class turbo
         {
             //@cond
             atomics::atomic<unsigned int>    m_nSeed;
+
+            static_assert( MaxHeight > 1, "MaxHeight" );
+            static_assert( MaxHeight <= c_nHeightLimit, "MaxHeight is too large" );
+            static unsigned int const c_nBitMask = (1u << ( MaxHeight - 1 )) - 1;
             //@endcond
         public:
             /// The upper bound of generator's return value. The generator produces random number in range <tt>[0..c_nUpperBound)</tt>
-            static unsigned int const c_nUpperBound = c_nHeightLimit;
+            static unsigned int const c_nUpperBound = MaxHeight;
 
             /// Initializes the generator instance
-            turbo_pascal()
+            turbo()
             {
                 m_nSeed.store( (unsigned int) cds::OS::Timer::random_seed(), atomics::memory_order_relaxed );
             }
@@ -390,11 +416,26 @@ namespace cds { namespace intrusive {
                 */
                 unsigned int x = m_nSeed.load( atomics::memory_order_relaxed ) * 134775813 + 1;
                 m_nSeed.store( x, atomics::memory_order_relaxed );
-                unsigned int nLevel = ( x & 0x80000000 ) ? (31 - cds::bitop::MSBnz( (x & 0x7FFFFFFF) | 1 )) : 0;
+                unsigned int nLevel = ( x & 0x80000000 ) ? ( c_nUpperBound - 1 - cds::bitop::MSBnz( (x & c_nBitMask ) | 1 )) : 0;
+
                 assert( nLevel < c_nUpperBound );
                 return nLevel;
             }
         };
+
+        /// Turbo-Pascal random level generator, max height 32
+        typedef turbo<c_nHeightLimit> turbo32;
+
+        //@cond
+        // For backward compatibility
+        typedef turbo32 turbo_pascal;
+        //@endcond
+
+        /// Turbo-Pascal generator, max height 24
+        typedef turbo< 24 > turbo24;
+
+        /// Turbo-Pascal generator, max height 16
+        typedef turbo< 16 > turbo16;
 
         /// \p SkipListSet internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
@@ -591,7 +632,7 @@ namespace cds { namespace intrusive {
 
                 See \p skip_list::random_level_generator option setter.
             */
-            typedef turbo_pascal                    random_level_generator;
+            typedef turbo32 random_level_generator;
 
             /// Allocator
             /**
@@ -642,9 +683,9 @@ namespace cds { namespace intrusive {
                 To enable it use \p atomicity::item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift,
-                \p skip_list::turbo_pascal (the default) or
-                user-provided one. See \p skip_list::random_level_generator option description for explanation.
+            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xor_shift,
+                \p skip_list::turbo32 (the default) or user-provided one. 
+                See \p skip_list::random_level_generator option description for explanation.
             - \p opt::allocator - although the skip-list is an intrusive container,
                 an allocator should be provided to maintain variable randomly-calculated height of the node
                 since the node can contain up to 32 next pointers. The allocator option is used to allocate an array of next pointers

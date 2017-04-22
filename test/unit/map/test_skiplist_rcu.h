@@ -223,7 +223,7 @@ TYPED_TEST_P( SkipListMap, stat )
     this->test( m );
 }
 
-TYPED_TEST_P( SkipListMap, random_level_generator )
+TYPED_TEST_P( SkipListMap, xorshift32 )
 {
     typedef typename TestFixture::rcu_type   rcu_type;
     typedef typename TestFixture::key_type   key_type;
@@ -231,12 +231,8 @@ TYPED_TEST_P( SkipListMap, random_level_generator )
 
     struct map_traits: public cc::skip_list::traits
     {
-        typedef typename TestFixture::cmp compare;
         typedef typename TestFixture::less less;
-        typedef cds::atomicity::item_counter item_counter;
-        typedef cc::skip_list::stat<> stat;
-        typedef cc::skip_list::xorshift random_level_generator;
-        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+        typedef cc::skip_list::xorshift32 random_level_generator;
     };
     typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
 
@@ -244,9 +240,93 @@ TYPED_TEST_P( SkipListMap, random_level_generator )
     this->test( m );
 }
 
+TYPED_TEST_P( SkipListMap, xorshift24 )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+
+    struct map_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cc::skip_list::xorshift24 random_level_generator;
+    };
+    typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m;
+    this->test( m );
+}
+
+TYPED_TEST_P( SkipListMap, xorshift16 )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+
+    struct map_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cc::skip_list::xorshift16 random_level_generator;
+    };
+    typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m;
+    this->test( m );
+}
+
+TYPED_TEST_P( SkipListMap, turbo32 )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+
+    struct map_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cc::skip_list::turbo32 random_level_generator;
+    };
+    typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m;
+    this->test( m );
+}
+
+TYPED_TEST_P( SkipListMap, turbo24 )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+
+    struct map_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cc::skip_list::turbo24 random_level_generator;
+    };
+    typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m;
+    this->test( m );
+}
+
+TYPED_TEST_P( SkipListMap, turbo16 )
+{
+    typedef typename TestFixture::rcu_type   rcu_type;
+    typedef typename TestFixture::key_type   key_type;
+    typedef typename TestFixture::value_type value_type;
+
+    struct map_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cc::skip_list::turbo16 random_level_generator;
+    };
+    typedef cc::SkipListMap< rcu_type, key_type, value_type, map_traits > map_type;
+
+    map_type m;
+    this->test( m );
+}
 
 REGISTER_TYPED_TEST_CASE_P( SkipListMap,
-    compare, less, cmpmix, item_counting, backoff, stat, random_level_generator
+    compare, less, cmpmix, item_counting, backoff, stat, xorshift32, xorshift24, xorshift16, turbo32, turbo24, turbo16
 );
 
 

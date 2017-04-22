@@ -231,18 +231,16 @@ TYPED_TEST_P( SkipListSet, stat )
     this->test( s );
 }
 
-TYPED_TEST_P( SkipListSet, random_level_generator )
+TYPED_TEST_P( SkipListSet, xorshift32 )
 {
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::int_item int_item;
 
     struct set_traits: public cc::skip_list::traits
     {
-        typedef typename TestFixture::cmp compare;
         typedef typename TestFixture::less less;
         typedef cds::atomicity::item_counter item_counter;
-        typedef cc::skip_list::stat<> stat;
-        typedef cc::skip_list::xorshift random_level_generator;
+        typedef cc::skip_list::xorshift32 random_level_generator;
         typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
     };
     typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
@@ -251,11 +249,100 @@ TYPED_TEST_P( SkipListSet, random_level_generator )
     this->test( s );
 }
 
+TYPED_TEST_P( SkipListSet, xorshift24 )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
 
-// GCC 5: All this->test names should be written on single line, otherwise a runtime error will be encountered like as
+    struct set_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cc::skip_list::xorshift24 random_level_generator;
+        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+    };
+    typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
+
+    set_type s;
+    this->test( s );
+}
+
+TYPED_TEST_P( SkipListSet, xorshift16 )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct set_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cc::skip_list::xorshift16 random_level_generator;
+        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+    };
+    typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
+
+    set_type s;
+    this->test( s );
+}
+
+TYPED_TEST_P( SkipListSet, turbo32 )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct set_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cc::skip_list::turbo32 random_level_generator;
+        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+    };
+    typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
+
+    set_type s;
+    this->test( s );
+}
+
+TYPED_TEST_P( SkipListSet, turbo24 )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct set_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cc::skip_list::turbo24 random_level_generator;
+        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+    };
+    typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
+
+    set_type s;
+    this->test( s );
+}
+
+TYPED_TEST_P( SkipListSet, turbo16 )
+{
+    typedef typename TestFixture::rcu_type rcu_type;
+    typedef typename TestFixture::int_item int_item;
+
+    struct set_traits: public cc::skip_list::traits
+    {
+        typedef typename TestFixture::less less;
+        typedef cds::atomicity::item_counter item_counter;
+        typedef cc::skip_list::turbo16 random_level_generator;
+        typedef cds::opt::v::rcu_assert_deadlock rcu_check_deadlock;
+    };
+    typedef cc::SkipListSet< rcu_type, int_item, set_traits >set_type;
+
+    set_type s;
+    this->test( s );
+}
+
+// All this->test names should be written on single line, otherwise a runtime error will be encountered like as
 // "No this->test named <test_name> can be found in this this->test case"
 REGISTER_TYPED_TEST_CASE_P( SkipListSet,
-    compare, less, cmpmix, item_counting, backoff, stat, random_level_generator
+    compare, less, cmpmix, item_counting, backoff, stat, xorshift32, xorshift24, xorshift16, turbo32, turbo24, turbo16
 );
 
 

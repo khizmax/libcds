@@ -74,9 +74,9 @@ namespace cds { namespace container {
         - opt::item_counter - the type of item counting feature. Default is \ref atomicity::empty_item_counter that is no item counting.
         - opt::memory_model - C++ memory ordering model. Can be opt::v::relaxed_ordering (relaxed memory model, the default)
             or opt::v::sequential_consistent (sequentially consisnent memory model).
-        - skip_list::random_level_generator - random level generator. Can be skip_list::xorshift, skip_list::turbo_pascal or
-            user-provided one. See skip_list::random_level_generator option description for explanation.
-            Default is \p %skip_list::turbo_pascal.
+        - skip_list::random_level_generator - random level generator. Can be \p skip_list::xor_shift, \p skip_list::turbo or
+            user-provided one. See \p skip_list::random_level_generator option description for explanation.
+            Default is \p skip_list::turbo32.
         - opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
         - opt::back_off - back-off strategy used. If the option is not specified, the cds::backoff::Default is used.
         - opt::stat - internal statistics. Available types: skip_list::stat, skip_list::empty_stat (the default)

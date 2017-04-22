@@ -51,6 +51,7 @@
     <ClCompile Include="..\..\..\test\unit\set\skiplist_rcu_shb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\set\skiplist_hp_inl.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_ordered_set_hp.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set_data.h" />

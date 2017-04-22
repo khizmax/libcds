@@ -116,14 +116,14 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveSkipListSet_HP, base_xorshift )
+    TEST_F( IntrusiveSkipListSet_HP, base_xorshift32 )
     {
         struct traits : public ci::skip_list::traits
         {
             typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
             typedef mock_disposer disposer;
             typedef cmp<base_item_type> compare;
-            typedef ci::skip_list::xorshift random_level_generator;
+            typedef ci::skip_list::xorshift32 random_level_generator;
         };
 
         typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
@@ -132,6 +132,85 @@ namespace {
         test( s );
     }
 
+    TEST_F( IntrusiveSkipListSet_HP, base_xorshift24 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<base_item_type> compare;
+            typedef ci::skip_list::xorshift24 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, base_xorshift16 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<base_item_type> compare;
+            typedef ci::skip_list::xorshift16 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, base_turbo32 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<base_item_type> compare;
+            typedef ci::skip_list::turbo32 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, base_turbo24 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<base_item_type> compare;
+            typedef ci::skip_list::turbo24 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, base_turbo16 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::base_hook< ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<base_item_type> compare;
+            typedef ci::skip_list::turbo16 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, base_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
 
     TEST_F( IntrusiveSkipListSet_HP, member_cmp )
     {
@@ -182,14 +261,94 @@ namespace {
         test( s );
     }
 
-    TEST_F( IntrusiveSkipListSet_HP, member_xorshift )
+    TEST_F( IntrusiveSkipListSet_HP, member_xorshift32 )
     {
         struct traits : public ci::skip_list::traits
         {
             typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
             typedef mock_disposer disposer;
             typedef cmp<member_item_type> compare;
-            typedef ci::skip_list::xorshift random_level_generator;
+            typedef ci::skip_list::xorshift32 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, member_xorshift24 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<member_item_type> compare;
+            typedef ci::skip_list::xorshift24 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, member_xorshift16 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<member_item_type> compare;
+            typedef ci::skip_list::xorshift16 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, member_turbo32 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<member_item_type> compare;
+            typedef ci::skip_list::turbo32 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, member_turbo24 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<member_item_type> compare;
+            typedef ci::skip_list::turbo24 random_level_generator;
+        };
+
+        typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( IntrusiveSkipListSet_HP, member_turbo16 )
+    {
+        struct traits: public ci::skip_list::traits
+        {
+            typedef ci::skip_list::member_hook< offsetof( member_item_type, hMember ), ci::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp<member_item_type> compare;
+            typedef ci::skip_list::turbo16 random_level_generator;
         };
 
         typedef ci::SkipListSet< gc_type, member_item_type, traits > set_type;

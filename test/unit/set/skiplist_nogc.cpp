@@ -130,7 +130,7 @@ namespace {
         test( s );
     }
 
-    TEST_F( SkipListSet_NoGC, random_level_generator )
+    TEST_F( SkipListSet_NoGC, xorshift32 )
     {
         struct set_traits: public cc::skip_list::traits
         {
@@ -138,7 +138,87 @@ namespace {
             typedef base_class::less less;
             typedef cds::atomicity::item_counter item_counter;
             typedef cc::skip_list::stat<> stat;
-            typedef cc::skip_list::xorshift random_level_generator;
+            typedef cc::skip_list::xorshift32 random_level_generator;
+        };
+        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( SkipListSet_NoGC, xorshift24 )
+    {
+        struct set_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::xorshift24 random_level_generator;
+        };
+        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( SkipListSet_NoGC, xorshift16 )
+    {
+        struct set_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::xorshift16 random_level_generator;
+        };
+        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( SkipListSet_NoGC, turbo32 )
+    {
+        struct set_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo32 random_level_generator;
+        };
+        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( SkipListSet_NoGC, turbo24 )
+    {
+        struct set_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
+
+        set_type s;
+        test( s );
+    }
+
+    TEST_F( SkipListSet_NoGC, turbo16 )
+    {
+        struct set_traits: public cc::skip_list::traits
+        {
+            typedef cmp compare;
+            typedef base_class::less less;
+            typedef cds::atomicity::item_counter item_counter;
+            typedef cc::skip_list::stat<> stat;
+            typedef cc::skip_list::turbo16 random_level_generator;
         };
         typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
 

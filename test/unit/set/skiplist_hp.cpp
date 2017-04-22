@@ -36,7 +36,7 @@ namespace {
     namespace cc = cds::container;
     typedef cds::gc::HP gc_type;
 
-    class SkipListSet_HP : public cds_test::container_ordered_set_hp
+    class SkipListSet_HP: public cds_test::container_ordered_set_hp
     {
     protected:
         typedef cds_test::container_ordered_set_hp base_class;
@@ -57,102 +57,7 @@ namespace {
         }
     };
 
-    TEST_F( SkipListSet_HP, compare )
-    {
-        typedef cc::SkipListSet< gc_type, int_item,
-            typename cc::skip_list::make_traits<
-                cds::opt::compare< cmp >
-            >::type
-        > set_type;
+#   define CDSTEST_FIXTURE_NAME SkipListSet_HP
+#   include "skiplist_hp_inl.h"
 
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, less )
-    {
-        typedef cc::SkipListSet< gc_type, int_item,
-            typename cc::skip_list::make_traits<
-                cds::opt::less< base_class::less >
-            >::type
-        > set_type;
-
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, cmpmix )
-    {
-        typedef cc::SkipListSet< gc_type, int_item,
-            typename cc::skip_list::make_traits<
-                cds::opt::less< base_class::less >
-                ,cds::opt::compare< cmp >
-            >::type
-        > set_type;
-
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, item_counting )
-    {
-        struct set_traits: public cc::skip_list::traits
-        {
-            typedef cmp compare;
-            typedef base_class::less less;
-            typedef cds::atomicity::item_counter item_counter;
-        };
-        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
-
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, backoff )
-    {
-        struct set_traits: public cc::skip_list::traits
-        {
-            typedef cmp compare;
-            typedef base_class::less less;
-            typedef cds::atomicity::item_counter item_counter;
-            typedef cds::backoff::yield back_off;
-        };
-        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
-
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, stat )
-    {
-        struct set_traits: public cc::skip_list::traits
-        {
-            typedef cmp compare;
-            typedef base_class::less less;
-            typedef cds::atomicity::item_counter item_counter;
-            typedef cds::backoff::yield back_off;
-            typedef cc::skip_list::stat<> stat;
-        };
-        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
-
-        set_type s;
-        test( s );
-    }
-
-    TEST_F( SkipListSet_HP, random_level_generator )
-    {
-        struct set_traits: public cc::skip_list::traits
-        {
-            typedef cmp compare;
-            typedef base_class::less less;
-            typedef cds::atomicity::item_counter item_counter;
-            typedef cc::skip_list::stat<> stat;
-            typedef cc::skip_list::xorshift random_level_generator;
-        };
-        typedef cc::SkipListSet< gc_type, int_item, set_traits >set_type;
-
-        set_type s;
-        test( s );
-    }
-
-} // namespace
+}

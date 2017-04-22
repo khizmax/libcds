@@ -83,153 +83,285 @@ namespace map {
         typedef typename base_class::key_compare compare;
         typedef typename base_class::key_less    less;
 
-        class traits_SkipListMap_less_pascal: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_turbo32: public cc::skip_list::make_traits <
                 co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_hp_less_pascal;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_dhp_less_pascal;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_nogc_less_pascal;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpi_less_pascal;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpb_less_pascal;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_gpt_less_pascal;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_hp_less_turbo32;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_dhp_less_turbo32;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_nogc_less_turbo32;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_rcu_gpi_less_turbo32;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_rcu_gpb_less_turbo32;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_rcu_gpt_less_turbo32;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal > SkipListMap_rcu_shb_less_pascal;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo32 > SkipListMap_rcu_shb_less_turbo32;
 #endif
 
-        class traits_SkipListMap_less_pascal_seqcst: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_turbo24: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::turbo24 >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_hp_less_turbo24;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_dhp_less_turbo24;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_nogc_less_turbo24;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_rcu_gpi_less_turbo24;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_rcu_gpb_less_turbo24;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_rcu_gpt_less_turbo24;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo24 > SkipListMap_rcu_shb_less_turbo24;
+#endif
+
+        class traits_SkipListMap_less_turbo16: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::turbo16 >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_hp_less_turbo16;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_dhp_less_turbo16;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_nogc_less_turbo16;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_rcu_gpi_less_turbo16;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_rcu_gpb_less_turbo16;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_rcu_gpt_less_turbo16;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo16 > SkipListMap_rcu_shb_less_turbo16;
+#endif
+
+        class traits_SkipListMap_less_turbo32_seqcst: public cc::skip_list::make_traits <
                 co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_hp_less_pascal_seqcst;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_dhp_less_pascal_seqcst;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_nogc_less_pascal_seqcst;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpi_less_pascal_seqcst;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpb_less_pascal_seqcst;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_gpt_less_pascal_seqcst;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_hp_less_turbo32_seqcst;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_dhp_less_turbo32_seqcst;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_nogc_less_turbo32_seqcst;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_rcu_gpi_less_turbo32_seqcst;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_rcu_gpb_less_turbo32_seqcst;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_rcu_gpt_less_turbo32_seqcst;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal_seqcst > SkipListMap_rcu_shb_less_pascal_seqcst;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo32_seqcst > SkipListMap_rcu_shb_less_turbo32_seqcst;
 #endif
 
-        class traits_SkipListMap_less_pascal_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_turbo32_stat: public cc::skip_list::make_traits <
                 co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_hp_less_pascal_stat;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_dhp_less_pascal_stat;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_nogc_less_pascal_stat;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpi_less_pascal_stat;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpb_less_pascal_stat;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_gpt_less_pascal_stat;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_hp_less_turbo32_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_dhp_less_turbo32_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_nogc_less_turbo32_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_rcu_gpi_less_turbo32_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_rcu_gpb_less_turbo32_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_rcu_gpt_less_turbo32_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_pascal_stat > SkipListMap_rcu_shb_less_pascal_stat;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo32_stat > SkipListMap_rcu_shb_less_turbo32_stat;
 #endif
 
-        class traits_SkipListMap_cmp_pascal: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_turbo24_stat: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::turbo24 >
+            , co::stat< cc::skip_list::stat<> >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_hp_less_turbo24_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_dhp_less_turbo24_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_nogc_less_turbo24_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_rcu_gpi_less_turbo24_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_rcu_gpb_less_turbo24_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_rcu_gpt_less_turbo24_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo24_stat > SkipListMap_rcu_shb_less_turbo24_stat;
+#endif
+
+        class traits_SkipListMap_less_turbo16_stat: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::turbo16 >
+            , co::stat< cc::skip_list::stat<> >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_hp_less_turbo16_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_dhp_less_turbo16_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_nogc_less_turbo16_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_rcu_gpi_less_turbo16_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_rcu_gpb_less_turbo16_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_rcu_gpt_less_turbo16_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_turbo16_stat > SkipListMap_rcu_shb_less_turbo16_stat;
+#endif
+
+        class traits_SkipListMap_cmp_turbo32: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_hp_cmp_pascal;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_dhp_cmp_pascal;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_nogc_cmp_pascal;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpi_cmp_pascal;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpb_cmp_pascal;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_gpt_cmp_pascal;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_hp_cmp_turbo32;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_dhp_cmp_turbo32;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_nogc_cmp_turbo32;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_rcu_gpi_cmp_turbo32;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_rcu_gpb_cmp_turbo32;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_rcu_gpt_cmp_turbo32;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_pascal > SkipListMap_rcu_shb_cmp_pascal;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_turbo32 > SkipListMap_rcu_shb_cmp_turbo32;
 #endif
 
-        class traits_SkipListMap_cmp_pascal_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_turbo32_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::turbo_pascal >
+                ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_hp_cmp_pascal_stat;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_dhp_cmp_pascal_stat;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_nogc_cmp_pascal_stat;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpi_cmp_pascal_stat;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpb_cmp_pascal_stat;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_gpt_cmp_pascal_stat;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_hp_cmp_turbo32_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_dhp_cmp_turbo32_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_nogc_cmp_turbo32_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_rcu_gpi_cmp_turbo32_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_rcu_gpb_cmp_turbo32_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_rcu_gpt_cmp_turbo32_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_pascal_stat > SkipListMap_rcu_shb_cmp_pascal_stat;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_turbo32_stat > SkipListMap_rcu_shb_cmp_turbo32_stat;
 #endif
 
-        class traits_SkipListMap_less_xorshift: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_xorshift32: public cc::skip_list::make_traits <
                 co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_hp_less_xorshift;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_dhp_less_xorshift;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_nogc_less_xorshift;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpi_less_xorshift;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpb_less_xorshift;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_gpt_less_xorshift;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_hp_less_xorshift32;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_dhp_less_xorshift32;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_nogc_less_xorshift32;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_rcu_gpi_less_xorshift32;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_rcu_gpb_less_xorshift32;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_rcu_gpt_less_xorshift32;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift > SkipListMap_rcu_shb_less_xorshift;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift32 > SkipListMap_rcu_shb_less_xorshift32;
 #endif
 
-        class traits_SkipListMap_less_xorshift_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_xorshift24: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::xorshift24 >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_hp_less_xorshift24;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_dhp_less_xorshift24;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_nogc_less_xorshift24;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_rcu_gpi_less_xorshift24;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_rcu_gpb_less_xorshift24;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_rcu_gpt_less_xorshift24;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift24 > SkipListMap_rcu_shb_less_xorshift24;
+#endif
+
+        class traits_SkipListMap_less_xorshift16: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::xorshift16 >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_hp_less_xorshift16;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_dhp_less_xorshift16;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_nogc_less_xorshift16;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_rcu_gpi_less_xorshift16;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_rcu_gpb_less_xorshift16;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_rcu_gpt_less_xorshift16;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift16 > SkipListMap_rcu_shb_less_xorshift16;
+#endif
+
+        class traits_SkipListMap_less_xorshift32_stat: public cc::skip_list::make_traits <
                 co::less< less >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_hp_less_xorshift_stat;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_dhp_less_xorshift_stat;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_nogc_less_xorshift_stat;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpi_less_xorshift_stat;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpb_less_xorshift_stat;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_gpt_less_xorshift_stat;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_hp_less_xorshift32_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_dhp_less_xorshift32_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_nogc_less_xorshift32_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_rcu_gpi_less_xorshift32_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_rcu_gpb_less_xorshift32_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_rcu_gpt_less_xorshift32_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift_stat > SkipListMap_rcu_shb_less_xorshift_stat;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift32_stat > SkipListMap_rcu_shb_less_xorshift32_stat;
 #endif
 
-        class traits_SkipListMap_cmp_xorshift: public cc::skip_list::make_traits <
+        class traits_SkipListMap_less_xorshift24_stat: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::xorshift24 >
+            , co::stat< cc::skip_list::stat<> >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_hp_less_xorshift24_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_dhp_less_xorshift24_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_nogc_less_xorshift24_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_rcu_gpi_less_xorshift24_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_rcu_gpb_less_xorshift24_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_rcu_gpt_less_xorshift24_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift24_stat > SkipListMap_rcu_shb_less_xorshift24_stat;
+#endif
+
+        class traits_SkipListMap_less_xorshift16_stat: public cc::skip_list::make_traits <
+            co::less< less >
+            , cc::skip_list::random_level_generator< cc::skip_list::xorshift16 >
+            , co::stat< cc::skip_list::stat<> >
+            , co::item_counter< cds::atomicity::item_counter >
+        >::type
+        {};
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_hp_less_xorshift16_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_dhp_less_xorshift16_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_nogc_less_xorshift16_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_rcu_gpi_less_xorshift16_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_rcu_gpb_less_xorshift16_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_rcu_gpt_less_xorshift16_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_less_xorshift16_stat > SkipListMap_rcu_shb_less_xorshift16_stat;
+#endif
+
+        class traits_SkipListMap_cmp_xorshift32: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_hp_cmp_xorshift;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_dhp_cmp_xorshift;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_nogc_cmp_xorshift;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpi_cmp_xorshift;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpb_cmp_xorshift;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_gpt_cmp_xorshift;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_hp_cmp_xorshift32;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_dhp_cmp_xorshift32;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_nogc_cmp_xorshift32;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_rcu_gpi_cmp_xorshift32;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_rcu_gpb_cmp_xorshift32;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_rcu_gpt_cmp_xorshift32;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift > SkipListMap_rcu_shb_cmp_xorshift;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift32 > SkipListMap_rcu_shb_cmp_xorshift32;
 #endif
 
-        class traits_SkipListMap_cmp_xorshift_stat: public cc::skip_list::make_traits <
+        class traits_SkipListMap_cmp_xorshift32_stat: public cc::skip_list::make_traits <
                 co::compare< compare >
-                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift >
+                ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
                 ,co::stat< cc::skip_list::stat<> >
                 ,co::item_counter< cds::atomicity::item_counter >
             >::type
         {};
-        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_hp_cmp_xorshift_stat;
-        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_dhp_cmp_xorshift_stat;
-        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_nogc_cmp_xorshift_stat;
-        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpi_cmp_xorshift_stat;
-        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpb_cmp_xorshift_stat;
-        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_gpt_cmp_xorshift_stat;
+        typedef SkipListMap< cds::gc::HP, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_hp_cmp_xorshift32_stat;
+        typedef SkipListMap< cds::gc::DHP, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_dhp_cmp_xorshift32_stat;
+        typedef SkipListMap< cds::gc::nogc, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_nogc_cmp_xorshift32_stat;
+        typedef SkipListMap< rcu_gpi, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_rcu_gpi_cmp_xorshift32_stat;
+        typedef SkipListMap< rcu_gpb, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_rcu_gpb_cmp_xorshift32_stat;
+        typedef SkipListMap< rcu_gpt, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_rcu_gpt_cmp_xorshift32_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift_stat > SkipListMap_rcu_shb_cmp_xorshift_stat;
+        typedef SkipListMap< rcu_shb, Key, Value, traits_SkipListMap_cmp_xorshift32_stat > SkipListMap_rcu_shb_cmp_xorshift32_stat;
 #endif
 
     };
@@ -253,7 +385,7 @@ namespace map {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 1
 #   define CDSSTRESS_SkipListMap_SHRCU_2( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_pascal_seqcst, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_turbo32_seqcst, key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_SkipListMap_SHRCU_2( fixture, test_case, key_type, value_type )
@@ -261,11 +393,11 @@ namespace map {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
 #   define CDSSTRESS_SkipListMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_pascal_stat,   key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_pascal,         key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_pascal_stat,    key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_xorshift_stat, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_xorshift,       key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_turbo32_stat,   key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_turbo32,         key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_turbo32_stat,    key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_xorshift32_stat, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_xorshift32,       key_type, value_type ) \
 
 #else
 #   define CDSSTRESS_SkipListMap_SHRCU_1( fixture, test_case, key_type, value_type )
@@ -273,9 +405,9 @@ namespace map {
 
 
 #   define CDSSTRESS_SkipListMap_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_pascal,        key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_xorshift,      key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_xorshift_stat,  key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_turbo32,        key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_less_xorshift32,      key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_shb_cmp_xorshift32_stat,  key_type, value_type ) \
         CDSSTRESS_SkipListMap_SHRCU_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListMap_SHRCU_2( fixture, test_case, key_type, value_type ) \
 
@@ -285,13 +417,13 @@ namespace map {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 1
 #   define CDSSTRESS_SkipListMap_HP_2( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_pascal_seqcst,      key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_pascal_seqcst,     key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_turbo32_seqcst,      key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_turbo32_seqcst,     key_type, value_type ) \
 
 #   define CDSSTRESS_SkipListMap_RCU_2( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_pascal_seqcst, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_pascal_seqcst, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_pascal_seqcst, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_turbo32_seqcst, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_turbo32_seqcst, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_turbo32_seqcst, key_type, value_type ) \
 
 #   define CDSSTRESS_SkipListMap_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_SkipListMap_HP_2( fixture, test_case, key_type, value_type ) \
@@ -305,28 +437,28 @@ namespace map {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
 #   define CDSSTRESS_SkipListMap_HP_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_pascal,            key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_pascal_stat,        key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_pascal,              key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_pascal_stat,        key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift,          key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift_stat,      key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_xorshift,            key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_xorshift_stat,      key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_turbo32,            key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_turbo32_stat,        key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_turbo32,              key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_turbo32_stat,        key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift32,          key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift32_stat,      key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_xorshift32,            key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_xorshift32_stat,      key_type, value_type ) \
 
 #   define CDSSTRESS_SkipListMap_RCU_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_pascal,        key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_pascal_stat,   key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_pascal_stat,   key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_pascal,         key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_pascal,         key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_pascal_stat,    key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift,      key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_xorshift_stat, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_xorshift_stat, key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_xorshift,       key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift,       key_type, value_type ) \
-        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_xorshift_stat,  key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_turbo32,        key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_turbo32_stat,   key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_turbo32_stat,   key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_turbo32,         key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_turbo32,         key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_turbo32_stat,    key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift32,      key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_xorshift32_stat, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_xorshift32_stat, key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_xorshift32,       key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift32,       key_type, value_type ) \
+        CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_xorshift32_stat,  key_type, value_type ) \
         CDSSTRESS_SkipListMap_SHRCU( fixture, test_case, key_type, value_type )
 
 #   define CDSSTRESS_SkipListMap_1( fixture, test_case, key_type, value_type ) \
@@ -341,30 +473,42 @@ namespace map {
 
 
 #define CDSSTRESS_SkipListMap_HP( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_pascal,             key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_pascal_stat,       key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_pascal,             key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_pascal_stat,         key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift,           key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift_stat,     key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_xorshift,           key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_xorshift_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_turbo32,             key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_turbo24,             key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_turbo16,             key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_turbo32_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_turbo24_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_turbo16_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_turbo32,             key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_turbo32_stat,         key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift32,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift24,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_less_xorshift16,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift32_stat,     key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift24_stat,     key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_less_xorshift16_stat,     key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_dhp_cmp_xorshift32,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_hp_cmp_xorshift32_stat,       key_type, value_type ) \
     CDSSTRESS_SkipListMap_HP_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListMap_HP_2( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_SkipListMap_RCU( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_pascal,        key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_pascal,        key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_pascal_stat,   key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_pascal,         key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_pascal_stat,    key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_pascal_stat,    key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_xorshift,      key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_xorshift,      key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift_stat, key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_xorshift,       key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_xorshift_stat,  key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift_stat,  key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_turbo32,        key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_turbo32,        key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_turbo32_stat,   key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_turbo24_stat,   key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_turbo16_stat,   key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_turbo32,         key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_turbo32_stat,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_turbo32_stat,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_less_xorshift32,      key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_less_xorshift32,      key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift32_stat, key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift24_stat, key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_less_xorshift16_stat, key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpb_cmp_xorshift32,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpi_cmp_xorshift32_stat,  key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_rcu_gpt_cmp_xorshift32_stat,  key_type, value_type ) \
     CDSSTRESS_SkipListMap_RCU_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SkipListMap_RCU_2( fixture, test_case, key_type, value_type ) \
 
@@ -373,14 +517,22 @@ namespace map {
     CDSSTRESS_SkipListMap_RCU( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_SkipListMap_nogc( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_pascal,           key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_pascal_seqcst,    key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_pascal_stat,      key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_pascal,            key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_pascal_stat,       key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift,         key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift_stat,    key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_xorshift,          key_type, value_type ) \
-    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_xorshift_stat,     key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo32,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo24,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo16,           key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo32_seqcst,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo32_stat,      key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo24_stat,      key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_turbo16_stat,      key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_turbo32,            key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_turbo32_stat,       key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift32,         key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift24,         key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift16,         key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift32_stat,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift24_stat,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_less_xorshift16_stat,    key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_xorshift32,          key_type, value_type ) \
+    CDSSTRESS_SkipListMap_case( fixture, test_case, SkipListMap_nogc_cmp_xorshift32_stat,     key_type, value_type ) \
 
 #endif // ifndef CDSUNIT_MAP_TYPE_SKIP_LIST_H

@@ -45,10 +45,40 @@ namespace cds { namespace container {
         using random_level_generator = cds::intrusive::skip_list::random_level_generator<Type>;
 
         /// Xor-shift random level generator
-        typedef cds::intrusive::skip_list::xorshift xorshift;
+        template <unsigned MaxHeight>
+        using xor_shift = cds::intrusive::skip_list::xor_shift<MaxHeight >;
+
+        /// Xor-shift random level generator, max height 32
+        typedef cds::intrusive::skip_list::xorshift32 xorshift32;
+
+        /// Xor-shift random level generator, max height 24
+        typedef cds::intrusive::skip_list::xorshift24 xorshift24;
+
+        /// Xor-shift random level generator, max height 16
+        typedef cds::intrusive::skip_list::xorshift16 xorshift16;
+
+        //@cond
+        // for backward compatibility
+        using cds::intrusive::skip_list::xorshift;
+        //@endcond
 
         /// Turbo-pascal random level generator
-        typedef cds::intrusive::skip_list::turbo_pascal turbo_pascal;
+        template <unsigned MaxHeight>
+        using turbo = cds::intrusive::skip_list::turbo<MaxHeight >;
+
+        /// Turbo-pascal random level generator, max height 32
+        typedef cds::intrusive::skip_list::turbo32 turbo32;
+
+        /// Turbo-pascal random level generator, max height 24
+        typedef cds::intrusive::skip_list::turbo24 turbo24;
+
+        /// Turbo-pascal random level generator, max height 16
+        typedef cds::intrusive::skip_list::turbo16 turbo16;
+
+        //@cond
+        // for backward compatibility
+        using cds::intrusive::skip_list::turbo_pascal;
+        //@endcond
 
         /// Skip list internal statistics
         template <typename EventCounter = cds::atomicity::event_counter>
@@ -94,7 +124,7 @@ namespace cds { namespace container {
 
                 See \p skip_list::random_level_generator option setter.
             */
-            typedef turbo_pascal                    random_level_generator;
+            typedef turbo32 random_level_generator;
 
             /// Allocator for skip-list nodes, \p std::allocator interface
             typedef CDS_DEFAULT_ALLOCATOR           allocator;
@@ -126,9 +156,8 @@ namespace cds { namespace container {
             - \p opt::item_counter - the type of item counting feature. Default is \p atomicity::empty_item_counter that is no item counting.
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xorshift, \p skip_list::turbo_pascal or
-                user-provided one.
-                Default is \p %skip_list::turbo_pascal.
+            - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xor_shift, \p skip_list::turbo or
+                user-provided one. Default is \p %skip_list::turbo32.
             - \p opt::allocator - allocator for skip-list node. Default is \ref CDS_DEFAULT_ALLOCATOR.
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::stat - internal statistics. Available types: \p skip_list::stat, \p skip_list::empty_stat (the default)

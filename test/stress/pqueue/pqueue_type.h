@@ -487,16 +487,42 @@ namespace pqueue {
         // Priority queue based on SkipListSet
         struct traits_SkipList_max :
             public cc::skip_list::make_traits <
-            cc::opt::less < std::less<Value> >
+                cc::opt::less < std::less<Value> >
             > ::type
         {};
-        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max > SkipList_HP_max;
-        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max > SkipList_DHP_max;
-        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_max > SkipList_RCU_gpi_max;
-        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_max > SkipList_RCU_gpb_max;
-        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max > SkipList_RCU_gpt_max;
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max > SkipList32_HP_max;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max > SkipList32_DHP_max;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_max > SkipList32_RCU_gpi_max;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_max > SkipList32_RCU_gpb_max;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max > SkipList32_RCU_gpt_max;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max > SkipList_RCU_shb_max;
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max > SkipList32_RCU_shb_max;
+#endif
+
+        struct traits_SkipList24_max: public traits_SkipList_max
+        {
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList24_max > SkipList24_HP_max;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList24_max > SkipList24_DHP_max;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList24_max > SkipList24_RCU_gpi_max;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList24_max > SkipList24_RCU_gpb_max;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList24_max > SkipList24_RCU_gpt_max;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList24_max > SkipList24_RCU_shb_max;
+#endif
+
+        struct traits_SkipList16_max: public traits_SkipList_max
+        {
+            typedef cc::skip_list::turbo16 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList16_max > SkipList16_HP_max;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList16_max > SkipList16_DHP_max;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList16_max > SkipList16_RCU_gpi_max;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList16_max > SkipList16_RCU_gpb_max;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList16_max > SkipList16_RCU_gpt_max;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList16_max > SkipList16_RCU_shb_max;
 #endif
 
         struct traits_SkipList_max_stat :
@@ -505,13 +531,39 @@ namespace pqueue {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max_stat > SkipList_HP_max_stat;
-        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max_stat > SkipList_DHP_max_stat;
-        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_max_stat > SkipList_RCU_gpi_max_stat;
-        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_max_stat > SkipList_RCU_gpb_max_stat;
-        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max_stat > SkipList_RCU_gpt_max_stat;
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_max_stat > SkipList32_HP_max_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_max_stat > SkipList32_DHP_max_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_max_stat > SkipList32_RCU_gpi_max_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_max_stat > SkipList32_RCU_gpb_max_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_max_stat > SkipList32_RCU_gpt_max_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max_stat > SkipList_RCU_shb_max_stat;
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_max_stat > SkipList32_RCU_shb_max_stat;
+#endif
+
+        struct traits_SkipList24_max_stat: public traits_SkipList_max_stat
+        {
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList24_max_stat > SkipList24_HP_max_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList24_max_stat > SkipList24_DHP_max_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList24_max_stat > SkipList24_RCU_gpi_max_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList24_max_stat > SkipList24_RCU_gpb_max_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList24_max_stat > SkipList24_RCU_gpt_max_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList24_max_stat > SkipList24_RCU_shb_max_stat;
+#endif
+
+        struct traits_SkipList16_max_stat: public traits_SkipList_max_stat
+        {
+            typedef cc::skip_list::turbo16 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList16_max_stat > SkipList16_HP_max_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList16_max_stat > SkipList16_DHP_max_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList16_max_stat > SkipList16_RCU_gpi_max_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList16_max_stat > SkipList16_RCU_gpb_max_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList16_max_stat > SkipList16_RCU_gpt_max_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList16_max_stat > SkipList16_RCU_shb_max_stat;
 #endif
 
         struct traits_SkipList_min :
@@ -519,13 +571,39 @@ namespace pqueue {
                 cc::opt::less< std::greater<Value> >
             >::type
         {};
-        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min, false > SkipList_HP_min;
-        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min, false > SkipList_DHP_min;
-        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_min, false > SkipList_RCU_gpi_min;
-        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_min, false > SkipList_RCU_gpb_min;
-        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min, false > SkipList_RCU_gpt_min;
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min, false > SkipList32_HP_min;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min, false > SkipList32_DHP_min;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_min, false > SkipList32_RCU_gpi_min;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_min, false > SkipList32_RCU_gpb_min;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min, false > SkipList32_RCU_gpt_min;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min, false > SkipList_RCU_shb_min;
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min, false > SkipList32_RCU_shb_min;
+#endif
+
+        struct traits_SkipList24_min: public traits_SkipList_min
+        {
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList24_min > SkipList24_HP_min;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList24_min > SkipList24_DHP_min;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList24_min > SkipList24_RCU_gpi_min;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList24_min > SkipList24_RCU_gpb_min;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList24_min > SkipList24_RCU_gpt_min;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList24_min > SkipList24_RCU_shb_min;
+#endif
+
+        struct traits_SkipList16_min: public traits_SkipList_min
+        {
+            typedef cc::skip_list::turbo16 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList16_min > SkipList16_HP_min;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList16_min > SkipList16_DHP_min;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList16_min > SkipList16_RCU_gpi_min;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList16_min > SkipList16_RCU_gpb_min;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList16_min > SkipList16_RCU_gpt_min;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList16_min > SkipList16_RCU_shb_min;
 #endif
 
         struct traits_SkipList_min_stat :
@@ -534,13 +612,39 @@ namespace pqueue {
                 ,co::stat< cc::skip_list::stat<> >
             >::type
         {};
-        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min_stat, false > SkipList_HP_min_stat;
-        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min_stat, false > SkipList_DHP_min_stat;
-        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpi_min_stat;
-        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpb_min_stat;
-        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min_stat, false > SkipList_RCU_gpt_min_stat;
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList_min_stat, false > SkipList32_HP_min_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList_min_stat, false > SkipList32_DHP_min_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList_min_stat, false > SkipList32_RCU_gpi_min_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList_min_stat, false > SkipList32_RCU_gpb_min_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList_min_stat, false > SkipList32_RCU_gpt_min_stat;
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min_stat, false > SkipList_RCU_shb_min_stat;
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList_min_stat, false > SkipList32_RCU_shb_min_stat;
+#endif
+
+        struct traits_SkipList24_min_stat: public traits_SkipList_min_stat
+        {
+            typedef cc::skip_list::turbo24 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList24_min_stat > SkipList24_HP_min_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList24_min_stat > SkipList24_DHP_min_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList24_min_stat > SkipList24_RCU_gpi_min_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList24_min_stat > SkipList24_RCU_gpb_min_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList24_min_stat > SkipList24_RCU_gpt_min_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList24_min_stat > SkipList24_RCU_shb_min_stat;
+#endif
+
+        struct traits_SkipList16_min_stat: public traits_SkipList_min_stat
+        {
+            typedef cc::skip_list::turbo16 random_level_generator;
+        };
+        typedef details::SkipListPQueue< cds::gc::HP, Value, traits_SkipList16_min_stat > SkipList16_HP_min_stat;
+        typedef details::SkipListPQueue< cds::gc::DHP, Value, traits_SkipList16_min_stat > SkipList16_DHP_min_stat;
+        typedef details::SkipListPQueue< rcu_gpi, Value, traits_SkipList16_min_stat > SkipList16_RCU_gpi_min_stat;
+        typedef details::SkipListPQueue< rcu_gpb, Value, traits_SkipList16_min_stat > SkipList16_RCU_gpb_min_stat;
+        typedef details::SkipListPQueue< rcu_gpt, Value, traits_SkipList16_min_stat > SkipList16_RCU_gpt_min_stat;
+#ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
+        typedef details::SkipListPQueue< rcu_shb, Value, traits_SkipList16_min_stat > SkipList16_RCU_shb_min_stat;
 #endif
 
 
