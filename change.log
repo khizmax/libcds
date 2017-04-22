@@ -16,8 +16,9 @@
     - Changed: exception handling. Now, exceptions raise by invoking new 
       cds::throw_exception() function. If you compile your code with exception disabled,
       the function prints an exception message to stdout and calls abort()
-      instead of throwing. You can provide your own cds::throw_exception() function 
-      and compile libcds with -DCDS_USER_DEFINED_THROW_EXCEPTION.
+      instead of throwing.
+    - Flat Combining: fixed memory-order bug that can lead to crash on weak ordered
+      architecture like PowerPC or ARM
     - Added: erase_at( iterator ) function to MichaelHashSet/Map and SplitListSet/Map
       based on IterableList
     - Fixed a bug in BronsonAVLTreeMap::extract_min()/extract_max()/clear().

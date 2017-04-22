@@ -69,16 +69,19 @@ namespace cds { namespace urcu { namespace details {
         assert( pRec != nullptr );
 
         uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
+        assert( ( tmp & rcu_class::c_nNestMask ) > 0 );
+
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
-            pRec->m_nAccessControl.store(
-                sh_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_acquire),
-                atomics::memory_order_release
-            );
+            pRec->m_nAccessControl.store( sh_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
+                atomics::memory_order_relaxed );
+
+            // acquire barrier
+            pRec->m_nAccessControl.load( atomics::memory_order_acquire );
         }
         else {
-            pRec->m_nAccessControl.fetch_add( 1, atomics::memory_order_release );
+            // nested lock
+            pRec->m_nAccessControl.store( tmp + 1, atomics::memory_order_relaxed );
         }
-        CDS_COMPILER_RW_BARRIER;
     }
 
     template <typename RCUtag>
@@ -87,8 +90,10 @@ namespace cds { namespace urcu { namespace details {
         thread_record * pRec = get_thread_record();
         assert( pRec != nullptr);
 
-        CDS_COMPILER_RW_BARRIER;
-        pRec->m_nAccessControl.fetch_sub( 1, atomics::memory_order_release );
+        uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
+        assert( ( tmp & rcu_class::c_nNestMask ) > 0 );
+
+        pRec->m_nAccessControl.store( tmp - 1, atomics::memory_order_release );
     }
 
     template <typename RCUtag>

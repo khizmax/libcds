@@ -51,6 +51,8 @@ namespace cds {
           Chapter 6 "User-Level Implementations of Read-Copy Update"
         - [2011] M.Desnoyers, P.McKenney, A.Stern, M.Dagenias, J.Walpole "User-Level
           Implementations of Read-Copy Update"
+        - [2012] M.Desnoyers, P.McKenney, A.Stern, M.Dagenias, J.Walpole "Supplementary
+          Material for User-Level Implementations of Read-Copy Update"
 
         <b>Informal introduction to user-space %RCU</b>
 
@@ -107,7 +109,7 @@ namespace cds {
           design, thus being appropriate for use within a general-purpose library, but it has
           relatively higher read-side overhead. The \p libcds contains several implementations of general-purpose
           %RCU: \ref general_instant, \ref general_buffered, \ref general_threaded.
-        - \ref signal_buffered: the signal-handling %RCU presents an implementation having low read-side overhead and
+        - \p signal_buffered: the signal-handling %RCU presents an implementation having low read-side overhead and
           requiring only that the application give up one POSIX signal to %RCU update processing.
 
         @note The signal-handled %RCU is defined only for UNIX-like systems, not for Windows.
