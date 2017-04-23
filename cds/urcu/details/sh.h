@@ -69,7 +69,6 @@ namespace cds { namespace urcu { namespace details {
         assert( pRec != nullptr );
 
         uint32_t tmp = pRec->m_nAccessControl.load( atomics::memory_order_relaxed );
-        assert( ( tmp & rcu_class::c_nNestMask ) > 0 );
 
         if ( (tmp & rcu_class::c_nNestMask) == 0 ) {
             pRec->m_nAccessControl.store( sh_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
