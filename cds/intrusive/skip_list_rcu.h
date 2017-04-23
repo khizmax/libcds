@@ -71,7 +71,7 @@ namespace cds { namespace intrusive {
 
         public:
             /// Constructs a node of height 1 (a bottom-list node)
-            CDS_CONSTEXPR node()
+            node()
                 : m_pNext( nullptr )
                 , m_pDelChain( nullptr )
                 , m_nHeight(1)
