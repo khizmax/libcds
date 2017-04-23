@@ -36,6 +36,7 @@
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #include <cds/details/static_functor.h>
 #include <cds/details/lib.h>
+#include <cds/user_setup/cache_line.h>
 
 #include <signal.h>
 
@@ -50,6 +51,7 @@ namespace cds { namespace urcu { namespace details {
         atomics::atomic<uint32_t>        m_nAccessControl ; \
         atomics::atomic<bool>            m_bNeedMemBar    ; \
         thread_list_record< thread_data >   m_list ; \
+        char pad_[cds::c_nCacheLineSize]; \
         thread_data(): m_nAccessControl(0), m_bNeedMemBar(false) {} \
         explicit thread_data( OS::ThreadId owner ): m_nAccessControl(0), m_bNeedMemBar(false), m_list(owner) {} \
         ~thread_data() {} \
