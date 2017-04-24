@@ -29,6 +29,7 @@
 */
 
 #include "set_del3.h"
+#include <string>
 
 namespace set {
 
@@ -119,5 +120,14 @@ namespace set {
         return lf;
     }
 
-    INSTANTIATE_TEST_CASE_P( a, Set_Del3_LF, ::testing::ValuesIn( Set_Del3_LF::get_load_factors()));
+#ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
+    static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
+    {
+        return std::to_string( p.param );
+    }
+    INSTANTIATE_TEST_CASE_P( a, Set_Del3_LF, ::testing::ValuesIn( Set_Del3_LF::get_load_factors() ), get_test_parameter_name );
+#else
+    INSTANTIATE_TEST_CASE_P( a, Set_Del3_LF, ::testing::ValuesIn( Set_Del3_LF::get_load_factors() ) );
+#endif
+
 } // namespace set
