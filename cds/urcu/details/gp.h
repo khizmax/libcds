@@ -70,8 +70,13 @@ namespace cds { namespace urcu { namespace details {
             pRec->m_nAccessControl.store( gp_singleton<RCUtag>::instance()->global_control_word(atomics::memory_order_relaxed),
                 atomics::memory_order_relaxed );
 
+#   if CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 30800
+            // Seems, CLang 3.6-3.7 cannot handle acquire barrier correctly
+            CDS_COMPILER_RW_BARRIER;
+#   else
             // acquire barrier
             pRec->m_nAccessControl.load( atomics::memory_order_acquire );
+#   endif
         }
         else {
             // nested lock
