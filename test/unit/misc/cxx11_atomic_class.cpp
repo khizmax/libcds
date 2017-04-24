@@ -452,18 +452,6 @@ namespace {
             EXPECT_EQ( reinterpret_cast<char *>(a.exchange( (void *) arr, order )), arr + 3 );
             EXPECT_EQ( reinterpret_cast<char *>(a.load( oLoad )), arr );
             EXPECT_EQ( *reinterpret_cast<char *>(a.load( oLoad )), 1 );
-
-            for ( char i = 1; i < aSize; ++i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load( oLoad )), i );
-                a.fetch_add( 1, order );
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load( oLoad )), i + 1 );
-            }
-
-            for ( char i = aSize; i > 1; --i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load( oLoad )), i );
-                a.fetch_sub( 1, order );
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load( oLoad )), i - 1 );
-            }
         }
 
         template <bool Volatile>
@@ -497,18 +485,6 @@ namespace {
             EXPECT_EQ( reinterpret_cast<char *>( a.exchange( (void *) arr )), arr + 3 );
             EXPECT_EQ( reinterpret_cast<char *>( a.load()), arr );
             EXPECT_EQ( *reinterpret_cast<char *>( a.load()), 1 );
-
-            for ( char i = 1; i < aSize; ++i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load()), i );
-                a.fetch_add( 1 );
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load()), i + 1 );
-            }
-
-            for ( char i = aSize; i > 1; --i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load()), i );
-                a.fetch_sub( 1 );
-                EXPECT_EQ( *reinterpret_cast<char *>(a.load()), i - 1 );
-            }
 
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_relaxed );
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acquire );
@@ -788,8 +764,6 @@ namespace {
         test_atomic_integral_volatile<unsigned long long>();
     }
 
-#if !( CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 50000 )
-    //clang error with atomic<void*> fetch_add/fetch_sub
     TEST_F( cxx11_atomic_class, atomic_pointer_void )
     {
         do_test_atomic_pointer_void<false>();
@@ -799,7 +773,6 @@ namespace {
     {
         do_test_atomic_pointer_void<true>();
     }
-#endif
 
     TEST_F( cxx11_atomic_class, atomic_pointer_char )
     {

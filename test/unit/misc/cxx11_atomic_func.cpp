@@ -513,18 +513,6 @@ namespace misc {
             EXPECT_EQ( reinterpret_cast<char *>(atomics::atomic_exchange_explicit( &a, (void *) arr, order )), arr + 3 );
             EXPECT_EQ( reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), arr );
             EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), 1 );
-
-            for ( char i = 1; i < aSize; ++i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), i );
-                atomics::atomic_fetch_add_explicit( &a, 1, order );
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), i + 1 );
-            }
-
-            for ( char i = aSize; i > 1; --i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), i );
-                atomics::atomic_fetch_sub_explicit( &a, 1, order );
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load_explicit( &a, oLoad )), i - 1 );
-            }
         }
 
         template <bool Volatile>
@@ -558,18 +546,6 @@ namespace misc {
             EXPECT_EQ( reinterpret_cast<char *>( atomics::atomic_exchange( &a, (void *) arr )), arr + 3 );
             EXPECT_EQ( reinterpret_cast<char *>( atomics::atomic_load( &a )), arr );
             EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), 1 );
-
-            for ( char i = 1; i < aSize; ++i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), i );
-                atomics::atomic_fetch_add( &a, 1 );
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), i + 1 );
-            }
-
-            for ( char i = aSize; i > 1; --i ) {
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), i );
-                atomics::atomic_fetch_sub( &a, 1 );
-                EXPECT_EQ( *reinterpret_cast<char *>(atomics::atomic_load( &a )), i - 1 );
-            }
 
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_relaxed );
             do_test_atomic_pointer_void_( a, arr, aSize, atomics::memory_order_acquire );
@@ -706,8 +682,6 @@ namespace misc {
         test_atomic_integral_volatile<unsigned long long>();
     }
 
-#if !( CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 50000 )
-    //clang error with atomic<void*> fetch_add/fetch_sub
     TEST_F( cxx11_atomic_func, atomic_pointer_void )
     {
         do_test_atomic_pointer_void<false>();
@@ -716,7 +690,6 @@ namespace misc {
     {
         do_test_atomic_pointer_void<true>();
     }
-#endif
 
     TEST_F( cxx11_atomic_func, atomic_pointer_char )
     {
