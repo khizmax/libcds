@@ -509,8 +509,21 @@ namespace {
     //CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_padding )
     CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_stat )
 
+
+#ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
+    static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
+    {
+        return std::to_string( p.param );
+    }
+
     INSTANTIATE_TEST_CASE_P( SQ,
         intrusive_segmented_queue_push_pop,
-        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters()));
+        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters() ), get_test_parameter_name );
+#else
+    INSTANTIATE_TEST_CASE_P( SQ,
+        intrusive_segmented_queue_push_pop,
+        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters() ) );
+#endif
+
 
 } // namespace

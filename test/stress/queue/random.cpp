@@ -323,7 +323,18 @@ namespace {
 
     CDSSTRESS_SegmentedQueue( segmented_queue_random )
 
+#ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
+    static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
+    {
+        return std::to_string( p.param );
+    }
     INSTANTIATE_TEST_CASE_P( SQ,
         segmented_queue_random,
-        ::testing::ValuesIn( segmented_queue_random::get_test_parameters()));
+        ::testing::ValuesIn( segmented_queue_random::get_test_parameters(), get_test_parameter_name ));
+#else
+    INSTANTIATE_TEST_CASE_P( SQ,
+        segmented_queue_random,
+        ::testing::ValuesIn( segmented_queue_random::get_test_parameters() ));
+#endif
+
 } // namespace

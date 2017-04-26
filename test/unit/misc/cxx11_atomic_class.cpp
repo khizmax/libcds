@@ -427,6 +427,8 @@ namespace {
         template <typename Atomic>
         void do_test_atomic_pointer_void_( Atomic& a, char * arr, char aSize, atomics::memory_order order )
         {
+            CDS_UNUSED( aSize );
+
             atomics::memory_order oLoad = convert_to_load_order(order);
             atomics::memory_order oStore = convert_to_store_order(order);
             void *  p;
