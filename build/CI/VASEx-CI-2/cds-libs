@@ -60,6 +60,21 @@ gcc-6-gtest:          $GTEST_ROOT
 gcc-6-64-gtest-lib:   $GTEST_ROOT/lib-gcc6/libgtest.a
 
 ########################################
+#GCC-7
+gcc-7-root:           $GCC7_ROOT/bin
+gcc-7-cxx:            g++-7
+gcc-7-cc:             gcc-7
+gcc-7-boost:          $BOOST_ROOT
+gcc-7-cxxflags:       -march=native
+gcc-7-exe-ldflags:    -Wl,-rpath=$GCC7_ROOT/lib64
+gcc-7-extlib:         rt
+gcc-7-64-boost-lib:   stage64-gcc7/lib
+gcc-7-64-asan-boost-lib:   stage64-gcc7-asan/lib
+gcc-7-64-tsan-boost-lib:   stage64-gcc7-tsan/lib
+gcc-7-gtest:          $GTEST_ROOT
+gcc-7-64-gtest-lib:   $GTEST_ROOT/lib-gcc7/libgtest.a
+
+########################################
 # clang-3.6
 clang-3.6-root:           $CLANG36_ROOT/bin
 clang-3.6-ld-lib-path:    $GCC5_ROOT/lib64
