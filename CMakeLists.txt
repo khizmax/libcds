@@ -115,6 +115,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16")
         set(LIB_SUFFIX "64")
+        
+        # GCC-7: 128-bit atomics support is implemented via libatomic on amd64
+        #        see https://gcc.gnu.org/ml/gcc/2017-01/msg00167.html
+        # Maybe, it will be changed in future
+        if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "7.0.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -latomic")
+        endif()
     endif()
     
     if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
