@@ -140,13 +140,16 @@
 
 
 // double-width CAS support - only for libc++
+// You can manually suppress wide-atomic support by defining in compiler command line:
+//  for 64bit platform: -DCDS_DISABLE_128BIT_ATOMIC
+//  for 32bit platform: -DCDS_DISABLE_64BIT_ATOMIC
 #ifdef _LIBCPP_VERSION
 #   if CDS_BUILD_BITS == 64
-#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
+#       if !defined( CDS_DISABLE_128BIT_ATOMIC ) && defined( __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 )
 #           define CDS_DCAS_SUPPORT
 #       endif
 #   else
-#       ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
+#       if !defined( CDS_DISABLE_64BIT_ATOMIC ) && defined( __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8 )
 #           define CDS_DCAS_SUPPORT
 #       endif
 #   endif
