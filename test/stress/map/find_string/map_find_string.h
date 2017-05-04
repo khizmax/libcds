@@ -170,8 +170,9 @@ namespace map {
             // Fill the map
             for ( size_t i = 0; i < s_Data.size(); ++i ) {
                 // All keys in arrData are unique, insert() must be successful
-                if ( s_Data[i].bExists )
+                if ( s_Data[i].bExists ) {
                     EXPECT_TRUE( check_result( testMap.insert( *(s_Data[i].pKey), s_Data[i] ), testMap ));
+                }
             }
 
             propout() << std::make_pair( "thread_count", s_nThreadCount )

@@ -193,8 +193,9 @@ namespace {
             size_t nError = 0;
             for ( size_t i = 0; i < nTotalItems; ++i ) {
                 EXPECT_EQ( arr[i], 1 ) << "i=" << i;
-                if ( ++nError > 10 )
+                if ( ++nError > 10 ) {
                     ASSERT_EQ( arr[i], 1 );
+                }
             }
         }
     };
