@@ -75,7 +75,10 @@
 // *************************************************
 // Features
 // If you run under Thread Sanitizer, pass -DCDS_THREAD_SANITIZER_ENABLED in compiler command line
-//#define CDS_THREAD_SANITIZER_ENABLED
+// UPD: Seems, GCC 5+ has predefined macro __SANITIZE_THREAD__, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64354
+#if defined(__SANITIZE_THREAD__) && !defined(CDS_THREAD_SANITIZER_ENABLED)
+#   define CDS_THREAD_SANITIZER_ENABLED
+#endif
 
 // *************************************************
 // Alignment macro
