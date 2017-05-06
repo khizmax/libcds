@@ -354,6 +354,14 @@ namespace cds {}
 #   define CDS_STRICT_DO( _expr )
 #endif
 
+#ifdef CDS_DEBUG
+#   define cds_assert( expr )       assert( expr )
+#else
+    static inline void cds_assert( bool expr ) {
+        if ( !expr )
+            abort();
+    }
+#endif
 
 // Compiler-specific defines
 #include <cds/compiler/defs.h>

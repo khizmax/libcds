@@ -88,8 +88,9 @@ namespace cds { namespace intrusive {
             atomics::atomic<node *> m_freeListNext;
 
             node()
-                : m_freeListNext( nullptr )
-            {}
+            {
+                m_freeListNext.store( nullptr, atomics::memory_order_release );
+            }
             //@endcond
         };
 
@@ -143,7 +144,8 @@ namespace cds { namespace intrusive {
             do {
                 newHead.tag = currentHead.tag + 1;
                 pNode->m_freeListNext.store( currentHead.ptr, atomics::memory_order_relaxed );
-            } while ( cds_unlikely( !m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_relaxed )));
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pNode->m_freeListNext );
+            } while ( cds_unlikely( !m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_acquire )));
         }
 
         /// Gets a node from the free list. If the list is empty, returns \p nullptr
@@ -152,6 +154,7 @@ namespace cds { namespace intrusive {
             tagged_ptr currentHead = m_Head.load( atomics::memory_order_acquire );
             tagged_ptr newHead;
             while ( currentHead.ptr != nullptr ) {
+                CDS_TSAN_ANNOTATE_HAPPENS_AFTER( &currentHead.ptr->m_freeListNext );
                 newHead.ptr = currentHead.ptr->m_freeListNext.load( atomics::memory_order_relaxed );
                 newHead.tag = currentHead.tag + 1;
                 if ( cds_likely( m_Head.compare_exchange_weak( currentHead, newHead, atomics::memory_order_release, atomics::memory_order_acquire )))

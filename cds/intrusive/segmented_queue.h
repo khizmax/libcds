@@ -256,7 +256,7 @@ namespace cds { namespace intrusive {
             // cell array is placed here in one continuous memory block
 
             // Initializes the segment
-            segment( size_t nCellCount )
+            explicit segment( size_t nCellCount )
                 // MSVC warning C4355: 'this': used in base member initializer list
                 : cells( reinterpret_cast< cell *>( this + 1 ))
                 , version( 0 )

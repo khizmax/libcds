@@ -97,8 +97,9 @@ namespace cds { namespace intrusive {
 
             node()
                 : m_freeListRefs( 0 )
-                , m_freeListNext( nullptr )
-            {}
+            {
+                m_freeListNext.store( nullptr, atomics::memory_order_release );
+            }
             //@endcond
         };
 

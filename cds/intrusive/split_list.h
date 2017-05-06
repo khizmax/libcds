@@ -1164,13 +1164,26 @@ namespace cds { namespace intrusive {
         {
             m_Stat.onHeadNodeAllocated();
             aux_node_type* p = m_Buckets.alloc_aux_node();
-            if ( p )
+            if ( p ) {
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
+                // p->m_nHash is read-only data member
                 p->m_nHash = nHash;
+                CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
+#       ifdef CDS_DEBUG
+                cds_assert( !p->m_busy.load( atomics::memory_order_acquire ) );
+                p->m_busy.store( true, atomics::memory_order_release );
+#       endif
+            }
             return p;
         }
 
         void free_aux_node( aux_node_type * p )
         {
+#       ifdef CDS_DEBUG
+            cds_assert( p->m_busy.load( atomics::memory_order_acquire ) );
+            p->m_busy.store( false, atomics::memory_order_release );
+#       endif
+
             m_Buckets.free_aux_node( p );
             m_Stat.onHeadNodeFreed();
         }
