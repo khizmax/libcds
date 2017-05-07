@@ -1614,7 +1614,7 @@ namespace cds { namespace intrusive {
 
             [From <i>"The Art of Multiprocessor Programming"</i>]
             <a href="https://en.wikipedia.org/wiki/Cuckoo_hashing">Cuckoo hashing</a> is a hashing algorithm in which a newly added item displaces any earlier item
-            occupying the same slot. For brevity, a table is a k-entry array of items. For a hash set f size
+            occupying the same slot. For brevity, a table is a k-entry array of items. For a hash set of size
             N = 2k we use a two-entry array of tables, and two independent hash functions,
             <tt> h0, h1: KeyRange -> 0,...,k-1</tt>
             mapping the set of possible keys to entries in he array. To test whether a value \p x is in the set,
