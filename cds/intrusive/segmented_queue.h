@@ -545,7 +545,7 @@ namespace cds { namespace intrusive {
 
             The disposer specified in \p Traits template argument is <b>not</b> called for returned item.
             You should manually dispose the item:
-            <code>
+            \code
             struct my_disposer {
                 void operator()( foo * p )
                 {
@@ -563,7 +563,7 @@ namespace cds { namespace intrusive {
             // pItem is not longer needed and can be deleted
             // Do it via gc::HP::retire
             cds::gc::HP::template retire< my_disposer >( pItem );
-            </code>
+            \endcode
         */
         value_type * dequeue()
         {
