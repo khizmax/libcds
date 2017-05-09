@@ -1255,5 +1255,8 @@
     <ClInclude Include="..\..\..\cds\algo\bit_reversal.h">
       <Filter>Header Files\cds\algo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\weak_ringbuffer.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

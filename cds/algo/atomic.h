@@ -199,8 +199,8 @@ namespace cds {
         class item_counter
         {
         public:
-            typedef atomics::atomic_size_t   atomic_type ;   ///< atomic type used
-            typedef size_t counter_type    ;   ///< Integral item counter type (size_t)
+            typedef atomics::atomic_size_t   atomic_type;   ///< atomic type used
+            typedef size_t counter_type;                    ///< Integral item counter type (size_t)
 
         private:
             //@cond
@@ -243,10 +243,22 @@ namespace cds {
                 return m_Counter.fetch_add( 1, order );
             }
 
+            /// Increments the counter. Semantics: postincrement
+            counter_type inc( counter_type count, atomics::memory_order order = atomics::memory_order_relaxed )
+            {
+                return m_Counter.fetch_add( count, order );
+            }
+
             /// Decrements the counter. Semantics: postdecrement
             counter_type dec(atomics::memory_order order = atomics::memory_order_relaxed)
             {
                 return m_Counter.fetch_sub( 1, order );
+            }
+
+            /// Decrements the counter. Semantics: postdecrement
+            counter_type dec( counter_type count, atomics::memory_order order = atomics::memory_order_relaxed )
+            {
+                return m_Counter.fetch_sub( count, order );
             }
 
             /// Preincrement
@@ -269,6 +281,18 @@ namespace cds {
             counter_type operator --(int)
             {
                 return dec();
+            }
+
+            /// Increment by \p count
+            counter_type operator +=( counter_type count )
+            {
+                return inc( count ) + count;
+            }
+
+            /// Decrement by \p count
+            counter_type operator -=( counter_type count )
+            {
+                return dec( count ) - count;
             }
 
             /// Resets count to 0
@@ -303,36 +327,62 @@ namespace cds {
             }
 
             /// Dummy increment. Always returns 0
-            static size_t inc(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            static counter_type inc(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
             {
                 return 0;
             }
 
             /// Dummy increment. Always returns 0
-            static size_t dec(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            static counter_type inc( counter_type /*count*/, atomics::memory_order /*order*/ = atomics::memory_order_relaxed )
+            {
+                return 0;
+            }
+
+            /// Dummy increment. Always returns 0
+            static counter_type dec(atomics::memory_order /*order*/ = atomics::memory_order_relaxed)
+            {
+                return 0;
+            }
+
+            /// Dummy increment. Always returns 0
+            static counter_type dec( counter_type /*count*/, atomics::memory_order /*order*/ = atomics::memory_order_relaxed )
             {
                 return 0;
             }
 
             /// Dummy pre-increment. Always returns 0
-            size_t operator ++() const
+            counter_type operator ++() const
             {
                 return 0;
             }
             /// Dummy post-increment. Always returns 0
-            size_t operator ++(int) const
+            counter_type operator ++(int) const
             {
                 return 0;
             }
 
             /// Dummy pre-decrement. Always returns 0
-            size_t operator --() const
+            counter_type operator --() const
             {
                 return 0;
             }
             /// Dummy post-decrement. Always returns 0
-            size_t operator --(int) const
+            counter_type operator --(int) const
             {
+                return 0;
+            }
+
+            /// Dummy increment by \p count, always returns 0
+            counter_type operator +=( counter_type count )
+            {
+                CDS_UNUSED( count );
+                return 0;
+            }
+
+            /// Dummy decrement by \p count, always returns 0
+            counter_type operator -=( counter_type count )
+            {
+                CDS_UNUSED( count );
                 return 0;
             }
 

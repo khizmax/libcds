@@ -40,6 +40,7 @@
 #include <cds/container/fcqueue.h>
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
+#include <cds/container/weak_ringbuffer.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -292,6 +293,29 @@ namespace fc_details{
             }
         };
 
+
+        // WeakRingBuffer
+        struct traits_WeakRingBuffer_dyn: public cds::container::weak_ringbuffer::traits
+        {
+            typedef cds::opt::v::uninitialized_dynamic_buffer< int > buffer;
+        };
+        class WeakRingBuffer_dyn
+            : public cds::container::WeakRingBuffer< Value, traits_WeakRingBuffer_dyn >
+        {
+            typedef cds::container::WeakRingBuffer< Value, traits_WeakRingBuffer_dyn > base_class;
+        public:
+            WeakRingBuffer_dyn()
+                : base_class( 1024 * 64 )
+            {}
+            WeakRingBuffer_dyn( size_t nCapacity )
+                : base_class( nCapacity )
+            {}
+
+            cds::opt::none statistics() const
+            {
+                return cds::opt::none();
+            }
+        };
 
         // BasketQueue
 
@@ -789,6 +813,9 @@ namespace cds_test {
 #define CDSSTRESS_VyukovQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn       ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_ic    )
+
+#define CDSSTRESS_WeakRingBuffer( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, WeakRingBuffer_dyn       )
 
 #define CDSSTRESS_StdQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, StdQueue_deque_Spinlock ) \

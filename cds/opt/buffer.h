@@ -173,6 +173,19 @@ namespace cds { namespace opt {
             {
                 return &( m_buffer[0].v );
             }
+
+            /// Returns <tt> idx % capacity() </tt>
+            /**
+            If the buffer size is a power of two, binary arithmethics is used
+            instead of modulo arithmetics
+            */
+            size_t mod( size_t idx )
+            {
+                static_if( c_bExp2 )
+                    return idx & ( capacity() - 1 );
+                else
+                    return idx % capacity();
+            }
         };
 
         /// Static initialized buffer
@@ -264,6 +277,19 @@ namespace cds { namespace opt {
             value_type * buffer() const CDS_NOEXCEPT
             {
                 return m_buffer;
+            }
+
+            /// Returns <tt> idx % capacity() </tt>
+            /**
+            If the buffer size is a power of two, binary arithmethics is used
+            instead of modulo arithmetics
+            */
+            size_t mod( size_t idx )
+            {
+                static_if( c_bExp2 )
+                    return idx & ( capacity() - 1 );
+                else
+                    return idx % capacity();
             }
         };
 
@@ -366,6 +392,19 @@ namespace cds { namespace opt {
             value_type * buffer() const CDS_NOEXCEPT
             {
                 return m_buffer;
+            }
+
+            /// Returns <tt> idx % capacity() </tt>
+            /**
+                If the buffer size is a power of two, binary arithmethics is used
+                instead of modulo arithmetics
+            */
+            size_t mod( size_t idx )
+            {
+                static_if ( c_bExp2 )
+                    return idx & ( capacity() - 1 );
+                else
+                    return idx % capacity();
             }
         };
 
@@ -470,6 +509,19 @@ namespace cds { namespace opt {
             value_type * buffer() const CDS_NOEXCEPT
             {
                 return m_buffer;
+            }
+
+            /// Returns <tt> idx % capacity() </tt>
+            /**
+            If the buffer size is a power of two, binary arithmethics is used
+            instead of modulo arithmetics
+            */
+            size_t mod( size_t idx )
+            {
+                static_if( c_bExp2 )
+                    return idx & ( capacity() - 1 );
+                else
+                    return idx % capacity();
             }
         };
 

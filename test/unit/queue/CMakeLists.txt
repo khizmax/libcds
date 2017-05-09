@@ -15,6 +15,7 @@ set(CDSGTEST_QUEUE_SOURCES
     segmented_queue_hp.cpp
     segmented_queue_dhp.cpp
     vyukov_mpmc_queue.cpp
+    weak_ringbuffer.cpp
     intrusive_basket_queue_hp.cpp
     intrusive_basket_queue_dhp.cpp
     intrusive_fcqueue.cpp

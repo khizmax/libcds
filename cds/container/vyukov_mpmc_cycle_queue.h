@@ -65,9 +65,9 @@ namespace cds { namespace container {
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
                 If \p T is a complex type, \p value_cleaner may be useful feature.
 
-                Default value is \ref opt::v::destruct_cleaner
+                Default value is \ref opt::v::auto_cleaner
             */
-            typedef cds::opt::v::destruct_cleaner value_cleaner;
+            typedef cds::opt::v::auto_cleaner value_cleaner;
 
             /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
             typedef cds::atomicity::empty_item_counter item_counter;
@@ -105,7 +105,7 @@ namespace cds { namespace container {
                 The functor calls the destructor for queue item.
                 After an item is dequeued, \p value_cleaner cleans the cell that the item has been occupied.
                 If \p T is a complex type, \p value_cleaner can be an useful feature.
-                Default value is \ref opt::v::destruct_cleaner
+                Default value is \ref opt::v::auto_cleaner
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
                 To enable item counting use \p cds::atomicity::item_counter
@@ -315,7 +315,7 @@ namespace cds { namespace container {
             return enqueue_with( [&val]( value_type& dest ) { new (&dest) value_type( std::move( val ));});
         }
 
-        /// Synonym for \p enqueue( valuetype const& )
+        /// Synonym for \p enqueue( value_type const& )
         bool push( value_type const& data )
         {
             return enqueue( data );

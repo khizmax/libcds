@@ -57,6 +57,7 @@ namespace cds_test {
             }
             ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
+            ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ) );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;

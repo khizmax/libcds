@@ -48,13 +48,15 @@ namespace cds { namespace opt {
             void operator ()( value_type& val )
             {
                 ...
-                // code to cleanup \p val
+                // code to cleanup val
             }
         }
         \endcode
 
         Predefined option types:
             \li opt::v::empty_cleaner
+            \li opt::v::destruct_cleaner
+            \li opt::v::auto_cleaner
     */
     template <typename Type>
     struct value_cleaner {
@@ -92,7 +94,32 @@ namespace cds { namespace opt {
             template <typename T>
             void operator()( T& val )
             {
-                (&val)->T::~T();
+                ( &val )->~T();
+            }
+            //@endcond
+        };
+
+        /// Cleaner that calls \p T destructor if it is not trivial
+        /**
+            If \p T has non-trivial destructor (<tt> std::is_trivially_destructible<T>::value </tt> is \p false),
+            the cleaner calls \p T destructor.
+
+            If <tt> std::is_trivially_destructible<T>::value </tt> is \p true, the cleaner is empty - no
+            destructor of \p T is called.
+        */
+        struct auto_cleaner
+        {
+            //@cond
+            template <typename T>
+            typename std::enable_if< std::is_trivially_destructible<T>::value >::type
+            operator()( T& /*val*/ )
+            {}
+
+            template <typename T>
+            typename std::enable_if< !std::is_trivially_destructible<T>::value >::type
+            operator()( T& val )
+            {
+                ( &val )->~T();
             }
             //@endcond
         };

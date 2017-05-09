@@ -66,6 +66,10 @@
 #   define cds_unlikely( expr ) expr
 #endif
 
+#ifndef static_if
+#   define static_if  if
+#endif
+
 // Features
 #include <cds/compiler/feature_tsan.h>
 
