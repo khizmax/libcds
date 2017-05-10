@@ -243,7 +243,7 @@ namespace cds { namespace intrusive {
                 the \p empty() member function depends on correct item counting.
                 Therefore, \p atomicity::empty_item_counter is not allowed as a type of the option.
 
-                Default is \p atomicity::item_counter.
+                Default is \p atomicity::item_counter. To avoid false sharing you can aldo use \p atomicity::cache_friendly_item_counter
             */
             typedef cds::atomicity::item_counter item_counter;
 
@@ -301,7 +301,7 @@ namespace cds { namespace intrusive {
                  The item counting is an important part of \p FeldmanHashSet algorithm:
                  the \p empty() member function depends on correct item counting.
                  Therefore, \p atomicity::empty_item_counter is not allowed as a type of the option.
-                 Default is \p atomicity::item_counter.
+                 Default is \p atomicity::item_counter. To avoid false sharing you can use or \p atomicity::cache_friendly_item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::stat - internal statistics. By default, it is disabled (\p feldman_hashset::empty_stat).

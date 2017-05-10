@@ -146,6 +146,7 @@ namespace map {
         struct traits_SplitList_Michael_dyn_cmp: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::compare< compare >
@@ -198,6 +199,7 @@ namespace map {
         struct traits_SplitList_Michael_dyn_cmp_seqcst: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
@@ -221,6 +223,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::compare< compare >
@@ -242,6 +245,7 @@ namespace map {
         struct traits_SplitList_Michael_dyn_less: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::less< less >
@@ -264,6 +268,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::michael_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::michael_list::make_traits<
                         co::less< less >
@@ -308,6 +313,7 @@ namespace map {
             public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         co::compare< compare >
@@ -347,6 +353,7 @@ namespace map {
             public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
@@ -371,6 +378,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         co::compare< compare >
@@ -393,6 +401,7 @@ namespace map {
             public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         co::less< less >
@@ -415,6 +424,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::lazy_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::lazy_list::make_traits<
                         co::less< less >
@@ -456,6 +466,7 @@ namespace map {
         struct traits_SplitList_Iterable_dyn_cmp: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::compare< compare >
@@ -480,6 +491,7 @@ namespace map {
         struct traits_SplitList_Iterable_dyn_cmp_seqcst: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,co::memory_model< co::v::sequential_consistent >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
@@ -496,6 +508,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::compare< compare >
@@ -510,6 +523,7 @@ namespace map {
         struct traits_SplitList_Iterable_dyn_less: public cc::split_list::make_traits<
                 cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::less< less >
@@ -524,6 +538,7 @@ namespace map {
                 cc::split_list::ordered_list<cc::iterable_list_tag>
                 ,cc::split_list::dynamic_bucket_table< false >
                 ,co::hash< hash >
+                , co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,cc::split_list::ordered_list_traits<
                     typename cc::iterable_list::make_traits<
                         co::less< less >

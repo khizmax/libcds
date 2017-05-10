@@ -136,6 +136,7 @@ namespace set {
             cc::ellen_bintree::key_extractor< typename ellen_bintree_props::key_extractor >
             ,co::less< typename ellen_bintree_props::less >
             ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
+            ,co::item_counter<cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
 
@@ -208,6 +209,7 @@ namespace set {
             ,co::less< typename ellen_bintree_props::less >
             ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
             ,co::stat< cc::ellen_bintree::stat<> >
+            ,co::item_counter<cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
 

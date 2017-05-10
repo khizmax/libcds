@@ -70,7 +70,7 @@ namespace set {
         class traits_SkipListSet_less_turbo32: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo32 > SkipListSet_hp_less_turbo32;
@@ -85,7 +85,7 @@ namespace set {
         class traits_SkipListSet_less_turbo24: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo24 >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo24 > SkipListSet_hp_less_turbo24;
@@ -100,7 +100,7 @@ namespace set {
         class traits_SkipListSet_less_turbo16: public cc::skip_list::make_traits <
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo16 >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo16 > SkipListSet_hp_less_turbo16;
@@ -116,7 +116,7 @@ namespace set {
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::memory_model< co::v::sequential_consistent >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo32_seqcst > SkipListSet_hp_less_turbo32_seqcst;
@@ -132,7 +132,7 @@ namespace set {
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
                 ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo32_stat > SkipListSet_hp_less_turbo32_stat;
@@ -148,7 +148,7 @@ namespace set {
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo24 >
                 ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo24_stat > SkipListSet_hp_less_turbo24_stat;
@@ -164,7 +164,7 @@ namespace set {
                 co::less< less >
                 ,cc::skip_list::random_level_generator< cc::skip_list::turbo16 >
                 ,co::stat< cc::skip_list::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_turbo16_stat > SkipListSet_hp_less_turbo16_stat;
@@ -179,7 +179,7 @@ namespace set {
         class traits_SkipListSet_cmp_turbo32: public cc::skip_list::make_traits <
             co::compare< compare >
             ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_cmp_turbo32 > SkipListSet_hp_cmp_turbo32;
@@ -195,7 +195,7 @@ namespace set {
             co::compare< compare >
             ,cc::skip_list::random_level_generator< cc::skip_list::turbo32 >
             ,co::stat< cc::skip_list::stat<> >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_cmp_turbo32_stat > SkipListSet_hp_cmp_turbo32_stat;
@@ -210,7 +210,7 @@ namespace set {
         class traits_SkipListSet_less_xorshift32: public cc::skip_list::make_traits <
             co::less< less >
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift32 > SkipListSet_hp_less_xorshift32;
@@ -225,7 +225,7 @@ namespace set {
         class traits_SkipListSet_less_xorshift24: public cc::skip_list::make_traits <
             co::less< less >
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift24 >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift24 > SkipListSet_hp_less_xorshift24;
@@ -240,7 +240,7 @@ namespace set {
         class traits_SkipListSet_less_xorshift16: public cc::skip_list::make_traits <
             co::less< less >
             , cc::skip_list::random_level_generator< cc::skip_list::xorshift16 >
-            , co::item_counter< cds::atomicity::item_counter >
+            , co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift16 > SkipListSet_hp_less_xorshift16;
@@ -256,7 +256,7 @@ namespace set {
             co::less< less >
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
             ,co::stat< cc::skip_list::stat<> >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift32_stat > SkipListSet_hp_less_xorshift32_stat;
@@ -272,7 +272,7 @@ namespace set {
             co::less< less >
             , cc::skip_list::random_level_generator< cc::skip_list::xorshift24 >
             , co::stat< cc::skip_list::stat<> >
-            , co::item_counter< cds::atomicity::item_counter >
+            , co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift24_stat > SkipListSet_hp_less_xorshift24_stat;
@@ -288,7 +288,7 @@ namespace set {
             co::less< less >
             , cc::skip_list::random_level_generator< cc::skip_list::xorshift16 >
             , co::stat< cc::skip_list::stat<> >
-            , co::item_counter< cds::atomicity::item_counter >
+            , co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_less_xorshift16_stat > SkipListSet_hp_less_xorshift16_stat;
@@ -303,7 +303,7 @@ namespace set {
         class traits_SkipListSet_cmp_xorshift32: public cc::skip_list::make_traits <
             co::compare< compare >
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_cmp_xorshift32 > SkipListSet_hp_cmp_xorshift32;
@@ -319,7 +319,7 @@ namespace set {
             co::compare< compare >
             ,cc::skip_list::random_level_generator< cc::skip_list::xorshift32 >
             ,co::stat< cc::skip_list::stat<> >
-            ,co::item_counter< cds::atomicity::item_counter >
+            ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
         >::type
         {};
         typedef SkipListSet< cds::gc::HP, key_val, traits_SkipListSet_cmp_xorshift32_stat > SkipListSet_hp_cmp_xorshift32_stat;

@@ -445,9 +445,9 @@ namespace cds { namespace intrusive {
     protected:
         head_node                   m_Head;   ///< head tower (max height)
 
-        item_counter                m_ItemCounter;    ///< item counter
         random_level_generator      m_RandomLevelGen; ///< random level generator instance
         atomics::atomic<unsigned int>    m_nHeight;   ///< estimated high level
+        item_counter                m_ItemCounter;    ///< item counter
         mutable stat                m_Stat;           ///< internal statistics
 
     protected:

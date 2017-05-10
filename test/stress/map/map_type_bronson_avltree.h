@@ -93,7 +93,7 @@ namespace map {
             cc::bronson_avltree::make_traits<
                 co::less< less >
                 ,cc::bronson_avltree::relaxed_insert< false >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less > BronsonAVLTreeMap_rcu_gpi_less;
@@ -106,7 +106,7 @@ namespace map {
             cc::bronson_avltree::make_traits<
                 co::compare< compare >
                 ,cc::bronson_avltree::relaxed_insert< false >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
                 ,co::stat< cc::bronson_avltree::stat<>>
             >::type
         {};

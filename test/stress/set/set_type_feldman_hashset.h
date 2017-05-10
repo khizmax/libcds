@@ -186,6 +186,7 @@ namespace set {
                     return kv.hash;
                 }
             };
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
         };
 
         typedef FeldmanHashSet< cds::gc::HP,  key_val<std::hash<key_type>>, default_traits >    FeldmanHashSet_hp_stdhash;
@@ -323,6 +324,7 @@ namespace set {
                 };
 
                 typedef set::cmp<Key>   compare;
+                typedef cds::atomicity::cache_friendly_item_counter item_counter;
             };
 
             struct traits_stat : public traits

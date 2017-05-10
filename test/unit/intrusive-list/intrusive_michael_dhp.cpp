@@ -229,6 +229,23 @@ namespace {
         test_hp( l );
     }
 
+    TEST_F( IntrusiveMichaelList_DHP, member_hook_cache_friendly_item_counting )
+    {
+        struct traits: public ci::michael_list::traits {
+            typedef ci::michael_list::member_hook< offsetof( member_item, hMember ), cds::opt::gc< gc_type >> hook;
+            typedef mock_disposer disposer;
+            typedef cmp< member_item > compare;
+            typedef intrusive_list_common::less< member_item > less;
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
+        };
+        typedef ci::MichaelList< gc_type, member_item, traits > list_type;
+
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+    }
+
     TEST_F( IntrusiveMichaelList_DHP, member_hook_seqcst )
     {
         struct traits : public ci::michael_list::traits {

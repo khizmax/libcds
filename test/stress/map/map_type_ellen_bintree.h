@@ -121,7 +121,7 @@ namespace map {
         struct traits_EllenBinTreeMap: public cc::ellen_bintree::make_set_traits<
                 co::less< less >
                 ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         struct traits_EllenBinTreeMap_hp : traits_EllenBinTreeMap {
@@ -183,7 +183,7 @@ namespace map {
                 >
                 ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
                 ,co::stat< cc::ellen_bintree::stat<> >
-                ,co::item_counter< cds::atomicity::item_counter >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
 

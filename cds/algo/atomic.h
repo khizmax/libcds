@@ -32,6 +32,7 @@
 #define CDSLIB_CXX11_ATOMIC_H
 
 #include <cds/details/defs.h>
+#include <cds/user_setup/cache_line.h>
 
 namespace cds {
 
@@ -194,7 +195,9 @@ namespace cds {
         /// Atomic item counter
         /**
             This class is simplified interface around \p std::atomic_size_t.
-            The class supports getting of current value of the counter and increment/decrement its value.
+            The class supports getting current value of the counter and increment/decrement its value.
+
+            See alûo improved version that eliminates false sharing: \p cache_friendly_item_counter.
         */
         class item_counter
         {
@@ -204,7 +207,7 @@ namespace cds {
 
         private:
             //@cond
-            atomic_type                         m_Counter   ;   ///< Atomic item counter
+            atomic_type     m_Counter;   ///< Atomic item counter
             //@endcond
 
         public:
@@ -301,6 +304,121 @@ namespace cds {
                 m_Counter.store( 0, order );
             }
         };
+
+        /// Atomic cache-friendly item counter
+        /**
+            Atomic item counter with cache-line padding to avoid false sharing.
+            Adding cache-line padding before and after atomic counter eliminates the contention
+            in read path of many containers and can notably improve search operations in sets/maps.
+        */
+        class cache_friendly_item_counter
+        {
+        public:
+            typedef atomics::atomic_size_t   atomic_type;   ///< atomic type used
+            typedef size_t counter_type;                    ///< Integral item counter type (size_t)
+
+        private:
+            //@cond
+            char            pad1_[cds::c_nCacheLineSize];
+            atomic_type     m_Counter;   ///< Atomic item counter
+            char            pad2_[cds::c_nCacheLineSize - sizeof( atomic_type )];
+            //@endcond
+
+        public:
+            /// Default ctor initializes the counter to zero.
+            cache_friendly_item_counter()
+                : m_Counter(counter_type(0))
+            {}
+
+            /// Returns current value of the counter
+            counter_type value(atomics::memory_order order = atomics::memory_order_relaxed) const
+            {
+                return m_Counter.load( order );
+            }
+
+            /// Same as \ref value() with relaxed memory ordering
+            operator counter_type() const
+            {
+                return value();
+            }
+
+            /// Returns underlying atomic interface
+            atomic_type& getAtomic()
+            {
+                return m_Counter;
+            }
+
+            /// Returns underlying atomic interface (const)
+            const atomic_type& getAtomic() const
+            {
+                return m_Counter;
+            }
+
+            /// Increments the counter. Semantics: postincrement
+            counter_type inc(atomics::memory_order order = atomics::memory_order_relaxed )
+            {
+                return m_Counter.fetch_add( 1, order );
+            }
+
+            /// Increments the counter. Semantics: postincrement
+            counter_type inc( counter_type count, atomics::memory_order order = atomics::memory_order_relaxed )
+            {
+                return m_Counter.fetch_add( count, order );
+            }
+
+            /// Decrements the counter. Semantics: postdecrement
+            counter_type dec(atomics::memory_order order = atomics::memory_order_relaxed)
+            {
+                return m_Counter.fetch_sub( 1, order );
+            }
+
+            /// Decrements the counter. Semantics: postdecrement
+            counter_type dec( counter_type count, atomics::memory_order order = atomics::memory_order_relaxed )
+            {
+                return m_Counter.fetch_sub( count, order );
+            }
+
+            /// Preincrement
+            counter_type operator ++()
+            {
+                return inc() + 1;
+            }
+            /// Postincrement
+            counter_type operator ++(int)
+            {
+                return inc();
+            }
+
+            /// Predecrement
+            counter_type operator --()
+            {
+                return dec() - 1;
+            }
+            /// Postdecrement
+            counter_type operator --(int)
+            {
+                return dec();
+            }
+
+            /// Increment by \p count
+            counter_type operator +=( counter_type count )
+            {
+                return inc( count ) + count;
+            }
+
+            /// Decrement by \p count
+            counter_type operator -=( counter_type count )
+            {
+                return dec( count ) - count;
+            }
+
+            /// Resets count to 0
+            void reset(atomics::memory_order order = atomics::memory_order_relaxed)
+            {
+                m_Counter.store( 0, order );
+            }
+        };
+
 
         /// Empty item counter
         /**

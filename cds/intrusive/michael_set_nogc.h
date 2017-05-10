@@ -77,10 +77,6 @@ namespace cds { namespace intrusive {
         // GC and OrderedList::gc must be the same
         static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
-        // atomicity::empty_item_counter is not allowed as a item counter
-        static_assert(!std::is_same<item_counter, atomicity::empty_item_counter>::value,
-            "atomicity::empty_item_counter is not allowed as a item counter");
-
     protected:
         //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
@@ -421,8 +417,8 @@ namespace cds { namespace intrusive {
 
         /// Checks if the set is empty
         /**
-            Emptiness is checked by item counting: if item count is zero then the set is empty.
-            Thus, the correct item counting feature is an important part of Michael's set implementation.
+            @warning If you use \p atomicity::empty_item_counter in \p traits::item_counter,
+            the function always returns \p true.
         */
         bool empty() const
         {
@@ -430,6 +426,10 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns item count in the set
+        /**
+            If you use \p atomicity::empty_item_counter in \p traits::item_counter,
+            the function always returns 0.
+        */
         size_t size() const
         {
             return m_ItemCounter;

@@ -105,6 +105,7 @@ namespace map {
         {
             typedef std::hash< Key >    hash;
             typedef std::less<size_t>   less;
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
         };
 
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_stdhash >    FeldmanHashMap_hp_stdhash;
@@ -137,6 +138,7 @@ namespace map {
         {
             typedef ::cds_test::city64 hash;
             typedef ::cds_test::city64::less less;
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
         };
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_city64 >    FeldmanHashMap_hp_city64;
         typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_city64 >    FeldmanHashMap_dhp_city64;
@@ -164,6 +166,7 @@ namespace map {
         {
             typedef ::cds_test::city128 hash;
             typedef ::cds_test::city128::less less;
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
         };
         typedef FeldmanHashMap< cds::gc::HP,  Key, Value, traits_FeldmanHashMap_city128 >    FeldmanHashMap_hp_city128;
         typedef FeldmanHashMap< cds::gc::DHP, Key, Value, traits_FeldmanHashMap_city128 >    FeldmanHashMap_dhp_city128;
@@ -193,6 +196,7 @@ namespace map {
         struct traits_FeldmanHashMap_fixed: public cc::feldman_hashmap::traits
         {
             typedef map::cmp<Key>    compare;
+            typedef cds::atomicity::cache_friendly_item_counter item_counter;
         };
 
         typedef FeldmanHashMap< cds::gc::HP, Key, Value,  traits_FeldmanHashMap_fixed >    FeldmanHashMap_hp_fixed;

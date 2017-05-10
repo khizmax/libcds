@@ -85,6 +85,7 @@ namespace map {
         struct traits_MichaelMap_hash :
             public cc::michael_map::make_traits<
                 co::hash< hash >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
 

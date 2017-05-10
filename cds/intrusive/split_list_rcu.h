@@ -1118,8 +1118,8 @@ namespace cds { namespace intrusive {
 
         atomics::atomic<size_t> m_nBucketCountLog2; ///< log2( current bucket count )
         atomics::atomic<size_t> m_nMaxItemCount;    ///< number of items container can hold, before we have to resize
-        item_counter            m_ItemCounter;      ///< Item counter
         hash                    m_HashFunctor;      ///< Hash functor
+        item_counter            m_ItemCounter;      ///< Item counter
         stat                    m_Stat;             ///< Internal statistics accumulator
         //@endcond
     };

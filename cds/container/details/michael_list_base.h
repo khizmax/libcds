@@ -74,7 +74,7 @@ namespace cds { namespace container {
             /// Back-off strategy
             typedef cds::backoff::empty             back_off;
 
-            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter or \p atomicity::cache_friendly_item_counter to enable item counting
             typedef atomicity::empty_item_counter     item_counter;
 
             /// Internal statistics
@@ -113,7 +113,7 @@ namespace cds { namespace container {
             - \p opt::allocator - an allocator, default is \p CDS_DEFAULT_ALLOCATOR
             - \p opt::back_off - back-off strategy used. If the option is not specified, the \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
-                 To enable item counting use \p atomicity::item_counter.
+                 To enable item counting use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::stat - internal statistics. By default, it is disabled (\p michael_list::empty_stat).
                 To enable it use \p michael_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)

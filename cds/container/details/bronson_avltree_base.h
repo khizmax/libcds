@@ -440,7 +440,7 @@ namespace cds { namespace container {
             /// Item counter
             /**
                 The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter.
             */
             typedef atomicity::empty_item_counter     item_counter;
 
@@ -493,7 +493,7 @@ namespace cds { namespace container {
             - \p bronson_avltree::relaxed_insert - enable (\p true) or disable (\p false, the default)
                 @ref bronson_avltree::relaxed_insert "relaxed insertion"
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::stat - internal statistics, by default it is disabled (\p bronson_avltree::empty_stat)

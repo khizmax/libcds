@@ -144,7 +144,7 @@ namespace cds { namespace container {
                 Note: unordering feature is not fully supported yet.
             - \p opt::back_off - back-off strategy used. If the option is not specified, \p cds::backoff::Default is used.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
-                To enable item counting use \p atomicity::item_counter.
+                To enable item counting use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::stat - internal statistics. By default, it is disabled (\p lazy_list::empty_stat).
                 To enable it use \p lazy_list::stat
             - \p opt::allocator - the allocator used for creating and freeing list's item. Default is \ref CDS_DEFAULT_ALLOCATOR macro.

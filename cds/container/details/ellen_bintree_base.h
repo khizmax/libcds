@@ -162,7 +162,7 @@ namespace cds { namespace container {
             /// Item counter
             /**
                 The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             */
             typedef atomicity::empty_item_counter     item_counter;
 
@@ -247,7 +247,7 @@ namespace cds { namespace container {
                 If the option is not specified, \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
             - \p opt::item_counter - the type of item counter, default is disabled (\p atomicity::empty_item_counter).
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::allocator - the allocator for \ref ellen_bintree::node "leaf nodes" which contains data.
@@ -287,7 +287,7 @@ namespace cds { namespace container {
                 If the option is not specified, \p %opt::less is used.
             - \p opt::less - specifies binary predicate used for key compare. At least \p %opt::compare or \p %opt::less should be defined.
             - \p opt::item_counter - the type of item counter, default is disabled (\p atomicity::empty_item_counter).
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p opt::allocator - the allocator used for \ref ellen_bintree::map_node "leaf nodes" which contains data.

@@ -76,10 +76,6 @@ namespace cds { namespace container {
         // GC and OrderedList::gc must be the same
         static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
-        // atomicity::empty_item_counter is not allowed as a item counter
-        static_assert(!std::is_same<item_counter, atomicity::empty_item_counter>::value,
-            "cds::atomicity::empty_item_counter is not allowed as a item counter");
-
     protected:
         //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;
@@ -115,10 +111,10 @@ namespace cds { namespace container {
     protected:
         //@cond
         const size_t    m_nHashBitmask;
-        item_counter    m_ItemCounter;      ///< Item counter
         hash            m_HashFunctor;      ///< Hash functor
         internal_bucket_type*   m_Buckets;  ///< bucket table
-        stat            m_Stat; ///< Internal statistics
+        item_counter    m_ItemCounter;      ///< Item counter
+        stat            m_Stat;             ///< Internal statistics
         //@endcond
 
     public:
@@ -379,8 +375,8 @@ namespace cds { namespace container {
 
         /// Checks if the set is empty
         /**
-            The emptiness is checked by the item counting: if item count is zero then the set is empty.
-            Thus, the correct item counting feature is an important part of Michael's set implementation.
+            @warning If you use \p atomicity::empty_item_counter in \p traits::item_counter,
+            the function always returns \p true.
         */
         bool empty() const
         {
@@ -388,6 +384,10 @@ namespace cds { namespace container {
         }
 
         /// Returns item count in the set
+        /**
+            @warning If you use \p atomicity::empty_item_counter in \p traits::item_counter,
+            the function always returns 0.
+        */
         size_t size() const
         {
             return m_ItemCounter;

@@ -93,6 +93,7 @@ namespace set {
         struct traits_MichaelSet :
             public cc::michael_set::make_traits<
                 co::hash< hash >
+                ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
             >::type
         {};
         typedef MichaelHashSet< cds::gc::HP,  typename ml::MichaelList_HP_cmp,  traits_MichaelSet > MichaelSet_HP_cmp;

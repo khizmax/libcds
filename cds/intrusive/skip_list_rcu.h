@@ -632,10 +632,10 @@ namespace cds { namespace intrusive {
     protected:
         skip_list::details::head_node< node_type > m_Head;   ///< head tower (max height)
 
-        item_counter                m_ItemCounter;      ///< item counter
         random_level_generator      m_RandomLevelGen;   ///< random level generator instance
         atomics::atomic<unsigned int>    m_nHeight;     ///< estimated high level
         atomics::atomic<node_type *>     m_pDeferredDelChain ;   ///< Deferred deleted node chain
+        item_counter                m_ItemCounter;      ///< item counter
         mutable stat                m_Stat;             ///< internal statistics
 
     protected:

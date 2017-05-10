@@ -257,7 +257,7 @@ namespace cds { namespace intrusive {
                 the <tt>empty()</tt> member function depends on correct item counting.
                 Therefore, \p cds::atomicity::empty_item_counter is not allowed as a type of the option.
 
-                Default is \p cds::atomicity::item_counter.
+                Default is \p cds::atomicity::item_counter; to avoid false sharing you may use \p atomicity::cache_friendly_item_counter
             */
             typedef cds::atomicity::item_counter item_counter;
 

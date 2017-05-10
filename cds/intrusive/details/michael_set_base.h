@@ -58,9 +58,10 @@ namespace cds { namespace intrusive {
             /**
                 The item counting is an important part of \p MichaelHashSet algorithm:
                 the \p empty() member function depends on correct item counting.
-                Therefore, \p atomicity::empty_item_counter is not allowed as a type of the option.
+                You may use \p atomicity::empty_item_counter if don't need \p empty() and \p size()
+                member functions.
 
-                Default is \p atomicity::item_counter.
+                Default is \p atomicity::item_counter; to avoid false sharing you may use \p atomicity::cache_friendly_item_counter
             */
             typedef cds::atomicity::item_counter item_counter;
 

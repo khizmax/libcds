@@ -515,7 +515,7 @@ namespace cds { namespace intrusive {
             /// Item counter
             /**
                 The type for item counter, by default it is disabled (\p atomicity::empty_item_counter).
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             */
             typedef atomicity::empty_item_counter item_counter;
 
@@ -582,7 +582,7 @@ namespace cds { namespace intrusive {
             - \p opt::disposer - the functor used for dispose removed nodes. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously. The disposer is used only for leaf nodes.
             - \p opt::item_counter - the type of item counting feature, by default it is disabled (\p atomicity::empty_item_counter)
-                To enable it use \p atomicity::item_counter
+                To enable it use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p ellen_bintree::update_desc_allocator - an allocator of \ref ellen_bintree::update_desc "update descriptors",

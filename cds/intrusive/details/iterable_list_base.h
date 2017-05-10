@@ -212,7 +212,7 @@ namespace cds { namespace intrusive {
             */
             typedef empty_stat                      stat;
 
-            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+            /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter or \p atomicity::cache_friendly_item_counter to enable item counting
             typedef atomicity::empty_item_counter   item_counter;
 
             /// C++ memory ordering model
@@ -234,7 +234,7 @@ namespace cds { namespace intrusive {
             - \p opt::disposer - the functor used for disposing removed items. Default is \p opt::v::empty_disposer. Due the nature
                 of GC schema the disposer may be called asynchronously.
             - \p opt::item_counter - the type of item counting feature. Default is disabled (\p atomicity::empty_item_counter).
-                 To enable item counting use \p atomicity::item_counter.
+                 To enable item counting use \p atomicity::item_counter or \p atomicity::cache_friendly_item_counter
             - \p opt::stat - internal statistics. By default, it is disabled (\p iterable_list::empty_stat).
                 To enable it use \p iterable_list::stat
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
