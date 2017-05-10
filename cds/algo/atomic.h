@@ -197,7 +197,7 @@ namespace cds {
             This class is simplified interface around \p std::atomic_size_t.
             The class supports getting current value of the counter and increment/decrement its value.
 
-            See alûo improved version that eliminates false sharing: \p cache_friendly_item_counter.
+            See also: improved version that eliminates false sharing - \p cache_friendly_item_counter.
         */
         class item_counter
         {
