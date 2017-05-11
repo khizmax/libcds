@@ -308,7 +308,7 @@ namespace cds {
 #if CDS_COMPILER == CDS_COMPILER_CLANG
     // CLang unhappy: pad1_ and pad2_ - unused private field warning
 #   pragma GCC diagnostic push
-#   pragma GCC diagnistic ignored "-Wunused-private-field"
+#   pragma GCC diagnostic ignored "-Wunused-private-field"
 #endif
         /// Atomic cache-friendly item counter
         /**
