@@ -305,6 +305,11 @@ namespace cds {
             }
         };
 
+#if CDS_COMPILER == CDS_COMPILER_CLANG
+    // CLang unhappy: pad1_ and pad2_ - unused private field warning
+#   pragma GCC diagnostic push
+#   pragma GCC diagnistic ignored "-Wunused-private-field"
+#endif
         /// Atomic cache-friendly item counter
         /**
             Atomic item counter with cache-line padding to avoid false sharing.
@@ -418,7 +423,9 @@ namespace cds {
                 m_Counter.store( 0, order );
             }
         };
-
+#if CDS_COMPILER == CDS_COMPILER_CLANG
+#   pragma GCC diagnostic pop
+#endif
 
         /// Empty item counter
         /**
