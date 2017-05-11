@@ -32,6 +32,7 @@
 #define CDSLIB_DEFS_H
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <cstdint>
 #include <exception>
