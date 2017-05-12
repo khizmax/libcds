@@ -654,7 +654,6 @@ namespace cds { namespace container {
             }
 
             // reserve and store size
-            uint8_t* reserved = buffer_.buffer() + buffer_.mod( back );
             *reinterpret_cast<size_t*>( reserved ) = size;
 
             return reinterpret_cast<void*>( reserved + sizeof( size_t ) );
