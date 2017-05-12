@@ -572,7 +572,11 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_queue
         @anchor cds_nonintrusive_WeakRingBuffer_void
     */
+#ifdef CDS_DOXYGEN_INVOKED
     template <typename Traits = weak_ringbuffer::traits>
+#else
+    template <typename Traits>
+#endif
     class WeakRingBuffer<void, Traits>: public cds::bounded_container
     {
     public:
