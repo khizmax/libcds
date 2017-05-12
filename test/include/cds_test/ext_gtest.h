@@ -10,11 +10,11 @@
     modification, are permitted provided that the following conditions are met:
 
     * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
+    list of conditions and the following disclaimer.
 
     * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,52 +28,18 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef CDS_ADDRESS_SANITIZER_ENABLED
+#ifndef CDSTEST_EXT_GTEST_H
+#define CDSTEST_EXT_GTEST_H
 
-#include <cds_test/ext_gtest.h>
+#if defined( __GCC__ ) && !defined(__clang__) && __GNUC__ >= 7
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wduplicated-branches"
+#endif
 
-namespace {
+#include <gtest/gtest.h>
 
-    class asan: public ::testing::Test
-    {};
+#if defined( __GCC__ ) && !defined(__clang__) && __GNUC__ >= 7
+#   pragma GCC diagnostic pop
+#endif
 
-    TEST_F( asan, memory_leak )
-    {
-        constexpr size_t size = 100;
-
-        size_t* arr = new size_t[size];
-        for ( size_t i = 0; i < size; ++i ) {
-            arr[i] = i;
-        }
-    }
-
-    TEST_F( asan, array_bound )
-    {
-        constexpr size_t size = 100;
-
-        size_t arr[size];
-        size_t protect = 0;
-
-        for ( size_t i = 0; i <= size; ++i ) {
-            arr[i] = i;
-        }
-
-        protect = 0;
-    }
-
-    TEST_F( asan, uninit_var )
-    {
-        constexpr size_t size = 100;
-
-        size_t arr[size];
-
-        for ( size_t i = 0; i < size; ++i ) {
-            arr[i] = i;
-        }
-
-        size_t n = arr[n];
-        n = arr[n / 2];
-    }
-} // namespace
-
-#endif // #ifdef CDS_ADDRESS_SANITIZER_ENABLED
+#endif // #ifndef CDSTEST_EXT_GTEST_H

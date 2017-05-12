@@ -31,7 +31,7 @@
 #ifndef CDSTEST_THREAD_H
 #define CDSTEST_THREAD_H
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 #include <vector>
 #include <thread>
 #include <condition_variable>

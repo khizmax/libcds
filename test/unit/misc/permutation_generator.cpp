@@ -29,7 +29,7 @@
 */
 
 #include <cds/opt/permutation.h>
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 
 namespace {
 

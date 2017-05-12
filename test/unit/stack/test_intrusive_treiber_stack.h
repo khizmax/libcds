@@ -31,7 +31,7 @@
 #ifndef CDSUNIT_STACK_INTRUSIVE_TREIBER_STACK_H
 #define CDSUNIT_STACK_INTRUSIVE_TREIBER_STACK_H
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 #include <cds/intrusive/details/single_link_struct.h>
 
 namespace cds_test {

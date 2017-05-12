@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds.vcxproj", "{408FE9BC-44F0-4E6A-89FA-D6F952584239}"
 EndProject
@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cds_test", "cds_test", "{3A
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\test\include\cds_test\check_size.h = ..\..\..\test\include\cds_test\check_size.h
 		..\..\..\test\include\cds_test\city.h = ..\..\..\test\include\cds_test\city.h
+		..\..\..\test\include\cds_test\ext_gtest.h = ..\..\..\test\include\cds_test\ext_gtest.h
 		..\..\..\test\include\cds_test\fc_hevy_value.h = ..\..\..\test\include\cds_test\fc_hevy_value.h
 		..\..\..\test\include\cds_test\fixture.h = ..\..\..\test\include\cds_test\fixture.h
 		..\..\..\test\include\cds_test\hash_func.h = ..\..\..\test\include\cds_test\hash_func.h

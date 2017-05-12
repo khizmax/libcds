@@ -31,7 +31,7 @@
 #ifndef CDSUNIT_STACK_TREIBER_STACK_H
 #define CDSUNIT_STACK_TREIBER_STACK_H
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 
 namespace cds_test {
 

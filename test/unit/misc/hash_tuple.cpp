@@ -28,7 +28,7 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 #include <cds/opt/hash.h>
 
 namespace {

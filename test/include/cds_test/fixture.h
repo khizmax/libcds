@@ -31,13 +31,9 @@
 #ifndef CDSTEST_FIXTURE_H
 #define CDSTEST_FIXTURE_H
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 #include <algorithm>
 #include <random>
-
-// earlier version of gtest do not support 4th parameter in INSTANTIATE_TEST_CASE_P macro
-//TODO: how to known gtest version?..
-//#define CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
 
 namespace cds_test {
 

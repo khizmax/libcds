@@ -31,7 +31,7 @@
 #ifndef CDSTEST_CHECK_SIZE_H
 #define CDSTEST_CHECK_SIZE_H
 
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 #include <cds/algo/atomic.h>
 
 namespace cds_test {

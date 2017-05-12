@@ -29,7 +29,7 @@
 */
 
 #include <cds/algo/split_bitstring.h>
-#include <gtest/gtest.h>
+#include <cds_test/ext_gtest.h>
 
 namespace {
     bool is_big_endian()
