@@ -34,8 +34,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_nogc.h" />
-    <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_set_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set.h" />
     <ClInclude Include="..\..\..\test\unit\intrusive-set\test_intrusive_split_iterable_set_hp.h" />
   </ItemGroup>

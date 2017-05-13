@@ -32,11 +32,9 @@
     <ClCompile Include="..\..\..\test\unit\map\split_iterable_hp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\map\test_map.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map_data.h" />
-    <ClInclude Include="..\..\..\test\unit\map\test_map_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\map\test_map_nogc.h" />
-    <ClInclude Include="..\..\..\test\unit\map\test_map_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_michael_iterable.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_michael_iterable_hp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B7C62D31-ED28-4D85-AA01-D1071E870080}</ProjectGuid>

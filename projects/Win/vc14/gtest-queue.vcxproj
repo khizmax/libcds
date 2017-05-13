@@ -55,6 +55,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\unit\queue\segmented_queue_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\vyukov_mpmc_queue.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\weak_ringbuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\queue\test_bounded_queue.h" />

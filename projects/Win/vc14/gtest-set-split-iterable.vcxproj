@@ -32,12 +32,7 @@
     <ClCompile Include="..\..\..\test\unit\set\split_iterable_hp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\test\unit\set\test_ordered_set_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\set\test_set.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_set_data.h" />
-    <ClInclude Include="..\..\..\test\unit\set\test_set_hp.h" />
-    <ClInclude Include="..\..\..\test\unit\set\test_set_nogc.h" />
-    <ClInclude Include="..\..\..\test\unit\set\test_set_rcu.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_split_iterable.h" />
     <ClInclude Include="..\..\..\test\unit\set\test_split_iterable_hp.h" />
   </ItemGroup>
