@@ -36,7 +36,43 @@ namespace {
     namespace cc = cds::container;
 
     class VyukovMPMCCycleQueue: public cds_test::bounded_queue
-    {};
+    {
+    public:
+        template <typename Queue>
+        void test_single_consumer( Queue& q )
+        {
+            typedef typename Queue::value_type value_type;
+
+            const size_t nSize = q.capacity();
+
+            ASSERT_TRUE( q.empty() );
+            ASSERT_CONTAINER_SIZE( q, 0 );
+
+            // enqueue/dequeue
+            for ( unsigned pass = 0; pass < 3; ++pass ) {
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    ASSERT_TRUE( q.enqueue( static_cast<value_type>( i ) ) );
+                    ASSERT_CONTAINER_SIZE( q, i + 1 );
+                }
+                ASSERT_FALSE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, nSize );
+                ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ) );
+
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    value_type* fr = q.front();
+                    ASSERT_TRUE( fr != nullptr );
+                    ASSERT_EQ( *fr, static_cast<value_type>( i ) );
+                    ASSERT_TRUE( q.pop_front() );
+                    ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                }
+                ASSERT_TRUE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, 0 );
+
+                ASSERT_TRUE( q.front() == nullptr );
+                ASSERT_FALSE( q.pop_front() );
+            }
+        }
+    };
 
     TEST_F( VyukovMPMCCycleQueue, defaulted )
     {
@@ -128,6 +164,19 @@ namespace {
 
         test_queue q( 128 );
         test_string( q );
+    }
+
+    TEST_F( VyukovMPMCCycleQueue, single_consumer )
+    {
+        struct traits: public cds::container::vyukov_queue::traits
+        {
+            enum: bool { single_consumer = true };
+        };
+        typedef cds::container::VyukovMPMCCycleQueue< int, traits > test_queue;
+
+        test_queue q( 128 );
+        test( q );
+        test_single_consumer( q );
     }
 
 } // namespace

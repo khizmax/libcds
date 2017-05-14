@@ -39,7 +39,7 @@ namespace cds_test {
 
     class fixture : public ::testing::Test
     {
-    protected:
+    public:
         template <typename RandomIt>
         static void shuffle( RandomIt first, RandomIt last )
         {

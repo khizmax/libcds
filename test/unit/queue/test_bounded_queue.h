@@ -50,69 +50,75 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // enqueue/dequeue
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = static_cast<value_type>(i);
-                ASSERT_TRUE( q.enqueue( it ));
-                ASSERT_CONTAINER_SIZE( q, i + 1 );
-            }
-            ASSERT_FALSE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, nSize );
-            ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ) );
+            for ( unsigned pass = 0; pass < 3; ++pass ) {
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = static_cast<value_type>( i );
+                    ASSERT_TRUE( q.enqueue( it ) );
+                    ASSERT_CONTAINER_SIZE( q, i + 1 );
+                }
+                ASSERT_FALSE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, nSize );
+                ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ) );
 
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = -1;
-                ASSERT_TRUE( q.dequeue( it ));
-                ASSERT_EQ( it, static_cast<value_type>( i ));
-                ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = -1;
+                    ASSERT_TRUE( q.dequeue( it ) );
+                    ASSERT_EQ( it, static_cast<value_type>( i ) );
+                    ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                }
+                ASSERT_TRUE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, 0 );
             }
-            ASSERT_TRUE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, 0 );
 
             // push/pop
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = static_cast<value_type>(i);
-                ASSERT_TRUE( q.push( it ));
-                ASSERT_CONTAINER_SIZE( q, i + 1 );
-            }
-            ASSERT_FALSE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, nSize );
+            for ( unsigned pass = 0; pass < 3; ++pass ) {
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = static_cast<value_type>( i );
+                    ASSERT_TRUE( q.push( it ) );
+                    ASSERT_CONTAINER_SIZE( q, i + 1 );
+                }
+                ASSERT_FALSE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, nSize );
 
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = -1;
-                ASSERT_TRUE( q.pop( it ));
-                ASSERT_EQ( it, static_cast<value_type>( i ));
-                ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = -1;
+                    ASSERT_TRUE( q.pop( it ) );
+                    ASSERT_EQ( it, static_cast<value_type>( i ) );
+                    ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                }
+                ASSERT_TRUE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, 0 );
             }
-            ASSERT_TRUE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, 0 );
 
             // push/pop with lambda
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = static_cast<value_type>(i);
-                ASSERT_NE( it, -1 );
-                auto f = [&it]( value_type& dest ) { dest = it; it = -1; };
-                if ( i & 1 )
-                    ASSERT_TRUE( q.enqueue_with( f ));
-                else
-                    ASSERT_TRUE( q.push_with( f ));
-                ASSERT_EQ( it, -1 );
-                ASSERT_CONTAINER_SIZE( q, i + 1 );
-            }
-            ASSERT_FALSE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, nSize );
+            for ( unsigned pass = 0; pass < 3; ++pass ) {
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = static_cast<value_type>( i );
+                    ASSERT_NE( it, -1 );
+                    auto f = [&it]( value_type& dest ) { dest = it; it = -1; };
+                    if ( i & 1 )
+                        ASSERT_TRUE( q.enqueue_with( f ) );
+                    else
+                        ASSERT_TRUE( q.push_with( f ) );
+                    ASSERT_EQ( it, -1 );
+                    ASSERT_CONTAINER_SIZE( q, i + 1 );
+                }
+                ASSERT_FALSE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, nSize );
 
-            for ( size_t i = 0; i < nSize; ++i ) {
-                it = -1;
-                auto f = [&it]( value_type& src ) { it = src; src = -1; };
-                if ( i & 1 )
-                    ASSERT_TRUE( q.pop_with( f ));
-                else
-                    ASSERT_TRUE( q.dequeue_with( f ));
-                ASSERT_EQ( it, static_cast<value_type>( i ));
-                ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                for ( size_t i = 0; i < nSize; ++i ) {
+                    it = -1;
+                    auto f = [&it]( value_type& src ) { it = src; src = -1; };
+                    if ( i & 1 )
+                        ASSERT_TRUE( q.pop_with( f ) );
+                    else
+                        ASSERT_TRUE( q.dequeue_with( f ) );
+                    ASSERT_EQ( it, static_cast<value_type>( i ) );
+                    ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
+                }
+                ASSERT_TRUE( q.empty() );
+                ASSERT_CONTAINER_SIZE( q, 0u );
             }
-            ASSERT_TRUE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, 0u );
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.push( static_cast<value_type>(i)));

@@ -96,7 +96,7 @@ namespace cds { namespace container {
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
-            Example: declare \p %WeakRingBuffer with static iternal buffer of size 1024:
+            Example: declare \p %WeakRingBuffer with static iternal buffer for 1024 objects:
             \code
             typedef cds::container::WeakRingBuffer< Foo,
                 typename cds::container::weak_ringbuffer::make_traits<
@@ -129,7 +129,10 @@ namespace cds { namespace container {
 
         There are a specialization \ref cds_nonintrusive_WeakRingBuffer_void "WeakRingBuffer<void, Traits>" 
         that is not a queue but a "memory pool" between producer and consumer threads. 
-        \p WeakRingBuffer<void> supports data of different size.
+        \p WeakRingBuffer<void> supports variable-sized data.
+
+        @warning: \p %WeakRingBuffer is developed for 64-bit architecture.
+        On 32-bit platform an integer overflow of internal counters is possible.
     */
     template <typename T, typename Traits = weak_ringbuffer::traits>
     class WeakRingBuffer: public cds::bounded_container
@@ -571,6 +574,62 @@ namespace cds { namespace container {
     /// Single-producer single-consumer ring buffer for untyped variable-sized data
     /** @ingroup cds_nonintrusive_queue
         @anchor cds_nonintrusive_WeakRingBuffer_void
+
+        This SPSC ring-buffer is intended for data of variable size. The producer
+        allocates a buffer from ring, fill it with data and pushes them back to ring.
+        The consumer thread reads data from front-end and then pops them:
+        \code
+        // allocates 1M ring buffer
+        WeakRingBuffer<void>    theRing( 1024 * 1024 );
+
+        void producer_thread()
+        {
+            // Get data of size N bytes
+            size_t size;
+            void*  data;
+
+            while ( true ) {
+                // Get external data
+                std::tie( data, size ) = get_data();
+
+                if ( data == nullptr )
+                    break;
+
+                // Allocates a buffer from the ring
+                void* buf = theRing.back( size );
+                if ( !buf ) {
+                    std::cout << "The ring is full" << std::endl;
+                    break;
+                }
+
+                memcpy( buf, data, size );
+
+                // Push data into the ring
+                theRing.push_back();
+            }
+        }
+
+        void consumer_thread()
+        {
+            while ( true ) {
+                auto buf = theRing.front();
+
+                if ( buf.first == nullptr ) {
+                    std::cout << "The ring is empty" << std::endl;
+                    break;
+                }
+
+                // Process data
+                process_data( buf.first, buf.second );
+
+                // Free buffer
+                theRing.pop_front();
+            }
+        }
+        \endcode
+
+        @warning: \p %WeakRingBuffer is developed for 64-bit architecture.
+        On 32-bit platform an integer overflow of internal counters is possible.
     */
 #ifdef CDS_DOXYGEN_INVOKED
     template <typename Traits = weak_ringbuffer::traits>
@@ -608,6 +667,8 @@ namespace cds { namespace container {
         /// [producer] Reserve \p size bytes
         void* back( size_t size )
         {
+            assert( size > 0 );
+
             // Any data is rounded to 8-byte boundary
             size_t real_size = calc_real_size( size );
 
@@ -650,6 +711,7 @@ namespace cds { namespace container {
                     }
                 }
 
+                back_.store( back, memory_model::memory_order_release );
                 reserved = buffer_.buffer();
             }
 
@@ -710,6 +772,7 @@ namespace cds { namespace container {
                 size = *reinterpret_cast<size_t*>( buf );
 
                 assert( !is_tail( size ) );
+                assert( buf == buffer_.buffer() );
             }
 
 #ifdef _DEBUG
@@ -720,7 +783,7 @@ namespace cds { namespace container {
             }
 #endif
 
-            return std::make_pair( reinterpret_cast<void*>( buf + sizeof( size_t ) ), size );
+            return std::make_pair( reinterpret_cast<void*>( buf + sizeof( size_t )), size );
         }
 
         /// [consumer] Pops top data
@@ -741,9 +804,7 @@ namespace cds { namespace container {
             assert( ( reinterpret_cast<uintptr_t>( buf ) & ( sizeof( uintptr_t ) - 1 ) ) == 0 );
 
             size_t size = *reinterpret_cast<size_t*>( buf );
-            assert( !is_tail( size ) );
-
-            size_t real_size = calc_real_size( size );
+            size_t real_size = calc_real_size( untail( size ));
 
 #ifdef _DEBUG
             if ( cback_ - front < real_size ) {
@@ -789,6 +850,7 @@ namespace cds { namespace container {
         }
 
     private:
+        //@cond
         static size_t calc_real_size( size_t size )
         {
             size_t real_size =  (( size + sizeof( uintptr_t ) - 1 ) & ~( sizeof( uintptr_t ) - 1 )) + sizeof( size_t );
@@ -808,6 +870,12 @@ namespace cds { namespace container {
         {
             return size | ( size_t( 1 ) << ( sizeof( size_t ) * 8 - 1 ));
         }
+
+        static size_t untail( size_t size )
+        {
+            return size & (( size_t( 1 ) << ( sizeof( size_t ) * 8 - 1 ) ) - 1);
+        }
+        //@endcond
 
     private:
         //@cond
