@@ -293,6 +293,51 @@ namespace fc_details{
             }
         };
 
+        // singlre-consumer version
+        struct traits_VyukovMPSCCycleQueue_dyn: public traits_VyukovMPMCCycleQueue_dyn
+        {
+            static const bool single_consumer = true;
+        };
+        class VyukovMPSCCycleQueue_dyn
+            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPSCCycleQueue_dyn >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPSCCycleQueue_dyn > base_class;
+        public:
+            VyukovMPSCCycleQueue_dyn()
+                : base_class( 1024 * 64 )
+            {}
+            VyukovMPSCCycleQueue_dyn( size_t nCapacity )
+                : base_class( nCapacity )
+            {}
+
+            cds::opt::none statistics() const
+            {
+                return cds::opt::none();
+            }
+        };
+
+        struct traits_VyukovMPSCCycleQueue_dyn_ic: public traits_VyukovMPMCCycleQueue_dyn
+        {
+            static const bool single_consumer = true;
+        };
+        class VyukovMPSCCycleQueue_dyn_ic
+            : public cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPSCCycleQueue_dyn_ic >
+        {
+            typedef cds::container::VyukovMPMCCycleQueue< Value, traits_VyukovMPSCCycleQueue_dyn_ic > base_class;
+        public:
+            VyukovMPSCCycleQueue_dyn_ic()
+                : base_class( 1024 * 64 )
+            {}
+            VyukovMPSCCycleQueue_dyn_ic( size_t nCapacity )
+                : base_class( nCapacity )
+            {}
+
+            cds::opt::none statistics() const
+            {
+                return cds::opt::none();
+            }
+        };
+
 
         // WeakRingBuffer
         struct traits_WeakRingBuffer_dyn: public cds::container::weak_ringbuffer::traits
@@ -308,6 +353,24 @@ namespace fc_details{
                 : base_class( 1024 * 64 )
             {}
             WeakRingBuffer_dyn( size_t nCapacity )
+                : base_class( nCapacity )
+            {}
+
+            cds::opt::none statistics() const
+            {
+                return cds::opt::none();
+            }
+        };
+
+        class WeakRingBuffer_void_dyn
+            : public cds::container::WeakRingBuffer< void, traits_WeakRingBuffer_dyn >
+        {
+            typedef cds::container::WeakRingBuffer< void, traits_WeakRingBuffer_dyn > base_class;
+        public:
+            WeakRingBuffer_void_dyn()
+                : base_class( 1024 * 64 )
+            {}
+            WeakRingBuffer_void_dyn( size_t nCapacity )
                 : base_class( nCapacity )
             {}
 
@@ -814,8 +877,15 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn       ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn_ic    )
 
+#define CDSSTRESS_VyukovSingleConsumerQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, VyukovMPSCCycleQueue_dyn       ) \
+    CDSSTRESS_Queue_F( test_fixture, VyukovMPSCCycleQueue_dyn_ic    )
+
 #define CDSSTRESS_WeakRingBuffer( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, WeakRingBuffer_dyn       )
+
+#define CDSSTRESS_WeakRingBuffer_void( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, WeakRingBuffer_void_dyn       )
 
 #define CDSSTRESS_StdQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, StdQueue_deque_Spinlock ) \

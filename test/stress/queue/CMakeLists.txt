@@ -53,6 +53,17 @@ add_executable(${CDSSTRESS_QUEUE_BOUNDED} ${CDSSTRESS_QUEUE_BOUNDED_SOURCES} $<T
 target_link_libraries(${CDSSTRESS_QUEUE_BOUNDED} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${CDSSTRESS_QUEUE_BOUNDED} COMMAND ${CDSSTRESS_QUEUE_BOUNDED} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})    
 
+# stress-spsc-queue
+set(CDSSTRESS_SPSC_QUEUE stress-spsc-queue)
+set(CDSSTRESS_SPSC_QUEUE_SOURCES
+    ../main.cpp
+    spsc_queue.cpp
+    spsc_buffer.cpp
+)
+add_executable(${CDSSTRESS_SPSC_QUEUE} ${CDSSTRESS_SPSC_QUEUE_SOURCES} $<TARGET_OBJECTS:${CDSSTRESS_FRAMEWORK_LIBRARY}>)
+target_link_libraries(${CDSSTRESS_SPSC_QUEUE} ${CDS_TEST_LIBRARIES})
+add_test(NAME ${CDSSTRESS_SPSC_QUEUE} COMMAND ${CDSSTRESS_SPSC_QUEUE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
 
 # stress-queue
 add_custom_target( stress-queue
@@ -62,4 +73,5 @@ add_custom_target( stress-queue
         ${CDSSTRESS_QUEUE_PUSHPOP}
         ${CDSSTRESS_QUEUE_RANDOM}
         ${CDSSTRESS_QUEUE_BOUNDED}
+        ${CDSSTRESS_SPSC_QUEUE}
 )        
