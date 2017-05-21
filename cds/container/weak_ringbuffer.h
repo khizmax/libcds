@@ -576,7 +576,7 @@ namespace cds { namespace container {
         @anchor cds_nonintrusive_WeakRingBuffer_void
 
         This SPSC ring-buffer is intended for data of variable size. The producer
-        allocates a buffer from ring, fill it with data and pushes them back to ring.
+        allocates a buffer from ring, you fill it with data and pushes them back to ring.
         The consumer thread reads data from front-end and then pops them:
         \code
         // allocates 1M ring buffer
@@ -665,6 +665,43 @@ namespace cds { namespace container {
         }
 
         /// [producer] Reserve \p size bytes
+        /**
+            The function returns a pointer to reserved buffer of \p size bytes. 
+            If no enough space in the ring buffer the function returns \p nullptr.
+
+            After successful \p %back() you should fill the buffer provided and call \p push_back():
+            \code
+            // allocates 1M ring buffer
+            WeakRingBuffer<void>    theRing( 1024 * 1024 );
+
+            void producer_thread()
+            {
+                // Get data of size N bytes
+                size_t size;1
+                void*  data;
+
+                while ( true ) {
+                    // Get external data
+                    std::tie( data, size ) = get_data();
+
+                    if ( data == nullptr )
+                        break;
+
+                    // Allocates a buffer from the ring
+                    void* buf = theRing.back( size );
+                    if ( !buf ) {
+                        std::cout << "The ring is full" << std::endl;
+                        break;
+                    }
+
+                    memcpy( buf, data, size );
+
+                    // Push data into the ring
+                    theRing.push_back();
+                }
+            }
+            \endcode
+        */
         void* back( size_t size )
         {
             assert( size > 0 );
@@ -722,6 +759,41 @@ namespace cds { namespace container {
         }
 
         /// [producer] Push reserved bytes into ring
+        /**
+            The function pushes reserved buffer into the ring. Afte this call,
+            the buffer becomes visible by a consumer:
+            \code
+            // allocates 1M ring buffer
+            WeakRingBuffer<void>    theRing( 1024 * 1024 );
+
+            void producer_thread()
+            {
+                // Get data of size N bytes
+                size_t size;1
+                void*  data;
+
+                while ( true ) {
+                    // Get external data
+                    std::tie( data, size ) = get_data();
+
+                    if ( data == nullptr )
+                        break;
+
+                    // Allocates a buffer from the ring
+                    void* buf = theRing.back( size );
+                    if ( !buf ) {
+                        std::cout << "The ring is full" << std::endl;
+                        break;
+                    }
+
+                    memcpy( buf, data, size );
+
+                    // Push data into the ring
+                    theRing.push_back();
+                }
+            }
+            \endcode
+        */
         void push_back()
         {
             size_t back = back_.load( memory_model::memory_order_relaxed );
@@ -734,6 +806,10 @@ namespace cds { namespace container {
         }
 
         /// [producer] Push \p data of \p size bytes into ring
+        /**
+            This function invokes \p back( size ), \p memcpy( buf, data, size )
+            and \p push_back() in one call.
+        */
         bool push_back( void const* data, size_t size )
         {
             void* buf = back( size );
@@ -746,6 +822,9 @@ namespace cds { namespace container {
         }
 
         /// [consumer] Get top data from the ring
+        /**
+            If the ring is empty, the function returns \p nullptr in \p std:pair::first.
+        */
         std::pair<void*, size_t> front()
         {
             size_t front = front_.load( memory_model::memory_order_relaxed );
@@ -787,6 +866,31 @@ namespace cds { namespace container {
         }
 
         /// [consumer] Pops top data
+        /**
+            Typical consumer workloop:
+            \code
+            // allocates 1M ring buffer
+            WeakRingBuffer<void>    theRing( 1024 * 1024 );
+
+            void consumer_thread()
+            {
+                while ( true ) {
+                    auto buf = theRing.front();
+
+                    if ( buf.first == nullptr ) {
+                        std::cout << "The ring is empty" << std::endl;
+                        break;
+                    }
+
+                    // Process data
+                    process_data( buf.first, buf.second );
+
+                    // Free buffer
+                    theRing.pop_front();
+                }
+            }
+            \endcode
+        */
         bool pop_front()
         {
             size_t front = front_.load( memory_model::memory_order_relaxed );
