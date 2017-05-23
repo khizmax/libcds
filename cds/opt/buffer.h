@@ -176,8 +176,8 @@ namespace cds { namespace opt {
 
             /// Returns <tt> idx % capacity() </tt>
             /**
-            If the buffer size is a power of two, binary arithmethics is used
-            instead of modulo arithmetics
+                If the buffer size is a power of two, binary arithmethics is used
+                instead of modulo arithmetics
             */
             size_t mod( size_t idx )
             {
@@ -186,6 +186,17 @@ namespace cds { namespace opt {
                 else
                     return idx % capacity();
             }
+
+            //@cond
+            template <typename I>
+            typename std::enable_if< sizeof(I) != sizeof(size_t), size_t >::type mod( I idx )
+            {
+                static_if( c_bExp2 )
+                    return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
+                else
+                    return static_cast<size_t>( idx % capacity());
+            }
+            //@endcond
         };
 
         /// Static initialized buffer
@@ -291,6 +302,17 @@ namespace cds { namespace opt {
                 else
                     return idx % capacity();
             }
+
+            //@cond
+            template <typename I>
+            typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
+            {
+                static_if( c_bExp2 )
+                    return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
+                else
+                    return static_cast<size_t>( idx % capacity());
+            }
+            //@endcond
         };
 
         /// Dynamically allocated uninitialized buffer
@@ -406,6 +428,17 @@ namespace cds { namespace opt {
                 else
                     return idx % capacity();
             }
+
+            //@cond
+            template <typename I>
+            typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
+            {
+                static_if ( c_bExp2 )
+                    return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
+                else
+                    return static_cast<size_t>( idx % capacity());
+            }
+            //@endcond
         };
 
 
@@ -523,6 +556,17 @@ namespace cds { namespace opt {
                 else
                     return idx % capacity();
             }
+
+            //@cond
+            template <typename I>
+            typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
+            {
+                static_if( c_bExp2 )
+                    return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
+                else
+                    return static_cast<size_t>( idx % capacity());
+            }
+            //@endcond
         };
 
     }   // namespace v

@@ -132,7 +132,7 @@ namespace cds { namespace container {
         \p WeakRingBuffer<void> supports variable-sized data.
 
         @warning: \p %WeakRingBuffer is developed for 64-bit architecture.
-        On 32-bit platform an integer overflow of internal counters is possible.
+        32-bit platform must provide support for 64-bit atomics.
     */
     template <typename T, typename Traits = weak_ringbuffer::traits>
     class WeakRingBuffer: public cds::bounded_container
@@ -157,6 +157,7 @@ namespace cds { namespace container {
     private:
         //@cond
         typedef typename traits::buffer::template rebind< value_type >::other buffer;
+        typedef uint64_t    counter_type;
         //@endcond
 
     public:
@@ -181,8 +182,8 @@ namespace cds { namespace container {
         ~WeakRingBuffer()
         {
             value_cleaner cleaner;
-            size_t back = back_.load( memory_model::memory_order_relaxed );
-            for ( size_t front = front_.load( memory_model::memory_order_relaxed ); front != back; ++front )
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
+            for ( counter_type front = front_.load( memory_model::memory_order_relaxed ); front != back; ++front )
                 cleaner( buffer_[ buffer_.mod( front ) ] );
         }
 
@@ -221,14 +222,14 @@ namespace cds { namespace container {
         bool push( Q* arr, size_t count, CopyFunc copy )
         {
             assert( count < capacity() );
-            size_t back = back_.load( memory_model::memory_order_relaxed );
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( back - pfront_ <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
 
-            if ( pfront_ + capacity() - back < count ) {
+            if ( static_cast<size_t>( pfront_ + capacity() - back ) < count ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
 
-                if ( pfront_ + capacity() - back < count ) {
+                if ( static_cast<size_t>( pfront_ + capacity() - back ) < count ) {
                     // not enough space
                     return false;
                 }
@@ -273,9 +274,9 @@ namespace cds { namespace container {
         typename std::enable_if< std::is_constructible<value_type, Args...>::value, bool>::type
         emplace( Args&&... args )
         {
-            size_t back = back_.load( memory_model::memory_order_relaxed );
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( back - pfront_ <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
 
             if ( pfront_ + capacity() - back < 1 ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -306,9 +307,9 @@ namespace cds { namespace container {
         template <typename Func>
         bool enqueue_with( Func f )
         {
-            size_t back = back_.load( memory_model::memory_order_relaxed );
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( back - pfront_ <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
 
             if ( pfront_ + capacity() - back < 1 ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -378,12 +379,12 @@ namespace cds { namespace container {
         {
             assert( count < capacity() );
 
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front < capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) < capacity() );
 
-            if ( cback_ - front < count ) {
+            if ( static_cast<size_t>( cback_ - front ) < count ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
-                if ( cback_ - front < count )
+                if ( static_cast<size_t>( cback_ - front ) < count )
                     return false;
             }
 
@@ -456,8 +457,8 @@ namespace cds { namespace container {
         template <typename Func>
         bool dequeue_with( Func f )
         {
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front < capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) < capacity() );
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -489,8 +490,8 @@ namespace cds { namespace container {
         */
         value_type* front()
         {
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front < capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) < capacity() );
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -508,8 +509,8 @@ namespace cds { namespace container {
         */
         bool pop_front()
         {
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front <= capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) <= capacity() );
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -546,7 +547,7 @@ namespace cds { namespace container {
         /// Returns the current size of ring buffer
         size_t size() const
         {
-            return back_.load( memory_model::memory_order_relaxed ) - front_.load( memory_model::memory_order_relaxed );
+            return static_cast<size_t>( back_.load( memory_model::memory_order_relaxed ) - front_.load( memory_model::memory_order_relaxed ));
         }
 
         /// Returns capacity of the ring buffer
@@ -557,14 +558,14 @@ namespace cds { namespace container {
 
     private:
         //@cond
-        atomics::atomic<size_t>     front_;
-        typename opt::details::apply_padding< atomics::atomic<size_t>, traits::padding >::padding_type pad1_;
-        atomics::atomic<size_t>     back_;
-        typename opt::details::apply_padding< atomics::atomic<size_t>, traits::padding >::padding_type pad2_;
-        size_t                      pfront_;
-        typename opt::details::apply_padding< size_t, traits::padding >::padding_type pad3_;
-        size_t                      cback_;
-        typename opt::details::apply_padding< size_t, traits::padding >::padding_type pad4_;
+        atomics::atomic<counter_type>   front_;
+        typename opt::details::apply_padding< atomics::atomic<counter_type>, traits::padding >::padding_type pad1_;
+        atomics::atomic<counter_type>   back_;
+        typename opt::details::apply_padding< atomics::atomic<counter_type>, traits::padding >::padding_type pad2_;
+        counter_type                    pfront_;
+        typename opt::details::apply_padding< counter_type, traits::padding >::padding_type pad3_;
+        counter_type                    cback_;
+        typename opt::details::apply_padding< counter_type, traits::padding >::padding_type pad4_;
 
         buffer                      buffer_;
         //@endcond
@@ -629,7 +630,7 @@ namespace cds { namespace container {
         \endcode
 
         @warning: \p %WeakRingBuffer is developed for 64-bit architecture.
-        On 32-bit platform an integer overflow of internal counters is possible.
+        32-bit platform must provide support for 64-bit atomics.
     */
 #ifdef CDS_DOXYGEN_INVOKED
     template <typename Traits = weak_ringbuffer::traits>
@@ -645,6 +646,7 @@ namespace cds { namespace container {
     private:
         //@cond
         typedef typename traits::buffer::template rebind< uint8_t >::other buffer;
+        typedef uint64_t    counter_type;
         //@endcond
 
     public:
@@ -711,14 +713,14 @@ namespace cds { namespace container {
 
             // check if we can reserve read_size bytes
             assert( real_size < capacity() );
-            size_t back = back_.load( memory_model::memory_order_relaxed );
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( back - pfront_ <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
 
-            if ( pfront_ + capacity() - back < real_size ) {
+            if ( static_cast<size_t>( pfront_ + capacity() - back ) < real_size ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
 
-                if ( pfront_ + capacity() - back < real_size ) {
+                if ( static_cast<size_t>( pfront_ + capacity() - back ) < real_size ) {
                     // not enough space
                     return nullptr;
                 }
@@ -727,7 +729,7 @@ namespace cds { namespace container {
             uint8_t* reserved = buffer_.buffer() + buffer_.mod( back );
 
             // Check if the buffer free space is enough for storing real_size bytes
-            size_t tail_size = capacity() - buffer_.mod( back );
+            size_t tail_size = capacity() - static_cast<size_t>( buffer_.mod( back ));
             if ( tail_size < real_size ) {
                 // make unused tail
                 assert( tail_size >= sizeof( size_t ) );
@@ -739,10 +741,10 @@ namespace cds { namespace container {
                 // We must be in beginning of buffer
                 assert( buffer_.mod( back ) == 0 );
 
-                if ( pfront_ + capacity() - back < real_size ) {
+                if ( static_cast<size_t>( pfront_ + capacity() - back ) < real_size ) {
                     pfront_ = front_.load( memory_model::memory_order_acquire );
 
-                    if ( pfront_ + capacity() - back < real_size ) {
+                    if ( static_cast<size_t>( pfront_ + capacity() - back ) < real_size ) {
                         // not enough space
                         return nullptr;
                     }
@@ -796,7 +798,7 @@ namespace cds { namespace container {
         */
         void push_back()
         {
-            size_t back = back_.load( memory_model::memory_order_relaxed );
+            counter_type back = back_.load( memory_model::memory_order_relaxed );
             uint8_t* reserved = buffer_.buffer() + buffer_.mod( back );
 
             size_t real_size = calc_real_size( *reinterpret_cast<size_t*>( reserved ) );
@@ -827,8 +829,8 @@ namespace cds { namespace container {
         */
         std::pair<void*, size_t> front()
         {
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front < capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) < capacity() );
 
             if ( cback_ - front < sizeof( size_t )) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -856,9 +858,9 @@ namespace cds { namespace container {
 
 #ifdef _DEBUG
             size_t real_size = calc_real_size( size );
-            if ( cback_ - front < real_size ) {
+            if ( static_cast<size_t>( cback_ - front ) < real_size ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
-                assert( cback_ - front >= real_size );
+                assert( static_cast<size_t>( cback_ - front ) >= real_size );
             }
 #endif
 
@@ -893,8 +895,8 @@ namespace cds { namespace container {
         */
         bool pop_front()
         {
-            size_t front = front_.load( memory_model::memory_order_relaxed );
-            assert( cback_ - front <= capacity() );
+            counter_type front = front_.load( memory_model::memory_order_relaxed );
+            assert( static_cast<size_t>( cback_ - front ) <= capacity() );
 
             if ( cback_ - front < sizeof(size_t) ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -911,9 +913,9 @@ namespace cds { namespace container {
             size_t real_size = calc_real_size( untail( size ));
 
 #ifdef _DEBUG
-            if ( cback_ - front < real_size ) {
+            if ( static_cast<size_t>( cback_ - front ) < real_size ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
-                assert( cback_ - front >= real_size );
+                assert( static_cast<size_t>( cback_ - front ) >= real_size );
             }
 #endif
 
@@ -944,7 +946,7 @@ namespace cds { namespace container {
         /// Returns the current size of ring buffer
         size_t size() const
         {
-            return back_.load( memory_model::memory_order_relaxed ) - front_.load( memory_model::memory_order_relaxed );
+            return static_cast<size_t>( back_.load( memory_model::memory_order_relaxed ) - front_.load( memory_model::memory_order_relaxed ));
         }
 
         /// Returns capacity of the ring buffer
@@ -983,14 +985,14 @@ namespace cds { namespace container {
 
     private:
         //@cond
-        atomics::atomic<size_t>     front_;
-        typename opt::details::apply_padding< atomics::atomic<size_t>, traits::padding >::padding_type pad1_;
-        atomics::atomic<size_t>     back_;
-        typename opt::details::apply_padding< atomics::atomic<size_t>, traits::padding >::padding_type pad2_;
-        size_t                      pfront_;
-        typename opt::details::apply_padding< size_t, traits::padding >::padding_type pad3_;
-        size_t                      cback_;
-        typename opt::details::apply_padding< size_t, traits::padding >::padding_type pad4_;
+        atomics::atomic<counter_type>     front_;
+        typename opt::details::apply_padding< atomics::atomic<counter_type>, traits::padding >::padding_type pad1_;
+        atomics::atomic<counter_type>     back_;
+        typename opt::details::apply_padding< atomics::atomic<counter_type>, traits::padding >::padding_type pad2_;
+        counter_type                      pfront_;
+        typename opt::details::apply_padding< counter_type, traits::padding >::padding_type pad3_;
+        counter_type                      cback_;
+        typename opt::details::apply_padding< counter_type, traits::padding >::padding_type pad4_;
 
         buffer                      buffer_;
         //@endcond
