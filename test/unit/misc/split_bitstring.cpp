@@ -423,11 +423,12 @@ namespace {
         struct int48 {
             uint32_t    n32;
             uint16_t    n16;
-
+#if 0
             friend bool operator ==( int48 lhs, int48 rhs )
             {
                 return lhs.n32 == rhs.n32 && lhs.n16 == rhs.n16;
             }
+#endif
 
             uint64_t to64() const
             {
