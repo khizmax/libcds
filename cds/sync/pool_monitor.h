@@ -157,9 +157,10 @@ namespace cds { namespace sync {
 
             //@cond
             node_injection()
-                : m_RefSpin( 0 )
-                , m_pLock( nullptr )
-            {}
+                : m_pLock( nullptr )
+            {
+                m_RefSpin.store( 0, atomics::memory_order_release );
+            }
 
             ~node_injection()
             {
@@ -169,7 +170,7 @@ namespace cds { namespace sync {
 
             bool check_free() const
             {
-                return m_pLock == nullptr && m_RefSpin.load( atomics::memory_order_acquire ) == 0;
+                return m_pLock == nullptr && m_RefSpin.load( atomics::memory_order_relaxed ) == 0;
             }
             //@endcond
         };
