@@ -107,7 +107,7 @@ namespace cds { namespace sync {
         Template arguments:
         - \p LockPool - the @ref cds_memory_pool "pool type". The pool must maintain
             the objects of type \p std::mutex or similar. The access to the pool is not synchronized.
-        - \p BackOff - back-off strategy for spinning, default is \p cds::backoff::yield
+        - \p BackOff - back-off strategy for spinning, default is \p cds::backoff::Default
         - \p Stat - enable (\p true) or disable (\p false, the default) monitor's internal statistics.
 
         <b>How to use</b>
@@ -116,7 +116,7 @@ namespace cds { namespace sync {
         typedef cds::sync::pool_monitor< pool_type > sync_monitor;
         \endcode
     */
-    template <class LockPool, typename BackOff = cds::backoff::yield, bool Stat = false >
+    template <class LockPool, typename BackOff = cds::backoff::Default, bool Stat = false >
     class pool_monitor
     {
     public:
@@ -195,7 +195,7 @@ namespace cds { namespace sync {
             // try lock spin and increment reference counter
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+                atomics::memory_order_acquire, atomics::memory_order_acquire ))
             {
                 back_off bkoff;
                 do {
@@ -203,7 +203,7 @@ namespace cds { namespace sync {
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                    atomics::memory_order_acquire, atomics::memory_order_relaxed ));
+                    atomics::memory_order_acquire, atomics::memory_order_acquire ));
             }
 
             // spin locked
@@ -237,7 +237,7 @@ namespace cds { namespace sync {
             // try lock spin
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+                atomics::memory_order_acquire, atomics::memory_order_acquire ))
             {
                 back_off bkoff;
                 do {
@@ -245,7 +245,7 @@ namespace cds { namespace sync {
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur | c_nSpinBit,
-                    atomics::memory_order_acquire, atomics::memory_order_relaxed ));
+                    atomics::memory_order_acquire, atomics::memory_order_acquire ));
             }
 
             // spin locked now
