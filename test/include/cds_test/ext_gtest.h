@@ -31,8 +31,10 @@
 #ifndef CDSTEST_EXT_GTEST_H
 #define CDSTEST_EXT_GTEST_H
 
+
 #if defined( __GCC__ ) && !defined(__clang__) && __GNUC__ >= 7
 #   pragma GCC diagnostic push
+    // Unfortunately, seems, -Wduplicated-branches cannot be controlled via this pragma
 #   pragma GCC diagnostic ignored "-Wduplicated-branches"
 #endif
 
