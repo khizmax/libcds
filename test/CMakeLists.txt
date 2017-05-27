@@ -67,6 +67,20 @@ set(CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
 if(GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_LANG_CXX11 -DCDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG") 
 endif()
+
+# Check if there is byteswap.h (needed for cityhash)
+CHECK_CXX_SOURCE_COMPILES("
+#include <byteswap.h>
+int main( int argc, char **argv ) 
+{
+    return 0;
+}
+" CDSTEST_HAVE_BYTESWAP_H )
+
+if(CDSTEST_HAVE_BYTESWAP_H)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDSTEST_HAVE_BYTESWAP_H") 
+endif()
+
  
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/unit)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stress)

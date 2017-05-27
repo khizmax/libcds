@@ -72,7 +72,7 @@ static uint32 UNALIGNED_LOAD32(const char *p) {
 
 #else
 
-#include <byteswap.h>
+#include <cds_test/ext_byteswap.h>
 
 #endif
 
