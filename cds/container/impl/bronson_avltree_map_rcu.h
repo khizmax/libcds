@@ -1856,7 +1856,7 @@ namespace cds { namespace container {
         {
             assert(pNode->version(memory_model::memory_order_acquire) == version );
             assert( (version & node_type::shrinking) == 0 );
-            pNode->version( version | node_type::shrinking, memory_model::memory_order_release );
+            pNode->exchange_version( version | node_type::shrinking, memory_model::memory_order_acquire );
         }
         static void end_change( node_type * pNode, version_type version )
         {

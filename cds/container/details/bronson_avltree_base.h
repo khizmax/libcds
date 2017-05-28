@@ -125,6 +125,11 @@ namespace cds { namespace container {
                 m_nVersion.store( ver, order );
             }
 
+            void exchange_version( version_type ver, atomics::memory_order order )
+            {
+                m_nVersion.exchange( ver, order );
+            }
+
             int height( atomics::memory_order order ) const
             {
                 return m_nHeight.load( order );
