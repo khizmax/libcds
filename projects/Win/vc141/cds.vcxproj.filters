@@ -1258,5 +1258,8 @@
     <ClInclude Include="..\..\..\cds\container\weak_ringbuffer.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\size_t_cast.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

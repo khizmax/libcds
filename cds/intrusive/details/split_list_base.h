@@ -39,6 +39,7 @@
 #include <cds/algo/bitop.h>
 #include <cds/opt/hash.h>
 #include <cds/intrusive/free_list_selector.h>
+#include <cds/details/size_t_cast.h>
 
 namespace cds { namespace intrusive {
 
@@ -1302,13 +1303,13 @@ namespace cds { namespace intrusive {
         template <typename BitReversalAlgo>
         static inline size_t regular_hash( size_t nHash )
         {
-            return BitReversalAlgo()( nHash ) | size_t(1);
+            return static_cast<size_t>( BitReversalAlgo()( cds::details::size_t_cast( nHash ))) | size_t(1);
         }
 
         template <typename BitReversalAlgo>
         static inline size_t dummy_hash( size_t nHash )
         {
-            return BitReversalAlgo()( nHash ) & ~size_t(1);
+            return static_cast<size_t>( BitReversalAlgo()( cds::details::size_t_cast( nHash ))) & ~size_t(1);
         }
         //@endcond
 
