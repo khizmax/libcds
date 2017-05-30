@@ -284,7 +284,7 @@ namespace cds { namespace algo {
                 , m_pHead( nullptr )
                 , m_pAllocatedHead( nullptr )
                 , m_pThreadRec( tls_cleanup )
-                , m_nCompactFactor( (unsigned int)( cds::beans::ceil2( nCompactFactor ) - 1 ))   // binary mask
+                , m_nCompactFactor( static_cast<unsigned>( cds::beans::ceil2( static_cast<size_t>( nCompactFactor )) - 1 ))   // binary mask
                 , m_nCombinePassCount( nCombinePassCount )
             {
                 assert( m_pThreadRec.get() == nullptr );
