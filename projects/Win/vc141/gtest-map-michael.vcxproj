@@ -56,6 +56,7 @@
     <ClInclude Include="..\..\..\test\unit\map\test_map_hp.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map_nogc.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map_rcu.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_michael_michael_rcu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32B5098A-D846-4964-A1A7-CDE98808BFBF}</ProjectGuid>

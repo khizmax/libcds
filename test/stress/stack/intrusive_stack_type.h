@@ -151,10 +151,7 @@ namespace istack {
             cds::intrusive::treiber_stack::make_traits <
                 cds::intrusive::opt::hook< base_hook<GC> >
                 ,cds::opt::back_off<
-                    cds::backoff::exponential<
-                        cds::backoff::pause,
-                        cds::backoff::yield
-                    >
+                    cds::backoff::make_exponential_t< cds::backoff::pause,cds::backoff::yield >
                 >
             > ::type
         {};
@@ -302,10 +299,7 @@ namespace istack {
                 cds::intrusive::opt::hook< base_hook<GC> >
                 , cds::opt::enable_elimination<true>
                 ,cds::opt::back_off<
-                    cds::backoff::exponential<
-                        cds::backoff::pause,
-                        cds::backoff::yield
-                    >
+                    cds::backoff::make_exponential_t< cds::backoff::pause, cds::backoff::yield >
                 >
             > ::type
         {};

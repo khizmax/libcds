@@ -30,6 +30,7 @@
 
 #include <cds/init.h>
 #include <cds/algo/atomic.h>
+#include <cds/algo/backoff_strategy.h>
 
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS && CDS_OS_TYPE != CDS_OS_MINGW
 #   if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL
@@ -86,5 +87,12 @@ namespace cds {
             return false;
         }
     } // namespace details
+
+    namespace backoff {
+        /*static*/ size_t exponential_runtime_traits::lower_bound = 16;
+        /*static*/ size_t exponential_runtime_traits::upper_bound = 16 * 1024;
+
+        /*static*/ unsigned delay_runtime_traits::timeout = 5;
+    } // namespace backoff
 
 }   // namespace cds

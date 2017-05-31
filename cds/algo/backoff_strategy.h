@@ -179,6 +179,28 @@ namespace cds {
         //@endcond
         };
 
+        /// \p backoff::exponential const traits
+        struct exponential_const_traits
+        {
+            typedef hint    fast_path_backoff;  ///< Fast-path back-off strategy
+            typedef yield   slow_path_backoff;  ///< Slow-path back-off strategy
+
+            enum: size_t {
+                lower_bound = 16,         ///< Minimum spinning limit
+                upper_bound = 16 * 1024   ///< Maximum spinning limit
+            };
+        };
+
+        /// \p nackoff::exponential runtime traits
+        struct exponential_runtime_traits
+        {
+            typedef hint    fast_path_backoff;  ///< Fast-path back-off strategy
+            typedef yield   slow_path_backoff;  ///< Slow-path back-off strategy
+
+            static size_t lower_bound;    ///< Minimum spinning limit, default is 16
+            static size_t upper_bound;    ///< Maximum spinning limit, default is 16*1024
+        };
+
         /// Exponential back-off
         /**
             This back-off strategy is composite. It consists of \p SpinBkoff and \p YieldBkoff
@@ -188,102 +210,73 @@ namespace cds {
             where it applies \p YieldBkoff until \p reset() is called.
             On each spinning iteration the internal spinning counter is doubled.
 
-            Choosing the best value for maximum spinning bound is platform and task specific.
-            In this implementation, the default values for maximum and minimum spinning is statically
-            declared so you can set its value globally for your platform.
-            The third template argument, \p Tag, is used to separate implementation. For
-            example, you may define two \p exponential back-offs that is the best for your task A and B:
+            Selecting the best value for maximum spinning limit is platform and application specific task.
+            The limits are described by \p Traits template parameter.
+            There are two types of \p Traits:
+            - constant traits \p exponential_const_traits - specifies the lower and upper limits
+              as a compile-time constants; to change the limits you should recompile your application
+            - runtime traits \p exponential_runtime_traits - specifies the limits as \p s_nExpMin
+              and \p s_nExpMax variables which can be changed at runtime to tune back-off strategy.
+
+            The traits class must declare two data member:
+            - \p lower_bound - the lower bound of spinning loop
+            - \p upper_bound - the upper boudn of spinning loop
+
+            You may use \p Traits template parameter to separate back-off implementations.
+            For example, you may define two \p exponential back-offs that is the best for your task A and B:
             \code
 
             #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
 
-            struct tagA ;   // tag to select task A implementation
-            struct tagB ;   // tag to select task B implementation
+            // the best bounds for task A
+            struct traits_A: public bkoff::exponential_const_traits
+            {
+                static size_t lower_bound;
+                static size_t upper_bound;
+            };
+            size_t traits_A::lower_bound = 1024;
+            size_t traits_A::upper_bound = 8 * 1024;
+
+            // the best bounds for task B
+            struct traits_B: public bkoff::exponential_const_traits
+            {
+                static size_t lower_bound;
+                static size_t upper_bound;
+            };
+            size_t traits_A::lower_bound = 16;
+            size_t traits_A::upper_bound = 1024;
 
             // // define your back-off specialization
-            typedef bkoff::exponential<bkoff::hint, bkoff::yield, tagA> expBackOffA;
-            typedef bkoff::exponential<bkoff::hint, bkoff::yield, tagB> expBackOffB;
-
-            // // set up the best bounds for task A
-            expBackOffA::s_nExpMin = 32;
-            expBackOffA::s_nExpMax = 1024;
-
-            // // set up the best bounds for task B
-            expBackOffB::s_nExpMin = 2;
-            expBackOffB::s_nExpMax = 512;
-
-            \endcode
-
-            Another way of solving this problem is subclassing \p exponential back-off class:
-            \code
-            #include <cds/algo/backoff_strategy.h>
-            namespace bkoff = cds::backoff;
-            typedef bkoff::exponential<bkoff::hint, bkoff::yield>   base_bkoff;
-
-            class expBackOffA: public base_bkoff
-            {
-            public:
-                expBackOffA()
-                    : base_bkoff( 32, 1024 )
-                    {}
-            };
-
-            class expBackOffB: public base_bkoff
-            {
-            public:
-                expBackOffB()
-                    : base_bkoff( 2, 512 )
-                    {}
-            };
+            typedef bkoff::exponential<traits_A> expBackOffA;
+            typedef bkoff::exponential<traits_B> expBackOffB;
             \endcode
         */
-        template <typename SpinBkoff, typename YieldBkoff, typename Tag=void>
+        template <typename Traits = exponential_const_traits >
         class exponential
         {
         public:
-            typedef SpinBkoff  spin_backoff    ;   ///< spin back-off strategy
-            typedef YieldBkoff yield_backoff   ;   ///< yield back-off strategy
-            typedef Tag        impl_tag        ;   ///< implementation separation tag
+            typedef Traits     traits;   ///< Traits
 
-            static size_t s_nExpMin ;   ///< Default minimum spinning bound (16)
-            static size_t s_nExpMax ;   ///< Default maximum spinning bound (16384)
+            typedef typename traits::fast_path_backoff  spin_backoff    ;   ///< spin (fast-path) back-off strategy
+            typedef typename traits::slow_path_backoff  yield_backoff   ;   ///< yield (slow-path) back-off strategy
 
         protected:
-            size_t  m_nExpCur   ;   ///< Current spinning
-            size_t  m_nExpMin   ;   ///< Minimum spinning bound
-            size_t  m_nExpMax   ;   ///< Maximum spinning bound
+            size_t  m_nExpCur   ;           ///< Current spin counter in range [traits::s_nExpMin, traits::s_nExpMax]
 
             spin_backoff    m_bkSpin    ;   ///< Spinning (fast-path) phase back-off strategy
             yield_backoff   m_bkYield   ;   ///< Yield phase back-off strategy
 
         public:
-            /// Initializes m_nExpMin and m_nExpMax from default s_nExpMin and s_nExpMax respectively
+            /// Default ctor
             exponential() CDS_NOEXCEPT
-                : m_nExpMin( s_nExpMin )
-                , m_nExpMax( s_nExpMax )
-            {
-                m_nExpCur = m_nExpMin;
-            }
-
-            /// Explicitly defined bounds of spinning
-            /**
-                The \p libcds library never calls this ctor.
-            */
-            exponential(
-                size_t nExpMin,     ///< Minimum spinning
-                size_t nExpMax      ///< Maximum spinning
-                ) CDS_NOEXCEPT
-                : m_nExpMin( nExpMin )
-                , m_nExpMax( nExpMax )
-            {
-                m_nExpCur = m_nExpMin;
-            }
+                : m_nExpCur( traits::lower_bound )
+            {}
 
             //@cond
             void operator ()() CDS_NOEXCEPT_(noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()()))
             {
-                if ( m_nExpCur <= m_nExpMax ) {
+                if ( m_nExpCur <= traits::upper_bound ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n )
                         m_bkSpin();
                     m_nExpCur *= 2;
@@ -295,7 +288,7 @@ namespace cds {
             template <typename Predicate>
             bool operator()( Predicate pr ) CDS_NOEXCEPT_( noexcept(std::declval<Predicate>()()) && noexcept(std::declval<spin_backoff>()()) && noexcept(std::declval<yield_backoff>()()))
             {
-                if ( m_nExpCur <= m_nExpMax ) {
+                if ( m_nExpCur <= traits::upper_bound ) {
                     for ( size_t n = 0; n < m_nExpCur; ++n ) {
                         if ( m_bkSpin(pr))
                             return true;
@@ -309,7 +302,7 @@ namespace cds {
 
             void reset() CDS_NOEXCEPT_( noexcept( std::declval<spin_backoff>().reset()) && noexcept( std::declval<yield_backoff>().reset()))
             {
-                m_nExpCur = m_nExpMin;
+                m_nExpCur = traits::lower_bound;
                 m_bkSpin.reset();
                 m_bkYield.reset();
             }
@@ -317,92 +310,113 @@ namespace cds {
         };
 
         //@cond
-        template <typename SpinBkoff, typename YieldBkoff, typename Tag>
-        size_t exponential<SpinBkoff, YieldBkoff, Tag>::s_nExpMin = 16;
+        template <typename FastPathBkOff, typename SlowPathBkOff>
+        struct make_exponential
+        {
+            struct traits: public exponential_const_traits
+            {
+                typedef FastPathBkOff   fast_path_backoff;
+                typedef SlowPathBkOff   slow_path_backoff;
+            };
 
-        template <typename SpinBkoff, typename YieldBkoff, typename Tag>
-        size_t exponential<SpinBkoff, YieldBkoff, Tag>::s_nExpMax = 16 * 1024;
+            typedef exponential<traits> type;
+        };
+
+        template <typename FastPathBkOff, typename SlowPathBkOff>
+        using make_exponential_t = typename make_exponential<FastPathBkOff, SlowPathBkOff>::type;
         //@endcond
+
+        /// Constant traits for \ref delay back-off strategy
+        struct delay_const_traits
+        {
+            typedef std::chrono::milliseconds duration_type;    ///< Timeout type
+            enum: unsigned {
+                timeout = 5                                     ///< Delay timeout
+            };
+        };
+
+        /// Runtime traits for \ref delay back-off strategy
+        struct delay_runtime_traits
+        {
+            typedef std::chrono::milliseconds duration_type;    ///< Timeout type
+            static unsigned timeout;                            ///< Delay timeout, default 5
+        };
 
         /// Delay back-off strategy
         /**
             Template arguments:
             - \p Duration - duration type, default is \p std::chrono::milliseconds
-            - \p Tag - a selector tag
+            - \p Traits - a class that defines default timeout.
 
-            Choosing the best value for th timeout is platform and task specific.
-            In this implementation, the default values for timeout is statically
-            declared so you can set its value globally for your platform.
-            The second template argument, \p Tag, is used to separate implementation. For
-            example, you may define two \p delay back-offs for 5 and 10 ms timeout:
+            Choosing the best value for th timeout is platform and application specific task.
+            The default values for timeout is provided by \p Traits class that should
+            \p timeout data member. There are two predefined \p Traits implementation:
+            - \p delay_const_traits - defines \p timeout as a constant (enum). 
+              To change timeout you should recompile your application.
+            - \p delay_runtime_traits - specifies timeout as static data member that can be changed 
+              at runtime to tune the back-off strategy.
+
+            You may use \p Traits template parameter to separate back-off implementations.
+            For example, you may define two \p delay back-offs for 5 and 10 ms timeout:
             \code
 
             #include <cds/algo/backoff_strategy.h>
             namespace bkoff = cds::backoff;
 
-            struct ms5  ;   // tag to select 5ms
-            struct ms10 ;   // tag to select 10ms
+            // 5ms delay
+            struct ms5
+            {
+                typedef std::chrono::milliseconds duration_type;
+                enum: unsigned { timeout = 5 };
+            };
 
-            // // define your back-off specialization
-            typedef bkoff::delay<std::chrono::milliseconds, ms5> delay5;
+            // 10ms delay, runtime support
+            struct ms10
+            {
+                typedef std::chrono::milliseconds duration_type;
+                static unsigned timeout;
+            };
+            unsigned ms10::timeout = 10;
+
+            // define your back-off specialization
+            typedef bkoff::delay<std::chrono::milliseconds, ms5>  delay5;
             typedef bkoff::delay<std::chrono::milliseconds, ms10> delay10;
 
-            // // set up the timeouts
-            delay5::s_nTimeout = 5;
-            delay10::s_nTimeout = 10;
             \endcode
-
-            Another way of solving this problem is subclassing \p delay back-off class:
-            \code
-            #include <cds/algo/backoff_strategy.h>
-            namespace bkoff = cds::backoff;
-            typedef bkoff::delay<> delay_bkoff;
-
-            class delay5: public delay_bkoff {
-            public:
-                delay5(): delay_bkoff( 5 ) {}
-            };
-
-            class delay10: public delay_bkoff {
-            public:
-                delay10(): delay_bkoff( 10 ) {}
-            };
-            \endcode
-
         */
-        template <class Duration = std::chrono::milliseconds, typename Tag=void >
+        template <typename Traits = delay_const_traits>
         class delay
         {
         public:
-            typedef Duration duration_type; ///< Duration type (default \p std::chrono::milliseconds)
-            static unsigned int s_nTimeout; ///< default timeout, =5
+            typedef Traits   traits;        ///< Traits
+            typedef typename Traits::duration_type duration_type; ///< Duration type (default \p std::chrono::milliseconds)
 
         protected:
             ///@cond
-            unsigned int const m_nTimeout;
+            duration_type const timeout;
             ///@endcond
 
         public:
-            /// Default ctor takes the timeout from s_nTimeout
+            /// Default ctor takes the timeout from \p traits::timeout
             delay() CDS_NOEXCEPT
-                : m_nTimeout( s_nTimeout )
+                : timeout( traits::timeout )
             {}
 
             /// Initializes timeout from \p nTimeout
             CDS_CONSTEXPR explicit delay( unsigned int nTimeout ) CDS_NOEXCEPT
-                : m_nTimeout( nTimeout )
+                : timeout( nTimeout )
             {}
 
             //@cond
             void operator()() const
             {
-                std::this_thread::sleep_for( duration_type( m_nTimeout ));
+                std::this_thread::sleep_for( timeout );
             }
 
             template <typename Predicate>
             bool operator()(Predicate pr) const
             {
-                for ( unsigned int i = 0; i < m_nTimeout; i += 2 ) {
+                for ( unsigned int i = 0; i < traits::timeout; i += 2 ) {
                     if ( pr())
                         return true;
                     std::this_thread::sleep_for( duration_type( 2 ));
@@ -416,36 +430,32 @@ namespace cds {
         };
 
         //@cond
-        template <class Duration, typename Tag>
-        unsigned int delay<Duration, Tag>::s_nTimeout = 5;
-        //@endcond
+        template <unsigned int Timeout, class Duration = std::chrono::milliseconds >
+        struct make_delay_of
+        {
+            struct traits {
+                typedef Duration duration_type;
+                enum: unsigned { timeout = Timeout };
+            };
 
+            typedef delay<traits> type;
+        };
+        //@endcond
 
         /// Delay back-off strategy, template version
         /**
-            This is a template version of backoff::delay class.
-            Template parameter \p Timeout sets a delay timeout.
-            The declaration <tt>cds::backoff::delay_of< 5 > bkoff</tt> is equal for
-            <tt>cds::backoff::delay<> bkoff(5)</tt>.
+            This is a simplified version of \p backoff::delay class.
+            Template parameter \p Timeout sets a delay timeout of \p Duration unit.
         */
         template <unsigned int Timeout, class Duration = std::chrono::milliseconds >
-        class delay_of: public delay<Duration>
-        {
-        //@cond
-            typedef delay<Duration> base_class;
-        public:
-            delay_of() CDS_NOEXCEPT
-                : base_class( Timeout )
-            {}
-        //@endcond
-        };
+        using delay_of = typename make_delay_of< Timeout, Duration >::type;
 
 
         /// Default backoff strategy
-        typedef exponential<hint, yield>    Default;
+        typedef exponential<exponential_const_traits>    Default;
 
         /// Default back-off strategy for lock primitives
-        typedef exponential<hint, yield>    LockDefault;
+        typedef exponential<exponential_const_traits>    LockDefault;
 
     } // namespace backoff
 } // namespace cds

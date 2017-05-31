@@ -187,10 +187,7 @@ namespace stack {
         struct traits_Treiber_exp: public
             cds::container::treiber_stack::make_traits<
                 cds::opt::back_off<
-                    cds::backoff::exponential<
-                        cds::backoff::pause,
-                        cds::backoff::yield
-                    >
+                    cds::backoff::make_exponential_t<cds::backoff::pause, cds::backoff::yield >
                 >
             >::type
         {};
@@ -324,10 +321,7 @@ namespace stack {
             cds::container::treiber_stack::make_traits <
                 cds::opt::enable_elimination<true>
                 ,cds::opt::back_off<
-                    cds::backoff::exponential<
-                        cds::backoff::pause,
-                        cds::backoff::yield
-                    >
+                    cds::backoff::make_exponential_t< cds::backoff::pause, cds::backoff::yield >
                 >
             > ::type
         {};

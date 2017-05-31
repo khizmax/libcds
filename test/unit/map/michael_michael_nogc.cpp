@@ -109,7 +109,7 @@ namespace {
         struct list_traits : public cc::michael_list::traits
         {
             typedef cmp compare;
-            typedef cds::backoff::exponential<cds::backoff::pause, cds::backoff::yield> back_off;
+            typedef cds::backoff::make_exponential_t<cds::backoff::pause, cds::backoff::yield> back_off;
         };
         typedef cc::MichaelKVList< gc_type, key_type, value_type, list_traits > list_type;
 

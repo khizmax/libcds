@@ -128,7 +128,7 @@ namespace {
         struct list_traits : public cc::lazy_list::traits
         {
             typedef cmp compare;
-            typedef cds::backoff::exponential<cds::backoff::pause, cds::backoff::yield> back_off;
+            typedef cds::backoff::make_exponential_t<cds::backoff::pause, cds::backoff::yield> back_off;
         };
         typedef cc::LazyList< gc_type, int_item, list_traits > list_type;
 
