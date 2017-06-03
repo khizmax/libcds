@@ -1875,27 +1875,34 @@ namespace cds { namespace container {
 
             if ( pLRight != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRight->m_pParent );
                 pLRight->parent( pNode, memory_model::memory_order_relaxed );
                 assert( check_node_ordering( pNode, pLRight ) > 0 );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLeft->m_pRight );
             pLeft->m_pRight.store( pNode, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
-            pNode->parent( pLeft, memory_model::memory_order_relaxed );
 
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pNode->m_pParent );
+            pNode->parent( pLeft, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pLeft, pNode ) < 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
-            if ( pParentLeft == pNode )
+            if ( pParentLeft == pNode ) {
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pLeft );
                 pParent->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
+            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pRight );
                 pParent->m_pRight.store( pLeft, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLeft->m_pParent );
             pLeft->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
@@ -1958,25 +1965,32 @@ namespace cds { namespace container {
             pNode->m_pRight.store( pRLeft, memory_model::memory_order_release );
             if ( pRLeft != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLeft->m_pParent );
                 pRLeft->parent( pNode, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRight->m_pLeft );
             pRight->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pNode->m_pParent );
             pNode->parent( pRight, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pRight, pNode ) > 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
-            if ( pParentLeft == pNode )
+            if ( pParentLeft == pNode ) {
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pLeft );
                 pParent->m_pLeft.store( pRight, memory_model::memory_order_relaxed );
+            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pRight );
                 pParent->m_pRight.store( pRight, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRight->m_pParent );
             pRight->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
@@ -2031,40 +2045,51 @@ namespace cds { namespace container {
             pNode->m_pLeft.store( pLRR, memory_model::memory_order_release );
             if ( pLRR != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRR->m_pParent );
                 pLRR->parent( pNode, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLeft->m_pRight );
             pLeft->m_pRight.store( pLRL, memory_model::memory_order_relaxed );
 
             if ( pLRL != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRL->m_pParent );
                 pLRL->parent( pLeft, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRight->m_pLeft );
             pLRight->m_pLeft.store( pLeft, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLeft->m_pParent );
             pLeft->parent( pLRight, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pLRight, pLeft ) > 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRight->m_pRight );
             pLRight->m_pRight.store( pNode, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pNode->m_pParent );
             pNode->parent( pLRight, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pLRight, pNode ) < 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
-            if ( pPL == pNode )
+            if ( pPL == pNode ) {
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pLeft );
                 pParent->m_pLeft.store( pLRight, memory_model::memory_order_relaxed );
+            }
             else {
                 assert( child( pParent, right_child, memory_model::memory_order_relaxed ) == pNode );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pRight );
                 pParent->m_pRight.store( pLRight, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pLRight->m_pParent );
             pLRight->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
@@ -2134,40 +2159,51 @@ namespace cds { namespace container {
             pNode->m_pRight.store( pRLL, memory_model::memory_order_release );
             if ( pRLL != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLL->m_pParent );
                 pRLL->parent( pNode, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRight->m_pLeft );
             pRight->m_pLeft.store( pRLR, memory_model::memory_order_relaxed );
 
             if ( pRLR != nullptr ) {
                 atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLR->m_pParent );
                 pRLR->parent( pRight, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLeft->m_pRight );
             pRLeft->m_pRight.store( pRight, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRight->m_pParent );
             pRight->parent( pRLeft, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pRLeft, pRight ) < 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLeft->m_pLeft );
             pRLeft->m_pLeft.store( pNode, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pNode->m_pParent );
             pNode->parent( pRLeft, memory_model::memory_order_relaxed );
             assert( check_node_ordering( pRLeft, pNode ) > 0 );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
-            if ( pPL == pNode )
+            if ( pPL == pNode ) {
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pLeft );
                 pParent->m_pLeft.store( pRLeft, memory_model::memory_order_relaxed );
+            }
             else {
                 assert( pParent->m_pRight.load( memory_model::memory_order_relaxed ) == pNode );
+                CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pParent->m_pRight );
                 pParent->m_pRight.store( pRLeft, memory_model::memory_order_relaxed );
             }
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
+            CDS_TSAN_ANNOTATE_HAPPENS_BEFORE( &pRLeft->m_pParent );
             pRLeft->parent( pParent, memory_model::memory_order_relaxed );
 
             atomics::atomic_thread_fence( memory_model::memory_order_acq_rel );
