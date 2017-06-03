@@ -1404,7 +1404,7 @@ namespace cds { namespace intrusive {
 
             update_ptr cur( pOp, update_desc::IFlag );
             pOp->iInfo.pParent->m_pUpdate.compare_exchange_strong( cur, pOp->iInfo.pParent->null_update_desc(),
-                      memory_model::memory_order_acquire, atomics::memory_order_relaxed );
+                      memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
         bool check_delete_precondition( search_result& res )
@@ -1423,7 +1423,7 @@ namespace cds { namespace intrusive {
             update_ptr pUpdate( pOp->dInfo.pUpdateParent );
             update_ptr pMark( pOp, update_desc::Mark );
             if ( pOp->dInfo.pParent->m_pUpdate.compare_exchange_strong( pUpdate, pMark,
-                    memory_model::memory_order_release, atomics::memory_order_relaxed ))
+                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
             {
                 help_marked( pOp );
                 retire_node( pOp->dInfo.pParent, rl );
@@ -1447,7 +1447,7 @@ namespace cds { namespace intrusive {
                 // Undo grandparent dInfo
                 update_ptr pDel( pOp, update_desc::DFlag );
                 if ( pOp->dInfo.pGrandParent->m_pUpdate.compare_exchange_strong( pDel, pOp->dInfo.pGrandParent->null_update_desc(),
-                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                    memory_model::memory_order_release, atomics::memory_order_relaxed ))
                 {
                     retire_update_desc( pOp, rl, false );
                 }
@@ -1473,7 +1473,7 @@ namespace cds { namespace intrusive {
 
             update_ptr upd( pOp, update_desc::DFlag );
             pOp->dInfo.pGrandParent->m_pUpdate.compare_exchange_strong( upd, pOp->dInfo.pGrandParent->null_update_desc(),
-                memory_model::memory_order_acquire, atomics::memory_order_relaxed );
+                memory_model::memory_order_release, atomics::memory_order_relaxed );
         }
 
         template <typename KeyValue, typename Compare>
@@ -1660,7 +1660,7 @@ namespace cds { namespace intrusive {
 
                             update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                                memory_model::memory_order_release, atomics::memory_order_acquire ))
+                                memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
                                     // res.pLeaf is not deleted yet since RCU is blocked
@@ -1738,7 +1738,7 @@ namespace cds { namespace intrusive {
 
                             update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                                memory_model::memory_order_release, atomics::memory_order_acquire ))
+                                memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
                                     pResult = node_traits::to_value_ptr( res.pLeaf );
@@ -1803,7 +1803,7 @@ namespace cds { namespace intrusive {
 
                             update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                                memory_model::memory_order_release, atomics::memory_order_acquire ))
+                                memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
                                     pResult = node_traits::to_value_ptr( res.pLeaf );
@@ -1867,7 +1867,7 @@ namespace cds { namespace intrusive {
 
                             update_ptr updGP( res.updGrandParent.ptr());
                             if ( res.pGrandParent->m_pUpdate.compare_exchange_strong( updGP, update_ptr( pOp, update_desc::DFlag ),
-                                memory_model::memory_order_release, atomics::memory_order_acquire ))
+                                memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                             {
                                 if ( help_delete( pOp, updRetire )) {
                                     pResult = node_traits::to_value_ptr( res.pLeaf );
@@ -1991,7 +1991,7 @@ namespace cds { namespace intrusive {
 
                 update_ptr updCur( res.updParent.ptr());
                 if ( res.pParent->m_pUpdate.compare_exchange_strong( updCur, update_ptr( pOp, update_desc::IFlag ),
-                    memory_model::memory_order_release, atomics::memory_order_acquire ))
+                    memory_model::memory_order_acq_rel, atomics::memory_order_acquire ))
                 {
                     // do insert
                     help_insert( pOp );

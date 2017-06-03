@@ -132,13 +132,13 @@ namespace cds { namespace intrusive {
             /// Checks if the node is internal
             bool is_internal() const
             {
-                return (m_nFlags.load(atomics::memory_order_relaxed) & internal) != 0;
+                return (m_nFlags.load(atomics::memory_order_acquire) & internal) != 0;
             }
 
             /// Returns infinite key, 0 if the node is not infinite
             unsigned int infinite_key() const
             {
-                return m_nFlags.load(atomics::memory_order_relaxed) & key_infinite;
+                return m_nFlags.load(atomics::memory_order_acquire) & key_infinite;
             }
 
             /// Sets infinite key for the node (for internal use only!!!)
@@ -159,7 +159,7 @@ namespace cds { namespace intrusive {
                     assert( false );
                     break;
                 }
-                m_nFlags.store( nFlags, atomics::memory_order_relaxed );
+                m_nFlags.store( nFlags, atomics::memory_order_release );
             }
         };
 
