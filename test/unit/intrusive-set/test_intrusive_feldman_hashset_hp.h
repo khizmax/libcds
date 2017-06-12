@@ -158,6 +158,7 @@ namespace cds_test {
                 EXPECT_EQ( i.nDisposeCount, 1u );
             }
         }
+
     };
 
 } // namespace cds_test

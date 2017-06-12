@@ -11,6 +11,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-map)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tree)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/no_collision_set)
 
 add_custom_target(unit-all
     DEPENDS 
@@ -26,4 +27,5 @@ add_custom_target(unit-all
         unit-striped-set
         unit-stack
         unit-tree
+        unit-nc-set
 )
