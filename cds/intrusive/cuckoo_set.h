@@ -615,9 +615,9 @@ namespace cds { namespace intrusive {
 
         /// Refinable concurrent access policy
         /**
-            This is one of available opt::mutex_policy option type for CuckooSet
+            This is one of available \p opt::mutex_policy option type for \p CuckooSet
 
-            Refining is like a striping technique (see cuckoo::striping)
+            Refining is like a striping technique (see \p cuckoo::striping)
             but it allows growing the size of lock array when resizing the hash table.
             So, the sizes of hash table and lock array are equal.
 
@@ -626,7 +626,7 @@ namespace cds { namespace intrusive {
                 The default is \p std::recursive_mutex. The mutex type should be default-constructible.
             - \p Arity - unsigned int constant that specifies an arity. The arity is the count of hash functors, i.e., the
                 count of lock arrays. Default value is 2.
-            - \p BackOff - back-off strategy. Default is cds::backoff::yield
+            - \p BackOff - back-off strategy. Default is \p cds::backoff::Default
             - \p Alloc - allocator type used for lock array memory allocation. Default is \p CDS_DEFAULT_ALLOCATOR.
             - \p Stat - internal statistics type. Note that this template argument is automatically selected by \ref CuckooSet
                 class according to its \p opt::stat option.
@@ -634,7 +634,7 @@ namespace cds { namespace intrusive {
         template <
             class RecursiveLock = std::recursive_mutex,
             unsigned int Arity = 2,
-            typename BackOff = cds::backoff::yield,
+            typename BackOff = cds::backoff::Default,
             class Alloc = CDS_DEFAULT_ALLOCATOR,
             class Stat = empty_refinable_stat
         >
@@ -687,9 +687,9 @@ namespace cds { namespace intrusive {
 
             atomics::atomic< owner_t >   m_Owner     ;   ///< owner mark (thread id + boolean flag)
             atomics::atomic<size_t>      m_nCapacity ;   ///< lock array capacity
-            lock_array_ptr                  m_arrLocks[ c_nArity ]  ; ///< Lock array. The capacity of array is specified in constructor.
-            spinlock_type                   m_access    ;   ///< access to m_arrLocks
-            statistics_type                 m_Stat      ;   ///< internal statistics
+            lock_array_ptr               m_arrLocks[ c_nArity ]  ; ///< Lock array. The capacity of array is specified in constructor.
+            spinlock_type                m_access    ;   ///< access to m_arrLocks
+            statistics_type              m_Stat      ;   ///< internal statistics
             //@endcond
 
         protected:
@@ -710,6 +710,7 @@ namespace cds { namespace intrusive {
             {
                 owner_t me = (owner_t) cds::OS::get_current_thread_id();
                 owner_t who;
+                size_t cur_capacity;
 
                 back_off bkoff;
                 while ( true ) {
@@ -718,6 +719,7 @@ namespace cds { namespace intrusive {
                         scoped_spinlock sl(m_access);
                         for ( unsigned int i = 0; i < c_nArity; ++i )
                             pLockArr[i] = m_arrLocks[i];
+                        cur_capacity = m_nCapacity.load( atomics::memory_order_acquire );
                     }
 
                     // wait while resizing
@@ -729,10 +731,7 @@ namespace cds { namespace intrusive {
                         m_Stat.onCellWaitResizing();
                     }
 
-                    if ( pLockArr[0] != m_arrLocks[0] ) {
-                        m_Stat.onCellArrayChanged();
-                    }
-                    else {
+                    if ( cur_capacity == m_nCapacity.load( atomics::memory_order_acquire )) {
 
                         size_t const nMask = pLockArr[0]->size() - 1;
                         assert( cds::beans::is_power2( nMask + 1 ));
@@ -743,22 +742,23 @@ namespace cds { namespace intrusive {
                         }
 
                         who = m_Owner.load( atomics::memory_order_acquire );
-                        if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask)) && m_arrLocks[0] == pLockArr[0] ) {
+                        if ( ( !(who & 1) || (who >> 1) == (me & c_nOwnerMask)) && cur_capacity == m_nCapacity.load( atomics::memory_order_acquire )) {
                             m_Stat.onCellLock();
                             return;
                         }
 
-                        for ( unsigned int i = 0; i < c_nArity; ++i ) {
+                        for ( unsigned int i = 0; i < c_nArity; ++i )
                             parrLock[i]->unlock();
-                        }
 
                         m_Stat.onCellLockFailed();
                     }
+                    else
+                        m_Stat.onCellArrayChanged();
 
                     // clears pLockArr can lead to calling dtor for each item of pLockArr[i] that may be a heavy-weighted operation
                     // (each pLockArr[i] is a shared pointer to array of a ton of mutexes)
                     // It is better to do this before the next loop iteration where we will use spin-locked assignment to pLockArr
-                    // Destructing a lot of mutexes under spin-lock is a bad solution
+                    // However, destructing a lot of mutexes under spin-lock is a bad solution
                     for ( unsigned int i = 0; i < c_nArity; ++i )
                         pLockArr[i].reset();
                 }
@@ -812,26 +812,27 @@ namespace cds { namespace intrusive {
             void acquire_resize( lock_array_ptr * pOldLocks )
             {
                 owner_t me = (owner_t) cds::OS::get_current_thread_id();
+                size_t cur_capacity;
 
                 while ( true ) {
                     {
                         scoped_spinlock sl(m_access);
                         for ( unsigned int i = 0; i < c_nArity; ++i )
                             pOldLocks[i] = m_arrLocks[i];
+                        cur_capacity = m_nCapacity.load( atomics::memory_order_acquire );
                     }
 
                     // global lock
                     owner_t ownNull = 0;
                     if ( m_Owner.compare_exchange_strong( ownNull, (me << 1) | 1, atomics::memory_order_acq_rel, atomics::memory_order_relaxed )) {
-                        if ( pOldLocks[0] != m_arrLocks[0] ) {
-                            m_Owner.store( 0, atomics::memory_order_release );
-                            m_Stat.onResizeLockArrayChanged();
-                        }
-                        else {
+                        if ( cur_capacity == m_nCapacity.load( atomics::memory_order_acquire )) {
                             pOldLocks[0]->lock_all();
                             m_Stat.onResizeLock();
                             return;
                         }
+
+                        m_Owner.store( 0, atomics::memory_order_release );
+                        m_Stat.onResizeLockArrayChanged();
                     }
                     else
                         m_Stat.onResizeLockIter();
@@ -839,7 +840,7 @@ namespace cds { namespace intrusive {
                     // clears pOldLocks can lead to calling dtor for each item of pOldLocks[i] that may be a heavy-weighted operation
                     // (each pOldLocks[i] is a shared pointer to array of a ton of mutexes)
                     // It is better to do this before the next loop iteration where we will use spin-locked assignment to pOldLocks
-                    // Destructing a lot of mutexes under spin-lock is a bad solution
+                    // However, destructing a lot of mutexes under spin-lock is a bad solution
                     for ( unsigned int i = 0; i < c_nArity; ++i )
                         pOldLocks[i].reset();
                 }
@@ -947,10 +948,10 @@ namespace cds { namespace intrusive {
 
                 {
                     scoped_spinlock sl(m_access);
+                    m_nCapacity.store( nCapacity, atomics::memory_order_release );
                     for ( unsigned int i = 0; i < c_nArity; ++i )
                         m_arrLocks[i] = pNew[i];
                 }
-                m_nCapacity.store( nCapacity, atomics::memory_order_release );
 
                 m_Stat.onResize();
             }
