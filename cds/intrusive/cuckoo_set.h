@@ -1943,9 +1943,9 @@ namespace cds { namespace intrusive {
     protected:
         bucket_entry *      m_BucketTable[ c_nArity ] ; ///< Bucket tables
 
-        size_t              m_nBucketMask           ;   ///< Hash bitmask; bucket table size minus 1.
-        unsigned int const  m_nProbesetSize         ;   ///< Probe set size
-        unsigned int const  m_nProbesetThreshold    ;   ///< Probe set threshold
+        atomics::atomic<size_t> m_nBucketMask           ;   ///< Hash bitmask; bucket table size minus 1.
+        unsigned int const      m_nProbesetSize         ;   ///< Probe set size
+        unsigned int const      m_nProbesetThreshold    ;   ///< Probe set threshold
 
         hash            m_Hash              ;   ///< Hash functor tuple
         mutex_policy    m_MutexPolicy       ;   ///< concurrent access policy
@@ -1984,7 +1984,7 @@ namespace cds { namespace intrusive {
         bucket_entry& bucket( unsigned int nTable, size_t nHash )
         {
             assert( nTable < c_nArity );
-            return m_BucketTable[nTable][nHash & m_nBucketMask];
+            return m_BucketTable[nTable][nHash & m_nBucketMask.load( atomics::memory_order_relaxed ) ];
         }
 
         static void store_hash( node_type * pNode, size_t * pHashes )
@@ -2001,7 +2001,7 @@ namespace cds { namespace intrusive {
         {
             assert( cds::beans::is_power2( nSize ));
 
-            m_nBucketMask = nSize - 1;
+            m_nBucketMask.store( nSize - 1, atomics::memory_order_release );
             bucket_table_allocator alloc;
             for ( unsigned int i = 0; i < c_nArity; ++i )
                 m_BucketTable[i] = alloc.NewArray( nSize );
@@ -2017,7 +2017,7 @@ namespace cds { namespace intrusive {
         }
         void free_bucket_tables()
         {
-            free_bucket_tables( m_BucketTable, m_nBucketMask + 1 );
+            free_bucket_tables( m_BucketTable, m_nBucketMask.load( atomics::memory_order_relaxed ) + 1 );
         }
 
         static CDS_CONSTEXPR unsigned int const c_nUndefTable = (unsigned int) -1;
@@ -2155,7 +2155,7 @@ namespace cds { namespace intrusive {
         {
             m_Stat.onResizeCall();
 
-            size_t nOldCapacity = bucket_count();
+            size_t nOldCapacity = bucket_count( atomics::memory_order_acquire );
             bucket_entry *      pOldTable[ c_nArity ];
             {
                 scoped_resize_lock guard( m_MutexPolicy );
@@ -2769,7 +2769,7 @@ namespace cds { namespace intrusive {
 
             for ( unsigned int i = 0; i < c_nArity; ++i ) {
                 bucket_entry * pEntry = m_BucketTable[i];
-                bucket_entry * pEnd = pEntry + m_nBucketMask + 1;
+                bucket_entry * pEnd = pEntry + m_nBucketMask.load( atomics::memory_order_relaxed ) + 1;
                 for ( ; pEntry != pEnd ; ++pEntry ) {
                     pEntry->clear( [&oDisposer]( node_type * pNode ){ oDisposer( node_traits::to_value_ptr( pNode )) ; } );
                 }
@@ -2798,8 +2798,14 @@ namespace cds { namespace intrusive {
         */
         size_t bucket_count() const
         {
-            return m_nBucketMask + 1;
+            return m_nBucketMask.load( atomics::memory_order_relaxed ) + 1;
         }
+        //@cond
+        size_t bucket_count( atomics::memory_order load_mo ) const
+        {
+            return m_nBucketMask.load( load_mo ) + 1;
+        }
+        //@endcond
 
         /// Returns lock array size
         size_t lock_count() const
