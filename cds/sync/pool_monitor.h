@@ -196,7 +196,7 @@ namespace cds { namespace sync {
             // try lock spin and increment reference counter
             refspin_type cur = p.m_SyncMonitorInjection.m_RefSpin.load( atomics::memory_order_relaxed ) & ~c_nSpinBit;
             if ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                atomics::memory_order_acquire, atomics::memory_order_acquire ))
+                atomics::memory_order_acq_rel, atomics::memory_order_acquire ))
             {
                 back_off bkoff;
                 do {
@@ -204,7 +204,7 @@ namespace cds { namespace sync {
                     bkoff();
                     cur &= ~c_nSpinBit;
                 } while ( !p.m_SyncMonitorInjection.m_RefSpin.compare_exchange_weak( cur, cur + c_nRefIncrement + c_nSpinBit,
-                    atomics::memory_order_acquire, atomics::memory_order_acquire ));
+                    atomics::memory_order_acq_rel, atomics::memory_order_acquire ));
             }
 
             // spin locked
