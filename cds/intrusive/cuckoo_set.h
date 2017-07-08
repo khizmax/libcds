@@ -697,7 +697,12 @@ namespace cds { namespace intrusive {
             struct lock_array_disposer {
                 void operator()( lock_array_type * pArr )
                 {
+                    // Seems, there is a false positive in std::shared_ptr deallocation in uninstrumented libc++
+                    // see, for example, https://groups.google.com/forum/#!topic/thread-sanitizer/eHu4dE_z7Cc
+                    // https://reviews.llvm.org/D21609
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_BEGIN;
                     lock_array_allocator().Delete( pArr );
+                    CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
                 }
             };
 
