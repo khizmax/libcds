@@ -18,6 +18,8 @@ option(WITH_TESTS_COVERAGE "Analyze test coverage using gcov (only for gcc)" OFF
 option(WITH_BOOST_ATOMIC "Use boost atomics (only for boost >= 1.54)" OFF)
 option(WITH_ASAN "Build ASan+UBSan instrumented code" OFF)
 option(WITH_TSAN "Build TSan instrumented code" OFF)
+option(ENABLE_UNIT_TEST "Enable unit test" ON)
+option(ENABLE_STRESS_TEST "Enable stress test" ON)
 set(CMAKE_TARGET_ARCHITECTURE "" CACHE string "Target build architecture")
 
 find_package(Threads)

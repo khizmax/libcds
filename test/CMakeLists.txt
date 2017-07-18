@@ -81,9 +81,12 @@ if(CDSTEST_HAVE_BYTESWAP_H)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDSTEST_HAVE_BYTESWAP_H") 
 endif()
 
- 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/unit)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stress)
+if(ENABLE_UNIT_TEST)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/unit)
+endif()
+if(ENABLE_STRESS_TEST)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stress)
+endif()
 
 file(GLOB SANITIZER_OPTION_FILES ${PROJECT_SOURCE_DIR}/tools/tsan-suppression)
 file(COPY ${SANITIZER_OPTION_FILES} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
