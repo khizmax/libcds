@@ -130,11 +130,13 @@ namespace pqueue {
 
             bool empty() const
             {
+                scoped_lock l( m_Lock );
                 return m_PQueue.empty();
             }
 
             size_t size() const
             {
+                scoped_lock l( m_Lock );
                 return m_PQueue.size();
             }
 

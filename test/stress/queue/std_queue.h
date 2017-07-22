@@ -39,10 +39,10 @@
 namespace queue {
 
     template <typename T, class Container, class Lock = cds::sync::spin >
-    class StdQueue: public std::queue<T, Container >
+    class StdQueue: private std::queue<T, Container >
     {
         typedef std::queue<T, Container >   base_class;
-        Lock    m_Locker;
+        mutable Lock m_Locker;
 
     public:
         bool enqueue( const T& data )
@@ -52,7 +52,12 @@ namespace queue {
             base_class::push( data );
             return true;
         }
-        bool push( const T& data )  { return enqueue( data ) ; }
+
+        bool push( const T& data )
+        { 
+            return enqueue( data );
+        }
+
         bool dequeue( T& data )
         {
             std::unique_lock<Lock> a(m_Locker);
@@ -63,7 +68,23 @@ namespace queue {
             base_class::pop();
             return true;
         }
-        bool pop( T& data )         { return dequeue( data ) ; }
+
+        bool pop( T& data )
+        { 
+            return dequeue( data );
+        }
+
+        bool empty() const
+        {
+            std::unique_lock<Lock> a( m_Locker );
+            return base_class::empty();
+        }
+
+        size_t size() const
+        {
+            std::unique_lock<Lock> a( m_Locker );
+            return base_class::size();
+        }
 
         cds::opt::none statistics() const
         {
