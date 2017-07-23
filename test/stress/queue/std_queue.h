@@ -39,7 +39,7 @@
 namespace queue {
 
     template <typename T, class Container, class Lock = cds::sync::spin >
-    class StdQueue: private std::queue<T, Container >
+    class StdQueue: public std::queue<T, Container >
     {
         typedef std::queue<T, Container >   base_class;
         mutable Lock m_Locker;
