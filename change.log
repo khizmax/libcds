@@ -1,3 +1,5 @@
+2.4.0
+
 2.3.0 31.07.2017
     General release
     - Changed: cds::gc::HP is totally refactored:
