@@ -214,7 +214,7 @@ namespace cds { namespace container {
                         return pMem;
                     }
                     else
-                        pMem = reinterpret_cast<unsigned char *>( node_allocator_type().allocate( 1 ) );
+                        pMem = reinterpret_cast<unsigned char *>( node_allocator_type().allocate( 1 ));
 
                     return pMem;
                 }

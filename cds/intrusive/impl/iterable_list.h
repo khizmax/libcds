@@ -597,12 +597,12 @@ namespace cds { namespace intrusive {
         */
         bool erase_at( iterator const& iter )
         {
-            assert( iter != end() );
+            assert( iter != end());
 
-            marked_data_ptr val( iter.data() );
-            if ( iter.m_pNode->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed ) ) {
+            marked_data_ptr val( iter.data());
+            if ( iter.m_pNode->data.compare_exchange_strong( val, marked_data_ptr(), memory_model::memory_order_acquire, atomics::memory_order_relaxed )) {
                 --m_ItemCounter;
-                retire_data( val.ptr() );
+                retire_data( val.ptr());
                 m_Stat.onEraseSuccess();
                 return true;
             }

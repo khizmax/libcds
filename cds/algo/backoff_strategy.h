@@ -351,9 +351,9 @@ namespace cds {
             Choosing the best value for th timeout is platform and application specific task.
             The default values for timeout is provided by \p Traits class that should
             \p timeout data member. There are two predefined \p Traits implementation:
-            - \p delay_const_traits - defines \p timeout as a constant (enum). 
+            - \p delay_const_traits - defines \p timeout as a constant (enum).
               To change timeout you should recompile your application.
-            - \p delay_runtime_traits - specifies timeout as static data member that can be changed 
+            - \p delay_runtime_traits - specifies timeout as static data member that can be changed
               at runtime to tune the back-off strategy.
 
             You may use \p Traits template parameter to separate back-off implementations.

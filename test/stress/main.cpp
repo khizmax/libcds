@@ -62,7 +62,7 @@ int main( int argc, char **argv )
         cds_test::config const& general_cfg = cds_test::stress_fixture::get_config( "General" );
 
         // Init SMR
-        cds::gc::HP hzpGC( 
+        cds::gc::HP hzpGC(
             general_cfg.get_size_t( "hazard_pointer_count", 16 ),
             general_cfg.get_size_t( "hp_max_thread_count", 0 ),
             general_cfg.get_size_t( "hp_retired_ptr_count", 0 ),

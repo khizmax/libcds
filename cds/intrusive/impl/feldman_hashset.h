@@ -640,7 +640,7 @@ namespace cds { namespace intrusive {
                         return false;
                     }
 
-                    if ( !pos.splitter.eos() ) {
+                    if ( !pos.splitter.eos()) {
                         // the slot must be expanded
                         base_class::expand_slot( pos, slot );
                     }
@@ -1219,7 +1219,7 @@ namespace cds { namespace intrusive {
                     }
 
                     if ( bInsert ) {
-                        if ( !pos.splitter.eos() ) {
+                        if ( !pos.splitter.eos()) {
                             // the slot must be expanded
                             base_class::expand_slot( pos, slot );
                         }

@@ -153,7 +153,7 @@ namespace cds { namespace gc {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
                 assert( !full());
 #       else
-                if ( full() )
+                if ( full())
                     CDS_THROW_EXCEPTION( not_enought_hazard_ptr());
 #       endif
                 guard* g = free_head_;
@@ -164,7 +164,7 @@ namespace cds { namespace gc {
 
             void free( guard* g ) CDS_NOEXCEPT
             {
-                assert( g >= array_ && g < array_ + capacity() );
+                assert( g >= array_ && g < array_ + capacity());
 
                 if ( g ) {
                     g->clear();
@@ -220,7 +220,7 @@ namespace cds { namespace gc {
 
             guard& operator[]( size_t idx )
             {
-                assert( idx < capacity() );
+                assert( idx < capacity());
 
                 return array_[idx];
             }
@@ -393,8 +393,8 @@ namespace cds { namespace gc {
 
         /// \p smr::scan() strategy
         enum scan_type {
-            classic,    ///< classic scan as described in Michael's works (see smr::classic_scan() )
-            inplace     ///< inplace scan without allocation (see smr::inplace_scan() )
+            classic,    ///< classic scan as described in Michael's works (see smr::classic_scan())
+            inplace     ///< inplace scan without allocation (see smr::inplace_scan())
         };
 
         //@cond
@@ -521,7 +521,7 @@ namespace cds { namespace gc {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
                     assert( false );    // not enough hazard ptr
 #       else
-                    CDS_THROW_EXCEPTION( not_enought_hazard_ptr() );
+                    CDS_THROW_EXCEPTION( not_enought_hazard_ptr());
 #       endif
                 }
             }
@@ -698,7 +698,7 @@ namespace cds { namespace gc {
                 @warning Can throw \p too_many_hazard_ptr_exception if internal hazard pointer objects are exhausted.
             */
             Guard()
-                : guard_( hp::smr::tls()->hazards_.alloc() )
+                : guard_( hp::smr::tls()->hazards_.alloc())
             {}
 
             /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
@@ -1006,7 +1006,7 @@ namespace cds { namespace gc {
             template <typename T>
             T * assign( size_t nIndex, T * p )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 guards_.set( nIndex, p );
                 hp::smr::tls()->sync();
@@ -1046,7 +1046,7 @@ namespace cds { namespace gc {
             template <typename T>
             T * get( size_t nIndex ) const
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return guards_[nIndex]->template get_as<T>();
             }
 

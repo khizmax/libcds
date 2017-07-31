@@ -71,7 +71,7 @@ namespace cds { namespace algo {
     public:
         /// Initializises the splitter with reference to \p h and zero start bit offset
         explicit split_bitstring( bitstring const& h )
-            : cur_( reinterpret_cast<uint8_t const*>( &h ) )
+            : cur_( reinterpret_cast<uint8_t const*>( &h ))
             , offset_( 0 )
             , first_( cur_ )
             , last_( cur_ + c_bitstring_size )
@@ -81,7 +81,7 @@ namespace cds { namespace algo {
         split_bitstring( bitstring const& h, size_t nBitOffset )
             : cur_( reinterpret_cast<uint8_t const*>( &h ) + nBitOffset / c_nBitPerByte )
             , offset_( nBitOffset % c_nBitPerByte  )
-            , first_( reinterpret_cast<uint8_t const*>( &h ) )
+            , first_( reinterpret_cast<uint8_t const*>( &h ))
             , last_( first_ + c_bitstring_size )
         {}
 
@@ -104,7 +104,7 @@ namespace cds { namespace algo {
         */
         uint_type cut( unsigned count )
         {
-            assert( !eos() );
+            assert( !eos());
 
             uint_type result = 0;
 #       if defined( CDS_ARCH_LITTLE_ENDIAN )
@@ -218,7 +218,7 @@ namespace cds { namespace algo {
     public:
         /// Initializises the splitter with reference to \p h and zero start bit offset
         explicit byte_splitter( bitstring const& h )
-            : cur_( reinterpret_cast<uint8_t const*>( &h ) )
+            : cur_( reinterpret_cast<uint8_t const*>( &h ))
             , first_( cur_ )
             , last_( cur_ + c_bitstring_size )
         {}
@@ -226,7 +226,7 @@ namespace cds { namespace algo {
         /// Initializises the splitter with reference to \p h and start bit offset \p nBitOffset
         byte_splitter( bitstring const& h, size_t nBitOffset )
             : cur_( reinterpret_cast<uint8_t const*>( &h ) + nBitOffset / c_nBitPerByte )
-            , first_( reinterpret_cast<uint8_t const*>( &h ) )
+            , first_( reinterpret_cast<uint8_t const*>( &h ))
             , last_( first_ + c_bitstring_size )
         {
             assert( is_correct( static_cast<unsigned>( nBitOffset )));
@@ -252,8 +252,8 @@ namespace cds { namespace algo {
         */
         uint_type cut( unsigned count )
         {
-            assert( !eos() );
-            assert( is_correct( count ) );
+            assert( !eos());
+            assert( is_correct( count ));
 
             uint_type result = 0;
 
@@ -379,7 +379,7 @@ namespace cds { namespace algo {
         */
         int_type cut( unsigned count )
         {
-            assert( !eos() );
+            assert( !eos());
             assert( is_correct( count ));
 
             int_type result = ( number_ >> shift_ ) & (( 1 << count ) - 1 );
@@ -396,10 +396,10 @@ namespace cds { namespace algo {
         */
         int_type safe_cut( unsigned count )
         {
-            if ( eos() )
+            if ( eos())
                 return 0;
 
-            unsigned rest = static_cast<unsigned>( rest_count() );
+            unsigned rest = static_cast<unsigned>( rest_count());
             if ( rest < count )
                 count = rest;
             return count ? cut( count ) : 0;

@@ -371,7 +371,7 @@ namespace cds {
             /// Unlock the spin-lock
             void unlock() CDS_NOEXCEPT
             {
-                assert( is_taken( OS::get_current_thread_id() ));
+                assert( is_taken( OS::get_current_thread_id()));
 
                 integral_type n = m_spin.load( atomics::memory_order_relaxed );
                 if ( n > 1 )
@@ -386,7 +386,7 @@ namespace cds {
             /// Change the owner of locked spin-lock. May be called by thread that owns spin-lock
             void change_owner( OS::ThreadId newOwnerId ) CDS_NOEXCEPT
             {
-                assert( is_taken( OS::get_current_thread_id() ));
+                assert( is_taken( OS::get_current_thread_id()));
                 assert( newOwnerId != OS::c_NullThreadId );
 
                 m_OwnerId = newOwnerId;

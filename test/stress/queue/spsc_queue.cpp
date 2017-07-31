@@ -79,7 +79,7 @@ namespace {
                 m_nPushFailed = 0;
 
                 for ( value_type v = 0; v < nPushCount; ++v ) {
-                    if ( !m_Queue.push( v ) ) {
+                    if ( !m_Queue.push( v )) {
                         ++m_nPushFailed;
                         --v;
                     }

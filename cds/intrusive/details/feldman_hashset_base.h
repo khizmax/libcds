@@ -650,7 +650,7 @@ namespace cds { namespace intrusive {
 
             bool expand_slot( traverse_data& pos, node_ptr current)
             {
-                assert( !pos.splitter.eos() );
+                assert( !pos.splitter.eos());
                 return expand_slot( pos.pArr, pos.nSlot, current, pos.splitter.bit_offset());
             }
 
@@ -671,7 +671,7 @@ namespace cds { namespace intrusive {
                     return false;
                 }
 
-                typename hash_splitter::uint_type idx = hash_splitter( hash_accessor()(*current.ptr()), nOffset ).cut( 
+                typename hash_splitter::uint_type idx = hash_splitter( hash_accessor()(*current.ptr()), nOffset ).cut(
                     static_cast<unsigned>( m_Metrics.array_node_size_log ));
                 pArr->nodes[idx].store(current, memory_model::memory_order_release);
 

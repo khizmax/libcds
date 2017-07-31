@@ -511,7 +511,7 @@ namespace cds { namespace memory {
                 }
 
                 // The pool is empty
-                CDS_THROW_EXCEPTION( std::bad_alloc() );
+                CDS_THROW_EXCEPTION( std::bad_alloc());
             }
 
         ok:

@@ -862,7 +862,7 @@ namespace cds { namespace intrusive {
         erase_at( Iterator const& iter )
 #endif
         {
-            assert( iter != end() );
+            assert( iter != end());
 
             if ( m_List.erase_at( iter.underlying_iterator())) {
                 --m_ItemCounter;
@@ -1170,7 +1170,7 @@ namespace cds { namespace intrusive {
                 p->m_nHash = nHash;
                 CDS_TSAN_ANNOTATE_IGNORE_WRITES_END;
 #       ifdef CDS_DEBUG
-                cds_assert( !p->m_busy.load( atomics::memory_order_acquire ) );
+                cds_assert( !p->m_busy.load( atomics::memory_order_acquire ));
                 p->m_busy.store( true, atomics::memory_order_release );
 #       endif
             }
@@ -1180,7 +1180,7 @@ namespace cds { namespace intrusive {
         void free_aux_node( aux_node_type * p )
         {
 #       ifdef CDS_DEBUG
-            cds_assert( p->m_busy.load( atomics::memory_order_acquire ) );
+            cds_assert( p->m_busy.load( atomics::memory_order_acquire ));
             p->m_busy.store( false, atomics::memory_order_release );
 #       endif
 

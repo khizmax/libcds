@@ -535,15 +535,15 @@ namespace cds_test {
                 EXPECT_EQ( it->nKey, key );
                 EXPECT_EQ( ( *it ).nKey, key );
 
-                EXPECT_TRUE( l.erase_at( it ) );
+                EXPECT_TRUE( l.erase_at( it ));
 
                 EXPECT_EQ( it->nKey, key );
                 EXPECT_EQ( ( *it ).nKey, key );
 
-                EXPECT_FALSE( l.erase_at( it ) );
+                EXPECT_FALSE( l.erase_at( it ));
                 ++key;
             }
-            EXPECT_TRUE( l.empty() );
+            EXPECT_TRUE( l.empty());
             EXPECT_CONTAINER_SIZE( l, 0 );
 
             List::gc::force_dispose();

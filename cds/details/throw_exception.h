@@ -46,11 +46,11 @@ namespace cds {
         throws the \p exception.
 
         If exception is disabled, \p %throw_exception() prints an exception message to
-        standard output and call \p abort(). 
+        standard output and call \p abort().
 
         You can supply your own \p %cds::throw_exception() function;
         for that you should specify \p -DCDS_USER_DEFINED_THROW_EXCEPTION
-        in compiler command line. 
+        in compiler command line.
 
         @note \p %throw_exception() never returns. If the user-defined \p %throw_exception() returns,
         the behavior is undefined.
@@ -71,7 +71,7 @@ namespace cds {
     template <typename E>
     CDS_NORETURN static inline void throw_exception( E&& exception, char const* file, int line )
     {
-        printf( "file %s, line %d: %s\n", file, line, exception.what() );
+        printf( "file %s, line %d: %s\n", file, line, exception.what());
         abort();
     }
 #endif

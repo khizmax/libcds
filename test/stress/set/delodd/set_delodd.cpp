@@ -124,8 +124,8 @@ namespace set {
     {
         return std::to_string( p.param );
     }
-    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors() ), get_test_parameter_name );
+    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors()), get_test_parameter_name );
 #else
-    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Set_DelOdd_LF, ::testing::ValuesIn( Set_DelOdd_LF::get_load_factors()) );
 #endif
 } // namespace set

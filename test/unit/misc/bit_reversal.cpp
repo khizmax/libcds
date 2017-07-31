@@ -67,7 +67,7 @@ namespace {
         {
             Algo f;
             for ( auto i : arr_ ) {
-                EXPECT_EQ( cds::algo::bit_reversal::swar()( i ), f( i ) ) << "i=" << i;
+                EXPECT_EQ( cds::algo::bit_reversal::swar()( i ), f( i )) << "i=" << i;
             }
         }
     };

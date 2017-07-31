@@ -78,7 +78,7 @@ namespace cds { namespace threading {
                 static void init()
                 {
                     if ( m_key == TLS_OUT_OF_INDEXES ) {
-                        if ( ( m_key = ::TlsAlloc() ) == TLS_OUT_OF_INDEXES )
+                        if ( ( m_key = ::TlsAlloc()) == TLS_OUT_OF_INDEXES )
                             CDS_THROW_EXCEPTION( api_exception( ::GetLastError(), "TlsAlloc" ));
                     }
                 }
@@ -96,7 +96,7 @@ namespace cds { namespace threading {
                 {
                     api_error_code  nErr;
                     void * pData = ::TlsGetValue( m_key );
-                    if ( pData == nullptr && ( nErr = ::GetLastError() ) != ERROR_SUCCESS )
+                    if ( pData == nullptr && ( nErr = ::GetLastError()) != ERROR_SUCCESS )
                         CDS_THROW_EXCEPTION( api_exception( nErr, "TlsGetValue" ));
                     return reinterpret_cast<ThreadData *>( pData );
                 }

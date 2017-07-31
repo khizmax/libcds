@@ -341,7 +341,7 @@ namespace map {
                     auto itEnd = rMap.template get_end<Iterator>();
                     for ( auto it = rMap.template get_begin<Iterator>(); it != itEnd; ++it ) {
                         if ( it->first.nKey & 3 ) {
-                            if ( rMap.erase_at( it ) )
+                            if ( rMap.erase_at( it ))
                                 ++m_nDeleteSuccess;
                             else
                                 ++m_nDeleteFailed;

@@ -54,7 +54,7 @@ namespace queue {
         }
 
         bool push( const T& data )
-        { 
+        {
             return enqueue( data );
         }
 
@@ -70,7 +70,7 @@ namespace queue {
         }
 
         bool pop( T& data )
-        { 
+        {
             return dequeue( data );
         }
 

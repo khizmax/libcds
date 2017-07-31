@@ -78,14 +78,14 @@ namespace cds { namespace threading {
                 static void init()
                 {
                     pthread_error_code  nErr;
-                    if ( ( nErr = pthread_key_create( &m_key, key_destructor ) ) != 0 )
+                    if ( ( nErr = pthread_key_create( &m_key, key_destructor )) != 0 )
                         CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_key_create" ));
                 }
 
                 static void fini()
                 {
                     pthread_error_code  nErr;
-                    if ( ( nErr = pthread_key_delete( m_key ) ) != 0 )
+                    if ( ( nErr = pthread_key_delete( m_key )) != 0 )
                         CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_key_delete" ));
                 }
 
@@ -98,7 +98,7 @@ namespace cds { namespace threading {
                 {
                     pthread_error_code  nErr;
                     ThreadData * pData = new ThreadData;
-                    if ( ( nErr = pthread_setspecific( m_key, pData ) ) != 0 )
+                    if ( ( nErr = pthread_setspecific( m_key, pData )) != 0 )
                         CDS_THROW_EXCEPTION( pthread_exception( nErr, "pthread_setspecific" ));
                 }
                 static void free()
@@ -205,7 +205,7 @@ namespace cds { namespace threading {
                 assert( pData );
 
                 if ( pData ) {
-                    if ( pData->fini() )
+                    if ( pData->fini())
                         _threadData( do_detachThread );
                 }
                 else

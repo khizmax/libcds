@@ -127,8 +127,8 @@ namespace cds { namespace container {
         Ring buffer is a bounded queue. Additionally, \p %WeakRingBuffer supports batch operations -
         you can push/pop an array of elements.
 
-        There are a specialization \ref cds_nonintrusive_WeakRingBuffer_void "WeakRingBuffer<void, Traits>" 
-        that is not a queue but a "memory pool" between producer and consumer threads. 
+        There are a specialization \ref cds_nonintrusive_WeakRingBuffer_void "WeakRingBuffer<void, Traits>"
+        that is not a queue but a "memory pool" between producer and consumer threads.
         \p WeakRingBuffer<void> supports variable-sized data.
 
         @warning: \p %WeakRingBuffer is developed for 64-bit architecture.
@@ -201,7 +201,7 @@ namespace cds { namespace container {
             \code
             cds::container::WeakRingBuffer<std::string> ringbuf;
             char const* arr[10];
-            ringbuf.push( arr, 10, 
+            ringbuf.push( arr, 10,
                 []( std::string& element, char const* src ) {
                     new( &element ) std::string( src );
                 });
@@ -221,10 +221,10 @@ namespace cds { namespace container {
         template <typename Q, typename CopyFunc>
         bool push( Q* arr, size_t count, CopyFunc copy )
         {
-            assert( count < capacity() );
+            assert( count < capacity());
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity());
 
             if ( static_cast<size_t>( pfront_ + capacity() - back ) < count ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -276,7 +276,7 @@ namespace cds { namespace container {
         {
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity());
 
             if ( pfront_ + capacity() - back < 1 ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -309,7 +309,7 @@ namespace cds { namespace container {
         {
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity());
 
             if ( pfront_ + capacity() - back < 1 ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -377,10 +377,10 @@ namespace cds { namespace container {
         template <typename Q, typename CopyFunc>
         bool pop( Q* arr, size_t count, CopyFunc copy )
         {
-            assert( count < capacity() );
+            assert( count < capacity());
 
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity() );
+            assert( static_cast<size_t>( cback_ - front ) < capacity());
 
             if ( static_cast<size_t>( cback_ - front ) < count ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -458,7 +458,7 @@ namespace cds { namespace container {
         bool dequeue_with( Func f )
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity() );
+            assert( static_cast<size_t>( cback_ - front ) < capacity());
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -491,7 +491,7 @@ namespace cds { namespace container {
         value_type* front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity() );
+            assert( static_cast<size_t>( cback_ - front ) < capacity());
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -510,7 +510,7 @@ namespace cds { namespace container {
         bool pop_front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) <= capacity() );
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -529,7 +529,7 @@ namespace cds { namespace container {
         void clear()
         {
             value_type v;
-            while ( pop( v ) );
+            while ( pop( v ));
         }
 
         /// Checks if the ring-buffer is empty
@@ -668,7 +668,7 @@ namespace cds { namespace container {
 
         /// [producer] Reserve \p size bytes
         /**
-            The function returns a pointer to reserved buffer of \p size bytes. 
+            The function returns a pointer to reserved buffer of \p size bytes.
             If no enough space in the ring buffer the function returns \p nullptr.
 
             After successful \p %back() you should fill the buffer provided and call \p push_back():
@@ -712,10 +712,10 @@ namespace cds { namespace container {
             size_t real_size = calc_real_size( size );
 
             // check if we can reserve read_size bytes
-            assert( real_size < capacity() );
+            assert( real_size < capacity());
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
-            assert( static_cast<size_t>( back - pfront_ ) <= capacity() );
+            assert( static_cast<size_t>( back - pfront_ ) <= capacity());
 
             if ( static_cast<size_t>( pfront_ + capacity() - back ) < real_size ) {
                 pfront_ = front_.load( memory_model::memory_order_acquire );
@@ -732,8 +732,8 @@ namespace cds { namespace container {
             size_t tail_size = capacity() - static_cast<size_t>( buffer_.mod( back ));
             if ( tail_size < real_size ) {
                 // make unused tail
-                assert( tail_size >= sizeof( size_t ) );
-                assert( !is_tail( tail_size ) );
+                assert( tail_size >= sizeof( size_t ));
+                assert( !is_tail( tail_size ));
 
                 *reinterpret_cast<size_t*>( reserved ) = make_tail( tail_size - sizeof(size_t));
                 back += tail_size;
@@ -757,7 +757,7 @@ namespace cds { namespace container {
             // reserve and store size
             *reinterpret_cast<size_t*>( reserved ) = size;
 
-            return reinterpret_cast<void*>( reserved + sizeof( size_t ) );
+            return reinterpret_cast<void*>( reserved + sizeof( size_t ));
         }
 
         /// [producer] Push reserved bytes into ring
@@ -801,8 +801,8 @@ namespace cds { namespace container {
             counter_type back = back_.load( memory_model::memory_order_relaxed );
             uint8_t* reserved = buffer_.buffer() + buffer_.mod( back );
 
-            size_t real_size = calc_real_size( *reinterpret_cast<size_t*>( reserved ) );
-            assert( real_size < capacity() );
+            size_t real_size = calc_real_size( *reinterpret_cast<size_t*>( reserved ));
+            assert( real_size < capacity());
 
             back_.store( back + real_size, memory_model::memory_order_release );
         }
@@ -830,30 +830,30 @@ namespace cds { namespace container {
         std::pair<void*, size_t> front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity() );
+            assert( static_cast<size_t>( cback_ - front ) < capacity());
 
             if ( cback_ - front < sizeof( size_t )) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
-                if ( cback_ - front < sizeof( size_t ) )
+                if ( cback_ - front < sizeof( size_t ))
                     return std::make_pair( nullptr, 0u );
             }
 
             uint8_t * buf = buffer_.buffer() + buffer_.mod( front );
 
             // check alignment
-            assert( ( reinterpret_cast<uintptr_t>( buf ) & ( sizeof( uintptr_t ) - 1 ) ) == 0 );
+            assert( ( reinterpret_cast<uintptr_t>( buf ) & ( sizeof( uintptr_t ) - 1 )) == 0 );
 
             size_t size = *reinterpret_cast<size_t*>( buf );
-            if ( is_tail( size ) ) {
+            if ( is_tail( size )) {
                 // unused tail, skip
-                CDS_VERIFY( pop_front() );
+                CDS_VERIFY( pop_front());
 
                 front = front_.load( memory_model::memory_order_relaxed );
                 buf = buffer_.buffer() + buffer_.mod( front );
                 size = *reinterpret_cast<size_t*>( buf );
 
-                assert( !is_tail( size ) );
-                assert( buf == buffer_.buffer() );
+                assert( !is_tail( size ));
+                assert( buf == buffer_.buffer());
             }
 
 #ifdef _DEBUG
@@ -896,18 +896,18 @@ namespace cds { namespace container {
         bool pop_front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) <= capacity() );
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
-            if ( cback_ - front < sizeof(size_t) ) {
+            if ( cback_ - front < sizeof(size_t)) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
-                if ( cback_ - front < sizeof( size_t ) )
+                if ( cback_ - front < sizeof( size_t ))
                     return false;
             }
 
             uint8_t * buf = buffer_.buffer() + buffer_.mod( front );
 
             // check alignment
-            assert( ( reinterpret_cast<uintptr_t>( buf ) & ( sizeof( uintptr_t ) - 1 ) ) == 0 );
+            assert( ( reinterpret_cast<uintptr_t>( buf ) & ( sizeof( uintptr_t ) - 1 )) == 0 );
 
             size_t size = *reinterpret_cast<size_t*>( buf );
             size_t real_size = calc_real_size( untail( size ));
@@ -927,7 +927,7 @@ namespace cds { namespace container {
         /// [consumer] Clears the ring buffer
         void clear()
         {
-            for ( auto el = front(); el.first; el = front() )
+            for ( auto el = front(); el.first; el = front())
                 pop_front();
         }
 
@@ -962,7 +962,7 @@ namespace cds { namespace container {
             size_t real_size =  (( size + sizeof( uintptr_t ) - 1 ) & ~( sizeof( uintptr_t ) - 1 )) + sizeof( size_t );
 
             assert( real_size > size );
-            assert( real_size - size >= sizeof( size_t ) );
+            assert( real_size - size >= sizeof( size_t ));
 
             return real_size;
         }
@@ -979,7 +979,7 @@ namespace cds { namespace container {
 
         static size_t untail( size_t size )
         {
-            return size & (( size_t( 1 ) << ( sizeof( size_t ) * 8 - 1 ) ) - 1);
+            return size & (( size_t( 1 ) << ( sizeof( size_t ) * 8 - 1 )) - 1);
         }
         //@endcond
 

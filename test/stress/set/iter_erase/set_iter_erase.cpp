@@ -109,8 +109,8 @@ namespace set {
     {
         return std::to_string( p.param );
     }
-    INSTANTIATE_TEST_CASE_P( a, Set_Iter_Del3_LF, ::testing::ValuesIn( Set_Iter_Del3_LF::get_load_factors() ), get_test_parameter_name );
+    INSTANTIATE_TEST_CASE_P( a, Set_Iter_Del3_LF, ::testing::ValuesIn( Set_Iter_Del3_LF::get_load_factors()), get_test_parameter_name );
 #else
-    INSTANTIATE_TEST_CASE_P( a, Set_Iter_Del3_LF, ::testing::ValuesIn( Set_Iter_Del3_LF::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Set_Iter_Del3_LF, ::testing::ValuesIn( Set_Iter_Del3_LF::get_load_factors()) );
 #endif
 } // namespace set

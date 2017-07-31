@@ -24,11 +24,11 @@ namespace fc_test {
         template <typename C, void (C::*) (size_t)> class selector
         {};
 
-        template <typename C> static select_small test( selector<C, &C::set_array>* ) ;
+        template <typename C> static select_small test( selector<C, &C::set_array>* );
         template <typename C> static select_big   test(...);
 
     public:
-        static constexpr bool value = sizeof(test<T>(0)) == sizeof(char) ;
+        static constexpr bool value = sizeof(test<T>(0)) == sizeof(char);
     };
 
     template<int DefaultSize = 10>
@@ -58,7 +58,7 @@ namespace fc_test {
                 pop_buff[i] = static_cast<int>( std::sqrt( std::abs( static_cast<double>( pop_buff[i] ) * rand())));
         }
 
-        void set_array(size_t new_size) 
+        void set_array(size_t new_size)
         {
             set_array_size(new_size);
         }

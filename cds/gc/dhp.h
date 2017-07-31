@@ -107,7 +107,7 @@ namespace cds { namespace gc {
 
         //@cond
         /// Per-thread hazard pointer storage
-        class thread_hp_storage 
+        class thread_hp_storage
         {
             friend class smr;
         public:
@@ -326,13 +326,13 @@ namespace cds { namespace gc {
             {
                 assert( current_block_ != nullptr );
                 assert( current_block_->first() <= current_cell_ );
-                assert( current_cell_ < current_block_->last() );
+                assert( current_cell_ < current_block_->last());
                 //assert( &p != current_cell_ );
 
                 *current_cell_ = p;
                 CDS_HPSTAT( ++retire_call_count_ );
 
-                if ( ++current_cell_ == current_block_->last() ) {
+                if ( ++current_cell_ == current_block_->last()) {
                     // goto next block if exists
                     if ( current_block_->next_ ) {
                         current_block_ = current_block_->next_;
@@ -349,7 +349,7 @@ namespace cds { namespace gc {
             }
 
             bool repush( retired_ptr* p ) CDS_NOEXCEPT
-            {                
+            {
                 bool ret = push( *p );
                 CDS_HPSTAT( --retire_call_count_ );
                 assert( ret );
@@ -393,7 +393,7 @@ namespace cds { namespace gc {
             {
                 assert( list_head_ != nullptr );
                 assert( current_block_ == list_tail_ );
-                assert( current_cell_ == current_block_->last() );
+                assert( current_cell_ == current_block_->last());
 
                 retired_block* block = retired_allocator::instance().alloc();
                 assert( block->next_ == nullptr );
@@ -456,10 +456,10 @@ namespace cds { namespace gc {
                     free_count =
                     scan_count =
                     help_scan_count =
-                    thread_rec_count = 
-                    hp_block_count = 
-                    retired_block_count = 
-                    hp_extend_count = 
+                    thread_rec_count =
+                    hp_block_count =
+                    retired_block_count =
+                    hp_extend_count =
                     retired_extend_count = 0;
             }
         };
@@ -517,7 +517,7 @@ namespace cds { namespace gc {
                 assert( instance_ != nullptr );
 #       else
                 if ( !instance_ )
-                    CDS_THROW_EXCEPTION( not_initialized() );
+                    CDS_THROW_EXCEPTION( not_initialized());
 #       endif
                 return *instance_;
             }
@@ -729,7 +729,7 @@ namespace cds { namespace gc {
         public:
             /// Default ctor allocates a guard (hazard pointer) from thread-private storage
             Guard() CDS_NOEXCEPT
-                : guard_( dhp::smr::tls()->hazards_.alloc() )
+                : guard_( dhp::smr::tls()->hazards_.alloc())
             {}
 
             /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
@@ -984,7 +984,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 T pRet;
                 do {
@@ -1014,7 +1014,7 @@ namespace cds { namespace gc {
             template <typename T, class Func>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard, Func f )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 T pRet;
                 do {
@@ -1031,7 +1031,7 @@ namespace cds { namespace gc {
             template <typename T>
             T * assign( size_t nIndex, T * p )
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
 
                 guards_.set( nIndex, p );
                 dhp::smr::tls()->sync();
@@ -1072,14 +1072,14 @@ namespace cds { namespace gc {
             template <typename T>
             T * get( size_t nIndex ) const
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return guards_[nIndex]->template get_as<T>();
             }
 
             /// Get native guarded pointer stored
             guarded_pointer get_native( size_t nIndex ) const
             {
-                assert( nIndex < capacity() );
+                assert( nIndex < capacity());
                 return guards_[nIndex]->get();
             }
 
@@ -1238,14 +1238,14 @@ namespace cds { namespace gc {
             value_type * operator ->() const CDS_NOEXCEPT
             {
                 assert( !empty());
-                return value_cast()( guard_->get_as<guarded_type>() );
+                return value_cast()( guard_->get_as<guarded_type>());
             }
 
             /// Returns a reference to guarded value
             value_type& operator *() CDS_NOEXCEPT
             {
                 assert( !empty());
-                return *value_cast()( guard_->get_as<guarded_type>() );
+                return *value_cast()( guard_->get_as<guarded_type>());
             }
 
             /// Returns const reference to guarded value
@@ -1384,7 +1384,7 @@ namespace cds { namespace gc {
         static void retire( T * p, void (* func)(void *))
         {
             dhp::thread_data* rec = dhp::smr::tls();
-            if ( !rec->retired_.push( dhp::retired_ptr( p, func ) ) )
+            if ( !rec->retired_.push( dhp::retired_ptr( p, func )) )
                 dhp::smr::instance().scan( rec );
         }
 
@@ -1456,7 +1456,7 @@ namespace cds { namespace gc {
         */
         static void scan()
         {
-            dhp::smr::instance().scan( dhp::smr::tls() );
+            dhp::smr::instance().scan( dhp::smr::tls());
         }
 
         /// Synonym for \p scan()

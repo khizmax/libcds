@@ -252,7 +252,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds ) ) == std::cv_status::no_timeout;
+                        bool ret = m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
                         m_wakeup = false;
                         return ret;
                     }
@@ -334,7 +334,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds ) ) == std::cv_status::no_timeout;
+                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
                         m_wakeup = false;
                         return ret;
                     }
@@ -411,7 +411,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds ) ) == std::cv_status::no_timeout;
+                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
                         rec.m_wakeup = false;
                         return ret;
                     }

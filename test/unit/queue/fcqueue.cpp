@@ -146,7 +146,7 @@ namespace {
 
             const int nSize = 100;
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // enqueue/dequeue
@@ -154,16 +154,16 @@ namespace {
                 ASSERT_TRUE( q.enqueue( value_type( i )));
                 ASSERT_EQ( q.size(), static_cast<size_t>( i + 1 ));
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), static_cast<size_t>( nSize ));
 
             for ( int i = 0; i < nSize; ++i ) {
                 it.value = -1;
-                ASSERT_TRUE( q.dequeue( it ) );
+                ASSERT_TRUE( q.dequeue( it ));
                 ASSERT_EQ( it.value, i );
                 ASSERT_EQ( q.size(), static_cast<size_t>( nSize - i - 1 ));
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // push/pop
@@ -171,39 +171,39 @@ namespace {
                 ASSERT_TRUE( q.push( value_type( i )));
                 ASSERT_EQ( q.size(), static_cast<size_t>( i + 1 ));
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), static_cast<size_t>( nSize ));
 
             for ( int i = 0; i < nSize; ++i ) {
                 it.value = -1;
-                ASSERT_TRUE( q.pop( it ) );
+                ASSERT_TRUE( q.pop( it ));
                 ASSERT_EQ( it.value, i );
                 ASSERT_EQ( q.size(), static_cast<size_t>( nSize - i - 1 ));
             }
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // clear
             for ( int i = 0; i < nSize; ++i ) {
                 ASSERT_TRUE( q.push( value_type( i )));
             }
-            ASSERT_FALSE( q.empty() );
+            ASSERT_FALSE( q.empty());
             ASSERT_EQ( q.size(), static_cast<size_t>( nSize ));
 
             q.clear();
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
             // pop from empty queue
             it = value_type( nSize * 2 );
-            ASSERT_FALSE( q.pop( it ) );
+            ASSERT_FALSE( q.pop( it ));
             ASSERT_EQ( it.value, nSize * 2 );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
 
-            ASSERT_FALSE( q.dequeue( it ) );
+            ASSERT_FALSE( q.dequeue( it ));
             ASSERT_EQ( it.value, nSize * 2 );
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
         }
 

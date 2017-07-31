@@ -200,9 +200,9 @@ namespace map {
     {
         return std::to_string( p.param );
     }
-    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors() ), get_test_parameter_name );
+    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors()), get_test_parameter_name );
 #else
-    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors() ) );
+    INSTANTIATE_TEST_CASE_P( a, Map_find_string_LF, ::testing::ValuesIn( Map_find_string::get_load_factors()) );
 #endif
 
 

@@ -276,7 +276,7 @@ namespace cds { namespace intrusive {
                 \p c_nUpperBound must be no more than 32.
             - <tt>random_generator()</tt> - the constructor of generator object initialises the generator instance (its internal state).
             - <tt>unsigned int operator()()</tt> - the main generating function. Returns random level from range <tt>[0 .. c_nUpperBound - 1]</tt>
-               
+
 
             Stateful generators are supported.
 
@@ -684,7 +684,7 @@ namespace cds { namespace intrusive {
             - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
                 or \p opt::v::sequential_consistent (sequentially consisnent memory model).
             - \p skip_list::random_level_generator - random level generator. Can be \p skip_list::xor_shift,
-                \p skip_list::turbo32 (the default) or user-provided one. 
+                \p skip_list::turbo32 (the default) or user-provided one.
                 See \p skip_list::random_level_generator option description for explanation.
             - \p opt::allocator - although the skip-list is an intrusive container,
                 an allocator should be provided to maintain variable randomly-calculated height of the node

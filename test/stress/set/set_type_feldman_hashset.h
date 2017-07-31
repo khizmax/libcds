@@ -47,7 +47,7 @@ namespace set {
     {
         typedef cc::FeldmanHashSet< GC, T, Traits > base_class;
 
-        
+
         template <typename GC2>
         struct get_extracted_ptr
         {

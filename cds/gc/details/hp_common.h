@@ -85,7 +85,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
         template <typename T>
         T* get_as() const noexcept
         {
-            return reinterpret_cast<T*>( get() );
+            return reinterpret_cast<T*>( get());
         }
 
         template <typename T>
@@ -130,7 +130,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
 
         guard* operator[]( size_t idx ) const noexcept
         {
-            assert( idx < capacity() );
+            assert( idx < capacity());
             return arr_[idx];
         }
 
@@ -145,7 +145,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
 
         void clear( size_t idx ) noexcept
         {
-            assert( idx < capacity() );
+            assert( idx < capacity());
             assert( arr_[idx] != nullptr );
 
             arr_[idx]->clear();
@@ -153,7 +153,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
 
         guard* release( size_t idx ) noexcept
         {
-            assert( idx < capacity() );
+            assert( idx < capacity());
 
             guard* g = arr_[idx];
             arr_[idx] = nullptr;
@@ -162,7 +162,7 @@ namespace cds { namespace gc { namespace hp { namespace common {
 
         void reset( size_t idx, guard* g ) noexcept
         {
-            assert( idx < capacity() );
+            assert( idx < capacity());
             assert( arr_[idx] == nullptr );
 
             arr_[idx] = g;

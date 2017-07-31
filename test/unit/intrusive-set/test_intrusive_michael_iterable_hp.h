@@ -155,14 +155,14 @@ namespace cds_test {
             // erase_at() test
             for ( auto& i : data ) {
                 i.nDisposeCount = 0;
-                ASSERT_TRUE( s.insert( i ) );
+                ASSERT_TRUE( s.insert( i ));
             }
 
             for ( auto it = s.begin(); it != s.end(); ++it ) {
                 EXPECT_TRUE( s.erase_at( it ));
                 EXPECT_FALSE( s.erase_at( it ));
             }
-            ASSERT_TRUE( s.empty() );
+            ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
 
             // Force retiring cycle

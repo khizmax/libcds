@@ -640,7 +640,7 @@ namespace cds { namespace intrusive {
         erase_at( Iterator const& iter )
 #endif
         {
-            assert( iter != end() );
+            assert( iter != end());
             assert( iter.bucket() != nullptr );
 
             if ( iter.bucket()->erase_at( iter.underlying_iterator())) {

@@ -251,11 +251,11 @@ namespace {
     }
     INSTANTIATE_TEST_CASE_P( SQ,
         segmented_queue_push,
-        ::testing::ValuesIn( segmented_queue_push::get_test_parameters() ), get_test_parameter_name );
+        ::testing::ValuesIn( segmented_queue_push::get_test_parameters()), get_test_parameter_name );
 #else
         INSTANTIATE_TEST_CASE_P( SQ,
             segmented_queue_push,
-            ::testing::ValuesIn( segmented_queue_push::get_test_parameters() ) );
+            ::testing::ValuesIn( segmented_queue_push::get_test_parameters()) );
 #endif
 
 

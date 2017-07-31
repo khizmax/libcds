@@ -425,7 +425,7 @@ namespace cds { namespace intrusive {
 
             scoped_resize_lock al( m_MutexPolicy );
             if ( al.success()) {
-                if ( nOldCapacity != bucket_count( atomics::memory_order_acquire ) ) {
+                if ( nOldCapacity != bucket_count( atomics::memory_order_acquire )) {
                     // someone resized already
                     return;
                 }
@@ -443,7 +443,7 @@ namespace cds { namespace intrusive {
             , m_nBucketMask( c_nMinimalCapacity - 1 )
             , m_MutexPolicy( c_nMinimalCapacity )
         {
-            alloc_bucket_table( bucket_count() );
+            alloc_bucket_table( bucket_count());
         }
 
         /// Ctor with initial capacity specified
@@ -452,9 +452,9 @@ namespace cds { namespace intrusive {
         )
             : m_Buckets( nullptr )
             , m_nBucketMask( calc_init_capacity(nCapacity) - 1 )
-            , m_MutexPolicy( bucket_count() )
+            , m_MutexPolicy( bucket_count())
         {
-            alloc_bucket_table( bucket_count() );
+            alloc_bucket_table( bucket_count());
         }
 
         /// Ctor with resizing policy (copy semantics)
@@ -467,10 +467,10 @@ namespace cds { namespace intrusive {
         )
         : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
-        , m_MutexPolicy( bucket_count() )
+        , m_MutexPolicy( bucket_count())
         , m_ResizingPolicy( resizingPolicy )
         {
-            alloc_bucket_table( bucket_count() );
+            alloc_bucket_table( bucket_count());
         }
 
         /// Ctor with resizing policy (move semantics)
@@ -484,16 +484,16 @@ namespace cds { namespace intrusive {
         )
         : m_Buckets( nullptr )
         , m_nBucketMask( ( nCapacity ? calc_init_capacity(nCapacity) : c_nMinimalCapacity ) - 1 )
-        , m_MutexPolicy( bucket_count() )
+        , m_MutexPolicy( bucket_count())
         , m_ResizingPolicy( std::forward<resizing_policy>( resizingPolicy ))
         {
-            alloc_bucket_table( bucket_count() );
+            alloc_bucket_table( bucket_count());
         }
 
         /// Destructor destroys internal data
         ~StripedSet()
         {
-            free_bucket_table( m_Buckets, bucket_count() );
+            free_bucket_table( m_Buckets, bucket_count());
         }
 
     public:

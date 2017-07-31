@@ -45,31 +45,31 @@ namespace {
 
             const size_t nSize = q.capacity();
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
             // enqueue/dequeue
             for ( unsigned pass = 0; pass < 3; ++pass ) {
                 for ( size_t i = 0; i < nSize; ++i ) {
-                    ASSERT_TRUE( q.enqueue( static_cast<value_type>( i ) ) );
+                    ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )) );
                     ASSERT_CONTAINER_SIZE( q, i + 1 );
                 }
-                ASSERT_FALSE( q.empty() );
+                ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, nSize );
-                ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ) );
+                ASSERT_FALSE( q.enqueue( static_cast<value_type>( nSize ) * 2 ));
 
                 for ( size_t i = 0; i < nSize; ++i ) {
                     value_type* fr = q.front();
                     ASSERT_TRUE( fr != nullptr );
-                    ASSERT_EQ( *fr, static_cast<value_type>( i ) );
-                    ASSERT_TRUE( q.pop_front() );
+                    ASSERT_EQ( *fr, static_cast<value_type>( i ));
+                    ASSERT_TRUE( q.pop_front());
                     ASSERT_CONTAINER_SIZE( q, nSize - i - 1 );
                 }
-                ASSERT_TRUE( q.empty() );
+                ASSERT_TRUE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, 0 );
 
                 ASSERT_TRUE( q.front() == nullptr );
-                ASSERT_FALSE( q.pop_front() );
+                ASSERT_FALSE( q.pop_front());
             }
         }
     };

@@ -148,9 +148,9 @@ namespace cds_test {
 
             // erase_at()
             for ( auto& i : data ) {
-                EXPECT_TRUE( s.insert( i ) );
+                EXPECT_TRUE( s.insert( i ));
             }
-            EXPECT_FALSE( s.empty() );
+            EXPECT_FALSE( s.empty());
             EXPECT_CONTAINER_SIZE( s, nSetSize );
 
             for ( auto it = s.begin(); it != s.end(); ++it ) {
@@ -158,7 +158,7 @@ namespace cds_test {
                 EXPECT_FALSE( s.erase_at( it ));
             }
 
-            EXPECT_TRUE( s.empty() );
+            EXPECT_TRUE( s.empty());
             EXPECT_CONTAINER_SIZE( s, 0 );
         }
 

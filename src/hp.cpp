@@ -63,12 +63,12 @@ namespace cds { namespace gc { namespace hp {
 
             static T* allocate( size_t nCount )
             {
-                return reinterpret_cast<T*>( s_alloc_memory( sizeof( value_type ) * nCount ) );
+                return reinterpret_cast<T*>( s_alloc_memory( sizeof( value_type ) * nCount ));
             }
 
             static void deallocate( T* p, size_t /*nCount*/ )
             {
-                s_free_memory( reinterpret_cast<void*>( p ) );
+                s_free_memory( reinterpret_cast<void*>( p ));
             }
         };
 
@@ -156,7 +156,7 @@ namespace cds { namespace gc { namespace hp {
         CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
         CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id();)
 
-        CDS_HPSTAT( statistics( s_postmortem_stat ) );
+        CDS_HPSTAT( statistics( s_postmortem_stat ));
 
         thread_record* pHead = thread_list_.load( atomics::memory_order_relaxed );
         thread_list_.store( nullptr, atomics::memory_order_release );
@@ -250,7 +250,7 @@ namespace cds { namespace gc { namespace hp {
         thread_record* pOldHead = thread_list_.load( atomics::memory_order_relaxed );
         do {
             hprec->m_pNextNode.store( pOldHead, atomics::memory_order_release );
-        } while ( !thread_list_.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_acquire ) );
+        } while ( !thread_list_.compare_exchange_weak( pOldHead, hprec, atomics::memory_order_release, atomics::memory_order_acquire ));
 
         return hprec;
     }
@@ -410,7 +410,7 @@ namespace cds { namespace gc { namespace hp {
         }
 
         // Sort plist to simplify search in
-        std::sort( plist.begin(), plist.end() );
+        std::sort( plist.begin(), plist.end());
 
         // Stage 2: Search plist
         retired_array& retired = pRec->retired_;
@@ -423,7 +423,7 @@ namespace cds { namespace gc { namespace hp {
             auto itEnd = plist.end();
             retired_ptr* insert_pos = first_retired;
             for ( retired_ptr* it = first_retired; it != last_retired; ++it ) {
-                if ( std::binary_search( itBegin, itEnd, first_retired->m_p ) ) {
+                if ( std::binary_search( itBegin, itEnd, first_retired->m_p )) {
                     if ( insert_pos != it )
                         *insert_pos = *it;
                     ++insert_pos;
@@ -440,7 +440,7 @@ namespace cds { namespace gc { namespace hp {
 
     CDS_EXPORT_API void smr::help_scan( thread_data* pThis )
     {
-        assert( static_cast<thread_record*>( pThis )->m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::get_current_thread_id() );
+        assert( static_cast<thread_record*>( pThis )->m_idOwner.load( atomics::memory_order_relaxed ) == cds::OS::get_current_thread_id());
 
         CDS_HPSTAT( ++pThis->help_scan_count_ );
 
@@ -460,7 +460,7 @@ namespace cds { namespace gc { namespace hp {
             {
                 cds::OS::ThreadId curOwner = hprec->m_idOwner.load( atomics::memory_order_relaxed );
                 if ( curOwner == nullThreadId ) {
-                    if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ) )
+                    if ( !hprec->m_idOwner.compare_exchange_strong( curOwner, curThreadId, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
                         continue;
                 }
                 else
@@ -471,7 +471,7 @@ namespace cds { namespace gc { namespace hp {
             // If it has ones then we move them to pThis that is private for current thread.
             retired_array& src = hprec->retired_;
             retired_array& dest = pThis->retired_;
-            assert( !dest.full() );
+            assert( !dest.full());
 
             retired_ptr* src_first = src.first();
             retired_ptr* src_last = src.last();
@@ -493,7 +493,7 @@ namespace cds { namespace gc { namespace hp {
     {
         st.clear();
 #   ifdef CDS_ENABLE_HPSTAT
-        for ( thread_record* hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ) )
+        for ( thread_record* hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->m_pNextNode.load( atomics::memory_order_relaxed ))
         {
             CDS_TSAN_ANNOTATE_IGNORE_READS_BEGIN;
             ++st.thread_rec_count;

@@ -32,7 +32,7 @@
 #include <cds/algo/atomic.h>
 #include "cxx11_convert_memory_order.h"
 
-#define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( x.is_lock_free() )
+#define EXPECT_ATOMIC_IS_LOCK_FREE( x ) EXPECT_TRUE( x.is_lock_free())
 
 namespace {
     class cxx11_atomic_class: public ::testing::Test

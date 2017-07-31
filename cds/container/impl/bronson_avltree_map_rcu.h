@@ -1349,7 +1349,7 @@ namespace cds { namespace container {
 
                     if ( !pChild ) {
                         // Found min/max
-                        if ( pNode->is_valued( memory_model::memory_order_acquire ) ) {
+                        if ( pNode->is_valued( memory_model::memory_order_acquire )) {
                             int result = try_remove_node( pParent, pNode, nVersion, func, disp );
 
                             if ( result == update_flags::result_removed )
@@ -1785,7 +1785,7 @@ namespace cds { namespace container {
 
                     int hLRL = height_null( child( pLRight, left_child, memory_model::memory_order_relaxed ), memory_model::memory_order_acquire );
                     int balance = hLL - hLRL;
-                    if ( balance >= -1 && balance <= 1 && !( ( hLL == 0 || hLRL == 0 ) && !pLeft->is_valued( memory_model::memory_order_relaxed ) ) ) {
+                    if ( balance >= -1 && balance <= 1 && !( ( hLL == 0 || hLRL == 0 ) && !pLeft->is_valued( memory_model::memory_order_relaxed )) ) {
                         // nParent.child.left won't be damaged after a double rotation
                         return rotate_right_over_left_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLRL );
                     }
@@ -1798,7 +1798,7 @@ namespace cds { namespace container {
                 // rotate right
                 return rotate_right_locked( pParent, pNode, pLeft, hR, hLL, pLRight, hLR );
             }
-            
+
             return pNode; // retry
         }
 
@@ -1840,7 +1840,7 @@ namespace cds { namespace container {
                     node_type * pRLRight = child( pRLeft, right_child, memory_model::memory_order_relaxed );
                     int hRLR = height_null( pRLRight, memory_model::memory_order_acquire );
                     int balance = hRR - hRLR;
-                    if ( balance >= -1 && balance <= 1 && !( ( hRR == 0 || hRLR == 0 ) && !pRight->is_valued( memory_model::memory_order_relaxed ) ) )
+                    if ( balance >= -1 && balance <= 1 && !( ( hRR == 0 || hRLR == 0 ) && !pRight->is_valued( memory_model::memory_order_relaxed )) )
                         return rotate_left_over_right_locked( pParent, pNode, hL, pRight, pRLeft, hRR, hRLR );
                 }
 

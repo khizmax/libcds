@@ -178,7 +178,7 @@ namespace cds {
                 assert( cds::beans::is_power2( nAlign ));
                 pointer p = reinterpret_cast<T *>( cds::OS::aligned_malloc( sizeof(T) * nCount, nAlign ));
                 if ( !p )
-                    CDS_THROW_EXCEPTION( std::bad_alloc() );
+                    CDS_THROW_EXCEPTION( std::bad_alloc());
                 assert( cds::details::is_aligned( p, nAlign ));
                 return p;
             }

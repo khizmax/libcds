@@ -141,13 +141,13 @@ namespace {
                             }
                         }
 
-                        if ( !m_Queue.pop_front() )
+                        if ( !m_Queue.pop_front())
                             ++m_nPopFrontFailed;
                     }
                     else {
                         ++m_nPopEmpty;
                         if ( s_nProducerDone.load() != 0 ) {
-                            if ( m_Queue.empty() )
+                            if ( m_Queue.empty())
                                 break;
                         }
                     }

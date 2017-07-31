@@ -116,7 +116,7 @@
 // double-width CAS support
 // note: gcc-4.8 does not support double-word atomics
 //       gcc-4.9: a lot of crashes when use DCAS
-//       gcc-7: 128-bit atomic is not lock-free, see https://gcc.gnu.org/ml/gcc/2017-01/msg00167.html 
+//       gcc-7: 128-bit atomic is not lock-free, see https://gcc.gnu.org/ml/gcc/2017-01/msg00167.html
 // You can manually suppress wide-atomic support by defining in compiler command line:
 //  for 64bit platform: -DCDS_DISABLE_128BIT_ATOMIC
 //  for 32bit platform: -DCDS_DISABLE_64BIT_ATOMIC

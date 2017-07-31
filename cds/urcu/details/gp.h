@@ -88,7 +88,7 @@ namespace cds { namespace urcu { namespace details {
         assert( (tmp & rcu_class::c_nNestMask) > 0 );
 
 #if CDS_COMPILER == CDS_COMPILER_CLANG && CDS_COMPILER_VERSION < 30800
-        // CLang 3.6-3.7: some tests of intrusive::FeldmanHashSet based on general-purpose RCU 
+        // CLang 3.6-3.7: some tests of intrusive::FeldmanHashSet based on general-purpose RCU
         // are failed even in single-threaded mode (unit tests) without magic compiler barrier below
         CDS_COMPILER_RW_BARRIER;
 #endif

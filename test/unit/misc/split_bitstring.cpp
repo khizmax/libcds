@@ -55,24 +55,24 @@ namespace {
             size_t res;
 
             // Trivial case
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut( sizeof( src ) * 8 );
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut( sizeof( src ) * 8 ), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             splitter.reset();
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut( sizeof( src ) * 8 );
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut( sizeof( src ) * 8 ), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             EXPECT_EQ( *splitter.source(), src );
@@ -154,24 +154,24 @@ namespace {
             size_t res;
 
             // Trivial case
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut( sizeof( src ) * 8 );
             ASSERT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut( sizeof( src ) * 8 ), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             splitter.reset();
-            ASSERT_FALSE( splitter.eos() );
+            ASSERT_FALSE( splitter.eos());
             ASSERT_FALSE( !splitter );
             res = splitter.cut( sizeof( src ) * 8 );
             EXPECT_EQ( res, src );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut( sizeof( src ) * 8 ), 0u );
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
 
             EXPECT_EQ( *splitter.source(), src );
@@ -212,7 +212,7 @@ namespace {
                     ASSERT_FALSE( !splitter );
                     if ( i % 8 == 0 )
                         res = res << 8;
-                    res |= ( splitter.cut( 1 ) ) << ( i % 8 );
+                    res |= ( splitter.cut( 1 )) << ( i % 8 );
                 }
                 ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
@@ -378,7 +378,7 @@ namespace {
                     ASSERT_FALSE( !splitter );
                     if ( i % 8 == 0 )
                         res = res << 8;
-                    res |= ( splitter.cut( 1 ) ) << ( i % 8 );
+                    res |= ( splitter.cut( 1 )) << ( i % 8 );
                 }
                 ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
@@ -455,24 +455,24 @@ namespace {
                 split_bitstring splitter( src );
 
                 // Trivial case
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 res = splitter.cut( int48_size * 8 );
-                EXPECT_EQ( res, src.to64() );
-                ASSERT_TRUE( splitter.eos() );
+                EXPECT_EQ( res, src.to64());
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( splitter.safe_cut( int48_size * 8 ), 0u );
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 splitter.reset();
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 res = splitter.cut( int48_size * 8 );
-                EXPECT_EQ( res, src.to64() );
-                ASSERT_TRUE( splitter.eos() );
+                EXPECT_EQ( res, src.to64());
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( splitter.safe_cut( int48_size * 8 ), 0u );
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
             }
 #endif
@@ -480,34 +480,34 @@ namespace {
             typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
             split_bitstring splitter( src );
 
-            EXPECT_EQ( splitter.source()->to64(), src.to64() );
+            EXPECT_EQ( splitter.source()->to64(), src.to64());
             EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
             EXPECT_EQ( splitter.bit_offset(), 0u );
 
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < int48_size * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 ASSERT_EQ( splitter.cut( 4 ), i );
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_FALSE( splitter );
             EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-            EXPECT_EQ( splitter.source()->to64(), src.to64() );
+            EXPECT_EQ( splitter.source()->to64(), src.to64());
             EXPECT_EQ( splitter.rest_count(), 0u );
             EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
 
             // by one bit
             {
                 splitter.reset();
-                EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                EXPECT_EQ( splitter.source()->to64(), src.to64());
                 EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
                 EXPECT_EQ( splitter.bit_offset(), 0u );
 
                 res = 0;
                 for ( size_t i = 0; i < int48_size * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
 #if CDS_BUILD_BITS == 64
                     res |= splitter.cut( 1 ) << i;
@@ -515,11 +515,11 @@ namespace {
                     res |= static_cast<decltype(res)>( splitter.cut( 1 )) << i;
 #endif
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
-                EXPECT_EQ( res, src.to64() );
+                EXPECT_EQ( res, src.to64());
                 EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-                EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                EXPECT_EQ( splitter.source()->to64(), src.to64());
                 EXPECT_EQ( splitter.rest_count(), 0u );
                 EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
             }
@@ -528,14 +528,14 @@ namespace {
             {
                 for ( size_t k = 0; k < 100; ++k ) {
                     splitter.reset();
-                    EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                    EXPECT_EQ( splitter.source()->to64(), src.to64());
                     EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
                     EXPECT_EQ( splitter.bit_offset(), 0u );
 
                     res = 0;
                     size_t shift = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         int bits = std::rand() % 16;
 #if CDS_BUILD_BITS == 64
@@ -545,11 +545,11 @@ namespace {
 #endif
                         shift += bits;
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
-                    EXPECT_EQ( res, src.to64() );
+                    EXPECT_EQ( res, src.to64());
                     EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-                    EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                    EXPECT_EQ( splitter.source()->to64(), src.to64());
                     EXPECT_EQ( splitter.rest_count(), 0u );
                     EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
                 }
@@ -570,24 +570,24 @@ namespace {
                 split_bitstring splitter( src );
 
                 // Trivial case
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 res = splitter.cut( int48_size * 8 );
-                ASSERT_EQ( res, src.to64() );
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_EQ( res, src.to64());
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( splitter.safe_cut( int48_size * 8 ), 0u );
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 splitter.reset();
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 res = splitter.cut( int48_size * 8 );
-                EXPECT_EQ( res, src.to64() );
-                ASSERT_TRUE( splitter.eos() );
+                EXPECT_EQ( res, src.to64());
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
                 EXPECT_EQ( splitter.safe_cut( int48_size * 8 ), 0u );
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
             }
 #endif
@@ -595,14 +595,14 @@ namespace {
             typedef cds::algo::split_bitstring< int48, int48_size, size_t > split_bitstring;
             split_bitstring splitter( src );
 
-            EXPECT_EQ( splitter.source()->to64(), src.to64() );
+            EXPECT_EQ( splitter.source()->to64(), src.to64());
             EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
             EXPECT_EQ( splitter.bit_offset(), 0u );
 
             // Cut each hex digit
             splitter.reset();
             for ( size_t i = 0; i < int48_size * 2; ++i ) {
-                ASSERT_FALSE( splitter.eos() );
+                ASSERT_FALSE( splitter.eos());
                 ASSERT_FALSE( !splitter );
                 if ( i % 2 == 0 ) {
                     EXPECT_EQ( splitter.cut( 4 ), 0x0A - i );
@@ -611,37 +611,37 @@ namespace {
                     EXPECT_EQ( splitter.cut( 4 ), 0x0B - i + 1 );
                 }
             }
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             ASSERT_TRUE( !splitter );
             EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-            EXPECT_EQ( splitter.source()->to64(), src.to64() );
+            EXPECT_EQ( splitter.source()->to64(), src.to64());
             EXPECT_EQ( splitter.rest_count(), 0u );
             EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
 
             // by one bit
             {
                 splitter.reset();
-                EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                EXPECT_EQ( splitter.source()->to64(), src.to64());
                 EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
                 EXPECT_EQ( splitter.bit_offset(), 0u );
 
                 res = 0;
                 for ( size_t i = 0; i < int48_size * 8; ++i ) {
-                    ASSERT_FALSE( splitter.eos() );
+                    ASSERT_FALSE( splitter.eos());
                     ASSERT_FALSE( !splitter );
 #if CDS_BUILD_BITS == 64
                     if ( i % 8 == 0 )
                         res = res << 8;
-                    res |= ( splitter.cut( 1 ) ) << ( i % 8 );
+                    res |= ( splitter.cut( 1 )) << ( i % 8 );
 #else
-                    res = ( res << 1 ) | static_cast<decltype(res)>( splitter.cut( 1 ) );
+                    res = ( res << 1 ) | static_cast<decltype(res)>( splitter.cut( 1 ));
 #endif
                 }
-                ASSERT_TRUE( splitter.eos() );
+                ASSERT_TRUE( splitter.eos());
                 ASSERT_TRUE( !splitter );
-                EXPECT_EQ( res, src.to64() );
+                EXPECT_EQ( res, src.to64());
                 EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-                EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                EXPECT_EQ( splitter.source()->to64(), src.to64());
                 EXPECT_EQ( splitter.rest_count(), 0u );
                 EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
             }
@@ -651,13 +651,13 @@ namespace {
             {
                 for ( size_t k = 0; k < 100; ++k ) {
                     splitter.reset();
-                    EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                    EXPECT_EQ( splitter.source()->to64(), src.to64());
                     EXPECT_EQ( splitter.rest_count(), int48_size * 8 );
                     EXPECT_EQ( splitter.bit_offset(), 0u );
 
                     res = 0;
                     while ( splitter ) {
-                        ASSERT_FALSE( splitter.eos() );
+                        ASSERT_FALSE( splitter.eos());
                         ASSERT_FALSE( !splitter );
                         unsigned bits = std::rand() % 16;
                         size_t shift = splitter.rest_count();
@@ -669,11 +669,11 @@ namespace {
                         res = ( res << shift ) | static_cast<decltype(res)>( splitter.safe_cut( bits ));
 #endif
                     }
-                    ASSERT_TRUE( splitter.eos() );
+                    ASSERT_TRUE( splitter.eos());
                     ASSERT_TRUE( !splitter );
-                    EXPECT_EQ( res, src.to64() );
+                    EXPECT_EQ( res, src.to64());
                     EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
-                    EXPECT_EQ( splitter.source()->to64(), src.to64() );
+                    EXPECT_EQ( splitter.source()->to64(), src.to64());
                     EXPECT_EQ( splitter.rest_count(), 0u );
                     EXPECT_EQ( splitter.bit_offset(), int48_size * 8 );
                 }
@@ -688,12 +688,12 @@ namespace {
             typedef cds::algo::byte_splitter< size_t > splitter_type;
             splitter_type splitter( src );
 
-            ASSERT_TRUE( !splitter.eos() );
+            ASSERT_TRUE( !splitter.eos());
             EXPECT_EQ( *splitter.source(), src );
             EXPECT_EQ( splitter.rest_count(), sizeof( src ) * 8 );
             EXPECT_EQ( splitter.bit_offset(), 0u );
-            EXPECT_TRUE( splitter.is_correct( 8 ) );
-            EXPECT_FALSE( splitter.is_correct( 4 ) );
+            EXPECT_TRUE( splitter.is_correct( 8 ));
+            EXPECT_FALSE( splitter.is_correct( 4 ));
 
             unsigned expected = 0x10;
             for ( unsigned i = 0; i < splitter_type::c_bitstring_size; ++i ) {
@@ -702,7 +702,7 @@ namespace {
                 expected += 0x22;
             }
 
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
             EXPECT_EQ( *splitter.source(), src );
             EXPECT_EQ( splitter.rest_count(), 0u );
@@ -716,12 +716,12 @@ namespace {
             typedef cds::algo::byte_splitter< size_t > splitter_type;
             splitter_type splitter( src );
 
-            ASSERT_TRUE( !splitter.eos() );
+            ASSERT_TRUE( !splitter.eos());
             EXPECT_EQ( *splitter.source(), src );
             EXPECT_EQ( splitter.rest_count(), sizeof( src ) * 8 );
             EXPECT_EQ( splitter.bit_offset(), 0u );
-            EXPECT_TRUE( splitter.is_correct( 8 ) );
-            EXPECT_FALSE( splitter.is_correct( 4 ) );
+            EXPECT_TRUE( splitter.is_correct( 8 ));
+            EXPECT_FALSE( splitter.is_correct( 4 ));
 
             unsigned expected = 0xFE;
             for ( unsigned i = 0; i < splitter_type::c_bitstring_size; ++i ) {
@@ -730,7 +730,7 @@ namespace {
                 expected -= 0x22;
             }
 
-            ASSERT_TRUE( splitter.eos() );
+            ASSERT_TRUE( splitter.eos());
             EXPECT_EQ( splitter.safe_cut( 8 ), 0u );
             EXPECT_EQ( *splitter.source(), src );
             EXPECT_EQ( splitter.rest_count(), 0u );
@@ -799,7 +799,7 @@ namespace {
 
     TEST_F( Split_bitstrig, cut_int48 )
     {
-        if ( is_big_endian() )
+        if ( is_big_endian())
             cut_int48_be();
         else
             cut_int48_le();
@@ -807,7 +807,7 @@ namespace {
 
     TEST_F( Split_bitstrig, cut_byte )
     {
-        if ( is_big_endian() )
+        if ( is_big_endian())
             cut_byte_be();
         else
             cut_byte_le();

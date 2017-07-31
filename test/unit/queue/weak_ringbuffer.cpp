@@ -58,27 +58,27 @@ namespace {
                             el[k] = static_cast<value_type>( i + k );
 
                         if ( i + nArrSize <= nSize ) {
-                            ASSERT_TRUE( q.push( el, nArrSize ) );
+                            ASSERT_TRUE( q.push( el, nArrSize ));
                         }
                         else {
-                            ASSERT_FALSE( q.push( el, nArrSize ) );
+                            ASSERT_FALSE( q.push( el, nArrSize ));
                         }
                     }
 
-                    ASSERT_TRUE( !q.empty() );
+                    ASSERT_TRUE( !q.empty());
                     if ( nSize % nArrSize != 0 ) {
-                        ASSERT_FALSE( q.full() );
+                        ASSERT_FALSE( q.full());
                         ASSERT_CONTAINER_SIZE( q, nArrCount * nArrSize );
                         for ( size_t i = nArrCount * nArrSize; i < nSize; ++i ) {
-                            ASSERT_TRUE( q.enqueue( static_cast<value_type>( i ) ) );
+                            ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )) );
                         }
                     }
-                    ASSERT_TRUE( q.full() );
+                    ASSERT_TRUE( q.full());
                     ASSERT_CONTAINER_SIZE( q, nSize );
 
                     // batch pop
                     value_type expected = 0;
-                    while ( q.pop( el, nArrSize ) ) {
+                    while ( q.pop( el, nArrSize )) {
                         for ( size_t i = 0; i < nArrSize; ++i ) {
                             ASSERT_EQ( el[i], expected );
                             ++expected;
@@ -86,15 +86,15 @@ namespace {
                     }
 
                     if ( nSize % nArrSize == 0 ) {
-                        ASSERT_TRUE( q.empty() );
+                        ASSERT_TRUE( q.empty());
                     }
                     else {
-                        ASSERT_FALSE( q.empty() );
+                        ASSERT_FALSE( q.empty());
                         ASSERT_CONTAINER_SIZE( q, nSize % nArrSize );
                         q.clear();
                     }
-                    ASSERT_TRUE( q.empty() );
-                    ASSERT_FALSE( q.full() );
+                    ASSERT_TRUE( q.empty());
+                    ASSERT_FALSE( q.full());
                     ASSERT_CONTAINER_SIZE( q, 0u );
                 }
             }
@@ -111,28 +111,28 @@ namespace {
                             el[k] = i + k;
 
                         if ( i + nArrSize <= nSize ) {
-                            ASSERT_TRUE( q.push( el, nArrSize, func_push ) );
+                            ASSERT_TRUE( q.push( el, nArrSize, func_push ));
                         }
                         else {
-                            ASSERT_FALSE( q.push( el, nArrSize, func_push ) );
+                            ASSERT_FALSE( q.push( el, nArrSize, func_push ));
                         }
                     }
 
-                    ASSERT_TRUE( !q.empty() );
+                    ASSERT_TRUE( !q.empty());
                     if ( nSize % nArrSize != 0 ) {
-                        ASSERT_FALSE( q.full() );
+                        ASSERT_FALSE( q.full());
                         ASSERT_CONTAINER_SIZE( q, nArrCount * nArrSize );
                         for ( size_t i = nArrCount * nArrSize; i < nSize; ++i ) {
-                            ASSERT_TRUE( q.push( &i, 1, func_push ) );
+                            ASSERT_TRUE( q.push( &i, 1, func_push ));
                         }
                     }
-                    ASSERT_TRUE( q.full() );
+                    ASSERT_TRUE( q.full());
                     ASSERT_CONTAINER_SIZE( q, nSize );
 
                     // batch pop with functor
                     auto func_pop = []( size_t& dest, value_type src ) { dest = static_cast<size_t>( src / 10 ); };
                     size_t expected = 0;
-                    while ( q.pop( el, nArrSize, func_pop ) ) {
+                    while ( q.pop( el, nArrSize, func_pop )) {
                         for ( size_t i = 0; i < nArrSize; ++i ) {
                             ASSERT_EQ( el[i], expected );
                             ++expected;
@@ -140,19 +140,19 @@ namespace {
                     }
 
                     if ( nSize % nArrSize == 0 ) {
-                        ASSERT_TRUE( q.empty() );
+                        ASSERT_TRUE( q.empty());
                     }
                     else {
-                        ASSERT_FALSE( q.empty() );
+                        ASSERT_FALSE( q.empty());
                         ASSERT_CONTAINER_SIZE( q, nSize % nArrSize );
                         size_t v;
-                        while ( q.pop( &v, 1, func_pop ) ) {
+                        while ( q.pop( &v, 1, func_pop )) {
                             ASSERT_EQ( v, expected );
                             ++expected;
                         }
                     }
-                    ASSERT_TRUE( q.empty() );
-                    ASSERT_FALSE( q.full() );
+                    ASSERT_TRUE( q.empty());
+                    ASSERT_FALSE( q.full());
                     ASSERT_CONTAINER_SIZE( q, 0u );
                 }
 
@@ -163,36 +163,36 @@ namespace {
                             el[k] = i + k;
 
                         if ( i + nArrSize <= nSize ) {
-                            ASSERT_TRUE( q.push( el, nArrSize, func_push ) );
+                            ASSERT_TRUE( q.push( el, nArrSize, func_push ));
                         }
                         else {
-                            ASSERT_FALSE( q.push( el, nArrSize, func_push ) );
+                            ASSERT_FALSE( q.push( el, nArrSize, func_push ));
                         }
                     }
 
-                    ASSERT_TRUE( !q.empty() );
+                    ASSERT_TRUE( !q.empty());
                     if ( nSize % nArrSize != 0 ) {
-                        ASSERT_FALSE( q.full() );
+                        ASSERT_FALSE( q.full());
                         ASSERT_CONTAINER_SIZE( q, nArrCount * nArrSize );
                         for ( size_t i = nArrCount * nArrSize; i < nSize; ++i ) {
-                            ASSERT_TRUE( q.push( &i, 1, func_push ) );
+                            ASSERT_TRUE( q.push( &i, 1, func_push ));
                         }
                     }
-                    ASSERT_TRUE( q.full() );
+                    ASSERT_TRUE( q.full());
                     ASSERT_CONTAINER_SIZE( q, nSize );
 
                     value_type cur = 0;
-                    while ( !q.empty() ) {
+                    while ( !q.empty()) {
                         value_type* front = q.front();
                         ASSERT_TRUE( front != nullptr );
                         ASSERT_EQ( cur, *front );
-                        ASSERT_TRUE( q.pop_front() );
+                        ASSERT_TRUE( q.pop_front());
                         cur += 10;
                     }
 
-                    ASSERT_TRUE( q.empty() );
+                    ASSERT_TRUE( q.empty());
                     ASSERT_TRUE( q.front() == nullptr );
-                    ASSERT_FALSE( q.pop_front() );
+                    ASSERT_FALSE( q.pop_front());
                 }
             }
         }
@@ -202,10 +202,10 @@ namespace {
         {
             size_t const capacity = q.capacity();
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
             ASSERT_TRUE( q.front().first == nullptr );
-            ASSERT_FALSE( q.pop_front() );
+            ASSERT_FALSE( q.pop_front());
 
             size_t total_push = 0;
             uint8_t chfill = 0;
@@ -227,14 +227,14 @@ namespace {
                 for ( size_t i = 0; i < pair.second; ++i )
                     ASSERT_EQ( *reinterpret_cast<uint8_t*>( pair.first ), chfill );
 
-                ASSERT_TRUE( q.pop_front() );
-                ASSERT_FALSE( q.pop_front() );
+                ASSERT_TRUE( q.pop_front());
+                ASSERT_FALSE( q.pop_front());
             }
 
-            ASSERT_TRUE( q.empty() );
+            ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
             ASSERT_TRUE( q.front().first == nullptr );
-            ASSERT_FALSE( q.pop_front() );
+            ASSERT_FALSE( q.pop_front());
         }
     };
 

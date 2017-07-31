@@ -599,7 +599,7 @@ namespace cds { namespace intrusive {
         }
         static void free_update_desc_void( void* pDesc )
         {
-            free_update_desc( reinterpret_cast<update_desc*>( pDesc ) );
+            free_update_desc( reinterpret_cast<update_desc*>( pDesc ));
         }
 
         class retired_list

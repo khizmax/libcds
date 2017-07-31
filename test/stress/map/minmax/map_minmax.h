@@ -80,7 +80,7 @@ namespace map {
                     m_arr.push_back( i );
                 for ( key_type i = keyMax - 10; i <= keyMax; ++i )
                     m_arr.push_back( i );
-                shuffle( m_arr.begin(), m_arr.end() );
+                shuffle( m_arr.begin(), m_arr.end());
             }
 
         public:
@@ -118,7 +118,7 @@ namespace map {
 
                 for ( size_t nPass = 0; nPass < s_nPassCount; ++nPass ) {
                     for ( key_type key : m_arr ) {
-                        if ( m_Map.insert( key, key ) ) {
+                        if ( m_Map.insert( key, key )) {
                             if ( key == keyMin )
                                 ++m_nInsertMinSuccess;
                             else if ( key == keyMax )
@@ -301,7 +301,7 @@ namespace map {
                 arr.resize( s_nMapSize );
                 for ( int i = 0; i < static_cast<int>( s_nMapSize ); ++i )
                     arr[i] = i;;
-                shuffle( arr.begin(), arr.end() );
+                shuffle( arr.begin(), arr.end());
 
                 for ( key_type key : arr )
                     testMap.insert( key, key );
