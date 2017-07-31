@@ -1,4 +1,4 @@
-2.3.0
+2.3.0 31.07.2017
     General release
     - Changed: cds::gc::HP is totally refactored:
         - simplified internal structures;
@@ -33,6 +33,8 @@
       N is 1 or 2.
     - Changed: refactoring cds::backoff::exponential and cds::backoff::delay
       back-off strategies to avoid static data members in template classes. 
+    - The library is extensively tested on x86-64, PowerPC and AArch64,
+      thanks to GCC Compile Farm project
  
 2.2.0 04.01.2017
     General release
