@@ -398,7 +398,7 @@ namespace cds { namespace gc {
                 retired_block* block = retired_allocator::instance().alloc();
                 assert( block->next_ == nullptr );
 
-                list_tail_ = list_tail_->next_ = block;
+                current_block_ = list_tail_ = list_tail_->next_ = block;
                 current_cell_ = block->first();
                 ++block_count_;
                 CDS_HPSTAT( ++extend_call_count_ );

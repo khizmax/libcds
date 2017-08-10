@@ -1,4 +1,6 @@
 2.4.0
+    - issue #81: bug in gc::DHP when extending thread's retired array,
+      thanks to gtroxler (https://github.com/gtroxler)
 
 2.3.0 31.07.2017
     General release
