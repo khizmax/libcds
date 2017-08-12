@@ -232,7 +232,6 @@ namespace cds { namespace urcu {
         bool synchronize( epoch_retired_ptr& ep )
         {
             uint64_t nEpoch;
-            atomics::atomic_thread_fence( atomics::memory_order_acquire );
             {
                 std::unique_lock<lock_type> sl( m_Lock );
                 if ( ep.m_p && m_Buffer.push( ep ) && m_Buffer.size() < capacity())
