@@ -685,7 +685,7 @@ namespace cds { namespace gc {
 
         %DHP is an adaptive variant of classic \p cds::gc::HP, see @ref cds_garbage_collectors_comparison "Compare HP implementation"
 
-        @note: Internally, %DHP depends on free-list implementation. There are
+        @note Internally, %DHP depends on free-list implementation. There are
         DCAS-based free-list \p cds::intrusive::TaggedFreeList and more complicated CAS-based free-list
         \p cds::intrusive::FreeList. For x86 architecture and GCC/clang, libcds selects appropriate free-list 
         based on \p -mcx16 compiler flag. You may manually disable DCAS support specifying

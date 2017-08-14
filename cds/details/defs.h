@@ -175,6 +175,7 @@
    in GCC/clang (for MS VC++ compiler DCAS is not supported):
    - \p -DCDS_DISABLE_128BIT_ATOMIC - for 64bit build
    - \p -DCDS_DISABLE_64BIT_ATOMIC - for 32bit build
+
    @warning All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.
 
    \par Windows build
