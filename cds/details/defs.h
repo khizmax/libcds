@@ -169,6 +169,14 @@
    - \p boost.thread (thread-loal storage support), boost.system
    - \p google-test
 
+   Some parts of libcds may depend on DCAS (double-width compare-and-swap) atomic primitive if
+   the target architecture supports it. For x86, cmake build script enables -mcx16 compiler flag that
+   switches DCAS support on. You may manually disable DCAS support with the following  command line flags
+   in GCC/clang (for MS VC++ compiler DCAS is not supported):
+   - \p -DCDS_DISABLE_128BIT_ATOMIC - for 64bit build
+   - \p -DCDS_DISABLE_64BIT_ATOMIC - for 32bit build
+   @warning All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.
+
    \par Windows build
 
    Prerequisites: for building <b>cds</b> library and test suite you need:

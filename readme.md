@@ -46,6 +46,16 @@ Evolution of libcds (Gource visualization by Landon Wilkins): https://www.youtub
    - *nix: [use CMake](build/cmake/readme.md)
    - Windows: use MS Visual C++ 2015 project
 
+Some parts of libcds may depend on DCAS (double-width compare-and-swap) atomic primitive if
+the target architecture supports it. For x86, cmake build script enables `-mcx16` compiler flag that
+switches DCAS support on. You may manually disable DCAS support with the following command line flags
+in GCC/clang (for MS VC++ compiler DCAS is not supported):
+  - `-DCDS_DISABLE_128BIT_ATOMIC` - for 64bit build
+  - `-DCDS_DISABLE_64BIT_ATOMIC` - for 32bit build
+
+**All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.**
+   
+   
 **Pull request requirements**
 - Pull-request to *master* branch will be unconditionally rejected
 - *integration* branch is intended for pull-request. Usually, *integration* branch is the same as *master*

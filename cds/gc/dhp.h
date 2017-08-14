@@ -685,6 +685,15 @@ namespace cds { namespace gc {
 
         %DHP is an adaptive variant of classic \p cds::gc::HP, see @ref cds_garbage_collectors_comparison "Compare HP implementation"
 
+        @note: Internally, %DHP depends on free-list implementation. There are
+        DCAS-based free-list \p cds::intrusive::TaggedFreeList and more complicated CAS-based free-list
+        \p cds::intrusive::FreeList. For x86 architecture and GCC/clang, libcds selects appropriate free-list 
+        based on \p -mcx16 compiler flag. You may manually disable DCAS support specifying
+        \p -DCDS_DISABLE_128BIT_ATOMIC for 64bit build or \p -DCDS_DISABLE_64BIT_ATOMIC for 32bit build
+        in compiler command line. All your projects and libcds MUST be compiled with the same flags -
+        either with DCAS support or without it.
+        For MS VC++ compiler DCAS is not supported.
+
         See \ref cds_how_to_use "How to use" section for details how to apply SMR.
     */
     class DHP
