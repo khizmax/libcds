@@ -108,16 +108,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     if(cxx_std_found)
         message("C++ std: ${cxx_std_found}")
     else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+        list(APPEND LIBCDS_PUBLIC_CXX_FLAGS "-std=c++11")
         message("C++ std: -std=c++11 (default)")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -fno-strict-aliasing")
+    list(APPEND LIBCDS_PUBLIC_CXX_FLAGS "-fno-strict-aliasing")
+    list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wall" "-Wextra" "-pedantic")
 
     if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcx16")
+        list(APPEND LIBCDS_PUBLIC_CXX_FLAGS "-mcx16")
         set(LIB_SUFFIX "64")
-        
+
         # GCC-7: 128-bit atomics support is implemented via libatomic on amd64
         #        see https://gcc.gnu.org/ml/gcc/2017-01/msg00167.html
         # Maybe, it will be changed in future
@@ -125,10 +126,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -latomic")
         endif()
     endif()
-    
+
     if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
         #   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")
+        list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wno-unused-local-typedefs")
     endif()
 endif()
 
@@ -139,9 +140,9 @@ message("Compiler version: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION
 message("System: ${CMAKE_SYSTEM_NAME} version: ${CMAKE_SYSTEM_VERSION}")
 message("Target architecture: ${CMAKE_TARGET_ARCHITECTURE}")
 if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} ${LIBCDS_PUBLIC_CXX_FLAGS} ${LIBCDS_PRIVATE_CXX_FLAGS}")
 else()
-    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+    message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${LIBCDS_PUBLIC_CXX_FLAGS} ${LIBCDS_PRIVATE_CXX_FLAGS}")
 endif()
 message("Exe flags: ${CMAKE_EXE_LINKER_FLAGS}")
 
@@ -154,8 +155,6 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
     set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
 endif()
-
-include_directories(${PROJECT_SOURCE_DIR})
 
 # Component names for separate distribution in rpms, debs etc.
 set(LIBRARIES_COMPONENT lib)
@@ -179,10 +178,19 @@ add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
 target_link_libraries(${CDS_SHARED_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(${CDS_STATIC_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+target_include_directories(${CDS_SHARED_LIBRARY} INTERFACE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+                                                            $<INSTALL_INTERFACE:include>)
+target_include_directories(${CDS_STATIC_LIBRARY} INTERFACE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+                                                            $<INSTALL_INTERFACE:include>)
+target_compile_options(${CDS_SHARED_LIBRARY} PUBLIC "${LIBCDS_PUBLIC_CXX_FLAGS}")
+target_compile_options(${CDS_STATIC_LIBRARY} PUBLIC "${LIBCDS_PUBLIC_CXX_FLAGS}")
+target_compile_options(${CDS_SHARED_LIBRARY} PRIVATE "${LIBCDS_PRIVATE_CXX_FLAGS}")
+target_compile_options(${CDS_STATIC_LIBRARY} PRIVATE "${LIBCDS_PRIVATE_CXX_FLAGS}")
 
-install(TARGETS ${CDS_SHARED_LIBRARY} LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIBRARIES_COMPONENT} NAMELINK_SKIP)
-install(TARGETS ${CDS_SHARED_LIBRARY} LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${HEADERS_COMPONENT} NAMELINK_ONLY)
-install(TARGETS ${CDS_STATIC_LIBRARY} DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIBRARIES_COMPONENT})
+install(TARGETS ${CDS_SHARED_LIBRARY} EXPORT LibCDSConfig LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIBRARIES_COMPONENT} NAMELINK_SKIP)
+install(TARGETS ${CDS_SHARED_LIBRARY} EXPORT LibCDSConfig LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${HEADERS_COMPONENT} NAMELINK_ONLY)
+install(TARGETS ${CDS_STATIC_LIBRARY} EXPORT LibCDSConfig DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIBRARIES_COMPONENT})
+install(EXPORT LibCDSConfig FILE LibCDSConfig.cmake NAMESPACE LibCDS:: DESTINATION lib/cmake/LibCDS)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/cds DESTINATION include COMPONENT ${HEADERS_COMPONENT})
 
 if(WITH_TESTS)
