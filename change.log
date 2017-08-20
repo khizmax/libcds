@@ -6,7 +6,7 @@
         find_package(LibCDS)
         add_library(mylib INTERFACE)
         target_link_libraries(mylib INTERFACE LibCDS::cds)
-      Thansk to Louis Dionne (https://github.com/ldionne
+      Thansk to Louis Dionne (https://github.com/ldionne)
 
 2.3.0 31.07.2017
     General release
