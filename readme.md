@@ -24,7 +24,7 @@ The library contains the implementations of the following containers:
   - several algo for lock-free queue, including classic Michael & Scott algorithm and its derivatives,
     the flat combining queue, the segmented queue.
   - several implementation of unordered set/map - lock-free and fine-grained lock-based
-  - [flat-combining] (http://mcg.cs.tau.ac.il/projects/projects/flat-combining) technique
+  - [flat-combining](http://mcg.cs.tau.ac.il/projects/projects/flat-combining) technique
   - lock-free [skip-list](http://en.wikipedia.org/wiki/Skip_list)
   - lock-free FeldmanHashMap/Set [Multi-Level Array Hash](http://samos-conference.com/Resources_Samos_Websites/Proceedings_Repository_SAMOS/2013/Files/2013-IC-20.pdf)
     with thread-safe bidirectional iterator support
