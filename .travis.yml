@@ -1,44 +1,106 @@
-
+dist: trusty
 language: cpp
-compiler: g++
-#  - gcc
-#  - clang
 
+dist: trusty
 before_install:
-    - export LIBCDS_BUILD_DIR=`pwd`
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    - sudo apt-get update -qq
-    - export GCC_VERSION=4.9
-    - export BOOST_VERSION=57
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgtest-dev
+  - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
+  - sudo tar xf release-1.7.0.tar.gz
+  - cd googletest-release-1.7.0
+  - sudo cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER .
+  - sudo make
+  - sudo cp -a include/gtest /usr/include
+  - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
+  - cd "${TRAVIS_BUILD_DIR}"
 
-install:
-    - sudo apt-get install -qq g++-${GCC_VERSION}
-    - export CXX="g++-${GCC_VERSION}"
-    - wget -O boost_1_${BOOST_VERSION}_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.0/boost_1_${BOOST_VERSION}_0.tar.bz2/download
-    - tar xjf boost_1_${BOOST_VERSION}_0.tar.bz2
-    - cd boost_1_${BOOST_VERSION}_0
-    - ./bootstrap.sh
-    - ./b2 --with-thread --with-atomic --with-date_time --with-system --with-timer --stagedir=stage64 --toolset=gcc-${GCC_VERSION} address-model=64
-    - cd ..
+script:
+  - mkdir build-test && cd build-test
+  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DCMAKE_EXE_LINKER_FLAGS=$LINKER_FLAGS -DWITH_TESTS=ON ..
+  - cmake --build . -- -j$(nproc --all) $TARGET
+  - ctest -R $TARGET
 
-before_script: cd ./build
+env:
+##   BUILD_TYPE=Release CXX_COMPILER=g++-6
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-deque
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-ilist
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-list
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-map
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-misc
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-pqueue
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-queue
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-set
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-striped-set
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-stack
+  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-tree
 
-script: ./build.sh -b 64 -j 2 -x ${CXX} -z '-Wall -Wextra -pedantic -Wno-unused-local-typedefs' --with-boost ../boost_1_${BOOST_VERSION}_0 -t test_hdr
+##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-deque
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-ilist
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-list
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-map
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-misc
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-pqueue
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-queue
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-set
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-striped-set
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-stack
+  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-tree
 
-#after_success:
+##   BUILD_TYPE=Release CXX_COMPILER=clang-5.0
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-deque
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-ilist
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-list
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-misc LINKER_FLAGS=-latomic
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-pqueue
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-queue
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-striped-set
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-stack
+# FIXME: building too long. Travis-ci will stop building.
+#  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-map
+#  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-iset
+#  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-tree
 
-#after_failure:
 
-after_script: cd ..
+##   BUILD_TYPE=Debug CXX_COMPILER=clang-5.0
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-deque
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-ilist
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-list
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-map
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-misc LINKER_FLAGS=-latomic
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-pqueue
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-queue
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-iset
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-striped-set
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-stack
+  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-tree
 
-# blacklist
-#branches:
-#  except:
-#    - integration
 
-# whitelist
-branches:
-  only:
-    - master
-    - dev
-    - integration
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-5.0
+    packages:
+      - libboost-all-dev
+      - clang-5.0
+      - g++-6
+
+#matrix:
+#  include:
+#    - os: osx
+#      osx_image: xcode8
+#      env: BUILD_TYPE=Debug
+#    - os: osx
+#      osx_image: xcode8.2
+#      env: BUILD_TYPE=Debug
+#    - os: osx
+#      osx_image: xcode8
+#      env: BUILD_TYPE=Release
+#    - os: osx
+#      osx_image: xcode8.2
+#      env: BUILD_TYPE=Release
