@@ -127,7 +127,7 @@ add_custom_target( unit-set
         ${UNIT_SET_MICHAEL}
         ${UNIT_SET_MICHAEL_ITERABLE}
         ${UNIT_SET_MICHAEL_LAZY}
-        ${UNIT_SET_SKIP_LIST}
+        ${UNIT_SET_SKIP}
         ${UNIT_SET_SPLIT_MICHAEL}
         ${UNIT_SET_SPLIT_ITERABLE}
         ${UNIT_SET_SPLIT_LAZY}
