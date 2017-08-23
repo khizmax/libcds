@@ -130,7 +130,7 @@ add_custom_target( unit-iset
         ${UNIT_ISET_MICHAEL}
         ${UNIT_ISET_MICHAEL_ITERABLE}
         ${UNIT_ISET_MICHAEL_LAZY}
-        ${UNIT_ISET_SKIP_LIST}
+        ${UNIT_ISET_SKIP}
         ${UNIT_ISET_SPLIT_MICHAEL}
         ${UNIT_ISET_SPLIT_ITERABLE}
         ${UNIT_ISET_SPLIT_LAZY}
