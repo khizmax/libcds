@@ -56,7 +56,15 @@ env:
   - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-misc LINKER_FLAGS=-latomic
   - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-pqueue
   - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-queue
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
+#  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-feldman
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael-iterable
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael-lazy
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-skip
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-iterable
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-michael
+  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-lazy
   - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-striped-set
   - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-stack
 # FIXME: building too long. Travis-ci will stop building.
