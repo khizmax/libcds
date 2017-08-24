@@ -19,7 +19,7 @@ target_link_libraries(${UNIT_SET_FELDMAN} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_SET_FELDMAN} COMMAND ${UNIT_SET_FELDMAN} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # MichaelSet<MichaelList>
-set(UNIT_SET_MICHAEL unit-set-michael)
+set(UNIT_SET_MICHAEL unit-set-michael-michael)
 set(UNIT_SET_MICHAEL_SOURCES
     ../main.cpp
     michael_michael_hp.cpp
