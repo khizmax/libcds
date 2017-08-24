@@ -21,7 +21,7 @@ target_link_libraries(${UNIT_ISET_FELDMAN} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_ISET_FELDMAN} COMMAND ${UNIT_ISET_FELDMAN} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # intrusive::MichaelHashSet<MichaelList>
-set(UNIT_ISET_MICHAEL unit-iset-michael)
+set(UNIT_ISET_MICHAEL unit-iset-michael-michael)
 set(UNIT_ISET_MICHAEL_SOURCES
     ../main.cpp
     intrusive_michael_michael_hp.cpp
