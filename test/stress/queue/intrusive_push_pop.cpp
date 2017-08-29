@@ -522,7 +522,7 @@ namespace {
 #else
     INSTANTIATE_TEST_CASE_P( SQ,
         intrusive_segmented_queue_push_pop,
-        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters()) );
+        ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters()));
 #endif
 
 

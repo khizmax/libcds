@@ -51,7 +51,7 @@ namespace {
             // enqueue/dequeue
             for ( unsigned pass = 0; pass < 3; ++pass ) {
                 for ( size_t i = 0; i < nSize; ++i ) {
-                    ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )) );
+                    ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )));
                     ASSERT_CONTAINER_SIZE( q, i + 1 );
                 }
                 ASSERT_FALSE( q.empty());

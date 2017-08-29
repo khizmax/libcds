@@ -687,7 +687,7 @@ namespace cds { namespace gc {
 
         @note Internally, %DHP depends on free-list implementation. There are
         DCAS-based free-list \p cds::intrusive::TaggedFreeList and more complicated CAS-based free-list
-        \p cds::intrusive::FreeList. For x86 architecture and GCC/clang, libcds selects appropriate free-list 
+        \p cds::intrusive::FreeList. For x86 architecture and GCC/clang, libcds selects appropriate free-list
         based on \p -mcx16 compiler flag. You may manually disable DCAS support specifying
         \p -DCDS_DISABLE_128BIT_ATOMIC for 64bit build or \p -DCDS_DISABLE_64BIT_ATOMIC for 32bit build
         in compiler command line. All your projects and libcds MUST be compiled with the same flags -
@@ -1393,7 +1393,7 @@ namespace cds { namespace gc {
         static void retire( T * p, void (* func)(void *))
         {
             dhp::thread_data* rec = dhp::smr::tls();
-            if ( !rec->retired_.push( dhp::retired_ptr( p, func )) )
+            if ( !rec->retired_.push( dhp::retired_ptr( p, func )))
                 dhp::smr::instance().scan( rec );
         }
 

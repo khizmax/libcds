@@ -118,7 +118,7 @@ namespace cds { namespace gc { namespace dhp {
 
     CDS_EXPORT_API retired_allocator::~retired_allocator()
     {
-        while ( retired_block* rb = static_cast<retired_block*>( free_list_.get()) ) {
+        while ( retired_block* rb = static_cast<retired_block*>( free_list_.get())) {
             rb->~retired_block();
             s_free_memory( rb );
         }

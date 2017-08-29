@@ -70,7 +70,7 @@ namespace {
                         ASSERT_FALSE( q.full());
                         ASSERT_CONTAINER_SIZE( q, nArrCount * nArrSize );
                         for ( size_t i = nArrCount * nArrSize; i < nSize; ++i ) {
-                            ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )) );
+                            ASSERT_TRUE( q.enqueue( static_cast<value_type>( i )));
                         }
                     }
                     ASSERT_TRUE( q.full());

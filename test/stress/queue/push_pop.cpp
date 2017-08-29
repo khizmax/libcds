@@ -434,7 +434,7 @@ namespace {
 #else
     INSTANTIATE_TEST_CASE_P( SQ,
         segmented_queue_push_pop,
-        ::testing::ValuesIn( segmented_queue_push_pop::get_test_parameters()) );
+        ::testing::ValuesIn( segmented_queue_push_pop::get_test_parameters()));
 #endif
 
 } // namespace

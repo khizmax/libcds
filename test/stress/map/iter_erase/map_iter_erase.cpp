@@ -111,7 +111,7 @@ namespace map {
     }
     INSTANTIATE_TEST_CASE_P( a, Map_Iter_Del3_LF, ::testing::ValuesIn( Map_Iter_Del3_LF::get_load_factors()), get_test_parameter_name );
 #else
-    INSTANTIATE_TEST_CASE_P( a, Map_Iter_Del3_LF, ::testing::ValuesIn( Map_Iter_Del3_LF::get_load_factors()) );
+    INSTANTIATE_TEST_CASE_P( a, Map_Iter_Del3_LF, ::testing::ValuesIn( Map_Iter_Del3_LF::get_load_factors()));
 #endif
 
 } // namespace map

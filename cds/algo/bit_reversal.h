@@ -54,8 +54,8 @@ namespace cds { namespace algo {
             /// 64bit
             uint64_t operator()( uint64_t x ) const
             {
-                return ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x )) ) << 32 )  // low 32bit
-                    | ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x >> 32 )) ));  // high 32bit
+                return ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x ))) << 32 )  // low 32bit
+                    | ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x >> 32 ))));  // high 32bit
             }
         };
 
@@ -93,8 +93,8 @@ namespace cds { namespace algo {
             /// 64bit
             uint64_t operator()( uint64_t x ) const
             {
-                return ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x )) ) << 32 ) |
-                    static_cast<uint64_t>( operator()( static_cast<uint32_t>( x >> 32 )) );
+                return ( static_cast<uint64_t>( operator()( static_cast<uint32_t>( x ))) << 32 ) |
+                    static_cast<uint64_t>( operator()( static_cast<uint32_t>( x >> 32 )));
             }
         };
 
@@ -117,43 +117,43 @@ namespace cds { namespace algo {
             // for 32bit architecture
             static uint32_t muldiv32( uint32_t x )
             {
-                return static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 24 )) )
-                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 16 )) ) << 8 )
-                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 8 )) ) << 16 )
-                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x )) ) << 24 );
+                return static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 24 )))
+                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 16 ))) << 8 )
+                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x >> 8 ))) << 16 )
+                    | ( static_cast<uint32_t>( muldiv32_byte( static_cast<uint8_t>( x ))) << 24 );
             }
 
             static uint64_t muldiv32( uint64_t x )
             {
-                return static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 56 )) )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 48 )) ) << 8 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 40 )) ) << 16 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 32 )) ) << 24 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 24 )) ) << 32 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 16 )) ) << 40 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 8 )) ) << 48 )
-                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x )) ) << 56 );
+                return static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 56 )))
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 48 ))) << 8 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 40 ))) << 16 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 32 ))) << 24 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 24 ))) << 32 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 16 ))) << 40 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x >> 8 ))) << 48 )
+                    | ( static_cast<uint64_t>( muldiv32_byte( static_cast<uint8_t>( x ))) << 56 );
             }
 
             /// for 64bit architectire
             static uint32_t muldiv64( uint32_t x )
             {
-                return static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 24 )) )
-                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 16 )) ) << 8 )
-                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 8 )) ) << 16 )
-                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x )) ) << 24 );
+                return static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 24 )))
+                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 16 ))) << 8 )
+                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x >> 8 ))) << 16 )
+                    | ( static_cast<uint32_t>( muldiv64_byte( static_cast<uint8_t>( x ))) << 24 );
             }
 
             static uint64_t muldiv64( uint64_t x )
             {
-                return static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 56 )) )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 48 )) ) << 8 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 40 )) ) << 16 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 32 )) ) << 24 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 24 )) ) << 32 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 16 )) ) << 40 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 8 )) ) << 48 )
-                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x )) ) << 56 );
+                return static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 56 )))
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 48 ))) << 8 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 40 ))) << 16 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 32 ))) << 24 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 24 ))) << 32 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 16 ))) << 40 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x >> 8 ))) << 48 )
+                    | ( static_cast<uint64_t>( muldiv64_byte( static_cast<uint8_t>( x ))) << 56 );
             }
             //@endcond
 
