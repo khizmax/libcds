@@ -1,3 +1,5 @@
+2.4.0
+
 2.3.1 01.09.2017
     Maintenance release
     - issue #81: bug in gc::DHP when extending thread's retired array,
