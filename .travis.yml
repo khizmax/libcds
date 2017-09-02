@@ -22,59 +22,57 @@ script:
 
 env:
 ##   BUILD_TYPE=Release CXX_COMPILER=g++-6
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-deque
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-ilist
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-list
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-map
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-misc
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-pqueue
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-queue
-#  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-feldman
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-michael-michael
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-michael-lazy
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-michael-iterable
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-skip
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-split-michael
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-split-lazy
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset-split-iterable
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-set
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-striped-set
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-stack
-  - BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-tree
+  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-map BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-feldman BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-michael-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-michael-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-michael-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-skip BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-split-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-split-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset-split-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-tree BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
 
 ##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-deque
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-ilist
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-list
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-map
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-misc
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-pqueue
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-queue
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-iset
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-set
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-striped-set
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-stack
-  - BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6 TARGET=unit-tree
+  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
 
 ##   BUILD_TYPE=Release CXX_COMPILER=clang-5.0
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-deque
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-ilist
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-list
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-misc LINKER_FLAGS=-latomic
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-pqueue
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-queue
-#  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-feldman
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael-michael
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael-iterable
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-michael-lazy
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-skip
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-iterable
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-michael
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set-split-lazy
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-striped-set
-  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-stack
+  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 LINKER_FLAGS=-latomic
+  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-feldman BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-michael-michael BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-michael-iterable BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-michael-lazy BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-skip BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-split-iterable BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-split-michael BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set-split-lazy BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
 # FIXME: building too long. Travis-ci will stop building.
 #  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-map
 #  - BUILD_TYPE=Release C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-iset
@@ -82,18 +80,18 @@ env:
 
 
 ##   BUILD_TYPE=Debug CXX_COMPILER=clang-5.0
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-deque
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-ilist
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-list
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-map
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-misc LINKER_FLAGS=-latomic
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-pqueue
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-queue
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-iset
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-set
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-striped-set
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-stack
-  - BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET=unit-tree
+  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 LINKER_FLAGS=-latomic
+  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
 
 
 addons:
