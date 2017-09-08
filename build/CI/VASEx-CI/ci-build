@@ -11,52 +11,57 @@ env|sort
 case "$TOOLSET" in
     "x64-gcc-4.8")
 	echo "GCC-4.8 '$BUILD_TYPE', toolset root: $GCC48_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.8-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.8-64 $*
 	exit $?
 	;;
     "x64-gcc-4.9")
 	echo "GCC-4.9 '$BUILD_TYPE', toolset root: $GCC49_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.9-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-4.9-64 $*
 	exit $?
 	;;
     "x64-gcc-5")
 	echo "GCC-5 '$BUILD_TYPE', toolset root: $GCC5_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-5-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-5-64 $*
 	exit $?
 	;;
     "x64-gcc-6")
 	echo "GCC-6 '$BUILD_TYPE', toolset root: $GCC6_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-6-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-6-64 $*
 	exit $?
 	;;
     "x64-gcc-7")
 	echo "GCC-7 '$BUILD_TYPE', toolset root: $GCC7_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-7-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-7-64 $*
 	exit $?
 	;;
     "x64-clang-3.6")
 	echo "clang-3.6 '$BUILD_TYPE', toolset root: $CLANG36_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.6-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.6-64 $*
 	exit $?
 	;;
     "x64-clang-3.7")
 	echo "clang-3.7 '$BUILD_TYPE', toolset root: $CLANG37_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.7-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.7-64 $*
 	exit $?
 	;;
     "x64-clang-3.8")
 	echo "clang-3.8 '$BUILD_TYPE', toolset root: $CLANG38_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.8-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.8-64 $*
 	exit $?
 	;;
     "x64-clang-3.9")
 	echo "clang-3.9 '$BUILD_TYPE', toolset root: $CLANG39_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.9-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.9-64 $*
 	exit $?
 	;;
     "x64-clang-4")
 	echo "clang-4 '$BUILD_TYPE', toolset root: $CLANG4_ROOT"
-	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-4-64
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-4-64 $*
+	exit $?
+	;;
+    "x64-clang-5")
+	echo "clang-5 '$BUILD_TYPE', toolset root: $CLANG5_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-5-64 $*
 	exit $?
 	;;
     * )

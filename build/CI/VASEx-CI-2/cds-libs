@@ -65,7 +65,7 @@ gcc-7-root:           $GCC7_ROOT/bin
 gcc-7-cxx:            g++-7
 gcc-7-cc:             gcc-7
 gcc-7-boost:          $BOOST_ROOT
-gcc-7-cxxflags:       -march=native
+gcc-7-cxxflags:       -march=native -Waligned-new
 gcc-7-exe-ldflags:    -Wl,-rpath=$GCC7_ROOT/lib64
 gcc-7-extlib:         rt
 gcc-7-64-boost-lib:   stage64-gcc7/lib
@@ -150,6 +150,25 @@ clang-4-64-asan-boost-lib:   stage64-clang4-asan/lib
 clang-4-64-tsan-boost-lib:   stage64-clang4-tsan/lib
 clang-4-gtest:          $GTEST_ROOT
 clang-4-64-gtest-lib:   $GTEST_ROOT/lib-clang4/libgtest.a
+
+
+########################################
+# clang-5
+clang-5-root:           $CLANG5_ROOT/bin
+clang-5-cxx:            clang++
+clang-5-cc:             clang
+clang-5-cxxflags:       -stdlib=libc++ -Wdocumentation
+clang-5-exe-ldflags:    -L$CLANG5_ROOT/lib -Wl,-rpath=$CLANG5_ROOT/lib
+clang-5-extlib:         rt
+clang-5-boost:          $BOOST_ROOT
+clang-5-64-boost-lib:   stage64-clang5/lib
+clang-5-64-asan-boost-lib:   stage64-clang5-asan/lib
+clang-5-64-tsan-boost-lib:   stage64-clang5-tsan/lib
+clang-5-gtest:          $GTEST_ROOT
+clang-5-64-gtest-lib:   $GTEST_ROOT/lib-clang5/libgtest.a
+
+
+
 
 
 
