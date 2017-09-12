@@ -735,15 +735,15 @@ namespace cds { namespace intrusive {
     private:
         //@cond
         template <typename Stat>
-        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type * bkt )
         {
-            new (bucket) internal_bucket_type;
+            new (bkt) internal_bucket_type;
         }
 
         template <typename Stat>
-        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type * bucket )
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type * bkt )
         {
-            new (bucket) internal_bucket_type( m_Stat );
+            new (bkt) internal_bucket_type( m_Stat );
         }
 
         /// Calculates hash value of \p key

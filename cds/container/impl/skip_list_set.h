@@ -313,7 +313,7 @@ namespace cds { namespace container {
         bool insert( Q const& val, Func f )
         {
             scoped_node_ptr sp( node_allocator().New( random_level(), val ));
-            if ( base_class::insert( *sp.get(), [&f]( node_type& val ) { f( val.m_Value ); } )) {
+            if ( base_class::insert( *sp.get(), [&f]( node_type& v ) { f( v.m_Value ); } )) {
                 sp.release();
                 return true;
             }

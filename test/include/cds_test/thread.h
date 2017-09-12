@@ -156,8 +156,8 @@ namespace cds_test {
         };
 
     public:
-        explicit thread_pool( ::testing::Test& fixture )
-            : m_fixture( fixture )
+        explicit thread_pool( ::testing::Test& fx )
+            : m_fixture( fx )
             , m_bTimeElapsed( false )
         {}
 

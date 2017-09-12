@@ -582,7 +582,7 @@ namespace cds { namespace intrusive {
             aux_node_type * pHead = get_bucket( nHash );
             assert( pHead != nullptr );
             return m_Stat.onFind( m_List.find_at( pHead, sv, cmp,
-                [&f](value_type& item, split_list::details::search_value_type<Q>& val){ f(item, val.val ); }));
+                [&f](value_type& item, split_list::details::search_value_type<Q>& v){ f(item, v.val ); }));
         }
 
         aux_node_type * alloc_aux_node( size_t nHash )

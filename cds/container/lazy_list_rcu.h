@@ -821,13 +821,13 @@ namespace cds { namespace container {
         template <typename Q, typename Compare>
         bool find_at( head_type& refHead, Q const& key, Compare cmp ) const
         {
-            return base_class::find_at( &refHead, key, cmp, [](node_type&, Q const &) {} );
+            return base_class::find_at( &refHead, key, cmp, [](node_type&, Q const&) {} );
         }
 
         template <typename Q, typename Compare, typename Func>
         bool find_at( head_type& refHead, Q& val, Compare cmp, Func f ) const
         {
-            return base_class::find_at( &refHead, val, cmp, [&f](node_type& node, Q& val){ f( node_to_value(node), val ); });
+            return base_class::find_at( &refHead, val, cmp, [&f](node_type& node, Q& v){ f( node_to_value(node), v ); });
         }
 
         template <typename Q, typename Compare>

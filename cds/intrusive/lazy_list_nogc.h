@@ -480,10 +480,10 @@ namespace cds { namespace intrusive {
             \p Equal functor has the interface like \p std::equal_to.
         */
         template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, bool>::type find_with( Q& key, Equal equal, Func f )
+        typename std::enable_if<!Sort, bool>::type find_with( Q& key, Equal eq, Func f )
         {
-            CDS_UNUSED( equal );
-            return find_at( &m_Head, key, equal, f );
+            //CDS_UNUSED( eq );
+            return find_at( &m_Head, key, eq, f );
         }
         //@cond
         template <typename Q, typename Less, typename Func, bool Sort = c_bSort>
@@ -494,10 +494,10 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Equal, typename Func, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, bool>::type find_with( Q const& key, Equal equal, Func f )
+        typename std::enable_if<!Sort, bool>::type find_with( Q const& key, Equal eq, Func f )
         {
-            CDS_UNUSED( equal );
-            return find_at( &m_Head, key, equal, f );
+            //CDS_UNUSED( eq );
+            return find_at( &m_Head, key, eq, f );
         }
         //@endcond
 
@@ -547,16 +547,16 @@ namespace cds { namespace intrusive {
             \p Equal functor has the interface like \p std::equal_to.
         */
         template <typename Q, typename Equal, bool Sort = c_bSort>
-        typename std::enable_if<!Sort, value_type *>::type contains( Q const& key, Equal equal )
+        typename std::enable_if<!Sort, value_type *>::type contains( Q const& key, Equal eq )
         {
-            return find_at( &m_Head, key, equal );
+            return find_at( &m_Head, key, eq );
         }
         //@cond
         template <typename Q, typename Equal, bool Sort = c_bSort>
         CDS_DEPRECATED("deprecated, use contains()")
-        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal equal )
+        typename std::enable_if<!Sort, value_type *>::type find_with( Q const& key, Equal eq )
         {
-            return contains( key, equal );
+            return contains( key, eq );
         }
         //@endcond
 

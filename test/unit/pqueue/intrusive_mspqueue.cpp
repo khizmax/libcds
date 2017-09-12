@@ -116,7 +116,7 @@ namespace {
             ASSERT_EQ( pq.size(), 0u );
 
             // Clear test
-            for ( value_type * p = pFirst; p < pLast; ++p ) {
+            for ( p = pFirst; p < pLast; ++p ) {
                 ASSERT_TRUE( pq.push( *p ));
             }
             EXPECT_FALSE( pq.empty());
@@ -128,7 +128,7 @@ namespace {
             EXPECT_EQ( pq.size(), 0u );
 
             // clear_with test
-            for ( value_type * p = pFirst; p < pLast; ++p ) {
+            for ( p = pFirst; p < pLast; ++p ) {
                 ASSERT_TRUE( pq.push( *p ));
             }
             ASSERT_FALSE( pq.empty());

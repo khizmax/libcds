@@ -416,14 +416,14 @@ namespace misc {
             EXPECT_EQ( *atomics::atomic_load_explicit( &a, oLoad ), 1 );
 
             for ( integral_type i = 1; i < aSize; ++i ) {
-                integral_type * p = atomics::atomic_load_explicit( &a, oLoad );
+                p = atomics::atomic_load_explicit( &a, oLoad );
                 EXPECT_EQ( *p, i );
                 EXPECT_EQ( atomics::atomic_fetch_add_explicit( &a, 1, order ), p );
                 EXPECT_EQ( *atomics::atomic_load_explicit( &a, oLoad ), i + 1 );
             }
 
             for ( integral_type i = aSize; i > 1; --i ) {
-                integral_type * p = atomics::atomic_load_explicit( &a, oLoad );
+                p = atomics::atomic_load_explicit( &a, oLoad );
                 EXPECT_EQ( *p, i  );
                 EXPECT_EQ( atomics::atomic_fetch_sub_explicit( &a, 1, order ), p );
                 EXPECT_EQ( *atomics::atomic_load_explicit( &a, oLoad ), i - 1 );
@@ -464,14 +464,14 @@ namespace misc {
             EXPECT_EQ( *atomics::atomic_load( &a ), 1 );
 
             for ( integral_type i = 1; i < aSize; ++i ) {
-                integral_type * p = atomics::atomic_load( &a );
+                p = atomics::atomic_load( &a );
                 EXPECT_EQ( *p, i );
                 EXPECT_EQ( atomics::atomic_fetch_add( &a, 1 ), p );
                 EXPECT_EQ( *atomics::atomic_load( &a ), i + 1 );
             }
 
             for ( integral_type i = aSize; i > 1; --i ) {
-                integral_type * p = atomics::atomic_load( &a );
+                p = atomics::atomic_load( &a );
                 EXPECT_EQ( *p, i );
                 EXPECT_EQ( atomics::atomic_fetch_sub( &a, 1 ), p );
                 EXPECT_EQ( *atomics::atomic_load( &a ), i - 1 );

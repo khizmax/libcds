@@ -69,14 +69,14 @@ TYPED_TEST_P( IntrusiveSplitLazySet, base_cmp )
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::base_item_type base_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
-    typedef typename TestFixture::template cmp<base_item_type> cmp;
+    typedef typename TestFixture::template cmp<base_item_type> item_cmp;
     typedef typename TestFixture::hash_int hash_int;
 
     typedef ci::LazyList< rcu_type
         , base_item_type
         , typename ci::lazy_list::make_traits<
             ci::opt::hook< ci::lazy_list::base_hook< ci::opt::gc< rcu_type > > >
-            , ci::opt::compare< cmp >
+            , ci::opt::compare< item_cmp >
             , ci::opt::disposer< mock_disposer >
         >::type
     > bucket_type;
@@ -96,14 +96,14 @@ TYPED_TEST_P( IntrusiveSplitLazySet, base_less )
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::base_item_type base_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
-    typedef typename TestFixture::template less<base_item_type> less;
+    typedef typename TestFixture::template less<base_item_type> item_less;
     typedef typename TestFixture::hash_int hash_int;
 
     typedef ci::LazyList< rcu_type
         , base_item_type
         , typename ci::lazy_list::make_traits<
             ci::opt::hook< ci::lazy_list::base_hook< ci::opt::gc< rcu_type >>>
-            , ci::opt::less< less >
+            , ci::opt::less< item_less >
             , ci::opt::disposer< mock_disposer >
         >::type
     > bucket_type;
@@ -270,7 +270,7 @@ TYPED_TEST_P( IntrusiveSplitLazySet, member_cmp )
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::member_item_type member_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
-    typedef typename TestFixture::template cmp<member_item_type> cmp;
+    typedef typename TestFixture::template cmp<member_item_type> item_cmp;
     typedef typename TestFixture::hash_int hash_int;
 
     typedef ci::LazyList< rcu_type
@@ -280,7 +280,7 @@ TYPED_TEST_P( IntrusiveSplitLazySet, member_cmp )
                 offsetof( member_item_type, hMember ),
                 ci::opt::gc<rcu_type>
             >>
-            , ci::opt::compare< cmp >
+            , ci::opt::compare< item_cmp >
             , ci::opt::disposer< mock_disposer >
         >::type
     >    bucket_type;
@@ -300,7 +300,7 @@ TYPED_TEST_P( IntrusiveSplitLazySet, member_less )
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::member_item_type member_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
-    typedef typename TestFixture::template less<member_item_type> less;
+    typedef typename TestFixture::template less<member_item_type> item_less;
     typedef typename TestFixture::hash_int hash_int;
 
     typedef ci::LazyList< rcu_type
@@ -310,7 +310,7 @@ TYPED_TEST_P( IntrusiveSplitLazySet, member_less )
                 offsetof( member_item_type, hMember ),
                 ci::opt::gc<rcu_type>
             > >
-            , ci::opt::less< less >
+            , ci::opt::less< item_less >
             , ci::opt::disposer< mock_disposer >
         >::type
     > bucket_type;

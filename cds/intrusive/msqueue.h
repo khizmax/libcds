@@ -584,7 +584,7 @@ namespace cds { namespace intrusive {
         bool empty() const
         {
             typename gc::Guard guard;
-            node_type * p = guard.protect( m_pHead, []( node_type * p ) -> value_type * { return node_traits::to_value_ptr( p );});
+            node_type * p = guard.protect( m_pHead, []( node_type * pNode ) -> value_type * { return node_traits::to_value_ptr( pNode );});
             return p->m_pNext.load( memory_model::memory_order_relaxed ) == nullptr;
         }
 

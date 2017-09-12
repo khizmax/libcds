@@ -918,18 +918,18 @@ namespace cds { namespace intrusive {
         retry:
             tree_node * p = bRight
                 ? res.guards.protect( search_result::Guard_Leaf, pParent->m_pRight,
-                    []( tree_node * p ) -> internal_node* { return static_cast<internal_node *>(p);})
+                    []( tree_node * pn ) -> internal_node* { return static_cast<internal_node *>(pn);})
                 : res.guards.protect( search_result::Guard_Leaf, pParent->m_pLeft,
-                    []( tree_node * p ) -> internal_node* { return static_cast<internal_node *>(p);});
+                    []( tree_node * pn ) -> internal_node* { return static_cast<internal_node *>(pn);});
 
             // If we use member hook, data node pointer != internal node pointer
             // So, we need protect the child twice: as internal node and as data node
             // and then analyze what kind of node we have
             tree_node * pVal = bRight
                 ? res.guards.protect( search_result::Guard_temporary, pParent->m_pRight,
-                    []( tree_node * p ) -> value_type* { return node_traits::to_value_ptr( static_cast<leaf_node *>(p));} )
+                    []( tree_node * pn ) -> value_type* { return node_traits::to_value_ptr( static_cast<leaf_node *>(pn));} )
                 : res.guards.protect( search_result::Guard_temporary, pParent->m_pLeft,
-                    []( tree_node * p ) -> value_type* { return node_traits::to_value_ptr( static_cast<leaf_node *>(p));} );
+                    []( tree_node * pn ) -> value_type* { return node_traits::to_value_ptr( static_cast<leaf_node *>(pn));} );
 
             // child node is guarded
             // See whether pParent->m_pUpdate has not been changed

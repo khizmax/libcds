@@ -200,11 +200,11 @@ uint32 CityHash32(const char *s, size_t len) {
   f = f * 5 + 0xe6546b64;
   size_t iters = (len - 1) / 20;
   do {
-    uint32 a0 = Rotate32(Fetch32(s) * c1, 17) * c2;
-    uint32 a1 = Fetch32(s + 4);
-    uint32 a2 = Rotate32(Fetch32(s + 8) * c1, 17) * c2;
-    uint32 a3 = Rotate32(Fetch32(s + 12) * c1, 17) * c2;
-    uint32 a4 = Fetch32(s + 16);
+    a0 = Rotate32(Fetch32(s) * c1, 17) * c2;
+    a1 = Fetch32(s + 4);
+    a2 = Rotate32(Fetch32(s + 8) * c1, 17) * c2;
+    a3 = Rotate32(Fetch32(s + 12) * c1, 17) * c2;
+    a4 = Fetch32(s + 16);
     h ^= a0;
     h = Rotate32(h, 18);
     h = h * 5 + 0xe6546b64;

@@ -936,7 +936,7 @@ namespace cds { namespace container {
         template <typename Q, typename Func>
         bool find_( Q& val, Func f )
         {
-            return base_class::find( val, [&f]( node_type& item, Q& val ) { f( item.m_Value, val ); } );
+            return base_class::find( val, [&f]( node_type& item, Q& v ) { f( item.m_Value, v ); } );
         }
 
         template <typename Q>
@@ -951,7 +951,7 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             return base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type(),
-                [&f]( node_type& item, Q& val ) { f( item.m_Value, val ); } );
+                [&f]( node_type& item, Q& v ) { f( item.m_Value, v ); } );
         }
 
         template <typename Q, typename Less>

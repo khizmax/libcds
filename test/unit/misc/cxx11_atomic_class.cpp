@@ -526,14 +526,14 @@ namespace {
             EXPECT_EQ( *a.load( oLoad ), 1 );
 
             for ( integral_type i = 1; i < aSize; ++i ) {
-                integral_type * p = a.load();
+                p = a.load();
                 EXPECT_EQ( *p, i );
                 EXPECT_EQ( a.fetch_add( 1, order ), p );
                 EXPECT_EQ( *a.load( oLoad ), i + 1 );
             }
 
             for ( integral_type i = aSize; i > 1; --i ) {
-                integral_type * p = a.load();
+                p = a.load();
                 EXPECT_EQ( *p, i  );
                 EXPECT_EQ( a.fetch_sub( 1, order ), p );
                 EXPECT_EQ( *a.load( oLoad ), i - 1 );
@@ -578,7 +578,7 @@ namespace {
             EXPECT_EQ( *a.load(), 1 );
 
             for ( integral_type i = 1; i < aSize; ++i ) {
-                integral_type * p = a.load();
+                p = a.load();
                 EXPECT_EQ( *p, i );
                 integral_type * pa = a.fetch_add( 1 );
                 EXPECT_EQ( pa, p );
@@ -586,7 +586,7 @@ namespace {
             }
 
             for ( integral_type i = aSize; i > 1; --i ) {
-                integral_type * p = a.load();
+                p = a.load();
                 EXPECT_EQ( *p, i  );
                 EXPECT_EQ( a.fetch_sub( 1 ), p );
                 EXPECT_EQ( *a.load(), i - 1 );

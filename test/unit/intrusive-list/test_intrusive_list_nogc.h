@@ -329,11 +329,11 @@ namespace cds_test {
                 EXPECT_FALSE( ret.second );
                 EXPECT_EQ( i.s.nUpdateExistsCall, 1 );
 
-                ret = l.update( i, []( bool bNew, value_type& i, value_type& arg ) {
+                ret = l.update( i, []( bool bNew, value_type& vi, value_type& arg ) {
                     EXPECT_FALSE( bNew );
-                    EXPECT_EQ( i.s.nUpdateExistsCall, 1 );
-                    EXPECT_TRUE( &i == &arg );
-                    ++i.s.nUpdateExistsCall;
+                    EXPECT_EQ( vi.s.nUpdateExistsCall, 1 );
+                    EXPECT_TRUE( &vi == &arg );
+                    ++vi.s.nUpdateExistsCall;
                 });
                 EXPECT_TRUE( ret.first );
                 EXPECT_FALSE( ret.second );

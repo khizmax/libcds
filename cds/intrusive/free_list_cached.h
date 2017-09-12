@@ -121,9 +121,9 @@ namespace cds { namespace intrusive {
                 return p;
 
             // iterate the cache
-            for ( auto& cell : m_cache ) {
-                p = cell.load( atomics::memory_order_relaxed );
-                if ( p && cell.compare_exchange_weak( p, nullptr, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+            for ( auto& item : m_cache ) {
+                p = item.load( atomics::memory_order_relaxed );
+                if ( p && item.compare_exchange_weak( p, nullptr, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
                     return p;
             }
 

@@ -990,15 +990,15 @@ namespace cds { namespace container {
         }
 
         template <typename Stat>
-        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        typename std::enable_if< Stat::empty >::type construct_bucket( internal_bucket_type* b )
         {
-            new (bucket) internal_bucket_type;
+            new (b) internal_bucket_type;
         }
 
         template <typename Stat>
-        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type* bucket )
+        typename std::enable_if< !Stat::empty >::type construct_bucket( internal_bucket_type* b )
         {
-            new (bucket) internal_bucket_type( m_Stat );
+            new (b) internal_bucket_type( m_Stat );
         }
         //@endcond
     };

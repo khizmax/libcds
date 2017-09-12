@@ -381,9 +381,9 @@ namespace cds { namespace container {
             return do_remove(
                 key,
                 key_comparator(),
-                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool {
+                [&f]( key_type const& k, mapped_type pVal, rcu_disposer& disp ) -> bool {
                     assert( pVal );
-                    f( key, *pVal );
+                    f( k, *pVal );
                     disp.dispose_value(pVal);
                     return true;
                 }
@@ -404,9 +404,9 @@ namespace cds { namespace container {
             return do_remove(
                 key,
                 cds::opt::details::make_comparator_from_less<Less>(),
-                [&f]( key_type const& key, mapped_type pVal, rcu_disposer& disp ) -> bool {
+                [&f]( key_type const& k, mapped_type pVal, rcu_disposer& disp ) -> bool {
                     assert( pVal );
-                    f( key, *pVal );
+                    f( k, *pVal );
                     disp.dispose_value(pVal);
                     return true;
                 }
@@ -1410,10 +1410,10 @@ namespace cds { namespace container {
         {
             node_type * pNew;
 
-            auto fnCreateNode = [&funcUpdate]( node_type * pNew ) {
-                mapped_type pVal = funcUpdate( pNew );
+            auto fnCreateNode = [&funcUpdate]( node_type * pNode ) {
+                mapped_type pVal = funcUpdate( pNode );
                 assert( pVal != nullptr );
-                pNew->m_pValue.store( pVal, memory_model::memory_order_release );
+                pNode->m_pValue.store( pVal, memory_model::memory_order_release );
             };
 
             static_if ( c_bRelaxedInsert ) {

@@ -72,8 +72,8 @@ namespace {
         template <typename Func>
         bool operator()( Set& s, int key, Func f ) const
         {
-            return s.find( key, [&f]( typename Set::value_type& v, int key ) {
-                cds_test::container_set::other_item oi( key );
+            return s.find( key, [&f]( typename Set::value_type& v, int k ) {
+                cds_test::container_set::other_item oi( k );
                 f( v, oi );
             });
         }

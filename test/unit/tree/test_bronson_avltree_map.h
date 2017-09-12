@@ -93,25 +93,25 @@ namespace {
                 case 0:
                     ASSERT_TRUE( m.insert( i ));
                     ASSERT_FALSE( m.insert( i ));
-                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     break;
                 case 1:
                     ASSERT_TRUE( m.insert( i.nKey ));
                     ASSERT_FALSE( m.insert( i.nKey ));
-                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     break;
                 case 2:
                     ASSERT_TRUE( m.insert( std::to_string( i.nKey )));
                     ASSERT_FALSE( m.insert( std::to_string( i.nKey )));
-                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     break;
                 case 3:
@@ -127,27 +127,27 @@ namespace {
                     ASSERT_FALSE( m.insert( val.strVal, i.nKey ));
                     break;
                 case 6:
-                    ASSERT_TRUE( m.insert_with( i, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.insert_with( i, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     ASSERT_FALSE( m.insert_with( i, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
                 case 7:
-                    ASSERT_TRUE( m.insert_with( i.nKey, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.insert_with( i.nKey, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     ASSERT_FALSE( m.insert_with( i.nKey, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
                     } ));
                     break;
                 case 8:
-                    ASSERT_TRUE( m.insert_with( val.strVal, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.insert_with( val.strVal, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     ASSERT_FALSE( m.insert_with( val.strVal, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
@@ -160,17 +160,17 @@ namespace {
                     ASSERT_FALSE( updResult.first );
                     ASSERT_FALSE( updResult.second );
 
-                    updResult = m.update( i.nKey, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( i.nKey, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_TRUE( bNew );
-                        val.nVal = key.nKey;
+                        v.nVal = key.nKey;
                     });
                     ASSERT_TRUE( updResult.first );
                     ASSERT_TRUE( updResult.second );
 
-                    updResult = m.update( i.nKey, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( i.nKey, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_FALSE( bNew );
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        val.strVal = std::to_string( val.nVal );
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        v.strVal = std::to_string( v.nVal );
                     } );
                     ASSERT_TRUE( updResult.first );
                     ASSERT_FALSE( updResult.second );
@@ -182,17 +182,17 @@ namespace {
                     ASSERT_FALSE( updResult.first );
                     ASSERT_FALSE( updResult.second );
 
-                    updResult = m.update( i, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( i, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_TRUE( bNew );
-                        val.nVal = key.nKey;
+                        v.nVal = key.nKey;
                     });
                     ASSERT_TRUE( updResult.first );
                     ASSERT_TRUE( updResult.second );
 
-                    updResult = m.update( i, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( i, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_FALSE( bNew );
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        val.strVal = std::to_string( val.nVal );
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        v.strVal = std::to_string( v.nVal );
                     } );
                     ASSERT_TRUE( updResult.first );
                     ASSERT_FALSE( updResult.second );
@@ -204,17 +204,17 @@ namespace {
                     ASSERT_FALSE( updResult.first );
                     ASSERT_FALSE( updResult.second );
 
-                    updResult = m.update( val.strVal, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( val.strVal, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_TRUE( bNew );
-                        val.nVal = key.nKey;
+                        v.nVal = key.nKey;
                     });
                     ASSERT_TRUE( updResult.first );
                     ASSERT_TRUE( updResult.second );
 
-                    updResult = m.update( val.strVal, []( bool bNew, key_type const& key, value_type& val ) {
+                    updResult = m.update( val.strVal, []( bool bNew, key_type const& key, value_type& v ) {
                         EXPECT_FALSE( bNew );
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        val.strVal = std::to_string( val.nVal );
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        v.strVal = std::to_string( v.nVal );
                     } );
                     ASSERT_TRUE( updResult.first );
                     ASSERT_FALSE( updResult.second );
@@ -222,9 +222,9 @@ namespace {
                 case 12:
                     ASSERT_TRUE( m.emplace( i.nKey ));
                     ASSERT_FALSE( m.emplace( i.nKey ));
-                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                        val.nVal = key.nKey;
-                        val.strVal = std::to_string( key.nKey );
+                    ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                        v.nVal = key.nKey;
+                        v.strVal = std::to_string( key.nKey );
                     } ));
                     break;
                 case 13:
@@ -256,17 +256,17 @@ namespace {
                 ASSERT_TRUE( m.contains( i.nKey ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE( m.contains( other_item( i.nKey ), other_less()));
-                ASSERT_TRUE( m.find( i, []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find( i, []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
-                ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
-                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
             }
             ASSERT_FALSE( m.empty());
@@ -284,17 +284,17 @@ namespace {
                 ASSERT_TRUE( m.contains( val.strVal ));
                 ASSERT_TRUE( m.contains( i ));
                 ASSERT_TRUE( m.contains( other_item( i.nKey ), other_less()));
-                ASSERT_TRUE( m.find( i, []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find( i, []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
-                ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find( i.nKey, []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
-                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& val ) {
-                    EXPECT_EQ( key.nKey, val.nVal );
-                    EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                ASSERT_TRUE( m.find_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& v ) {
+                    EXPECT_EQ( key.nKey, v.nVal );
+                    EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                 } ));
 
 
@@ -316,36 +316,36 @@ namespace {
                     ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_less()));
                     break;
                 case 4:
-                    ASSERT_TRUE( m.erase( i, []( key_type const& key, value_type& val ) {
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                    ASSERT_TRUE( m.erase( i, []( key_type const& key, value_type& v ) {
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                     }));
                     ASSERT_FALSE( m.erase( i, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
                     }));
                     break;
                 case 5:
-                    ASSERT_TRUE( m.erase( i.nKey, []( key_type const& key, value_type& val ) {
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                    ASSERT_TRUE( m.erase( i.nKey, []( key_type const& key, value_type& v ) {
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                     }));
                     ASSERT_FALSE( m.erase( i.nKey, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
                     }));
                     break;
                 case 6:
-                    ASSERT_TRUE( m.erase( val.strVal, []( key_type const& key, value_type& val ) {
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                    ASSERT_TRUE( m.erase( val.strVal, []( key_type const& key, value_type& v ) {
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                     }));
                     ASSERT_FALSE( m.erase( val.strVal, []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
                     }));
                     break;
                 case 7:
-                    ASSERT_TRUE( m.erase_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& val ) {
-                        EXPECT_EQ( key.nKey, val.nVal );
-                        EXPECT_EQ( std::to_string( key.nKey ), val.strVal );
+                    ASSERT_TRUE( m.erase_with( other_item( i.nKey ), other_less(), []( key_type const& key, value_type& v ) {
+                        EXPECT_EQ( key.nKey, v.nVal );
+                        EXPECT_EQ( std::to_string( key.nKey ), v.strVal );
                     }));
                     ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_less(), []( key_type const& /*key*/, value_type& /*val*/ ) {
                         EXPECT_TRUE( false );
