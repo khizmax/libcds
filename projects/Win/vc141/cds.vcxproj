@@ -139,12 +139,12 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libcds-x86-vc$(PlatformToolset)_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">libcds-x86-vc$(PlatformToolset)_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libcds-x86-vc$(PlatformToolset)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libcds-amd64-vc$(PlatformToolset)_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">libcds-amd64-vc$(PlatformToolset)_debug</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcds-amd64-vc$(PlatformToolset)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libcds-x86-dbg</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|Win32'">libcds-x86-dbg</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libcds-x86</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libcds-amd64-dbg</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugVLD|x64'">libcds-amd64-dbg</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcds-amd64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
