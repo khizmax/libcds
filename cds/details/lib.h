@@ -42,7 +42,9 @@
 #   define  CDS_LIB_DEBUG_SUFFIX ""
 #endif
 
-#pragma comment( lib, "libcds-" CDS_PROCESSOR__NICK CDS_LIB_DEBUG_SUFFIX )
+#if CDS_COMPILER == CDS_COMPILER_MSVC || CDS_COMPILER == CDS_COMPILER_INTEL
+#   pragma comment( lib, "libcds-" CDS_PROCESSOR__NICK CDS_LIB_DEBUG_SUFFIX )
+#endif
 
 #undef CDS_LIB_DEBUG_SUFFIX
 
