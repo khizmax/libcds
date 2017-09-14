@@ -1410,10 +1410,10 @@ namespace cds { namespace container {
         {
             node_type * pNew;
 
-            auto fnCreateNode = [&funcUpdate]( node_type * pNode ) {
-                mapped_type pVal = funcUpdate( pNode );
+            auto fnCreateNode = [&funcUpdate]( node_type * node ) {
+                mapped_type pVal = funcUpdate( node );
                 assert( pVal != nullptr );
-                pNode->m_pValue.store( pVal, memory_model::memory_order_release );
+                node->m_pValue.store( pVal, memory_model::memory_order_release );
             };
 
             static_if ( c_bRelaxedInsert ) {

@@ -227,7 +227,7 @@ namespace cds { namespace container {
         bool insert( Q const& val, Func f )
         {
             scoped_node_ptr sp( cxx_leaf_node_allocator().New( val ));
-            if ( base_class::insert( *sp.get(), [&f]( leaf_node& val ) { f( val.m_Value ); } )) {
+            if ( base_class::insert( *sp.get(), [&f]( leaf_node& v ) { f( v.m_Value ); } )) {
                 sp.release();
                 return true;
             }

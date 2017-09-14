@@ -213,13 +213,13 @@ TYPED_TEST_P( IntrusiveSkipListSet, base_turbo24 )
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::base_item_type base_item_type;
     typedef typename TestFixture::mock_disposer mock_disposer;
-    typedef typename TestFixture::template cmp<base_item_type> cmp;
+    typedef typename TestFixture::template cmp<base_item_type> item_cmp;
 
     struct traits: public ci::skip_list::traits
     {
         typedef ci::skip_list::base_hook< ci::opt::gc< rcu_type >> hook;
         typedef mock_disposer disposer;
-        typedef cmp compare;
+        typedef item_cmp compare;
         typedef ci::skip_list::turbo24 random_level_generator;
     };
 

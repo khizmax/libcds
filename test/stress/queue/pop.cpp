@@ -131,8 +131,8 @@ namespace {
             size_t nTotalPops = 0;
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 Consumer<Queue>& thread = static_cast<Consumer<Queue>&>(pool.get( i ));
-                for ( size_t i = 0; i < s_nQueueSize; ++i )
-                    arr[i] += thread.m_arr[i];
+                for ( size_t j = 0; j < s_nQueueSize; ++j )
+                    arr[j] += thread.m_arr[j];
                 nTotalPops += thread.m_nPopCount;
             }
             EXPECT_EQ( nTotalPops, s_nQueueSize );

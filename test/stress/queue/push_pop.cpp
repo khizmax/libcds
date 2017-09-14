@@ -200,8 +200,8 @@ namespace {
         {
             cds_test::thread_pool& pool = get_pool();
 
-            typedef Consumer<Queue> Consumer;
-            typedef Producer<Queue> Producer;
+            typedef Consumer<Queue> consumer_type;
+            typedef Producer<Queue> producer_type;
 
             size_t nPostTestPops = 0;
             {
@@ -215,12 +215,12 @@ namespace {
             size_t nPoppedItems = 0;
             size_t nPushFailed = 0;
 
-            std::vector< Consumer * > arrConsumer;
+            std::vector< consumer_type * > arrConsumer;
 
             for ( size_t i = 0; i < pool.size(); ++i ) {
                 cds_test::thread& thr = pool.get(i);
                 if ( thr.type() == consumer_thread ) {
-                    Consumer& consumer = static_cast<Consumer&>( thr );
+                    consumer_type& consumer = static_cast<consumer_type&>( thr );
                     nTotalPops += consumer.m_nPopped;
                     nPopFalse += consumer.m_nPopEmpty;
                     arrConsumer.push_back( &consumer );
@@ -235,7 +235,7 @@ namespace {
                 else {
                     assert( thr.type() == producer_thread );
 
-                    Producer& producer = static_cast<Producer&>( thr );
+                    producer_type& producer = static_cast<producer_type&>( thr );
                     nPushFailed += producer.m_nPushFailed;
                     EXPECT_EQ( producer.m_nPushFailed, 0u ) << "producer_thread_no " << i;
                 }
