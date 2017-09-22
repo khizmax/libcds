@@ -348,10 +348,12 @@ namespace cds {}
 #   define CDS_VERIFY( _expr )       assert( _expr )
 #   define CDS_VERIFY_FALSE( _expr ) assert( !( _expr ))
 #   define CDS_DEBUG_ONLY( _expr )        _expr
+#   define CDS_VERIFY_EQ( expr, val )   assert( expr == val )
 #else
 #   define CDS_VERIFY( _expr )    _expr
 #   define CDS_VERIFY_FALSE( _expr ) _expr
 #   define CDS_DEBUG_ONLY( _expr )
+#   define CDS_VERIFY_EQ( expr, val )   expr
 #endif
 
 #ifdef CDS_STRICT

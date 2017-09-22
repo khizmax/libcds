@@ -2184,7 +2184,7 @@ namespace cds { namespace intrusive {
 
                             value_type& val = *node_traits::to_value_ptr( *it );
                             copy_hash( arrHash, val );
-                            contains( arrPos, arrHash, val, key_predicate()) ; // must return c_nUndefTable
+                            CDS_VERIFY_EQ( contains( arrPos, arrHash, val, key_predicate()), c_nUndefTable );
 
                             for ( unsigned int i = 0; i < c_nArity; ++i ) {
                                 bucket_entry& refBucket = bucket( i, arrHash[i] );
