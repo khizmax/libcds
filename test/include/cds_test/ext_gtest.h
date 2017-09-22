@@ -36,7 +36,6 @@
 #   pragma GCC diagnostic push
     // Unfortunately, seems, -Wduplicated-branches cannot be controlled via this pragma
 #   pragma GCC diagnostic ignored "-Wduplicated-branches"
-#   pragma GCC diagnostic ignored "-Wshadow"
 #endif
 
 #include <gtest/gtest.h>

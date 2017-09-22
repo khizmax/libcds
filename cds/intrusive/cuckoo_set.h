@@ -2171,7 +2171,6 @@ namespace cds { namespace intrusive {
                 memcpy( pOldTable, m_BucketTable, sizeof(pOldTable));
                 allocate_bucket_tables( nCapacity );
 
-                typedef typename bucket_entry::iterator bucket_iterator;
                 hash_array arrHash;
                 position arrPos[ c_nArity ];
 
