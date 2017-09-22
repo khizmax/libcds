@@ -112,7 +112,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         message("C++ std: -std=c++11 (default)")
     endif()
 
-#    list(APPEND LIBCDS_PUBLIC_CXX_FLAGS "-fno-strict-aliasing")
     list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wall" "-Wextra" "-pedantic")
 
     if(CMAKE_TARGET_ARCHITECTURE STREQUAL "x86_64")
