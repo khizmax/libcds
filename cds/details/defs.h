@@ -163,9 +163,9 @@
    \par How to build
 
    The <b>cds</b> is mostly header-only library. Only small part of library related to GC core functionality
-   should be compiled.
+   should be compiled. <b>cds</b> depends on C++ standard library only.
 
-   External dependenies: the tests depends on:
+   Test suite depends on:
    - \p boost.thread (thread-loal storage support), boost.system
    - \p google-test
 
@@ -186,7 +186,7 @@
     - <a href="http://www.boost.org/">boost library</a> 1.51 and above. You should create environment variable
         \p BOOST_PATH containing full path to \p boost root directory (for example, <tt>C:\\libs\\boost_1_57_0</tt>).
 
-   Open solution file <tt>cds\projects\vc14\cds.sln</tt> with Microsoft VisualStudio 2015.
+   Open solution file <tt>cds\projects\vc141\cds.sln</tt> with Microsoft VisualStudio 2017.
    The solution contains \p cds project and a lot of test projects. Just build the library using solution.
 
    <b>Warning</b>: the solution depends on \p BOOST_PATH environment variable that specifies full path
