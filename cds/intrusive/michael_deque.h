@@ -28,8 +28,8 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CDSLIB_INTRUSIVE_MICHAEL_DEQUEUE_H
-#define CDSLIB_INTRUSIVE_MICHAEL_DEQUEUE_H
+#ifndef CDSLIB_INTRUSIVE_MICHAEL_DEQUE_H
+#define CDSLIB_INTRUSIVE_MICHAEL_DEQUE_H
 
 #include <type_traits>
 #include <cds/algo/atomic.h>
@@ -40,13 +40,13 @@ namespace cds
 namespace intrusive
 {
 
-/// michael_dequeue related definitions
+/// michael_deque related definitions
 /** @ingroup cds_intrusive_helper
 */
-namespace michael_dequeue
+namespace michael_deque
 {
 
-/// Dequeue node
+/// Deque node
 /**
     Template parameters:
     - GC - garbage collector used
@@ -88,7 +88,7 @@ using member_hook = cds::intrusive::double_link::member_hook< MemberOffset, Opti
 template <typename NodeTraits, typename... Options >
 using traits_hook = cds::intrusive::double_link::traits_hook< NodeTraits, Options... >;
 
-/// Dequeue internal statistics. May be used for debugging or profiling
+/// Deque internal statistics. May be used for debugging or profiling
 /**
     Template argument \p Counter defines type of counter.
     Default is \p cds::atomicity::event_counter, that is weak, i.e. it is not guaranteed
@@ -107,8 +107,8 @@ struct stat
   counter_type    m_nPopRight      ;  ///< Count of success pop_right operations
   counter_type    m_nFailedPopLeft ;  ///< Count of failed pop_left operations (pop from empty deque)
   counter_type    m_nFailedPopRight;  ///< Count of failed pop_right operations (pop from empty deque)
-  counter_type    m_nStabilizeRight;  ///< How many tries to stabilize dequeue
-  counter_type    m_nStabilizeLeft ;  ///< How many tries to stabilize dequeue
+  counter_type    m_nStabilizeRight;  ///< How many tries to stabilize deque
+  counter_type    m_nStabilizeLeft ;  ///< How many tries to stabilize deque
 
   //@cond
   void    onPushLeft()               { ++m_nPushLeft; }
@@ -146,7 +146,7 @@ struct stat
   //@endcond
 };
 
-/// Dummy dequeue statistics - no counting is performed, no overhead. Support interface like \p michael_dequeue::stat
+/// Dummy deque statistics - no counting is performed, no overhead. Support interface like \p michael_deque::stat
 struct empty_stat
 {
   //@cond
@@ -165,11 +165,11 @@ struct empty_stat
   //@endcond
 };
 
-/// MichaelDequeue default traits
+/// MichaelDeque default traits
 struct traits
 {
-  /// Hook, possible types are \p michael_dequeue::base_hook, \p michael_dequeue::member_hook, \p michael_dequeue::traits_hook
-  typedef michael_dequeue::base_hook<>        hook;
+  /// Hook, possible types are \p michael_deque::base_hook, \p michael_deque::member_hook, \p michael_deque::traits_hook
+  typedef michael_deque::base_hook<>        hook;
 
   /// The functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used for dequeuing
   typedef opt::v::empty_disposer      disposer;
@@ -179,10 +179,10 @@ struct traits
 
   /// Internal statistics (by default, disabled)
   /**
-      Possible option value are: \p michael_dequeue::stat, \p michael_dequeue::empty_stat (the default),
-      user-provided class that supports \p %michael_dequeue::stat interface.
+      Possible option value are: \p michael_deque::stat, \p michael_deque::empty_stat (the default),
+      user-provided class that supports \p %michael_deque::stat interface.
   */
-  typedef michael_dequeue::empty_stat         stat;
+  typedef michael_deque::empty_stat         stat;
 
   /// C++ memory ordering model
   /**
@@ -198,33 +198,33 @@ struct traits
   enum { padding = opt::cache_line_padding };
 };
 
-/// Metafunction converting option list to \p michael_dequeue::traits
+/// Metafunction converting option list to \p michael_deque::traits
 /**
     Supported \p Options are:
 
-    - \p opt::hook - hook used. Possible hooks are: \p michael_dequeue::base_hook, \p michael_dequeue::member_hook, \p michael_dequeue::traits_hook.
-        If the option is not specified, \p %michael_dequeue::base_hook<> is used.
+    - \p opt::hook - hook used. Possible hooks are: \p michael_deque::base_hook, \p michael_deque::member_hook, \p michael_deque::traits_hook.
+        If the option is not specified, \p %michael_deque::base_hook<> is used.
     - \p opt::disposer - the functor used for dispose removed items. Default is \p opt::v::empty_disposer. This option is used
         when dequeuing.
     - \p opt::link_checker - the type of node's link fields checking. Default is \p opt::debug_check_link
     - \p opt::item_counter - the type of item counting feature. Default is \p cds::atomicity::empty_item_counter (item counting disabled)
         To enable item counting use \p cds::atomicity::item_counter
     - \p opt::stat - the type to gather internal statistics.
-        Possible statistics types are: \p michael_dequeue::stat, \p michael_dequeue::empty_stat, user-provided class that supports \p %michael_dequeue::stat interface.
-        Default is \p %michael_dequeue::empty_stat (internal statistics disabled).
+        Possible statistics types are: \p michael_deque::stat, \p michael_deque::empty_stat, user-provided class that supports \p %michael_deque::stat interface.
+        Default is \p %michael_deque::empty_stat (internal statistics disabled).
     - \p opt::padding - padding for internal critical atomic data. Default is \p opt::cache_line_padding
     - \p opt::memory_model - C++ memory ordering model. Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
         or \p opt::v::sequential_consistent (sequentially consisnent memory model).
 
-    Example: declare \p %MichaelDequeue with item counting and internal statistics
+    Example: declare \p %MichaelDeque with item counting and internal statistics
     \code
-    typedef cds::intrusive::MichaelDequeue< cds::gc::HP, Foo,
-        typename cds::intrusive::michael_dequeue::make_traits<
-            cds::intrusive::opt::hook< cds::intrusive::michael_dequeue::base_hook< cds::opt::gc<cds::gc::HP> >>,
+    typedef cds::intrusive::MichaelDeque< cds::gc::HP, Foo,
+        typename cds::intrusive::michael_deque::make_traits<
+            cds::intrusive::opt::hook< cds::intrusive::michael_deque::base_hook< cds::opt::gc<cds::gc::HP> >>,
             cds::opt::item_counter< cds::atomicity::item_counter >,
-            cds::opt::stat< cds::intrusive::michael_dequeue::stat<> >
+            cds::opt::stat< cds::intrusive::michael_deque::stat<> >
         >::type
-    > myDequeue;
+    > myDeque;
     \endcode
 */
 
@@ -240,46 +240,46 @@ struct make_traits
   >::type type;
 #   endif
 };
-} // namespace michael_dequeue
+} // namespace michael_deque
 
 /// CAS-Based Lock-Free Algorithm for Shared Deques
-/** @ingroup cds_intrusive_dequeue
+/** @ingroup cds_intrusive_deque
     Implementation of CAS-Based Lock-Free Algorithm for Shared Deques:
     - [2003] Maged M. Michael "CAS-Based Lock-Free Algorithm for Shared Deques"
 
     Template arguments:
     - \p GC - garbage collector type: \p gc::HP, \p gc::DHP
-    - \p T - type of value to be stored in the dequeue. A value of type \p T must be derived from \p michael_dequeue::node for \p michael_dequeue::base_hook,
-        or it should have a member of type \p %michael_dequeue::node for \p michael_dequeue::member_hook,
-        or it should be convertible to \p %michael_dequeue::node for \p michael_dequeue::traits_hook.
-    - \p Traits - dequeue traits, default is \p michael_dequeue::traits. You can use \p michael_dequeue::make_traits
-        metafunction to make your traits or just derive your traits from \p %michael_dequeue::traits:
+    - \p T - type of value to be stored in the deque. A value of type \p T must be derived from \p michael_deque::node for \p michael_deque::base_hook,
+        or it should have a member of type \p %michael_deque::node for \p michael_deque::member_hook,
+        or it should be convertible to \p %michael_deque::node for \p michael_deque::traits_hook.
+    - \p Traits - deque traits, default is \p michael_deque::traits. You can use \p michael_deque::make_traits
+        metafunction to make your traits or just derive your traits from \p %michael_deque::traits:
         \code
-        struct myTraits: public cds::intrusive::michael_dequeue::traits {
-            typedef cds::intrusive::michael_dequeue::stat<> stat;
+        struct myTraits: public cds::intrusive::michael_deque::traits {
+            typedef cds::intrusive::michael_deque::stat<> stat;
             typedef cds::atomicity::item_counter    item_counter;
         };
-        typedef cds::intrusive::MichaelDequeue< cds::gc::HP, Foo, myTraits > myDequeue;
+        typedef cds::intrusive::MichaelDeque< cds::gc::HP, Foo, myTraits > myDeque;
 
         // Equivalent make_traits example:
-        typedef cds::intrusive::MichaelDequeue< cds::gc::HP, Foo,
-            typename cds::intrusive::michael_dequeue::make_traits<
-                cds::opt::stat< cds::intrusive::michael_dequeue::stat<> >,
+        typedef cds::intrusive::MichaelDeque< cds::gc::HP, Foo,
+            typename cds::intrusive::michael_deque::make_traits<
+                cds::opt::stat< cds::intrusive::michael_deque::stat<> >,
                 cds::opt::item_counter< cds::atomicity::item_counter >
             >::type
-        > myDequeue;
+        > myDeque;
         \endcode
 
     \par Examples
     \code
-    #include <cds/intrusive/michael_dequeue.h>
+    #include <cds/intrusive/michael_deque.h>
     #include <cds/gc/hp.h>
 
     namespace ci = cds::intrusive;
     typedef cds::gc::HP hp_gc;
 
-    // MichaelDequeue with Hazard Pointer garbage collector, base hook + item disposer:
-    struct Foo: public ci::michael_dequeue::node< hp_gc >
+    // MichaelDeque with Hazard Pointer garbage collector, base hook + item disposer:
+    struct Foo: public ci::michael_deque::node< hp_gc >
     {
         // Your data
         ...
@@ -293,32 +293,32 @@ struct make_traits
         }
     };
 
-    // Declare traits for the dequeue
-    struct myTraits: public ci::michael_dequeue::traits {
-        typedef ci::opt::hook<ci::michael_dequeue::base_hook< ci::opt::gc<hp_gc> >> hook;
+    // Declare traits for the deque
+    struct myTraits: public ci::michael_deque::traits {
+        typedef ci::opt::hook<ci::michael_deque::base_hook< ci::opt::gc<hp_gc> >> hook;
         typedef ci::opt::disposer< fooDisposer > disposer;
     };
 
-    // At least, declare the dequeue type
-    typedef ci::MichaelDequeue< hp_gc, Foo, myTraits > fooDequeue;
+    // At least, declare the deque type
+    typedef ci::MichaelDeque< hp_gc, Foo, myTraits > fooDeque;
 
     // Example 2:
-    //  MichaelDequeue with Hazard Pointer garbage collector,
+    //  MichaelDeque with Hazard Pointer garbage collector,
     //  member hook + item disposer + item counter,
-    //  without padding of internal queue data
-    //  Use michael_dequeue::make_traits
+    //  without padding of internal deque data
+    //  Use michael_deque::make_traits
     struct Bar
     {
         // Your data
         ...
-        ci::michael_dequeue::node< hp_gc > hMember;
+        ci::michael_deque::node< hp_gc > hMember;
     };
 
-    typedef ci::MichaelDequeue< hp_gc,
+    typedef ci::MichaelDeque< hp_gc,
         Foo,
-        typename ci::michael_dequeue::make_traits<
+        typename ci::michael_deque::make_traits<
             ci::opt::hook<
-                ci::michael_dequeue::member_hook<
+                ci::michael_deque::member_hook<
                     offsetof(Bar, hMember)
                     ,ci::opt::gc<hp_gc>
                 >
@@ -327,16 +327,16 @@ struct make_traits
             ,cds::opt::item_counter< cds::atomicity::item_counter >
             ,cds::opt::padding< cds::opt::no_special_padding >
         >::type
-    > barDequeue;
+    > barDeque;
     \endcode
 */
-template <typename GC, typename T, typename Traits = michael_dequeue::traits>
-class MichaelDequeue
+template <typename GC, typename T, typename Traits = michael_deque::traits>
+class MichaelDeque
 {
 public:
   typedef GC gc;          ///< Garbage collector
-  typedef T  value_type;  ///< type of value to be stored in the queue
-  typedef Traits traits;  ///< Dequeue traits
+  typedef T  value_type;  ///< type of value to be stored in the deque
+  typedef Traits traits;  ///< Deque traits
 
   typedef typename traits::hook       hook;       ///< hook type
   typedef typename hook::node_type    node_type;  ///< node type
@@ -352,7 +352,7 @@ public:
   template <typename GC2, typename T2, typename Traits2>
   struct rebind
   {
-    typedef MichaelDequeue< GC2, T2, Traits2 > other;   ///< Rebinding result
+    typedef MichaelDeque< GC2, T2, Traits2 > other;   ///< Rebinding result
   };
 
   static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 3; ///< Count of hazard pointer required for the algorithm
@@ -373,7 +373,7 @@ protected:
     RPUSH
   };
 
-  /// Dequeue's anchor stores two marked pointers to nodes; first bit of every pointer defines status flag
+  /// Deque's anchor stores two marked pointers to nodes; first bit of every pointer defines status flag
   struct anchor_type
   {
   protected:
@@ -441,13 +441,13 @@ protected:
 
   typedef typename gc::template atomic_type<anchor_type> atomic_anchor_type;
 
-  atomic_anchor_type m_Anchor; ///< Dequeue's anchor
+  atomic_anchor_type m_Anchor; ///< Deque's anchor
   typename opt::details::apply_padding< atomic_anchor_type, traits::padding >::padding_type pad1_;
   item_counter       m_ItemCounter; ///< Item counter
   stat               m_Stat;        ///< Internal statistics
   //@endcond
 
-  /// Stabilization procedure of dequeue
+  /// Stabilization procedure of deque
   void StabilizeRight(anchor_type anchor)
   {
     m_Stat.onStabilizeRight();
@@ -481,7 +481,7 @@ protected:
     m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed);
   }
 
-  /// Stabilization procedure of dequeue
+  /// Stabilization procedure of deque
   void StabilizeLeft(anchor_type anchor)
   {
     m_Stat.onStabilizeLeft();
@@ -515,7 +515,7 @@ protected:
     m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed);
   }
 
-  /// Stabilization procedure of dequeue
+  /// Stabilization procedure of deque
   void Stabilize(anchor_type anchor)
   {
     if (anchor.getStatus() == STATUS::RPUSH)
@@ -542,7 +542,7 @@ protected:
       void operator()(value_type* p) const
       {
         assert(p != nullptr);
-        MichaelDequeue::clear_links(node_traits::to_node_ptr(p));
+        MichaelDeque::clear_links(node_traits::to_node_ptr(p));
         disposer()(p);
       }
     };
@@ -552,15 +552,15 @@ protected:
   //@endcond
 
 public:
-  /// Initializes empty dequeue
-  MichaelDequeue()
+  /// Initializes empty deque
+  MichaelDeque()
   {
     anchor_type new_anchor = anchor_type::create(nullptr, nullptr, STATUS::STABLE);
     m_Anchor.store(new_anchor, memory_model::memory_order_release);
   }
 
-  /// Destructor clears the dequeue
-  ~MichaelDequeue()
+  /// Destructor clears the deque
+  ~MichaelDeque()
   {
     clear();
 
@@ -569,7 +569,7 @@ public:
     assert(anchor.getRight() == nullptr);
   }
 
-  /// Push element to right side of dequeue
+  /// Push element to right side of deque
   void PushRight(value_type& val)
   {
     //create new node
@@ -579,7 +579,7 @@ public:
       {
         //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        //if dequeue is empty
+        //if deque is empty
         if (anchor.getRight() == nullptr)
           {
             //CAS anchor to anchor with pointers to our new element
@@ -587,29 +587,29 @@ public:
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
-        //if dequeue isn't empty and stable
+        //if deque isn't empty and stable
         else if (anchor.getStatus() == STATUS::STABLE)
           {
-            //set left pointer of new node to rightmost node of dequeue
+            //set left pointer of new node to rightmost node of deque
             new_node_ptr->m_pLeft.store(anchor.getRight(), memory_model::memory_order_release);
             //CAS anchor: right pointer to new node, status is RPUSH
             anchor_type new_anchor = anchor_type::create(anchor.getLeft(), new_node_ptr, STATUS::RPUSH);
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               {
-                //try to stabilize dequeue
+                //try to stabilize deque
                 StabilizeRight(new_anchor);
                 break;
               }
           }
         else
-          //try to stabilize dequeue
+          //try to stabilize deque
           Stabilize(anchor);
       }
     ++m_ItemCounter;
     m_Stat.onPushRight();
   }
 
-  /// Pop element from right side of dequeue
+  /// Pop element from right side of deque
   value_type* PopRight()
   {
     typename gc::Guard guard;
@@ -619,13 +619,13 @@ public:
       {
         //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        //if dequeue if empty
+        //if deque if empty
         if (anchor.getRight() == nullptr)
           {
             m_Stat.onPopRight(false);
             return nullptr;
           }
-        //if dequeue stores one element
+        //if deque stores one element
         else if (anchor.getRight() == anchor.getLeft())
           {
             //protect pointer to poped element
@@ -635,7 +635,7 @@ public:
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
-        //if dequeue stores more then one element
+        //if deque stores more then one element
         else if (anchor.getStatus() == STATUS::STABLE)
           {
             //protect anchor pointers
@@ -652,7 +652,7 @@ public:
               break;
           }
         else
-          //try to stabilize dequeue
+          //try to stabilize deque
           Stabilize(anchor);
       }
 
@@ -666,7 +666,7 @@ public:
   }
 
 
-  /// Push element to left side of dequeue
+  /// Push element to left side of deque
   void PushLeft(value_type& val)
   {
     //create new node
@@ -676,7 +676,7 @@ public:
       {
         //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        //if dequeue is empty
+        //if deque is empty
         if (anchor.getLeft() == nullptr)
           {
             //CAS anchor to anchor with pointers to our new element
@@ -684,29 +684,29 @@ public:
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
-        //if dequeue isn't empty and stable
+        //if deque isn't empty and stable
         else if (anchor.getStatus() == STATUS::STABLE)
           {
-            //set right pointer of new node to leftmost node of dequeue
+            //set right pointer of new node to leftmost node of deque
             new_node_ptr->m_pRight.store(anchor.getLeft(), memory_model::memory_order_release);
             //CAS anchor: right pointer to new node, status is RPUSH
             anchor_type new_anchor = anchor_type::create(anchor.getLeft(), new_node_ptr, STATUS::LPUSH);
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               {
-                //try to stabilize dequeue
+                //try to stabilize deque
                 StabilizeLeft(new_anchor);
                 break;
               }
           }
         else
-          //try to stabilize dequeue
+          //try to stabilize deque
           Stabilize(anchor);
       }
     ++m_ItemCounter;
     m_Stat.onPushLeft();
   }
 
-  /// Pop element from left side of dequeue
+  /// Pop element from left side of deque
   value_type* PopLeft()
   {
     typename gc::Guard guard;
@@ -716,13 +716,13 @@ public:
       {
         //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        //if dequeue if empty
+        //if deque if empty
         if (anchor.getLeft() == nullptr)
           {
             m_Stat.onPopLeft(false);
             return nullptr;
           }
-        //if dequeue stores one element
+        //if deque stores one element
         else if (anchor.getRight() == anchor.getLeft())
           {
             //protect pointer to poped element
@@ -732,7 +732,7 @@ public:
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
-        //if dequeue stores more then one element
+        //if deque stores more then one element
         else if (anchor.getStatus() == STATUS::STABLE)
           {
             //protect anchor pointers
@@ -749,7 +749,7 @@ public:
               break;
           }
         else
-          //try to stabilize dequeue
+          //try to stabilize deque
           Stabilize(anchor);
       }
 
@@ -762,15 +762,15 @@ public:
     return result;
   }
 
-  /// Checks if the queue is empty
+  /// Checks if the deque is empty
   bool empty() const
   {
     return m_Anchor.load(memory_model::memory_order_relaxed).getRight() == nullptr;
   }
 
-  /// Clear the queue
+  /// Clear the deque
   /**
-      The function repeatedly calls \p dequeue() until it returns \p nullptr.
+      The function repeatedly calls \p deque() until it returns \p nullptr.
       The disposer defined in template \p Traits is called for each item
       that can be safely disposed.
   */
@@ -779,13 +779,13 @@ public:
     while (PopRight() != nullptr);
   }
 
-  /// Returns dequeue's item count
+  /// Returns deque's item count
   /**
-      The value returned depends on \p michael_dequeue::traits::item_counter. For \p atomicity::empty_item_counter,
+      The value returned depends on \p michael_deque::traits::item_counter. For \p atomicity::empty_item_counter,
       this function always returns 0.
 
-      @note Even if you use real item counter and it returns 0, this fact is not mean that the dequeue
-      is empty. To check dequeue emptyness use \p empty() method.
+      @note Even if you use real item counter and it returns 0, this fact is not mean that the deque
+      is empty. To check deque emptyness use \p empty() method.
   */
   size_t size() const
   {
@@ -802,4 +802,4 @@ public:
 }
 } // namespace cds::intrusive
 
-#endif // #ifndef CDSLIB_INTRUSIVE_MICHAEL_DEQUEUE_H
+#endif // #ifndef CDSLIB_INTRUSIVE_MICHAEL_DEQUE_H
