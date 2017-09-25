@@ -107,14 +107,16 @@ struct stat
   counter_type    m_nPopRight      ;  ///< Count of success pop_right operations
   counter_type    m_nFailedPopLeft ;  ///< Count of failed pop_left operations (pop from empty deque)
   counter_type    m_nFailedPopRight;  ///< Count of failed pop_right operations (pop from empty deque)
-  counter_type    m_nCollided      ;  ///< How many pairs of push/pop were collided
+  counter_type    m_nStabilizeRight;  ///< How many tries to stabilize dequeue
+  counter_type    m_nStabilizeLeft ;  ///< How many tries to stabilize dequeue
 
   //@cond
   void    onPushLeft()               { ++m_nPushLeft; }
   void    onPushRight()              { ++m_nPushRight; }
-  void    onPopLeft(bool bFailed)    { if (bFailed) ++m_nFailedPopLeft; else ++m_nPopLeft;  }
-  void    onPopRight(bool bFailed)   { if (bFailed) ++m_nPopRight; else ++m_nFailedPopRight;  }
-  void    onCollide()                { ++m_nCollided; }
+  void    onPopLeft(bool succ = true)    { if (succ) ++m_nPopLeft; else ++m_nFailedPopLeft;  }
+  void    onPopRight(bool succ = true)   { if (succ) ++m_nPopRight; else ++m_nFailedPopRight;  }
+  void    onStabilizeRight()         { ++m_nStabilizeRight; }
+  void    onStabilizeLeft()          { ++m_nStabilizeLeft; }
 
   void reset()
   {
@@ -124,7 +126,8 @@ struct stat
     m_nPopRight.reset();
     m_nFailedPopLeft.reset();
     m_nFailedPopRight.reset();
-    m_nCollided.reset();
+    m_nStabilizeRight.reset();
+    m_nStabilizeLeft.reset();
   }
 
   stat& operator +=(stat const& s)
@@ -135,7 +138,8 @@ struct stat
     m_nPopRight += s.m_nPopRight.get();
     m_nFailedPopLeft += s.m_nFailedPopLeft.get();
     m_nFailedPopRight += s.m_nFailedPopRight.get();
-    m_nCollided += s.m_nCollided.get();
+    m_nStabilizeRight += s.m_nStabilizeRight.get();
+    m_nStabilizeLeft += s.m_nStabilizeLeft.get();
 
     return *this;
   }
@@ -148,9 +152,10 @@ struct empty_stat
   //@cond
   void    onPushLeft()               const { }
   void    onPushRight()              const { }
-  void    onPopLeft(/*bool bFailed*/)    const { }
-  void    onPopRight(/*bool bFailed*/)   const { }
-  void    onCollide()                const { }
+  void    onPopLeft(bool succ = true)    const { (void)(succ); } //to hide warning
+  void    onPopRight(bool succ = true)   const { (void)(succ); }
+  void    onStabilizeRight()         const { }
+  void    onStabilizeLeft()          const { }
 
   void reset() {}
   empty_stat& operator +=(empty_stat const&)
@@ -215,13 +220,14 @@ struct traits
     \code
     typedef cds::intrusive::MichaelDequeue< cds::gc::HP, Foo,
         typename cds::intrusive::michael_dequeue::make_traits<
-            cds::intrusive::opt:hook< cds::intrusive::michael_dequeue::base_hook< cds::opt::gc<cds:gc::HP> >>,
-            cds::opt::item_counte< cds::atomicity::item_counter >,
+            cds::intrusive::opt::hook< cds::intrusive::michael_dequeue::base_hook< cds::opt::gc<cds::gc::HP> >>,
+            cds::opt::item_counter< cds::atomicity::item_counter >,
             cds::opt::stat< cds::intrusive::michael_dequeue::stat<> >
         >::type
     > myDequeue;
     \endcode
 */
+
 template <typename... Options>
 struct make_traits
 {
@@ -269,7 +275,7 @@ struct make_traits
     #include <cds/intrusive/michael_dequeue.h>
     #include <cds/gc/hp.h>
 
-    namespace ci = cds::inrtusive;
+    namespace ci = cds::intrusive;
     typedef cds::gc::HP hp_gc;
 
     // MichaelDequeue with Hazard Pointer garbage collector, base hook + item disposer:
@@ -357,9 +363,9 @@ protected:
   // GC and node_type::gc must be the same
   static_assert((std::is_same<gc, typename node_type::gc>::value), "GC and node_type::gc must be the same");
 
-  typedef typename node_type::marked_ptr marked_node_ptr;
   typedef typename node_type::atomic_node_ptr atomic_node_ptr;
 
+  /// Status flag for anchor
   enum STATUS
   {
     STABLE,
@@ -367,89 +373,168 @@ protected:
     RPUSH
   };
 
-  //в атомарной структуре храним два ОБЫЧНЫХ указателя и статус
+  /// Dequeue's anchor stores two marked pointers to nodes; first bit of every pointer defines status flag
   struct anchor_type
   {
-    marked_node_ptr m_pLeft;
-    marked_node_ptr m_pRight;
-    STATUS status;
+  protected:
+    cds::details::marked_ptr<node_type, 1> m_pLeft; /// < Left pointer
+    cds::details::marked_ptr<node_type, 1> m_pRight; /// < Right pointer
 
+  public:
+    /// Not equal operator to compare anchors
     friend bool operator !=(anchor_type anchor1, anchor_type anchor2)
     {
-      return anchor1.m_pLeft != anchor2.m_pLeft || anchor1.m_pRight != anchor2.m_pRight || anchor1.status != anchor2.status;
+      return anchor1.m_pLeft != anchor2.m_pLeft || anchor1.m_pRight != anchor2.m_pRight;
+    }
+
+    /// Status getter
+    STATUS getStatus()
+    {
+      //get first bit of two pointers
+      bool bit1 = m_pLeft.bits();
+      bool bit2 = m_pRight.bits();
+
+      assert(bit1 || bit2);
+
+      if (bit1 && bit2)
+        return STATUS::STABLE;
+      else if (bit1)
+        return STATUS::LPUSH;
+      else //if (bit2)
+        return STATUS::RPUSH;
+    }
+
+    /// Left pointer getter
+    node_type* getLeft()
+    {
+      return m_pLeft.ptr();
+    }
+
+    /// Right pointer getter
+    node_type* getRight()
+    {
+      return m_pRight.ptr();
+    }
+
+    /// Anchor constructor
+    static anchor_type create(node_type* left, node_type* right, STATUS s)
+    {
+      anchor_type result;
+      //set pointers
+      result.m_pLeft = cds::details::marked_ptr<node_type, 1>(left);
+      result.m_pRight = cds::details::marked_ptr<node_type, 1>(right);
+
+      //set first bit of pointers
+      if (s == STATUS::STABLE)
+        {
+          result.m_pLeft |= 1;
+          result.m_pRight |= 1;
+        }
+      else if (s == STATUS::LPUSH)
+        result.m_pLeft |= 1;
+      else //if (STATUS::RPUSH)
+        result.m_pRight |= 1;
+
+      return result;
     }
   };
 
   typedef typename gc::template atomic_type<anchor_type> atomic_anchor_type;
 
-  //atomic_node_ptr    m_pLeft;        ///< Dequeue's left pointer
-  //typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad1_;
-  //atomic_node_ptr    m_pRight;        ///< Dequeue's right pointer
-  //typename opt::details::apply_padding< atomic_node_ptr, traits::padding >::padding_type pad2_;
-  atomic_anchor_type m_Anchor ;
-  typename opt::details::apply_padding< atomic_anchor_type, traits::padding >::padding_type pad3_;
+  atomic_anchor_type m_Anchor; ///< Dequeue's anchor
+  typename opt::details::apply_padding< atomic_anchor_type, traits::padding >::padding_type pad1_;
   item_counter       m_ItemCounter; ///< Item counter
   stat               m_Stat;        ///< Internal statistics
   //@endcond
 
-
-
+  /// Stabilization procedure of dequeue
   void StabilizeRight(anchor_type anchor)
   {
+    m_Stat.onStabilizeRight();
+
     typename gc::Guard guard;
-    //защищаем указатели якоря
-    marked_node_ptr anchor_left(guard.assign(anchor.m_pLeft));
-    marked_node_ptr anchor_right(guard.assign(anchor.m_pRight));
-    //проверяем, что якорь не изменился
+    //protect anchor pointers
+    node_type* anchor_left = guard.assign(anchor.getLeft());
+    node_type* anchor_right = guard.assign(anchor.getRight());
+    //check if anchor hasn't changed
     if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
       return;
-    //защищаем указатель на предыдущий узел
-    marked_node_ptr prev(guard.protect(anchor_right->m_pLeft));
-    //проверяем, что якорь не изменился
+    //protect pointer to previous node
+    node_type* prev = guard.protect(anchor_right->m_pLeft);
+    //check if anchor hasn't changed
     if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
       return;
-    //берем правый указатель предыдущего узла
-    marked_node_ptr prevnext = prev->m_pRight.load(memory_model::memory_order_acquire);
-    //если он не совпадает с правым указателем якоря (то есть если они одновременно не указывают на наш новый узел)
+    //take right pointer of previous node
+    node_type* prevnext = prev->m_pRight.load(memory_model::memory_order_acquire);
+    //if it isn't equal with right pointer of anchor (if they don't point to our new node)
     if (prevnext != anchor_right)
       {
-        //проверяем, что якорь не изменился
+        //check if anchor hasn't changed
         if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
           return;
-        //пытаемся поменять правый указатель предыдущего узла
+        //CAS right pointer of previous node
         if (!prev->m_pRight.compare_exchange_strong(prevnext, anchor_right, memory_model::memory_order_release, atomics::memory_order_relaxed))
           return;
       }
-    //пытаемся поменять статус очереди на стабильный
-    anchor_type new_anchor = {anchor_left, anchor_right, STATUS::STABLE};
+    //CAS anchor status to stable
+    anchor_type new_anchor = anchor_type::create(anchor_left, anchor_right, STATUS::STABLE);
     m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed);
   }
 
+  /// Stabilization procedure of dequeue
+  void StabilizeLeft(anchor_type anchor)
+  {
+    m_Stat.onStabilizeLeft();
 
+    typename gc::Guard guard;
+    //protect anchor pointers
+    node_type* anchor_left = guard.assign(anchor.getLeft());
+    node_type* anchor_right = guard.assign(anchor.getRight());
+    //check if anchor hasn't changed
+    if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
+      return;
+    //protect pointer to previous node
+    node_type* prev = guard.protect(anchor_left->m_pRight);
+    //check if anchor hasn't changed
+    if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
+      return;
+    //take left pointer of previous node
+    node_type* prevnext = prev->m_pLeft.load(memory_model::memory_order_acquire);
+    //if it isn't equal with left pointer of anchor (if they don't point to our new node)
+    if (prevnext != anchor_left)
+      {
+        //check if anchor hasn't changed
+        if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
+          return;
+        //CAS left pointer of previous node
+        if (!prev->m_pLeft.compare_exchange_strong(prevnext, anchor_left, memory_model::memory_order_release, atomics::memory_order_relaxed))
+          return;
+      }
+    //CAS anchor status to stable
+    anchor_type new_anchor = anchor_type::create(anchor_left, anchor_right, STATUS::STABLE);
+    m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed);
+  }
+
+  /// Stabilization procedure of dequeue
   void Stabilize(anchor_type anchor)
   {
-    if (anchor.status == STATUS::RPUSH)
-      {
-        StabilizeRight(anchor);
-      }
+    if (anchor.getStatus() == STATUS::RPUSH)
+      StabilizeRight(anchor);
     else
-      {
-        //StabilizeLeft(anchor);
-      }
+      StabilizeLeft(anchor);
   }
 
 
   //@cond
 
-
   static void clear_links(node_type* pNode)
   {
-    pNode->m_pLeft.store(marked_node_ptr(), memory_model::memory_order_release);
-    pNode->m_pRight.store(marked_node_ptr(), memory_model::memory_order_release);
+    pNode->m_pLeft.store(nullptr, memory_model::memory_order_release);
+    pNode->m_pRight.store(nullptr, memory_model::memory_order_release);
   }
 
 
-  void dispose_node(node_type* p)
+  void dispose_node(value_type* p)
   {
 
     struct disposer_thunk
@@ -462,7 +547,7 @@ protected:
       }
     };
 
-    gc::template retire<disposer_thunk>(node_traits::to_value_ptr(p));
+    gc::template retire<disposer_thunk>(p);
   }
   //@endcond
 
@@ -470,99 +555,217 @@ public:
   /// Initializes empty dequeue
   MichaelDequeue()
   {
-    m_Anchor.store({marked_node_ptr(), marked_node_ptr(), STATUS::STABLE}, memory_model::memory_order_release);
+    anchor_type new_anchor = anchor_type::create(nullptr, nullptr, STATUS::STABLE);
+    m_Anchor.store(new_anchor, memory_model::memory_order_release);
   }
 
   /// Destructor clears the dequeue
-  /**
-      Since the Michael dequeue contains at least one item even
-      if the dequeue is empty, the destructor may call item disposer.
-  */
   ~MichaelDequeue()
   {
     clear();
 
     anchor_type anchor = m_Anchor.load(memory_model::memory_order_relaxed);
-    assert(anchor.m_pLeft == marked_node_ptr());
-    assert(anchor.m_pRight == marked_node_ptr());
+    assert(anchor.getLeft() == nullptr);
+    assert(anchor.getRight() == nullptr);
   }
 
-
+  /// Push element to right side of dequeue
   void PushRight(value_type& val)
   {
-    marked_node_ptr new_node_ptr(node_traits::to_node_ptr(val));
-    link_checker::is_empty(new_node_ptr.ptr());
+    //create new node
+    node_type* new_node_ptr = node_traits::to_node_ptr(val);
+    link_checker::is_empty(new_node_ptr);
     while (true)
       {
+        //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        if (anchor.m_pRight == marked_node_ptr())
+        //if dequeue is empty
+        if (anchor.getRight() == nullptr)
           {
-            anchor_type new_anchor = {new_node_ptr, new_node_ptr, anchor.status};
+            //CAS anchor to anchor with pointers to our new element
+            anchor_type new_anchor = anchor_type::create(new_node_ptr, new_node_ptr, anchor.getStatus());
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
-              return;
+              break;
           }
-        else if (anchor.status == STATUS::STABLE)
+        //if dequeue isn't empty and stable
+        else if (anchor.getStatus() == STATUS::STABLE)
           {
-            //сохраняем ссылку на якорь (неверный формат указателя?)
-            new_node_ptr->m_pLeft.store(marked_node_ptr(anchor.m_pRight), memory_model::memory_order_release);
-            anchor_type new_anchor = {anchor.m_pLeft, new_node_ptr, STATUS::RPUSH};
+            //set left pointer of new node to rightmost node of dequeue
+            new_node_ptr->m_pLeft.store(anchor.getRight(), memory_model::memory_order_release);
+            //CAS anchor: right pointer to new node, status is RPUSH
+            anchor_type new_anchor = anchor_type::create(anchor.getLeft(), new_node_ptr, STATUS::RPUSH);
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               {
+                //try to stabilize dequeue
                 StabilizeRight(new_anchor);
-                return;
+                break;
               }
           }
         else
+          //try to stabilize dequeue
           Stabilize(anchor);
       }
+    ++m_ItemCounter;
+    m_Stat.onPushRight();
   }
 
-
+  /// Pop element from right side of dequeue
   value_type* PopRight()
   {
     typename gc::Guard guard;
-    marked_node_ptr anchor_right;
+    //pointer to poped element
+    node_type* anchor_right;
     while (true)
       {
+        //take current anchor
         anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
-        if (anchor.m_pRight == marked_node_ptr())
-          return nullptr;
-        if (anchor.m_pRight == anchor.m_pLeft)
+        //if dequeue if empty
+        if (anchor.getRight() == nullptr)
           {
-            //защищаем указатели якоря
-            anchor_right = marked_node_ptr(guard.assign(anchor.m_pRight));
-            anchor_type new_anchor = {marked_node_ptr(), marked_node_ptr(), anchor.status};
+            m_Stat.onPopRight(false);
+            return nullptr;
+          }
+        //if dequeue stores one element
+        else if (anchor.getRight() == anchor.getLeft())
+          {
+            //protect pointer to poped element
+            anchor_right = guard.assign(anchor.getRight());
+            //CAS anchor to anchor with nullptr
+            anchor_type new_anchor = anchor_type::create(nullptr, nullptr, anchor.getStatus());
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
-        else if (anchor.status == STATUS::STABLE)
+        //if dequeue stores more then one element
+        else if (anchor.getStatus() == STATUS::STABLE)
           {
-            //защищаем указатели якоря
-            marked_node_ptr anchor_left(guard.assign(anchor.m_pLeft));
-            anchor_right = marked_node_ptr(guard.assign(anchor.m_pRight));
+            //protect anchor pointers
+            node_type* anchor_left = guard.assign(anchor.getLeft());
+            anchor_right = guard.assign(anchor.getRight());
+            //if anchor changed then continue
             if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
               continue;
-
-            marked_node_ptr prev = anchor_right->m_pLeft.load(memory_model::memory_order_acquire);
-
-            anchor_type new_anchor = {anchor_left, prev, anchor.status};
+            //take pointer to previous element from right side
+            node_type* prev = anchor_right->m_pLeft.load(memory_model::memory_order_acquire);
+            //CAS anchor: right pointer to previous element
+            anchor_type new_anchor = anchor_type::create(anchor_left, prev, anchor.getStatus());
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               break;
           }
         else
+          //try to stabilize dequeue
           Stabilize(anchor);
       }
 
-    value_type* result = node_traits::to_value_ptr(anchor_right.ptr());
-    dispose_node(anchor_right.ptr());
+    m_Stat.onPopRight();
+    --m_ItemCounter;
+
+    //get and return value from node
+    value_type* result = node_traits::to_value_ptr(anchor_right);
+    dispose_node(result);
     return result;
   }
 
 
+  /// Push element to left side of dequeue
+  void PushLeft(value_type& val)
+  {
+    //create new node
+    node_type* new_node_ptr = node_traits::to_node_ptr(val);
+    link_checker::is_empty(new_node_ptr);
+    while (true)
+      {
+        //take current anchor
+        anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
+        //if dequeue is empty
+        if (anchor.getLeft() == nullptr)
+          {
+            //CAS anchor to anchor with pointers to our new element
+            anchor_type new_anchor = anchor_type::create(new_node_ptr, new_node_ptr, anchor.getStatus());
+            if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
+              break;
+          }
+        //if dequeue isn't empty and stable
+        else if (anchor.getStatus() == STATUS::STABLE)
+          {
+            //set right pointer of new node to leftmost node of dequeue
+            new_node_ptr->m_pRight.store(anchor.getLeft(), memory_model::memory_order_release);
+            //CAS anchor: right pointer to new node, status is RPUSH
+            anchor_type new_anchor = anchor_type::create(anchor.getLeft(), new_node_ptr, STATUS::LPUSH);
+            if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
+              {
+                //try to stabilize dequeue
+                StabilizeLeft(new_anchor);
+                break;
+              }
+          }
+        else
+          //try to stabilize dequeue
+          Stabilize(anchor);
+      }
+    ++m_ItemCounter;
+    m_Stat.onPushLeft();
+  }
+
+  /// Pop element from left side of dequeue
+  value_type* PopLeft()
+  {
+    typename gc::Guard guard;
+    //pointer to poped element
+    node_type* anchor_left;
+    while (true)
+      {
+        //take current anchor
+        anchor_type anchor = m_Anchor.load(memory_model::memory_order_acquire);
+        //if dequeue if empty
+        if (anchor.getLeft() == nullptr)
+          {
+            m_Stat.onPopLeft(false);
+            return nullptr;
+          }
+        //if dequeue stores one element
+        else if (anchor.getRight() == anchor.getLeft())
+          {
+            //protect pointer to poped element
+            anchor_left = guard.assign(anchor.getLeft());
+            //CAS anchor to anchor with nullptr
+            anchor_type new_anchor = anchor_type::create(nullptr, nullptr, anchor.getStatus());
+            if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
+              break;
+          }
+        //if dequeue stores more then one element
+        else if (anchor.getStatus() == STATUS::STABLE)
+          {
+            //protect anchor pointers
+            node_type* anchor_right = guard.assign(anchor.getRight());
+            anchor_left = guard.assign(anchor.getLeft());
+            //if anchor changed then continue
+            if (anchor != m_Anchor.load(memory_model::memory_order_acquire))
+              continue;
+            //take pointer to previous element from left side
+            node_type* prev = anchor_left->m_pRight.load(memory_model::memory_order_acquire);
+            //CAS anchor: left pointer to previous element
+            anchor_type new_anchor = anchor_type::create(prev, anchor_right, anchor.getStatus());
+            if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
+              break;
+          }
+        else
+          //try to stabilize dequeue
+          Stabilize(anchor);
+      }
+
+    m_Stat.onPopLeft();
+    --m_ItemCounter;
+
+    //get and return value from node
+    value_type* result = node_traits::to_value_ptr(anchor_left);
+    dispose_node(result);
+    return result;
+  }
+
   /// Checks if the queue is empty
   bool empty() const
   {
-    return m_Anchor.load(memory_model::memory_order_acquire).m_pRight == marked_node_ptr();
+    return m_Anchor.load(memory_model::memory_order_relaxed).getRight() == nullptr;
   }
 
   /// Clear the queue
@@ -573,16 +776,16 @@ public:
   */
   void clear()
   {
-    while (PopRight());
+    while (PopRight() != nullptr);
   }
 
-  /// Returns queue's item count
+  /// Returns dequeue's item count
   /**
       The value returned depends on \p michael_dequeue::traits::item_counter. For \p atomicity::empty_item_counter,
       this function always returns 0.
 
-      @note Even if you use real item counter and it returns 0, this fact is not mean that the queue
-      is empty. To check queue emptyness use \p empty() method.
+      @note Even if you use real item counter and it returns 0, this fact is not mean that the dequeue
+      is empty. To check dequeue emptyness use \p empty() method.
   */
   size_t size() const
   {

@@ -58,8 +58,7 @@ struct node
   typedef GC              gc  ;   ///< Garbage collector
   typedef Tag             tag ;   ///< tag
 
-  typedef typename cds::details::marked_ptr<node, 1> marked_ptr;   ///< marked pointer
-  typedef typename gc::template atomic_marked_ptr<marked_ptr> atomic_node_ptr;   ///< atomic marked pointer specific for GC
+  typedef typename gc::template atomic_ref<node> atomic_node_ptr;   ///< Atomic pointer specific for GC
 
   /// Rebind node for other template parameters
   template <class GC2, typename Tag2 = tag>
@@ -68,13 +67,13 @@ struct node
     typedef node<GC2, Tag2>  other ;    ///< Rebinding result
   };
 
-  atomic_node_ptr m_pLeft ; ///< pointer to the left node in the container
-  atomic_node_ptr m_pRight ; ///< pointer to the right node in the container
+  atomic_node_ptr m_pLeft ; ///< Pointer to the left node in the container
+  atomic_node_ptr m_pRight ; ///< Pointer to the right node in the container
 
   node() CDS_NOEXCEPT
   {
-    m_pLeft.store(marked_ptr(), atomics::memory_order_release);
-    m_pRight.store(marked_ptr(), atomics::memory_order_release);
+    m_pLeft.store(nullptr, atomics::memory_order_release);
+    m_pRight.store(nullptr, atomics::memory_order_release);
   }
 };
 
@@ -142,7 +141,7 @@ struct traits_hook: public hook< opt::traits_hook_tag, Options... >
   //@endcond
 };
 
-/// Check links
+/// Check node links
 template <typename Node>
 struct link_checker
 {
@@ -152,7 +151,7 @@ struct link_checker
 
   /// Checks if the link fields of node \p pNode is \p nullptr
   /**
-      An asserting is generated if \p pNode link field is not \p nullptr
+      An asserting is generated if \p pNode link fields is not \p nullptr
   */
   static void is_empty(const node_type* pNode)
   {
@@ -205,4 +204,4 @@ struct get_link_checker
 
 
 
-#endif // #ifndef CDSLIB_INTRUSIVE_DETAILS_SINGLE_LINK_STRUCT_H
+#endif // #ifndef CDSLIB_INTRUSIVE_DETAILS_DOUBLE_LINK_STRUCT_H
