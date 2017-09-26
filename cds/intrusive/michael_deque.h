@@ -570,7 +570,7 @@ public:
   }
 
   /// Push element to right side of deque
-  void push_right(value_type& val)
+  bool push_right(value_type& val)
   {
     //create new node
     node_type* new_node_ptr = node_traits::to_node_ptr(val);
@@ -607,6 +607,7 @@ public:
       }
     ++m_ItemCounter;
     m_Stat.onPushRight();
+    return true;
   }
 
   /// Pop element from right side of deque
@@ -667,7 +668,7 @@ public:
 
 
   /// Push element to left side of deque
-  void push_left(value_type& val)
+  bool push_left(value_type& val)
   {
     //create new node
     node_type* new_node_ptr = node_traits::to_node_ptr(val);
@@ -704,6 +705,7 @@ public:
       }
     ++m_ItemCounter;
     m_Stat.onPushLeft();
+    return true;
   }
 
   /// Pop element from left side of deque

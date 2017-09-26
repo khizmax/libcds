@@ -41,6 +41,7 @@
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
 #include <cds/container/weak_ringbuffer.h>
+#include <cds/intrusive/michael_deque.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>

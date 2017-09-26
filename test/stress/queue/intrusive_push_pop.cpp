@@ -373,6 +373,8 @@ namespace {
         queue_type::gc::force_dispose(); \
     }
 
+    CDSSTRESS_QUEUE_F( MichaelDeque_HP,  cds::intrusive::michael_deque::node<cds::gc::HP> )
+
     CDSSTRESS_QUEUE_F( MSQueue_HP,       cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_ic,    cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_stat,  cds::intrusive::msqueue::node<cds::gc::HP> )

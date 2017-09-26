@@ -38,6 +38,7 @@
 #include <cds/intrusive/basket_queue.h>
 #include <cds/intrusive/fcqueue.h>
 #include <cds/intrusive/segmented_queue.h>
+#include <cds/intrusive/michael_deque.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -109,11 +110,46 @@ namespace queue {
                 return empty_stat();
             }
         };
+
+        //MichaelDeque
+        template <typename GC, typename T, typename Traits = cds::intrusive::michael_deque::traits>
+        class MichaelDequeL: public cds::intrusive::MichaelDeque<GC, T, Traits >
+        {
+          typedef cds::intrusive::MichaelDeque<GC, T, Traits > base_class;
+        public:
+          MichaelDequeL()
+          {}
+
+          bool push(T& v)
+          {
+            return base_class::push_left(v);
+          }
+          bool enqueue(T& v)
+          {
+            return push(v);
+          }
+
+          T* pop()
+          {
+            return base_class::pop_right();
+          }
+          T* deque()
+          {
+            return pop();
+          }
+        };
     } // namespace details
 
     template <typename T>
     struct Types
     {
+        // MichaelDeque
+        struct traits_MichaelDeque_HP : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+        };
+        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP > MichaelDeque_HP;
+
         // MSQueue, MoirQueue
         struct traits_MSQueue_HP : public cds::intrusive::msqueue::traits
         {
