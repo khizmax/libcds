@@ -3,6 +3,7 @@ set(PACKAGE_NAME unit-deque)
 set(CDSGTEST_DEQUE_SOURCES
     ../main.cpp
     fcdeque.cpp
+    intrusive_michael_deque_hp.cpp
 )
 
 include_directories(

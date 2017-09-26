@@ -448,7 +448,7 @@ protected:
   //@endcond
 
   /// Stabilization procedure of deque
-  void StabilizeRight(anchor_type anchor)
+  void stabilize_right(anchor_type anchor)
   {
     m_Stat.onStabilizeRight();
 
@@ -482,7 +482,7 @@ protected:
   }
 
   /// Stabilization procedure of deque
-  void StabilizeLeft(anchor_type anchor)
+  void stabilize_left(anchor_type anchor)
   {
     m_Stat.onStabilizeLeft();
 
@@ -516,12 +516,12 @@ protected:
   }
 
   /// Stabilization procedure of deque
-  void Stabilize(anchor_type anchor)
+  void stabilize(anchor_type anchor)
   {
     if (anchor.getStatus() == STATUS::RPUSH)
-      StabilizeRight(anchor);
+      stabilize_right(anchor);
     else
-      StabilizeLeft(anchor);
+      stabilize_left(anchor);
   }
 
 
@@ -570,7 +570,7 @@ public:
   }
 
   /// Push element to right side of deque
-  void PushRight(value_type& val)
+  void push_right(value_type& val)
   {
     //create new node
     node_type* new_node_ptr = node_traits::to_node_ptr(val);
@@ -597,20 +597,20 @@ public:
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               {
                 //try to stabilize deque
-                StabilizeRight(new_anchor);
+                stabilize_right(new_anchor);
                 break;
               }
           }
         else
           //try to stabilize deque
-          Stabilize(anchor);
+          stabilize(anchor);
       }
     ++m_ItemCounter;
     m_Stat.onPushRight();
   }
 
   /// Pop element from right side of deque
-  value_type* PopRight()
+  value_type* pop_right()
   {
     typename gc::Guard guard;
     //pointer to poped element
@@ -653,7 +653,7 @@ public:
           }
         else
           //try to stabilize deque
-          Stabilize(anchor);
+          stabilize(anchor);
       }
 
     m_Stat.onPopRight();
@@ -667,7 +667,7 @@ public:
 
 
   /// Push element to left side of deque
-  void PushLeft(value_type& val)
+  void push_left(value_type& val)
   {
     //create new node
     node_type* new_node_ptr = node_traits::to_node_ptr(val);
@@ -689,25 +689,25 @@ public:
           {
             //set right pointer of new node to leftmost node of deque
             new_node_ptr->m_pRight.store(anchor.getLeft(), memory_model::memory_order_release);
-            //CAS anchor: right pointer to new node, status is RPUSH
-            anchor_type new_anchor = anchor_type::create(anchor.getLeft(), new_node_ptr, STATUS::LPUSH);
+            //CAS anchor: right pointer to new node, status is LPUSH
+            anchor_type new_anchor = anchor_type::create(new_node_ptr, anchor.getRight(), STATUS::LPUSH);
             if (m_Anchor.compare_exchange_strong(anchor, new_anchor, memory_model::memory_order_release, atomics::memory_order_relaxed))
               {
                 //try to stabilize deque
-                StabilizeLeft(new_anchor);
+                stabilize_left(new_anchor);
                 break;
               }
           }
         else
           //try to stabilize deque
-          Stabilize(anchor);
+          stabilize(anchor);
       }
     ++m_ItemCounter;
     m_Stat.onPushLeft();
   }
 
   /// Pop element from left side of deque
-  value_type* PopLeft()
+  value_type* pop_left()
   {
     typename gc::Guard guard;
     //pointer to poped element
@@ -750,7 +750,7 @@ public:
           }
         else
           //try to stabilize deque
-          Stabilize(anchor);
+          stabilize(anchor);
       }
 
     m_Stat.onPopLeft();
@@ -776,7 +776,7 @@ public:
   */
   void clear()
   {
-    while (PopRight() != nullptr);
+    while (pop_right() != nullptr);
   }
 
   /// Returns deque's item count
