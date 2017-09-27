@@ -4,6 +4,7 @@ set(CDSGTEST_DEQUE_SOURCES
     ../main.cpp
     fcdeque.cpp
     intrusive_michael_deque_hp.cpp
+    intrusive_michael_deque_dhp.cpp
 )
 
 include_directories(

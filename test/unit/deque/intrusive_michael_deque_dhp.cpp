@@ -30,7 +30,7 @@
 
 #include "test_intrusive_deque.h"
 
-#include <cds/gc/hp.h>
+#include <cds/gc/dhp.h>
 #include <cds/intrusive/michael_deque.h>
 #include <vector>
 
@@ -38,10 +38,10 @@ namespace
 {
 namespace ci = cds::intrusive;
 
-typedef cds::gc::HP gc_type;
-namespace cg = cds::gc::hp;
+typedef cds::gc::DHP gc_type;
+namespace cg = cds::gc::dhp;
 
-class IntrusiveMichaelDeque_HP : public cds_test::intrusive_michael_deque
+class IntrusiveMichaelDeque_DHP : public cds_test::intrusive_michael_deque
 {
   typedef cds_test::intrusive_michael_deque base_class;
 
@@ -52,7 +52,7 @@ protected:
   void SetUp()
   {
     typedef ci::MichaelDeque< gc_type, base_item_type > queue_type;
-    cg::GarbageCollector::Construct(queue_type::c_nHazardPtrCount, 1, 16);
+    cg::GarbageCollector::Construct();
     cds::threading::Manager::attachThread();
   }
 
@@ -72,11 +72,12 @@ protected:
   }
 };
 
-TEST_F(IntrusiveMichaelDeque_HP, defaulted)
+TEST_F(IntrusiveMichaelDeque_DHP, defaulted)
 {
   typedef cds::intrusive::MichaelDeque < gc_type, base_item_type,
           typename ci::michael_deque::make_traits <
           ci::opt::disposer< mock_disposer >
+          , ci::opt::hook< ci::michael_deque::base_hook< ci::opt::gc<gc_type>>>
           >::type
           > test_deque;
 
@@ -90,7 +91,7 @@ TEST_F(IntrusiveMichaelDeque_HP, defaulted)
   check_array(arr);
 }
 
-TEST_F(IntrusiveMichaelDeque_HP, base_hook)
+TEST_F(IntrusiveMichaelDeque_DHP, base_hook)
 {
   typedef cds::intrusive::MichaelDeque< gc_type, base_item_type,
           typename ci::michael_deque::make_traits<
@@ -109,7 +110,7 @@ TEST_F(IntrusiveMichaelDeque_HP, base_hook)
   check_array(arr);
 }
 
-TEST_F(IntrusiveMichaelDeque_HP, base_item_counting)
+TEST_F(IntrusiveMichaelDeque_DHP, base_item_counting)
 {
   typedef cds::intrusive::MichaelDeque< gc_type, base_item_type,
           typename ci::michael_deque::make_traits<
@@ -129,7 +130,7 @@ TEST_F(IntrusiveMichaelDeque_HP, base_item_counting)
   check_array(arr);
 }
 
-TEST_F(IntrusiveMichaelDeque_HP, base_stat)
+TEST_F(IntrusiveMichaelDeque_DHP, base_stat)
 {
   struct traits : public ci::michael_deque::traits
   {
@@ -137,6 +138,7 @@ TEST_F(IntrusiveMichaelDeque_HP, base_stat)
     typedef cds::atomicity::item_counter item_counter;
     typedef ci::michael_deque::stat<> stat;
     typedef cds::opt::v::sequential_consistent memory_model;
+    typedef ci::michael_deque::base_hook< ci::opt::gc<gc_type>> hook;
   };
   typedef cds::intrusive::MichaelDeque< gc_type, base_item_type, traits > test_deque;
 
@@ -150,7 +152,7 @@ TEST_F(IntrusiveMichaelDeque_HP, base_stat)
   check_array(arr);
 }
 
-TEST_F(IntrusiveMichaelDeque_HP, member_hook)
+TEST_F(IntrusiveMichaelDeque_DHP, member_hook)
 {
   typedef cds::intrusive::MichaelDeque< gc_type, member_item_type,
           typename ci::michael_deque::make_traits<
@@ -172,7 +174,7 @@ TEST_F(IntrusiveMichaelDeque_HP, member_hook)
   check_array(arr);
 }
 
-TEST_F(IntrusiveMichaelDeque_HP, member_hook_stat)
+TEST_F(IntrusiveMichaelDeque_DHP, member_hook_stat)
 {
   struct traits : public ci::michael_deque::traits
   {

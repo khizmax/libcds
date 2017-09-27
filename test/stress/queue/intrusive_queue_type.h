@@ -138,6 +138,33 @@ namespace queue {
             return pop();
           }
         };
+
+        template <typename GC, typename T, typename Traits = cds::intrusive::michael_deque::traits>
+        class MichaelDequeR: public cds::intrusive::MichaelDeque<GC, T, Traits >
+        {
+          typedef cds::intrusive::MichaelDeque<GC, T, Traits > base_class;
+        public:
+          MichaelDequeR()
+          {}
+
+          bool push(T& v)
+          {
+            return base_class::push_right(v);
+          }
+          bool enqueue(T& v)
+          {
+            return push(v);
+          }
+
+          T* pop()
+          {
+            return base_class::pop_left();
+          }
+          T* deque()
+          {
+            return pop();
+          }
+        };
     } // namespace details
 
     template <typename T>
@@ -148,7 +175,66 @@ namespace queue {
         {
             typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > hook;
         };
-        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP > MichaelDeque_HP;
+        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP > MichaelDequeL_HP;
+        typedef details::MichaelDequeR< cds::gc::HP, T, traits_MichaelDeque_HP > MichaelDequeR_HP;
+
+        struct traits_MichaelDeque_HP_seqcst : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::opt::v::sequential_consistent memory_model;
+        };
+        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP_seqcst > MichaelDequeL_HP_seqcst;
+        typedef details::MichaelDequeR< cds::gc::HP, T, traits_MichaelDeque_HP_seqcst > MichaelDequeR_HP_seqcst;
+
+        struct traits_MichaelDeque_DHP : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+        };
+        typedef details::MichaelDequeL< cds::gc::DHP, T, traits_MichaelDeque_DHP > MichaelDequeL_DHP;
+        typedef details::MichaelDequeR< cds::gc::DHP, T, traits_MichaelDeque_DHP > MichaelDequeR_DHP;
+
+        struct traits_MichaelDeque_DHP_seqcst : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::opt::v::sequential_consistent memory_model;
+        };
+        typedef details::MichaelDequeL< cds::gc::DHP, T, traits_MichaelDeque_DHP_seqcst > MichaelDequeL_DHP_seqcst;
+        typedef details::MichaelDequeR< cds::gc::DHP, T, traits_MichaelDeque_DHP_seqcst > MichaelDequeR_DHP_seqcst;
+
+        // MichaelDeque + item counter
+        struct traits_MichaelDeque_HP_ic : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP_ic > MichaelDequeL_HP_ic;
+        typedef details::MichaelDequeR< cds::gc::HP, T, traits_MichaelDeque_HP_ic > MichaelDequeR_HP_ic;
+
+        struct traits_MichaelDeque_DHP_ic : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef details::MichaelDequeL< cds::gc::DHP, T, traits_MichaelDeque_DHP_ic > MichaelDequeL_DHP_ic;
+        typedef details::MichaelDequeR< cds::gc::DHP, T, traits_MichaelDeque_DHP_ic > MichaelDequeR_DHP_ic;
+
+        // MichaelDeque + stat
+        struct traits_MichaelDeque_HP_stat : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::intrusive::michael_deque::stat<> stat;
+        };
+        typedef details::MichaelDequeL< cds::gc::HP, T, traits_MichaelDeque_HP_stat > MichaelDequeL_HP_stat;
+        typedef details::MichaelDequeR< cds::gc::HP, T, traits_MichaelDeque_HP_stat > MichaelDequeR_HP_stat;
+
+
+        struct traits_MichaelDeque_DHP_stat : public cds::intrusive::michael_deque::traits
+        {
+            typedef cds::intrusive::michael_deque::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::intrusive::michael_deque::stat<> stat;
+        };
+        typedef details::MichaelDequeL< cds::gc::DHP, T, traits_MichaelDeque_DHP_stat > MichaelDequeL_DHP_stat;
+        typedef details::MichaelDequeR< cds::gc::DHP, T, traits_MichaelDeque_DHP_stat > MichaelDequeR_DHP_stat;
 
         // MSQueue, MoirQueue
         struct traits_MSQueue_HP : public cds::intrusive::msqueue::traits
