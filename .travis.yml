@@ -1,12 +1,12 @@
 language: cpp
 
 install: 
-  - chmod +x ./CI/travis-ci/install.sh
-  - ./CI/travis-ci/install.sh
+  - chmod +x ./build/CI/travis-ci/install.sh
+  - ./build/CI/travis-ci/install.sh
 
 script:
-  - chmod +x ./CI/travis-ci/run.sh
-  - ./CI/travis-ci/run.sh
+  - chmod +x ./build/CI/travis-ci/run.sh
+  - ./build/CI/travis-ci/run.sh
 
 env:
 ##   BUILD_TYPE=Release CXX_COMPILER=g++-6
