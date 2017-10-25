@@ -1,0 +1,12 @@
+[requires]
+gtest/1.7.0@lasote/stable
+Boost/1.60.0@lasote/stable
+
+[options]
+Boost:shared=True
+
+# We copy the builded files in order to refer to them when calling cmake.
+# cmake -DCMAKE_PREFIX_PATH="build_dir/deps"
+[imports]
+include, * -> ./deps/include # Copies files
+lib, * -> ./deps/lib # Copies files
