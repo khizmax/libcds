@@ -17,9 +17,11 @@ script:
 
 compiler:
   - g++-6
-    env: CC=gcc-6 CXX=g++-6
   - clang-4.0
-    env: CC=clang-4.0 CXX=clang++-4.0
+
+env:
+  - CXX=g++-6 CC=gcc-6
+  - CXX=clang++-4.0 CC=clang-4.0
 
 env:
   - TARGET="unit-deque unit-misc unit-pqueue"   BUILD_TYPE=Release
