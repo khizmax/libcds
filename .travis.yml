@@ -1,5 +1,11 @@
 language: cpp
 
+install:
+  - ./build/CI/travis-ci/install.sh
+
+script:
+  - CXX=$CXX CC=$CC ./build/CI/travis-ci/run.sh
+
 env:
   - TARGET="unit-deque unit-misc unit-pqueue"   BUILD_TYPE=Release
   - TARGET="unit-queue unit-stack"              BUILD_TYPE=Release
@@ -56,7 +62,7 @@ matrix:
           packages:
             - g++-6
       env:
-        - CC="gcc-6" CXX="g++-6"
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
         
     - os: linux
       addons:
@@ -66,13 +72,11 @@ matrix:
           packages:
             - clang-4.0
       env:
-        - CXX="clang++-4.0" CC="clang-4.0"
+        - MATRIX_EVAL="CXX=clang++-4.0 && CC=clang-4.0"
 
-install:
-  - ./build/CI/travis-ci/install.sh
+before_install:
+  - eval "${MATRIX_EVAL}"
 
-script:
-  - CXX=$CXX CC=$CC ./build/CI/travis-ci/run.sh
 
 #matrix:
 #  include:
