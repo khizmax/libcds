@@ -56,7 +56,7 @@ matrix:
           packages:
             - g++-6
       env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - CC="gcc-6" CXX="g++-6"
         
     - os: linux
       addons:
@@ -66,19 +66,12 @@ matrix:
           packages:
             - clang-4.0
       env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - echo CC=$CC
-  - echo CXX=$CXX
+        - CXX="clang++-4.0" CC="clang-4.0"
 
 install:
-#  - chmod +x ./build/CI/travis-ci/install.sh
   - ./build/CI/travis-ci/install.sh
 
 script:
-#  - chmod +x ./build/CI/travis-ci/run.sh
   - CXX=$CXX CC=$CC ./build/CI/travis-ci/run.sh
 
 #matrix:
