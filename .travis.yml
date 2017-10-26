@@ -1,35 +1,5 @@
 language: cpp
 
-install: 
-  - chmod +x ./build/CI/travis-ci/install.sh
-  - ./build/CI/travis-ci/install.sh
-
-script:
-  - chmod +x ./build/CI/travis-ci/run.sh
-  - ./build/CI/travis-ci/run.sh
-
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-        
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - clang-4.0
-      env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-
 env:
   - TARGET="unit-deque unit-misc unit-pqueue"   BUILD_TYPE=Release
   - TARGET="unit-queue unit-stack"              BUILD_TYPE=Release
@@ -76,6 +46,38 @@ env:
   - TARGET=unit-striped-map                     BUILD_TYPE=Debug
   - TARGET=unit-tree                            BUILD_TYPE=Debug
 
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - clang-4.0
+      env:
+        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+install:
+#  - chmod +x ./build/CI/travis-ci/install.sh
+  - ./build/CI/travis-ci/install.sh
+
+script:
+#  - chmod +x ./build/CI/travis-ci/run.sh
+  - ./build/CI/travis-ci/run.sh
 
 #matrix:
 #  include:
