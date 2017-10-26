@@ -70,6 +70,8 @@ matrix:
 
 before_install:
   - eval "${MATRIX_EVAL}"
+  - echo CC=$CC
+  - echo CXX=$CXX
 
 install:
 #  - chmod +x ./build/CI/travis-ci/install.sh
@@ -77,7 +79,7 @@ install:
 
 script:
 #  - chmod +x ./build/CI/travis-ci/run.sh
-  - ./build/CI/travis-ci/run.sh
+  - CXX=$CXX CC=$CC ./build/CI/travis-ci/run.sh
 
 #matrix:
 #  include:
