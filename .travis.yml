@@ -87,6 +87,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty-5.0
+      - llvm-toolchain-trusty-4.0
     packages:
       - clang-4.0
       - g++-6
