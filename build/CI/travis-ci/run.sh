@@ -20,4 +20,4 @@ cmake --build . -- -j2 $TARGET
 if [[ "$(uname -s)" == 'Darwin' ]]; then
 	export DYLD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/build-test/deps/lib
 fi
-ctest -VV -R $TARGET
+ctest -VV -R
