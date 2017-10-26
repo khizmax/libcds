@@ -10,11 +10,11 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     pyenv activate conan
 fi
 
-export CXX=$CXX_COMPILER
-export CC=$C_COMPILER
+#export CXX=$CXX_COMPILER
+#export CC=$C_COMPILER
 mkdir build-test && cd build-test
 conan install --build=missing -s build_type=$BUILD_TYPE ..
-cmake -DCMAKE_PREFIX_PATH="$TRAVIS_BUILD_DIR/build-test/deps" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DCMAKE_EXE_LINKER_FLAGS=$LINKER_FLAGS -DWITH_TESTS=ON ..
+cmake -DCMAKE_PREFIX_PATH="$TRAVIS_BUILD_DIR/build-test/deps" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_EXE_LINKER_FLAGS=$LINKER_FLAGS -DWITH_TESTS=ON ..
 cmake --build . -- -j2 $TARGET
 
 if [[ "$(uname -s)" == 'Darwin' ]]; then

@@ -120,15 +120,24 @@ add_executable(${UNIT_SET_SPLIT_ITERABLE} ${UNIT_SET_SPLIT_ITERABLE_SOURCES})
 target_link_libraries(${UNIT_SET_SPLIT_ITERABLE} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_SET_SPLIT_ITERABLE} COMMAND ${UNIT_SET_SPLIT_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
+add_custom_target( unit-set-michael
+    DEPENDS
+        ${UNIT_SET_MICHAEL}
+        ${UNIT_SET_MICHAEL_ITERABLE}
+        ${UNIT_SET_MICHAEL_LAZY}
+)
+
+add_custom_target( unit-set-split
+    DEPENDS
+        ${UNIT_SET_SPLIT_MICHAEL}
+        ${UNIT_SET_SPLIT_ITERABLE}
+        ${UNIT_SET_SPLIT_LAZY}
+)
 
 add_custom_target( unit-set
     DEPENDS
         ${UNIT_SET_FELDMAN}
-        ${UNIT_SET_MICHAEL}
-        ${UNIT_SET_MICHAEL_ITERABLE}
-        ${UNIT_SET_MICHAEL_LAZY}
         ${UNIT_SET_SKIP}
-        ${UNIT_SET_SPLIT_MICHAEL}
-        ${UNIT_SET_SPLIT_ITERABLE}
-        ${UNIT_SET_SPLIT_LAZY}
+        unit-set-michael
+        unit-set-split
 )

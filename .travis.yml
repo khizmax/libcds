@@ -8,97 +8,6 @@ script:
   - chmod +x ./build/CI/travis-ci/run.sh
   - ./build/CI/travis-ci/run.sh
 
-env:
-##   BUILD_TYPE=Release CXX_COMPILER=g++-6
-  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-map BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-feldman BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-skip BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-tree BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-
-##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
-  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-
-##   BUILD_TYPE=Release CXX_COMPILER=clang-4.0
-  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 LINKER_FLAGS=-latomic
-  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-#  - TARGET=unit-iset BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-feldman BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-michael-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-michael-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-michael-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-skip BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-split-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-split-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset-split-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-#  - TARGET=unit-set BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-feldman BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-skip BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-#  - TARGET=unit-map BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-feldman BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-michael-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-michael-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-skip BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-split-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-split-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map-split-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-# FIXME: building too long. Travis-ci will stop building.
-#  - TARGET=unit-tree BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-
-
-##   BUILD_TYPE=Debug CXX_COMPILER=clang-4.0
-  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 LINKER_FLAGS=-latomic
-  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-
-
 addons:
   apt:
     sources:
@@ -108,6 +17,57 @@ addons:
     packages:
       - clang-4.0
       - g++-6
+
+compiler:
+  - gcc-6
+  - clang-4.0
+
+env:
+  - TARGET="unit-deque unit-misc unit-pqueue"   BUILD_TYPE=Release
+  - TARGET="unit-queue unit-stack"              BUILD_TYPE=Release
+  - TARGET=unit-ilist                           BUILD_TYPE=Release
+  - TARGET=unit-list                            BUILD_TYPE=Release
+# - TARGET=unit-iset                            BUILD_TYPE=Release
+  - TARGET=unit-iset-feldman                    BUILD_TYPE=Release
+  - TARGET=unit-iset-michael                    BUILD_TYPE=Release
+  - TARGET=unit-iset-skip                       BUILD_TYPE=Release
+  - TARGET=unit-iset-split                      BUILD_TYPE=Release
+# - TARGET=unit-set                             BUILD_TYPE=Release
+  - TARGET=unit-set-feldman                     BUILD_TYPE=Release
+  - TARGET=unit-set-michael                     BUILD_TYPE=Release
+  - TARGET=unit-set-skip                        BUILD_TYPE=Release
+  - TARGET=unit-set-split                       BUILD_TYPE=Release
+  - TARGET=unit-striped-set                     BUILD_TYPE=Release
+# - TARGET=unit-map                             BUILD_TYPE=Release
+  - TARGET=unit-map-feldman                     BUILD_TYPE=Release
+  - TARGET=unit-map-michael                     BUILD_TYPE=Release
+  - TARGET=unit-map-skip                        BUILD_TYPE=Release
+  - TARGET=unit-map-split                       BUILD_TYPE=Release
+  - TARGET=unit-striped-map                     BUILD_TYPE=Release
+  - TARGET=unit-tree                            BUILD_TYPE=Release
+  - TARGET="unit-deque unit-misc unit-pqueue"   BUILD_TYPE=Debug
+  - TARGET="unit-queue unit-stack"              BUILD_TYPE=Debug
+  - TARGET=unit-ilist                           BUILD_TYPE=Debug
+  - TARGET=unit-list                            BUILD_TYPE=Debug
+# - TARGET=unit-iset                            BUILD_TYPE=Debug
+  - TARGET=unit-iset-feldman                    BUILD_TYPE=Debug
+  - TARGET=unit-iset-michael                    BUILD_TYPE=Debug
+  - TARGET=unit-iset-skip                       BUILD_TYPE=Debug
+  - TARGET=unit-iset-split                      BUILD_TYPE=Debug
+# - TARGET=unit-set                             BUILD_TYPE=Debug
+  - TARGET=unit-set-feldman                     BUILD_TYPE=Debug
+  - TARGET=unit-set-michael                     BUILD_TYPE=Debug
+  - TARGET=unit-set-skip                        BUILD_TYPE=Debug
+  - TARGET=unit-set-split                       BUILD_TYPE=Debug
+  - TARGET=unit-striped-set                     BUILD_TYPE=Debug
+# - TARGET=unit-map                             BUILD_TYPE=Debug
+  - TARGET=unit-map-feldman                     BUILD_TYPE=Debug
+  - TARGET=unit-map-michael                     BUILD_TYPE=Debug
+  - TARGET=unit-map-skip                        BUILD_TYPE=Debug
+  - TARGET=unit-map-split                       BUILD_TYPE=Debug
+  - TARGET=unit-striped-map                     BUILD_TYPE=Debug
+  - TARGET=unit-tree                            BUILD_TYPE=Debug
+
 
 #matrix:
 #  include:
