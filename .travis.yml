@@ -91,17 +91,92 @@ addons:
       - clang-4.0
       - g++-6
 
-#matrix:
-#  include:
-#    - os: osx
-#      osx_image: xcode8
-#      env: BUILD_TYPE=Debug
-#    - os: osx
-#      osx_image: xcode8.2
-#      env: BUILD_TYPE=Debug
-#    - os: osx
-#      osx_image: xcode8
-#      env: BUILD_TYPE=Release
-#    - os: osx
-#      osx_image: xcode8.2
-#      env: BUILD_TYPE=Release
+osx: &osx
+   os: osx
+   osx_image: xcode8.3
+
+matrix:
+  include:
+# RELEASE
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-deque C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-ilist C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-list C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-misc C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-pqueue C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-queue C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-feldman C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-michael C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-lazy C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-iterable C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-skip C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-michael C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-lazy C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-iterable C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-striped-set C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-stack C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Release TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+# DEBUG
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-deque C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-ilist C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-list C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-misc C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-pqueue C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-queue C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-feldman C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-michael C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-lazy C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-iterable C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-skip C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-michael C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-lazy C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-iterable C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-striped-set C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-stack C_COMPILER=clang CXX_COMPILER=clang++
+    - <<: *osx
+      env: BUILD_TYPE=Debug TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+      
