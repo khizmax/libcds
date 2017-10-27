@@ -72,57 +72,57 @@ env:
   - TARGET=unit-striped-map                     BUILD_TYPE=Debug CXX_COMPILER=g++-6 C_COMPILER=gcc-6
   - TARGET=unit-tree                            BUILD_TYPE=Debug CXX_COMPILER=g++-6 C_COMPILER=gcc-6
 
-  - TARGET=unit-deque                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-misc                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-pqueue                          BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-queue                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-stack                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-ilist                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-list                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-iset                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-feldman                    BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-michael                    BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-skip                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-split                      BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-set                             BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-feldman                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-michael                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-skip                        BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-split                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-striped-set                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-map                             BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-feldman                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-michael                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-skip                        BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-split                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-striped-map                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-tree                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
+  - TARGET=unit-deque                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-misc                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-pqueue                          BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-queue                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-stack                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-ilist                           BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-list                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-iset                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-feldman                    BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-michael                    BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-skip                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-split                      BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-set                             BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-feldman                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-michael                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-skip                        BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-split                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-striped-set                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-map                             BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-feldman                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-michael                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-skip                        BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-split                       BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-striped-map                     BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-tree                            BUILD_TYPE=Release CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
 
-  - TARGET=unit-deque                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-misc                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-pqueue                          BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-queue                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-stack                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-ilist                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-list                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-iset                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-feldman                    BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-michael                    BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-skip                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-iset-split                      BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-set                             BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-feldman                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-michael                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-skip                        BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-set-split                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-striped-set                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-# - TARGET=unit-map                             BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-feldman                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-michael                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-skip                        BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-map-split                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-striped-map                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
-  - TARGET=unit-tree                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0
+  - TARGET=unit-deque                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-misc                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-pqueue                          BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-queue                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-stack                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-ilist                           BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-list                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-iset                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-feldman                    BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-michael                    BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-skip                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-iset-split                      BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-set                             BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-feldman                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-michael                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-skip                        BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-set-split                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-striped-set                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+# - TARGET=unit-map                             BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-feldman                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-michael                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-skip                        BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-map-split                       BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-striped-map                     BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
+  - TARGET=unit-tree                            BUILD_TYPE=Debug CXX_COMPILER=clang-4.0 C_COMPILER=clang-4.0 CXX_FLAGS=-stdlib=libc++
 
 #matrix:
 #  include:
