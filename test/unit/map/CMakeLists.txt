@@ -19,7 +19,7 @@ target_link_libraries(${UNIT_MAP_FELDMAN} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_MAP_FELDMAN} COMMAND ${UNIT_MAP_FELDMAN} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 # MichaelHashMap<MichaelList> unit test
-set(UNIT_MAP_MICHAEL unit-map-michael-michael)
+set(UNIT_MAP_MICHAEL unit-map-michael)
 set(UNIT_MAP_MICHAEL_SOURCES 
     ../main.cpp
     michael_michael_hp.cpp
@@ -123,24 +123,15 @@ target_link_libraries(${UNIT_MAP_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_MAP_SPLIT_LAZY} COMMAND ${UNIT_MAP_SPLIT_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 
-add_custom_target( unit-map-michael
-    DEPENDS
-        ${UNIT_MAP_MICHAEL}
-        ${UNIT_MAP_MICHAEL_ITERABLE}
-        ${UNIT_MAP_MICHAEL_LAZY}
-)
-
-add_custom_target( unit-map-split
-    DEPENDS
-        ${UNIT_MAP_SPLIT_MICHAEL}
-        ${UNIT_MAP_SPLIT_ITERABLE}
-        ${UNIT_MAP_SPLIT_LAZY}
-)
 
 add_custom_target( unit-map
     DEPENDS
         ${UNIT_MAP_FELDMAN}
+        ${UNIT_MAP_MICHAEL}
+        ${UNIT_MAP_MICHAEL_ITERABLE}
+        ${UNIT_MAP_MICHAEL_LAZY}
         ${UNIT_MAP_SKIP_LIST}
-        unit-map-michael
-        unit-map-split
+        ${UNIT_MAP_SPLIT_MICHAEL}
+        ${UNIT_MAP_SPLIT_ITERABLE}
+        ${UNIT_MAP_SPLIT_LAZY}
 )

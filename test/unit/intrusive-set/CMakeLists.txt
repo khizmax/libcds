@@ -122,26 +122,18 @@ add_executable(${UNIT_ISET_SPLIT_ITERABLE} ${UNIT_ISET_SPLIT_ITERABLE_SOURCES})
 target_link_libraries(${UNIT_ISET_SPLIT_ITERABLE} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_ISET_SPLIT_ITERABLE} COMMAND ${UNIT_ISET_SPLIT_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-add_custom_target( unit-iset-michael
-    DEPENDS
-        ${UNIT_ISET_MICHAEL}
-        ${UNIT_ISET_MICHAEL_ITERABLE}
-        ${UNIT_ISET_MICHAEL_LAZY}
-)
 
-add_custom_target( unit-iset-split
-    DEPENDS
-        ${UNIT_ISET_SPLIT_MICHAEL}
-        ${UNIT_ISET_SPLIT_ITERABLE}
-        ${UNIT_ISET_SPLIT_LAZY}
-)
 
 add_custom_target( unit-iset
     DEPENDS
         ${UNIT_ISET_FELDMAN}
-        unit-iset-michael
-        unit-iset-split
+        ${UNIT_ISET_MICHAEL}
+        ${UNIT_ISET_MICHAEL_ITERABLE}
+        ${UNIT_ISET_MICHAEL_LAZY}
         ${UNIT_ISET_SKIP}
+        ${UNIT_ISET_SPLIT_MICHAEL}
+        ${UNIT_ISET_SPLIT_ITERABLE}
+        ${UNIT_ISET_SPLIT_LAZY}
 )
 
 
