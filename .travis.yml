@@ -105,8 +105,6 @@ matrix:
     - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-list C_COMPILER=clang CXX_COMPILER=clang++
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
-    - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-misc C_COMPILER=clang CXX_COMPILER=clang++
     - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-pqueue C_COMPILER=clang CXX_COMPILER=clang++
@@ -131,13 +129,17 @@ matrix:
     - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-iset-split-iterable C_COMPILER=clang CXX_COMPILER=clang++
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
-    - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-striped-set C_COMPILER=clang CXX_COMPILER=clang++
     - <<: *osx
       env: BUILD_TYPE=Release TARGET=unit-stack C_COMPILER=clang CXX_COMPILER=clang++
-    - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+# FIXME: building too long. Travis-ci will stop building.
+#    - <<: *osx
+#      env: BUILD_TYPE=Release TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
+#    - <<: *osx
+#      env: BUILD_TYPE=Release TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
+#    - <<: *osx
+#      env: BUILD_TYPE=Release TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+
 # DEBUG
     - <<: *osx
       env: BUILD_TYPE=Debug TARGET=unit-deque C_COMPILER=clang CXX_COMPILER=clang++
