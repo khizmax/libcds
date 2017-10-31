@@ -43,10 +43,7 @@ namespace cds_test {
         template <typename RandomIt>
         static void shuffle( RandomIt first, RandomIt last )
         {
-            static std::random_device random_dev;
-            static std::mt19937       random_gen( random_dev());
-
-            std::shuffle( first, last, random_gen );
+            std::shuffle( first, last, std::mt19937( std::random_device()() ) );
         }
 
         static inline unsigned int rand( unsigned int nMax )
