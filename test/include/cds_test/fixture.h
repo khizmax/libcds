@@ -46,11 +46,12 @@ namespace cds_test {
             std::shuffle( first, last, std::mt19937( std::random_device()() ) );
         }
 
-        static inline unsigned int rand( unsigned int nMax )
+        static unsigned int rand( unsigned int nMax )
         {
-            double rnd = double( std::rand()) / double( RAND_MAX );
-            unsigned int n = (unsigned int)(rnd * nMax);
-            return n < nMax ? n : (n - 1);
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<unsigned> dis(0, nMax - 1);
+            return dis(gen);
         }
     };
 
