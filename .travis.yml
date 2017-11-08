@@ -8,177 +8,258 @@ script:
   - chmod +x ./build/CI/travis-ci/run.sh
   - ./build/CI/travis-ci/run.sh
 
-env:
-##   BUILD_TYPE=Release CXX_COMPILER=g++-6
-  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-map BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-feldman BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-michael-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-skip BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-michael BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-lazy BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset-split-iterable BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-tree BUILD_TYPE=Release C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+linux: &linux_gcc
+  os: linux
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-6
+  compiler:
+    - g++-6
+  before_install:
+    - eval "CC=gcc-6 && CXX=g++-6"
+    
 
-##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
-  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=gcc-6 CXX_COMPILER=g++-6
-
-##   BUILD_TYPE=Release CXX_COMPILER=clang-4.0
-  - TARGET=unit-deque BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-ilist BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-list BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-misc BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 LINKER_FLAGS=-latomic
-  - TARGET=unit-pqueue BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-queue BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-feldman BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-michael-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-skip BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-iterable BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-michael BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set-split-lazy BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-striped-set BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-stack BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-# FIXME: building too long. Travis-ci will stop building.
-#  - BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 TARGET=unit-map
-#  - BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 TARGET=unit-iset
-#  - BUILD_TYPE=Release C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 TARGET=unit-tree
-
-
-##   BUILD_TYPE=Debug CXX_COMPILER=clang-4.0
-  - TARGET=unit-deque BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-ilist BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-list BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-map BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-misc BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 LINKER_FLAGS=-latomic
-  - TARGET=unit-pqueue BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-queue BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-iset BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-set BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-striped-set BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-stack BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-  - TARGET=unit-tree BUILD_TYPE=Debug C_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
-
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-4.0
-    packages:
-      - clang-4.0
-      - g++-6
-
+linux: &linux_clang
+  os: linux
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-trusty-4.0
+      packages:
+        - clang-4.0
+  compiler:
+    - clang-4.0          
+  before_install:
+    - eval "CC=clang-4.0 && CXX=clang++-4.0"
+  
+      
 osx: &osx
    os: osx
    osx_image: xcode8.3
+   compiler:
+    - clang
+   before_install:
+    - eval "CC=clang && CXX=clang++"
+    
 
 matrix:
   include:
+##   BUILD_TYPE=Release CXX_COMPILER=g++-6
+    - <<: *linux_gcc
+      env: TARGET=unit-deque BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-ilist BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-list BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-map BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-misc BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-pqueue BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-queue BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-feldman BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-michael-michael BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-michael-lazy BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-michael-iterable BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-skip BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-split-michael BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-split-lazy BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset-split-iterable BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-set BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-striped-set BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-stack BUILD_TYPE=Release 
+    - <<: *linux_gcc
+      env: TARGET=unit-tree BUILD_TYPE=Release 
+
+##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
+    - <<: *linux_gcc
+      env: TARGET=unit-deque BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-ilist BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-list BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-map BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-misc BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-pqueue BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-queue BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-iset BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-set BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-striped-set BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-stack BUILD_TYPE=Debug 
+    - <<: *linux_gcc
+      env: TARGET=unit-tree BUILD_TYPE=Debug 
+
+##   BUILD_TYPE=Release CXX_COMPILER=clang-4.0
+    - <<: *linux_clang
+      env: TARGET=unit-deque BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-ilist BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-list BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-misc BUILD_TYPE=Release  LINKER_FLAGS=-latomic
+    - <<: *linux_clang
+      env: TARGET=unit-pqueue BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-queue BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-feldman BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-michael-michael BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-michael-iterable BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-michael-lazy BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-skip BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-split-iterable BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-split-michael BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-set-split-lazy BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-striped-set BUILD_TYPE=Release 
+    - <<: *linux_clang
+      env: TARGET=unit-stack BUILD_TYPE=Release 
+# FIXME: building too long. Travis-ci will stop building.
+#  - BUILD_TYPE=Release  TARGET=unit-map
+#  - BUILD_TYPE=Release  TARGET=unit-iset
+#  - BUILD_TYPE=Release  TARGET=unit-tree
+
+##   BUILD_TYPE=Debug CXX_COMPILER=clang-4.0
+    - <<: *linux_clang
+      env: TARGET=unit-deque BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-ilist BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-list BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-map BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-misc BUILD_TYPE=Debug  LINKER_FLAGS=-latomic
+    - <<: *linux_clang
+      env: TARGET=unit-pqueue BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-queue BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-iset BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-set BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-striped-set BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-stack BUILD_TYPE=Debug 
+    - <<: *linux_clang
+      env: TARGET=unit-tree BUILD_TYPE=Debug 
+
 # RELEASE
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-deque C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-deque 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-ilist C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-ilist 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-list C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-list 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-misc C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-misc 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-pqueue C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-pqueue 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-queue C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-queue 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-feldman C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-feldman 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-michael-michael C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-michael 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-michael-lazy C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-lazy 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-michael-iterable C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-michael-iterable 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-skip C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-skip 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-split-michael C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-michael 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-split-lazy C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-lazy 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-iset-split-iterable C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-iset-split-iterable 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-striped-set C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-striped-set 
     - <<: *osx
-      env: BUILD_TYPE=Release TARGET=unit-stack C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Release TARGET=unit-stack 
 # FIXME: building too long. Travis-ci will stop building.
 #    - <<: *osx
-#      env: BUILD_TYPE=Release TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
+#      env: BUILD_TYPE=Release TARGET=unit-map 
 #    - <<: *osx
-#      env: BUILD_TYPE=Release TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
+#      env: BUILD_TYPE=Release TARGET=unit-set 
 #    - <<: *osx
-#      env: BUILD_TYPE=Release TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+#      env: BUILD_TYPE=Release TARGET=unit-tree 
 
 # DEBUG
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-deque C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-deque 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-ilist C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-ilist 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-list C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-list 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-map C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-map 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-misc C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-misc 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-pqueue C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-pqueue 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-queue C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-queue 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-feldman C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-feldman 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-michael C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-michael 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-lazy C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-lazy 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-iterable C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-michael-iterable 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-skip C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-skip 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-split-michael C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-michael 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-split-lazy C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-lazy 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-iset-split-iterable C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-iset-split-iterable 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-set C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-set 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-striped-set C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-striped-set 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-stack C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-stack 
     - <<: *osx
-      env: BUILD_TYPE=Debug TARGET=unit-tree C_COMPILER=clang CXX_COMPILER=clang++
+      env: BUILD_TYPE=Debug TARGET=unit-tree 
       
