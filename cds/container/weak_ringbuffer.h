@@ -849,6 +849,13 @@ namespace cds { namespace container {
                 CDS_VERIFY( pop_front());
 
                 front = front_.load( memory_model::memory_order_relaxed );
+
+                if ( cback_ - front < sizeof( size_t )) {
+                    cback_ = back_.load( memory_model::memory_order_acquire );
+                    if ( cback_ - front < sizeof( size_t ) )
+                        return std::make_pair( nullptr, 0u );
+                }
+
                 buf = buffer_.buffer() + buffer_.mod( front );
                 size = *reinterpret_cast<size_t*>( buf );
 
@@ -921,7 +928,6 @@ namespace cds { namespace container {
 
             front_.store( front + real_size, memory_model::memory_order_release );
             return true;
-
         }
 
         /// [consumer] Clears the ring buffer
