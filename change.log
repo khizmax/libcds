@@ -1,5 +1,6 @@
 2.4.0
     - Removed: -fno-strict-aliasing requirement
+    - Fixed: a serious bug in WeakRingBuffer::front()
 
 2.3.1 01.09.2017
     Maintenance release
