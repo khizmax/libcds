@@ -244,6 +244,38 @@ namespace cds { namespace intrusive {
             m_FlatCombining.release_record( pRec );
         }
 
+        /// Exclusive access to underlying queue object
+        /**
+            The functor \p f can do any operation with underlying \p container_type in exclusive mode.
+            For example, you can iterate over the queue.
+            \p Func signature is:
+            \code
+                void f( container_type& queue );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f )
+        {
+            auto& queue = m_Queue;
+            m_FlatCombining.invoke_exclusive( [&queue, &f]() { f( queue ); } );
+        }
+
+        /// Exclusive access to underlying queue object
+        /**
+            The functor \p f can do any operation with underlying \p container_type in exclusive mode.
+            For example, you can iterate over the queue.
+            \p Func signature is:
+            \code
+                void f( container_type const& queue );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f ) const
+        {
+            auto const& queue = m_Queue;
+            m_FlatCombining.invoke_exclusive( [&queue, &f]() { f( queue ); } );
+        }
+
         /// Returns the number of elements in the queue.
         /**
             Note that <tt>size() == 0</tt> is not mean that the queue is empty because

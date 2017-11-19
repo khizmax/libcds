@@ -340,6 +340,38 @@ namespace cds { namespace container {
             m_FlatCombining.release_record( pRec );
         }
 
+        /// Exclusive access to underlying deque object
+        /**
+            The functor \p f can do any operation with underlying \p deque_type in exclusive mode.
+            For example, you can iterate over the deque.
+            \p Func signature is:
+            \code
+                void f( deque_type& deque );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f )
+        {
+            auto& deque = m_Deque;
+            m_FlatCombining.invoke_exclusive( [&deque, &f]() { f( deque ); } );
+        }
+
+        /// Exclusive access to underlying deque object
+        /**
+            The functor \p f can do any operation with underlying \p deque_type in exclusive mode.
+            For example, you can iterate over the deque.
+            \p Func signature is:
+            \code
+                void f( deque_type const& deque );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f ) const
+        {
+            auto const& deque = m_Deque;
+            m_FlatCombining.invoke_exclusive( [&deque, &f]() { f( deque ); } );
+        }
+
         /// Returns the number of elements in the deque.
         /**
             Note that <tt>size() == 0</tt> is not mean that the deque is empty because

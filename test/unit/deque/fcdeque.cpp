@@ -41,11 +41,23 @@ namespace {
         void test( Deque& dq )
         {
             size_t const c_nSize = 100;
+            int total_sum = 0;
 
             // push_front/pop_front
-            for ( int i = 0; i < static_cast<int>( c_nSize ); ++i )
-                EXPECT_TRUE( dq.push_front( i ));
+            for ( int i = 0; i < static_cast<int>( c_nSize ); ++i ) {
+                EXPECT_TRUE( dq.push_front( i ) );
+                total_sum += i;
+            }
             EXPECT_EQ( dq.size(), c_nSize );
+
+            int sum = 0;
+            dq.apply( [&sum]( typename Deque::deque_type const& d )
+                {
+                    for ( auto const& el : d )
+                        sum += el;
+                }
+            );
+            EXPECT_EQ( sum, total_sum );
 
             size_t nCount = 0;
             int val;

@@ -228,6 +228,38 @@ namespace cds { namespace container {
             return !pRec->bEmpty;
         }
 
+        /// Exclusive access to underlying priority queue object
+        /**
+            The functor \p f can do any operation with underlying \p priority_queue_type in exclusive mode.
+            For example, you can iterate over the queue.
+            \p Func signature is:
+            \code
+                void f( priority_queue_type& deque );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f )
+        {
+            auto& pqueue = m_PQueue;
+            m_FlatCombining.invoke_exclusive( [&pqueue, &f]() { f( pqueue ); } );
+        }
+
+        /// Exclusive access to underlying priority queue object
+        /**
+            The functor \p f can do any operation with underlying \p proiprity_queue_type in exclusive mode.
+            For example, you can iterate over the queue.
+            \p Func signature is:
+            \code
+                void f( priority_queue_type const& queue );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f ) const
+        {
+            auto const& pqueue = m_PQueue;
+            m_FlatCombining.invoke_exclusive( [&pqueue, &f]() { f( pqueue ); } );
+        }
+
         /// Clears the priority queue
         void clear()
         {

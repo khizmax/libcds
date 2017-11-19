@@ -77,13 +77,17 @@ namespace {
         void test( Queue& q )
         {
             typedef typename Queue::value_type value_type;
+            typedef typename Queue::container_type underlying_queue_type;
 
             size_t const nSize = 100;
             value_type * pv;
             std::vector<value_type> arr;
             arr.resize( nSize );
-            for ( size_t i = 0; i < nSize; ++i )
-                arr[i].nVal = static_cast<int>(i);
+            int total_sum = 0;
+            for ( size_t i = 0; i < nSize; ++i ) {
+                arr[i].nVal = static_cast<int>( i );
+                total_sum += static_cast<int>( i );
+            }
 
             ASSERT_TRUE( q.empty());
             ASSERT_EQ( q.size(), 0u );
@@ -108,6 +112,15 @@ namespace {
                 ASSERT_FALSE( q.empty());
                 ASSERT_EQ( q.size(), i + 1 );
             }
+
+            int sum = 0;
+            q.apply( [&sum]( underlying_queue_type& queue )
+            {
+                for ( auto const& el : queue )
+                    sum += el.nVal;
+            } );
+            EXPECT_EQ( sum, total_sum );
+
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_FALSE( q.empty());

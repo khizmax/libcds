@@ -73,6 +73,7 @@ namespace {
         void test()
         {
             typedef typename Stack::value_type  value_type;
+            typedef typename Stack::container_type underlying_stack_type;
             Stack stack;
 
             ASSERT_TRUE( stack.empty());
@@ -87,6 +88,14 @@ namespace {
             ASSERT_TRUE( !stack.empty());
             ASSERT_TRUE( stack.push( v3 ));
             ASSERT_TRUE( !stack.empty());
+
+            unsigned sum = 0;
+            stack.apply( [&sum]( underlying_stack_type& stack )
+            {
+                for ( auto const& el : stack )
+                    sum += el.nVal;
+            } );
+            EXPECT_EQ( sum, 6 );
 
             value_type * pv;
             pv = stack.pop();

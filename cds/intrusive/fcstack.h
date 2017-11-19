@@ -230,6 +230,38 @@ namespace cds { namespace intrusive {
             m_FlatCombining.release_record( pRec );
         }
 
+        /// Exclusive access to underlying stack object
+        /**
+            The functor \p f can do any operation with underlying \p container_type in exclusive mode.
+            For example, you can iterate over the stack.
+            \p Func signature is:
+            \code
+                void f( container_type& stack );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f )
+        {
+            auto& stack = m_Stack;
+            m_FlatCombining.invoke_exclusive( [&stack, &f]() { f( stack ); } );
+        }
+
+        /// Exclusive access to underlying stack object
+        /**
+            The functor \p f can do any operation with underlying \p container_type in exclusive mode.
+            For example, you can iterate over the stack.
+            \p Func signature is:
+            \code
+                void f( container_type const& stack );
+            \endcode
+        */
+        template <typename Func>
+        void apply( Func f ) const
+        {
+            auto const& stack = m_Stack;
+            m_FlatCombining.invoke_exclusive( [&stack, &f]() { f( stack ); } );
+        }
+
         /// Returns the number of elements in the stack.
         /**
             Note that <tt>size() == 0</tt> is not mean that the stack is empty because
