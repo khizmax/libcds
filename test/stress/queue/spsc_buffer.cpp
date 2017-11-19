@@ -137,7 +137,7 @@ namespace {
             double              m_PayloadResult = 0.0;
         };
 
-        template <class Queue, class Payload = empty_func>
+        template <class Queue, class Payload = empty_functor>
         class Consumer: public cds_test::thread
         {
             typedef cds_test::thread base_class;
