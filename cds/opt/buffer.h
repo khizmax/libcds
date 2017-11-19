@@ -181,7 +181,7 @@ namespace cds { namespace opt {
             */
             size_t mod( size_t idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return idx & ( capacity() - 1 );
                 else
                     return idx % capacity();
@@ -191,7 +191,7 @@ namespace cds { namespace opt {
             template <typename I>
             typename std::enable_if< sizeof(I) != sizeof(size_t), size_t >::type mod( I idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
                 else
                     return static_cast<size_t>( idx % capacity());
@@ -297,7 +297,7 @@ namespace cds { namespace opt {
             */
             size_t mod( size_t idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return idx & ( capacity() - 1 );
                 else
                     return idx % capacity();
@@ -307,7 +307,7 @@ namespace cds { namespace opt {
             template <typename I>
             typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
                 else
                     return static_cast<size_t>( idx % capacity());
@@ -423,7 +423,7 @@ namespace cds { namespace opt {
             */
             size_t mod( size_t idx )
             {
-                static_if ( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return idx & ( capacity() - 1 );
                 else
                     return idx % capacity();
@@ -433,7 +433,7 @@ namespace cds { namespace opt {
             template <typename I>
             typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
             {
-                static_if ( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
                 else
                     return static_cast<size_t>( idx % capacity());
@@ -551,7 +551,7 @@ namespace cds { namespace opt {
             */
             size_t mod( size_t idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return idx & ( capacity() - 1 );
                 else
                     return idx % capacity();
@@ -561,7 +561,7 @@ namespace cds { namespace opt {
             template <typename I>
             typename std::enable_if< sizeof( I ) != sizeof( size_t ), size_t >::type mod( I idx )
             {
-                static_if( c_bExp2 )
+                constexpr_if ( c_bExp2 )
                     return static_cast<size_t>( idx & static_cast<I>( capacity() - 1 ));
                 else
                     return static_cast<size_t>( idx % capacity());

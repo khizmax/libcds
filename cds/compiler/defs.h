@@ -31,17 +31,10 @@
 #ifndef CDSLIB_COMPILER_DEFS_H
 #define CDSLIB_COMPILER_DEFS_H
 
-/*
-    Required C++11 features:
-    - move semantics [CDS_RVALUE_SUPPORT, CDS_MOVE_SEMANTICS_SUPPORT]
-    - lambda function [CDS_CXX11_LAMBDA_SUPPORT]
-    - variadic template [CDS_CXX11_VARIADIC_TEMPLATE_SUPPORT]
-    - template alias [CDS_CXX11_TEMPLATE_ALIAS_SUPPORT]
-    - explicit conversion operator [CDS_CXX11_EXPLICIT_CONVERSION_OPERATOR_SUPPORT]
-    - default template argument for function [CDS_CXX11_DEFAULT_FUNCTION_TEMPLATE_ARGS_SUPPORT]
-    - explicit default functions (=default) [CDS_CXX11_EXPLICITLY_DEFAULTED_FUNCTION_SUPPORT]
-    - =delete [CDS_CXX11_DELETE_DEFINITION_SUPPORT]
-*/
+// __cplusplus values
+#define CDS_CPLUSPLUS_11     201103L
+#define CDS_CPLUSPLUS_14     201402L
+#define CDS_CPLUSPLUS_17     201703L
 
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   include <cds/compiler/vc/defs.h>
@@ -66,8 +59,9 @@
 #   define cds_unlikely( expr ) expr
 #endif
 
-#ifndef static_if
-#   define static_if  if
+//if constexpr support (C++17)
+#ifndef constexpr_if
+#   define constexpr_if if
 #endif
 
 // Features

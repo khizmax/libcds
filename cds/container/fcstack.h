@@ -186,7 +186,7 @@ namespace cds { namespace container {
             auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_push, pRec, *this );
             else
                 m_FlatCombining.combine( op_push, pRec, *this );
@@ -206,7 +206,7 @@ namespace cds { namespace container {
             auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPush = &val;
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_push_move, pRec, *this );
             else
                 m_FlatCombining.combine( op_push_move, pRec, *this );
@@ -227,7 +227,7 @@ namespace cds { namespace container {
             auto pRec = m_FlatCombining.acquire_record();
             pRec->pValPop = &val;
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_pop, pRec, *this );
             else
                 m_FlatCombining.combine( op_pop, pRec, *this );
@@ -244,7 +244,7 @@ namespace cds { namespace container {
         {
             auto pRec = m_FlatCombining.acquire_record();
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_clear, pRec, *this );
             else
                 m_FlatCombining.combine( op_clear, pRec, *this );
@@ -272,7 +272,7 @@ namespace cds { namespace container {
         {
             auto pRec = m_FlatCombining.acquire_record();
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_empty, pRec, *this );
             else
                 m_FlatCombining.combine( op_empty, pRec, *this );

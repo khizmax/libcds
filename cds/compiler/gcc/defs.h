@@ -132,6 +132,13 @@
 #   endif
 #endif
 
+//if constexpr support (C++17)
+#ifndef constexpr_if
+#   if defined( __cpp_if_constexpr ) && __cpp_if_constexpr >= 201606
+#       define constexpr_if if constexpr
+#   endif
+#endif
+
 
 #include <cds/compiler/gcc/compiler_barriers.h>
 

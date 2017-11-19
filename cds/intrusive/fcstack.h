@@ -183,7 +183,7 @@ namespace cds { namespace intrusive {
             auto pRec = m_FlatCombining.acquire_record();
             pRec->pVal = &val;
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_push, pRec, *this );
             else
                 m_FlatCombining.combine( op_push, pRec, *this );
@@ -200,7 +200,7 @@ namespace cds { namespace intrusive {
             auto pRec = m_FlatCombining.acquire_record();
             pRec->pVal = nullptr;
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( op_pop, pRec, *this );
             else
                 m_FlatCombining.combine( op_pop, pRec, *this );
@@ -221,7 +221,7 @@ namespace cds { namespace intrusive {
         {
             auto pRec = m_FlatCombining.acquire_record();
 
-            if ( c_bEliminationEnabled )
+            constexpr_if ( c_bEliminationEnabled )
                 m_FlatCombining.batch_combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );
             else
                 m_FlatCombining.combine( bDispose ? op_clear_and_dispose : op_clear, pRec, *this );

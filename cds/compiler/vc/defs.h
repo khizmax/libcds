@@ -42,6 +42,7 @@
 #define CDS_COMPILER_MSVC14         1900    // 2015 vc14
 #define CDS_COMPILER_MSVC14_1       1910    // 2017 vc14.1
 #define CDS_COMPILER_MSVC14_1_3     1911    // 2017 vc14.1 (VS 15.3)
+#define CDS_COMPILER_MSVC14_1_5     1912    // 2017 vc14.1 (VS 15.5)
 #define CDS_COMPILER_MSVC15         2000    // next Visual Studio
 
 #if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
@@ -180,6 +181,21 @@
 //  It seems, MSVC works only on little-endian architecture?..
 #if !defined(CDS_ARCH_LITTLE_ENDIAN) && !defined(CDS_ARCH_BIG_ENDIAN)
 #   define CDS_ARCH_LITTLE_ENDIAN
+#endif
+
+//if constexpr support (C++17)
+#ifndef constexpr_if
+    // Standard way to check if the compiler supports "if constexpr"
+    // Of course, MS VC doesn't support any standard way
+#   if defined __cpp_if_constexpr
+#       if __cpp_if_constexpr >= 201606
+#           define constexpr_if if constexpr
+#       endif
+#   elif CDS_COMPILER_VERSION >= CDS_COMPILER_MSVC14_1_3 && _MSVC_LANG > CDS_CPLUSPLUS_14
+        // MS-specific WTF.
+        // Don't work in /std:c++17 because /std:c++17 key defines _MSVC_LANG=201402 (c++14) in VC 15.3
+#       define constexpr_if if constexpr
+#   endif
 #endif
 
 // Sanitizer attributes (not supported)

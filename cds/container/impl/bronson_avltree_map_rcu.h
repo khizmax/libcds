@@ -1416,7 +1416,7 @@ namespace cds { namespace container {
                 node->m_pValue.store( pVal, memory_model::memory_order_release );
             };
 
-            static_if ( c_bRelaxedInsert ) {
+            constexpr_if ( c_bRelaxedInsert ) {
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
                      || child( pNode, nDir, memory_model::memory_order_acquire ) != nullptr )
                 {
@@ -1435,7 +1435,7 @@ namespace cds { namespace container {
                 if ( pNode->version( memory_model::memory_order_acquire ) != nVersion
                      || child( pNode, nDir, memory_model::memory_order_acquire ) != nullptr )
                 {
-                    static_if ( c_bRelaxedInsert ) {
+                    constexpr_if ( c_bRelaxedInsert ) {
                         mapped_type pVal = pNew->m_pValue.load( memory_model::memory_order_relaxed );
                         pNew->m_pValue.store( nullptr, memory_model::memory_order_relaxed );
                         free_value( pVal );
@@ -1447,7 +1447,7 @@ namespace cds { namespace container {
                     return update_flags::retry;
                 }
 
-                static_if ( !c_bRelaxedInsert )
+                constexpr_if ( !c_bRelaxedInsert )
                     fnCreateNode( pNew = alloc_node( key, 1, 0, pNode, nullptr, nullptr ));
 
                 pNode->child( pNew, nDir, memory_model::memory_order_release );
