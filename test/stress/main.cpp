@@ -45,6 +45,11 @@
 #   include <cds_test/stat_dhp_out.h>
 #   include <iostream>
 #endif
+#include <random>
+
+
+/*static*/ std::random_device cds_test::fixture::random_dev_;
+/*static*/ std::mt19937 cds_test::fixture::random_gen_( random_dev_() );
 
 int main( int argc, char **argv )
 {

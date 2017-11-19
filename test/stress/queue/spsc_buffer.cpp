@@ -33,6 +33,7 @@
 #include <vector>
 #include <algorithm>
 #include <type_traits>
+#include <cmath>
 
 // Single producer/single consumer buffer push/pop test
 namespace {
@@ -45,17 +46,50 @@ namespace {
     class spsc_buffer: public cds_test::stress_fixture
     {
     protected:
-       typedef size_t value_type;
+        typedef size_t value_type;
 
         enum {
             producer_thread,
             consumer_thread
         };
 
-        template <class Queue>
+        class empty_functor
+        {
+        public:
+            void operator()()
+            {}
+
+            double result()
+            {
+                return 0.0;
+            }
+        };
+
+        class payload_functor
+        {
+        public:
+            void operator()()
+            {
+                std::random_device rd;
+                std::mt19937 gen( rd() );
+                std::uniform_int_distribution<unsigned> dis( 0, 64 * 1024* 1024 );
+                quad_sum += std::sqrt( static_cast<double>( dis(gen) ));
+            }
+
+            double result()
+            {
+                return quad_sum;
+            }
+
+        private:
+            double quad_sum = 0.0;
+        };
+
+        template <class Queue, class Payload = empty_functor>
         class Producer: public cds_test::thread
         {
             typedef cds_test::thread base_class;
+            typedef Payload payload_type;
 
         public:
             Producer( cds_test::thread_pool& pool, Queue& queue )
@@ -76,8 +110,10 @@ namespace {
             virtual void test()
             {
                 size_t const nPushCount = s_nPushCount;
+                payload_type func;
 
                 for ( size_t i = 0; i < nPushCount; ++i ) {
+                    func();
                     size_t len = rand( 1024 ) + 64;
                     void* buf = m_Queue.back( len );
                     if ( buf ) {
@@ -90,18 +126,22 @@ namespace {
                 }
 
                 s_nProducerDone.fetch_add( 1 );
+                m_PayloadResult = func.result();
             }
 
         public:
             Queue&              m_Queue;
             size_t              m_nPushFailed = 0;
             size_t              m_nPushed = 0;
+
+            double              m_PayloadResult = 0.0;
         };
 
-        template <class Queue>
+        template <class Queue, class Payload = empty_func>
         class Consumer: public cds_test::thread
         {
             typedef cds_test::thread base_class;
+            typedef Payload payload_type;
 
         public:
             Queue&              m_Queue;
@@ -109,6 +149,8 @@ namespace {
             size_t              m_nPopped = 0;
             size_t              m_nBadValue = 0;
             size_t              m_nPopFrontFailed = 0;
+
+            double              m_PayloadResult = 0.0;
 
         public:
             Consumer( cds_test::thread_pool& pool, Queue& queue )
@@ -127,7 +169,11 @@ namespace {
 
             virtual void test()
             {
+                payload_type func;
+
                 while ( true ) {
+                    func();
+
                     auto buf = m_Queue.front();
                     if ( buf.first ) {
                         m_nPopped += buf.second;
@@ -152,6 +198,8 @@ namespace {
                         }
                     }
                 }
+
+                m_PayloadResult = func.result();
             }
         };
 
@@ -159,12 +207,12 @@ namespace {
         size_t m_nThreadPushCount;
 
     protected:
-        template <class Queue>
+        template <class ProducerPayload, class ConsumerPayload, class Queue >
         void test_queue( Queue& q )
         {
             cds_test::thread_pool& pool = get_pool();
-            auto producer = new Producer<Queue>( pool, q );
-            auto consumer = new Consumer<Queue>( pool, q );
+            auto producer = new Producer<Queue, ProducerPayload>( pool, q );
+            auto consumer = new Consumer<Queue, ConsumerPayload>( pool, q );
 
             pool.add( producer, 1 );
             pool.add( consumer, 1 );
@@ -195,7 +243,7 @@ namespace {
         template <class Queue>
         void test( Queue& q )
         {
-            test_queue( q );
+            test_queue<empty_functor, empty_functor>( q );
             propout() << q.statistics();
         }
 
@@ -214,6 +262,28 @@ namespace {
         }
     };
 
+    class spsc_buffer_slow_producer: public spsc_buffer
+    {
+    public:
+        template <class Queue>
+        void test( Queue& q )
+        {
+            test_queue<payload_functor, empty_functor>( q );
+            propout() << q.statistics();
+        }
+    };
+
+    class spsc_buffer_slow_consumer: public spsc_buffer
+    {
+    public:
+        template <class Queue>
+        void test( Queue& q )
+        {
+            test_queue<empty_functor, payload_functor>( q );
+            propout() << q.statistics();
+        }
+    };
+
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_F( test_fixture, type_name ) \
@@ -224,6 +294,8 @@ namespace {
     }
 
     CDSSTRESS_WeakRingBuffer_void( spsc_buffer )
+    CDSSTRESS_WeakRingBuffer_void( spsc_buffer_slow_producer )
+    CDSSTRESS_WeakRingBuffer_void( spsc_buffer_slow_consumer )
 
 #undef CDSSTRESS_Queue_F
 
