@@ -1,4 +1,7 @@
 2.4.0
+    - Added: apply( Func f ) method to containers based on flat combining.
+      This method allows to execute any function over underlying container
+      in exclusive mode.
     - Removed: -fno-strict-aliasing requirement
     - Fixed: a serious bug in WeakRingBuffer::front()
 
