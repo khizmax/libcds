@@ -109,7 +109,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    string(REGEX MATCHALL "-std=[^ ]+" cxx_std_found ${CMAKE_CXX_FLAGS} "dummy@rg")
+    string(REGEX MATCHALL "-std=[^ ]+" cxx_std_found ${CMAKE_CXX_FLAGS} " dummy@rg")
     if(cxx_std_found)
         message("C++ std: ${cxx_std_found}")
     else()
