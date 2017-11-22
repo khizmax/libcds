@@ -1975,10 +1975,8 @@ namespace cds { namespace intrusive {
 
         void copy_hash( size_t * pHashes, value_type const& v ) const
         {
-            constexpr_if( c_nNodeHashArraySize ) {
-                auto src = node_traits::to_node_ptr( v )->get_hash();
+            constexpr_if( c_nNodeHashArraySize )
                 memcpy( pHashes, node_traits::to_node_ptr( v )->get_hash(), sizeof( pHashes[0] ) * c_nNodeHashArraySize );
-            }
             else
                 hashing( pHashes, v );
         }
