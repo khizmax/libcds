@@ -151,7 +151,7 @@ namespace cds { namespace intrusive {
                 : m_pNext( nullptr )
             {}
 
-            void store_hash( size_t * )
+            void store_hash( size_t const* )
             {}
 
             size_t * get_hash() const
@@ -185,9 +185,9 @@ namespace cds { namespace intrusive {
                 memset( m_arrHash, 0, sizeof(m_arrHash));
             }
 
-            void store_hash( size_t * pHashes )
+            void store_hash( size_t const* pHashes )
             {
-                memcpy( m_arrHash, pHashes, hash_array_size );
+                memcpy( m_arrHash, pHashes, sizeof( m_arrHash ));
             }
 
             size_t * get_hash() const
@@ -213,7 +213,7 @@ namespace cds { namespace intrusive {
             node() CDS_NOEXCEPT
             {}
 
-            void store_hash( size_t * )
+            void store_hash( size_t const* )
             {}
 
             size_t * get_hash() const
@@ -243,9 +243,9 @@ namespace cds { namespace intrusive {
                 memset( m_arrHash, 0, sizeof(m_arrHash));
             }
 
-            void store_hash( size_t * pHashes )
+            void store_hash( size_t const* pHashes )
             {
-                memcpy( m_arrHash, pHashes, hash_array_size );
+                memcpy( m_arrHash, pHashes, sizeof( m_arrHash ));
             }
 
             size_t * get_hash() const
@@ -1526,7 +1526,7 @@ namespace cds { namespace intrusive {
 
             template <typename Node, unsigned int ArraySize>
             struct hash_ops {
-                static void store( Node * pNode, size_t * pHashes )
+                static void store( Node * pNode, size_t const* pHashes )
                 {
                     memcpy( pNode->m_arrHash, pHashes, sizeof(pHashes[0]) * ArraySize );
                 }
@@ -1975,8 +1975,10 @@ namespace cds { namespace intrusive {
 
         void copy_hash( size_t * pHashes, value_type const& v ) const
         {
-            if ( c_nNodeHashArraySize )
-                memcpy( pHashes, node_traits::to_node_ptr( v )->get_hash(), sizeof(pHashes[0]) * c_nNodeHashArraySize );
+            constexpr_if( c_nNodeHashArraySize ) {
+                auto src = node_traits::to_node_ptr( v )->get_hash();
+                memcpy( pHashes, node_traits::to_node_ptr( v )->get_hash(), sizeof( pHashes[0] ) * c_nNodeHashArraySize );
+            }
             else
                 hashing( pHashes, v );
         }
@@ -2156,7 +2158,7 @@ namespace cds { namespace intrusive {
             m_Stat.onResizeCall();
 
             size_t nOldCapacity = bucket_count( atomics::memory_order_acquire );
-            bucket_entry *      pOldTable[ c_nArity ];
+            bucket_entry* pOldTable[ c_nArity ];
             {
                 scoped_resize_lock guard( m_MutexPolicy );
 
