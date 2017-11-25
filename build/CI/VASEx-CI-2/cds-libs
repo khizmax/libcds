@@ -161,8 +161,8 @@ clang-5-cc:             clang
 clang-5-cxxflags:       -stdlib=libc++ -Wdocumentation -std=c++1z
 clang-5-exe-ldflags:    -L$CLANG5_ROOT/lib -Wl,-rpath=$CLANG5_ROOT/lib
 clang-5-extlib:         rt
-clang-5-boost:          $BOOST_ROOT
-clang-5-64-boost-lib:   stage64-clang5/lib
+clang-5-boost:          $LIB_ROOT/boost_1_65_1
+clang-5-64-boost-lib:   stage64-clang5-std17/lib
 clang-5-64-asan-boost-lib:   stage64-clang5-asan/lib
 clang-5-64-tsan-boost-lib:   stage64-clang5-tsan/lib
 clang-5-gtest:          $GTEST_ROOT
