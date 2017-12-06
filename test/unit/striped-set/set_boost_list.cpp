@@ -32,9 +32,8 @@
 
 #include <boost/version.hpp>
 #include <cds/details/defs.h>
-#if CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12 && BOOST_VERSION < 105600
-    // Skipped; for Microsoft Visual C++ 2013 and boost::container::list you should use boost version 1.56 or above" );
-#elif BOOST_VERSION >= 104800
+
+#if BOOST_VERSION >= 104800
 
 #include <cds/container/striped_set/boost_list.h>
 #include "test_striped_set.h"

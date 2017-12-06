@@ -62,7 +62,7 @@
    Supported compilers:
       - GCC 4.8+
       - Clang 3.6+
-      - MS Visual C++ 2013 Update 4 and above
+      - MS Visual C++ 2015 and above
       - Intel C++ Compiler 15
 
    For each lock-free data structure the \p CDS library presents several implementation based on published papers. For

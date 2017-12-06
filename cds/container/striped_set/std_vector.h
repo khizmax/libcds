@@ -166,13 +166,7 @@ namespace cds { namespace intrusive { namespace striped_set {
             template <typename... Args>
             bool emplace( Args&&... args )
             {
-#if CDS_COMPILER == CDS_COMPILER_MSVC && CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
-                // MS VC++ 2013 internal compiler error
-                // Use assignment workaround, see http://connect.microsoft.com/VisualStudio/feedback/details/804941/visual-studio-2013-rc-c-internal-compiler-error-with-std-forward
-                value_type val = value_type(std::forward<Args>(args)...);
-#else
                 value_type val( std::forward<Args>(args)... );
-#endif
                 iterator it = std::lower_bound( m_Vector.begin(), m_Vector.end(), val, find_predicate());
                 if ( it == m_Vector.end() || key_comparator()( val, *it ) != 0 ) {
                     it = m_Vector.emplace( it, std::move( val ));

@@ -36,24 +36,19 @@
 #define CDS_COMPILER_VERSION    _MSC_VER
 
 // Compiler name
-// Supported compilers: MS VC 2013 +
+// Supported compilers: MS VC 2015 +
 // C++ compiler versions:
-#define CDS_COMPILER_MSVC12         1800    // 2013 vc12
 #define CDS_COMPILER_MSVC14         1900    // 2015 vc14
 #define CDS_COMPILER_MSVC14_1       1910    // 2017 vc14.1
 #define CDS_COMPILER_MSVC14_1_3     1911    // 2017 vc14.1 (VS 15.3)
 #define CDS_COMPILER_MSVC14_1_5     1912    // 2017 vc14.1 (VS 15.5)
 #define CDS_COMPILER_MSVC15         2000    // next Visual Studio
 
-#if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC12
-#   error "Only MS Visual C++ 12 (2013) Update 4 and above is supported"
+#if CDS_COMPILER_VERSION < CDS_COMPILER_MSVC14
+#   error "Only MS Visual C++ 14 (2015) and above is supported"
 #endif
 
-#if _MSC_VER == 1800
-#   define  CDS_COMPILER__NAME  "MS Visual C++ 2013"
-#   define  CDS_COMPILER__NICK  "vc12"
-#   define  CDS_COMPILER_LIBCDS_SUFFIX "vc12"
-#elif _MSC_VER == 1900
+#if _MSC_VER == 1900
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2015"
 #   define  CDS_COMPILER__NICK  "vc14"
 #   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv140"
@@ -118,38 +113,11 @@
 #   define CDS_MSVC_MEMORY_LEAKS_DETECTING_ENABLED
 #endif
 
-// constexpr is not yet supported
-#define CDS_CONSTEXPR
+#define CDS_CONSTEXPR constexpr
 
 // noexcept - vc14 +
-#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
-#   define CDS_NOEXCEPT_SUPPORT        noexcept
-#   define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-#else
-#   define CDS_NOEXCEPT_SUPPORT
-#   define CDS_NOEXCEPT_SUPPORT_(expr)
-#endif
-
-// C++11 inline namespace
-#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
-#   define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-#endif
-
-#if CDS_COMPILER_VERSION == CDS_COMPILER_MSVC12
-    // VC12: move ctor cannot be defaulted
-    // Error: C2610 [move ctor] is not a special member function which can be defaulted
-#   define CDS_DISABLE_DEFAULT_MOVE_CTOR
-#endif
-
-// Full SFINAE support
-#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
-#   define CDS_CXX11_SFINAE
-#endif
-
-// Inheriting constructors
-#if CDS_COMPILER_VERSION > CDS_COMPILER_MSVC12
-#   define CDS_CXX11_INHERITING_CTOR
-#endif
+#define CDS_NOEXCEPT_SUPPORT        noexcept
+#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
 
 // *************************************************
 // Alignment macro
@@ -159,11 +127,7 @@
 #define CDS_CLASS_ALIGNMENT(n)    __declspec( align(n))
 
 // Attributes
-#if CDS_COMPILER_VERSION >= CDS_COMPILER_MSVC14
-#   define CDS_DEPRECATED( reason ) [[deprecated( reason )]]
-#else
-#   define CDS_DEPRECATED( reason ) __declspec(deprecated( reason ))
-#endif
+#define CDS_DEPRECATED( reason ) [[deprecated( reason )]]
 
 #define CDS_NORETURN __declspec(noreturn)
 

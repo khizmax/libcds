@@ -31,7 +31,7 @@ Generally, each container has an intrusive and non-intrusive (STL-like) version 
 *cds::intrusive* and *cds::container* namespace respectively. 
 
 Version 2.x of the library is written on C++11 and can be compiled by GCC 4.8+, clang 3.6+, Intel C++ 15+, 
-and MS VC++ 12 (2013) Update 4 and above
+and MS VC++ 14 (2015) and above
 
 Download the latest release from http://sourceforge.net/projects/libcds/files/
 
