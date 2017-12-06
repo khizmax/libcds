@@ -41,7 +41,7 @@ Evolution of libcds (Gource visualization by Landon Wilkins): https://www.youtub
 
 **How to build**
    - *nix: [use CMake](build/cmake/readme.md)
-   - Windows: use MS Visual C++ 2015 project
+   - Windows: use MS Visual C++ 2017 project
 
 Some parts of libcds may depend on DCAS (double-width compare-and-swap) atomic primitive if
 the target architecture supports it. For x86, cmake build script enables `-mcx16` compiler flag that
