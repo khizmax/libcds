@@ -187,7 +187,7 @@ namespace cds { namespace urcu {
 
         //@cond
         // Added for uniformity
-        size_t CDS_CONSTEXPR capacity() const
+        size_t constexpr capacity() const
         {
             return 1;
         }

@@ -38,8 +38,8 @@
 #include <cds/os/details/fake_topology.h>
 
 namespace cds { namespace OS {
-    /// Linux-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace OS_X {
+    /// OSX-specific wrappers
+    inline namespace OS_X {
 
         /// System topology
         /**
@@ -80,9 +80,6 @@ namespace cds { namespace OS {
         };
     }   // namespace OS_X
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using OS_X::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_OSX_TOPOLOGY_H

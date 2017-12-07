@@ -205,7 +205,7 @@ namespace cds { namespace container {
         typedef typename base_class::rcu_lock       rcu_lock;   ///< RCU scoped lock
         typedef typename base_class::exempt_ptr     exempt_ptr; ///< pointer to extracted node
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
+        static constexpr const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
         typedef typename base_class::raw_ptr        raw_ptr;    ///< type of \p get() return value
 
     protected:

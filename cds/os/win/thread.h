@@ -38,7 +38,7 @@
 
 namespace cds { namespace OS {
     /// Windows-specific functions
-    CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
+    inline namespace Win32 {
 
         /// OS-specific type of thread identifier
         typedef DWORD           ThreadId;
@@ -51,12 +51,7 @@ namespace cds { namespace OS {
     }    // namespace Win32
 
     //@cond
-    CDS_CONSTEXPR const Win32::ThreadId c_NullThreadId = 0;
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Win32::ThreadId;
-    using Win32::get_current_thread_id;
-#endif
+    constexpr const Win32::ThreadId c_NullThreadId = 0;
     //@endcond
 
 }} // namespace cds::OS

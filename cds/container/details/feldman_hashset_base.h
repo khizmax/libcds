@@ -87,7 +87,7 @@ namespace cds { namespace container {
             /**
                 @copydetails cds::intrusive::feldman_hashset::traits::hash_size
             */
-            static CDS_CONSTEXPR size_t const hash_size = 0;
+            static constexpr size_t const hash_size = 0;
 
             /// Hash splitter
             /**

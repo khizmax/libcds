@@ -113,7 +113,7 @@ namespace cds { namespace container {
         typedef typename traits::stat           stat;           ///< Internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename gc::scoped_lock       rcu_lock;        ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+        static constexpr const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
 
         /// Level statistics
         typedef feldman_hashmap::level_statistics level_statistics;
@@ -145,7 +145,7 @@ namespace cds { namespace container {
             typedef typename base_class::iterator_base iterator_base;
 
         protected:
-            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+            static constexpr bool const c_bConstantIterator = IsConst;
 
         public:
             typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer

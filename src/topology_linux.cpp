@@ -38,7 +38,7 @@
 #include <fstream>
 */
 
-namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Linux {
+namespace cds { namespace OS { inline namespace Linux {
 
     unsigned int topology::s_nProcessorCount = 0;
 

@@ -41,7 +41,7 @@
 
 //@cond
 namespace cds { namespace cxx11_atomic {
-    namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace ia64 {
+    namespace platform { inline namespace gcc { inline namespace ia64 {
 
         static inline void itanium_full_fence() CDS_NOEXCEPT
         {
@@ -671,9 +671,6 @@ namespace cds { namespace cxx11_atomic {
 
     }} // namespace gcc::ia64
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using namespace gcc::ia64;
-#endif
     }   // namespace platform
 }}  // namespace cds::cxx11_atomic
 //@endcond

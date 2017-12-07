@@ -93,7 +93,7 @@ namespace cds { namespace container {
             typedef MoirQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
     public:
         typedef T value_type ; ///< Value type stored in the queue

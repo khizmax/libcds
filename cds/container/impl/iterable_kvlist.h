@@ -140,7 +140,7 @@ namespace cds { namespace container {
         typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::stat         stat;           ///< Internal statistics
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
         /// Guarded pointer
         typedef typename base_class::guarded_ptr guarded_ptr;

@@ -69,7 +69,7 @@
 
 //@cond
 namespace cds { namespace cxx11_atomic {
-    namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace Sparc {
+    namespace platform { inline namespace gcc { inline namespace Sparc {
 
         static inline void fence_before( memory_order order ) CDS_NOEXCEPT
         {
@@ -620,9 +620,6 @@ namespace cds { namespace cxx11_atomic {
 
     }} // namespace gcc::Sparc
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using namespace gcc::Sparc;
-#endif
     }   // namespace platform
 }}  // namespace cds::cxx11_atomic
 //@endcond

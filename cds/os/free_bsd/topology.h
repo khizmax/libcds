@@ -43,7 +43,7 @@
 namespace cds { namespace OS {
 
     /// FreeBSD-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Free_BSD {
+    inline namespace Free_BSD {
 
         /// System topology
         /**
@@ -98,9 +98,6 @@ namespace cds { namespace OS {
         };
     }   // namespace Free_BSD
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Free_BSD::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_FREE_BSD_TOPOLOGY_H

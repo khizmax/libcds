@@ -86,7 +86,7 @@ namespace cds { namespace container {
         typedef typename maker::key_comparator    key_comparator; ///< key comparison functor
         typedef typename base_class::memory_model memory_model;   ///< Memory ordering. See cds::opt::memory_model option
         typedef typename base_class::stat         stat;           ///< Internal statistics
-        static CDS_CONSTEXPR bool const c_bSort = base_class::c_bSort; ///< List type: ordered (\p true) or unordered (\p false)
+        static constexpr bool const c_bSort = base_class::c_bSort; ///< List type: ordered (\p true) or unordered (\p false)
 
         //@cond
         // Rebind traits (split-list support)

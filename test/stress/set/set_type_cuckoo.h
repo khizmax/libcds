@@ -61,9 +61,9 @@ namespace set {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+        static constexpr bool const c_bExtractSupported = false;
+        static constexpr bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bEraseExactKey = false;
     };
 
     struct tag_CuckooSet;
@@ -112,7 +112,7 @@ namespace set {
 
         struct traits_CuckooSet_list_unord_storehash : public traits_CuckooSet_list_unord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_unord_storehash>> CuckooStripedSet_list_unord_storehash;
         typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_unord_storehash>> CuckooRefinableSet_list_unord_storehash;
@@ -136,7 +136,7 @@ namespace set {
 
         struct traits_CuckooSet_list_ord_storehash : public traits_CuckooSet_list_ord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_list_ord_storehash>> CuckooStripedSet_list_ord_storehash;
         typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_list_ord_storehash>> CuckooRefinableSet_list_ord_storehash;
@@ -161,7 +161,7 @@ namespace set {
 
         struct traits_CuckooSet_vector_unord_storehash : public traits_CuckooSet_vector_unord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_unord_storehash>> CuckooStripedSet_vector_unord_storehash;
         typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_unord_storehash>> CuckooRefinableSet_vector_unord_storehash;
@@ -185,7 +185,7 @@ namespace set {
 
         struct traits_CuckooSet_vector_ord_storehash : public traits_CuckooSet_vector_ord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooSet< key_val, traits_CuckooStripedSet<traits_CuckooSet_vector_ord_storehash>> CuckooStripedSet_vector_ord_storehash;
         typedef CuckooSet< key_val, traits_CuckooRefinableSet<traits_CuckooSet_vector_ord_storehash>> CuckooRefinableSet_vector_ord_storehash;

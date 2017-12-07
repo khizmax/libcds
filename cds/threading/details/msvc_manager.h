@@ -49,7 +49,7 @@ namespace cds { namespace threading {
     //@endcond
 
     /// cds::threading::Manager implementation based on Microsoft Visual C++ __declspec( thread ) construction
-    CDS_CXX11_INLINE_NAMESPACE namespace msvc {
+    inline namespace msvc {
 
         /// Thread-specific data manager based on MSVC __declspec( thread ) feature
         class Manager {

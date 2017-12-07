@@ -99,17 +99,6 @@
 #   define alignof __alignof__
 #endif
 
-#define CDS_CONSTEXPR    constexpr
-
-#define CDS_NOEXCEPT_SUPPORT        noexcept
-#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-
-// C++11 inline namespace
-#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-
-// Inheriting constructors
-#define CDS_CXX11_INHERITING_CTOR
-
 // *************************************************
 // Alignment macro
 
@@ -133,7 +122,6 @@
 #endif
 
 // Exceptions
-
 #if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
 #   if defined( _CPPUNWIND )
 #       define CDS_EXCEPTION_ENABLED

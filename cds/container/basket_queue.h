@@ -154,7 +154,7 @@ namespace cds { namespace container {
             {
                 typedef cds::intrusive::basket_queue::base_hook< opt::gc<gc> > hook;
                 typedef node_deallocator disposer;
-                static CDS_CONSTEXPR const cds::intrusive::opt::link_check_type link_checker = cds::intrusive::basket_queue::traits::link_checker;
+                static constexpr const cds::intrusive::opt::link_check_type link_checker = cds::intrusive::basket_queue::traits::link_checker;
             };
 
             typedef cds::intrusive::BasketQueue< gc, node_type, intrusive_traits > type;
@@ -260,7 +260,7 @@ namespace cds { namespace container {
         typedef typename base_class::stat           stat;           ///< Internal statistics policy used
         typedef typename base_class::memory_model   memory_model;   ///< Memory ordering. See cds::opt::memory_model option
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount; ///< Count of hazard pointer required for the algorithm
 
     protected:
         typedef typename maker::node_type node_type; ///< queue node type (derived from intrusive::basket_queue::node)

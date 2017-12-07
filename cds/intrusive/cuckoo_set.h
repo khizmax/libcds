@@ -147,7 +147,7 @@ namespace cds { namespace intrusive {
 
             node *  m_pNext;
 
-            CDS_CONSTEXPR node() CDS_NOEXCEPT
+            constexpr node() CDS_NOEXCEPT
                 : m_pNext( nullptr )
             {}
 
@@ -547,7 +547,7 @@ namespace cds { namespace intrusive {
             //@endcond
 
             /// Returns the arity of striping mutex policy
-            CDS_CONSTEXPR unsigned int arity() const CDS_NOEXCEPT
+            constexpr unsigned int arity() const CDS_NOEXCEPT
             {
                 return c_nArity;
             }
@@ -972,7 +972,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Returns the arity of \p refinable mutex policy
-            CDS_CONSTEXPR unsigned int arity() const CDS_NOEXCEPT
+            constexpr unsigned int arity() const CDS_NOEXCEPT
             {
                 return c_nArity;
             }
@@ -2020,7 +2020,7 @@ namespace cds { namespace intrusive {
             free_bucket_tables( m_BucketTable, m_nBucketMask.load( atomics::memory_order_relaxed ) + 1 );
         }
 
-        static CDS_CONSTEXPR unsigned int const c_nUndefTable = (unsigned int) -1;
+        static constexpr unsigned int const c_nUndefTable = (unsigned int) -1;
         template <typename Q, typename Predicate >
         unsigned int contains( position * arrPos, size_t * arrHash, Q const& val, Predicate pred )
         {
@@ -2214,7 +2214,7 @@ namespace cds { namespace intrusive {
             free_bucket_tables( pOldTable, nOldCapacity );
         }
 
-        CDS_CONSTEXPR static unsigned int calc_probeset_size( unsigned int nProbesetSize ) CDS_NOEXCEPT
+        constexpr static unsigned int calc_probeset_size( unsigned int nProbesetSize ) CDS_NOEXCEPT
         {
             return std::is_same< probeset_class, cuckoo::vector_probeset_class >::value
                 ? node_type::probeset_size

@@ -39,7 +39,7 @@
 
 namespace cds { namespace OS {
     /// HP-UX-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Hpux {
+    inline namespace Hpux {
 
         /// System topology
         struct topology {
@@ -100,9 +100,6 @@ namespace cds { namespace OS {
         };
     }   // namespace Hpux
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Hpux::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_HPUX_TOPOLOGY_H

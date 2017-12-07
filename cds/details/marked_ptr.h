@@ -55,17 +55,17 @@ namespace cds {
         public:
             typedef T       value_type      ;       ///< type of value the class points to
             typedef T *     pointer_type    ;       ///< type of pointer
-            static CDS_CONSTEXPR const uintptr_t bitmask = Bitmask;   ///< bitfield bitmask
-            static CDS_CONSTEXPR const uintptr_t pointer_bitmask = ~bitmask; ///< pointer bitmask
+            static constexpr const uintptr_t bitmask = Bitmask;   ///< bitfield bitmask
+            static constexpr const uintptr_t pointer_bitmask = ~bitmask; ///< pointer bitmask
 
         public:
             /// Constructs null marked pointer. The flag is cleared.
-            CDS_CONSTEXPR marked_ptr() CDS_NOEXCEPT
+            constexpr marked_ptr() CDS_NOEXCEPT
                 : m_ptr( nullptr )
             {}
 
             /// Constructs marked pointer with \p ptr value. The least bit(s) of \p ptr is the flag.
-            CDS_CONSTEXPR explicit marked_ptr( value_type * ptr ) CDS_NOEXCEPT
+            constexpr explicit marked_ptr( value_type * ptr ) CDS_NOEXCEPT
                 : m_ptr( ptr )
             {}
 
@@ -360,14 +360,14 @@ CDS_CXX11_ATOMIC_BEGIN_NAMESPACE
             return m_atomic.compare_exchange_strong( expected.impl_ref(), desired.all(), success_order );
         }
 
-        CDS_CONSTEXPR atomic() CDS_NOEXCEPT
+        constexpr atomic() CDS_NOEXCEPT
             : m_atomic( nullptr )
         {}
 
-        CDS_CONSTEXPR explicit atomic(marked_ptr val) CDS_NOEXCEPT
+        constexpr explicit atomic(marked_ptr val) CDS_NOEXCEPT
             : m_atomic( val.all())
         {}
-        CDS_CONSTEXPR explicit atomic(T * p) CDS_NOEXCEPT
+        constexpr explicit atomic(T * p) CDS_NOEXCEPT
             : m_atomic( p )
         {}
 

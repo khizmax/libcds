@@ -71,9 +71,9 @@ namespace map {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = true;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+        static constexpr bool const c_bExtractSupported = true;
+        static constexpr bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bEraseExactKey = false;
     };
 
     struct tag_BronsonAVLTreeMap;
@@ -141,7 +141,7 @@ namespace map {
         struct BronsonAVLTreeMap_less_pool_lazy: public BronsonAVLTreeMap_less
         {
             typedef cds::sync::pool_monitor<BronsonAVLTreeMap_lazy_pool> sync_monitor;
-            static CDS_CONSTEXPR bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
+            static constexpr bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
         };
         typedef BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpi_less_pool_lazy;
         typedef BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_lazy > BronsonAVLTreeMap_rcu_gpb_less_pool_lazy;
@@ -153,7 +153,7 @@ namespace map {
         {
             typedef cc::bronson_avltree::stat<> stat;
             typedef cds::sync::pool_monitor<BronsonAVLTreeMap_lazy_pool, cds::opt::none, true > sync_monitor;
-            static CDS_CONSTEXPR bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
+            static constexpr bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
         };
         typedef BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_lazy_stat;
         typedef BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_lazy_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_lazy_stat;
@@ -164,7 +164,7 @@ namespace map {
         struct BronsonAVLTreeMap_less_pool_bounded: public BronsonAVLTreeMap_less
         {
             typedef cds::sync::pool_monitor<BronsonAVLTreeMap_bounded_pool> sync_monitor;
-            static CDS_CONSTEXPR bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
+            static constexpr bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
         };
         typedef BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpi_less_pool_bounded;
         typedef BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_bounded > BronsonAVLTreeMap_rcu_gpb_less_pool_bounded;
@@ -176,7 +176,7 @@ namespace map {
         {
             typedef cc::bronson_avltree::stat<> stat;
             typedef cds::sync::pool_monitor<BronsonAVLTreeMap_bounded_pool, cds::opt::none, true > sync_monitor;
-            static CDS_CONSTEXPR bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
+            static constexpr bool const relaxed_insert = false; // relaxed insert can lead to test assert triggering
         };
         typedef BronsonAVLTreeMap< rcu_gpi, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpi_less_pool_bounded_stat;
         typedef BronsonAVLTreeMap< rcu_gpb, Key, Value, BronsonAVLTreeMap_less_pool_bounded_stat > BronsonAVLTreeMap_rcu_gpb_less_pool_bounded_stat;

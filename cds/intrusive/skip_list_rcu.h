@@ -532,7 +532,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat          stat;           ///< internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename gc::scoped_lock       rcu_lock;      ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+        static constexpr const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
 
 
         /// Max node height. The actual node height should be in range <tt>[0 .. c_nMaxHeight)</tt>
@@ -1372,7 +1372,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.
-        static CDS_CONSTEXPR unsigned int max_height() CDS_NOEXCEPT
+        static constexpr unsigned int max_height() CDS_NOEXCEPT
         {
             return c_nMaxHeight;
         }

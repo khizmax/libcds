@@ -42,6 +42,10 @@
 #   error "Compiler version error. Clang version 3.6.0 and above is supported"
 #endif
 
+#if __cplusplus < CDS_CPLUSPLUS_11
+#   error C++11 and above is required
+#endif
+
 #if defined(_LIBCPP_VERSION) && !defined(CDS_USE_BOOST_ATOMIC) && CDS_COMPILER_VERSION < 30700
     // Note: Clang libc++ atomic leads to program crash.
     // So, we use libcds atomic implementation
@@ -66,14 +70,6 @@
 
 #define alignof __alignof__
 
-// C++11 inline namespace
-#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-
-#define CDS_CONSTEXPR    constexpr
-
-#define CDS_NOEXCEPT_SUPPORT        noexcept
-#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-
 // C++11 thread_local keyword
 #if !(CDS_OS_TYPE == CDS_OS_OSX && CDS_COMPILER_VERSION < 30600)
     // OS X error?
@@ -83,23 +79,13 @@
 #   define CDS_CXX11_THREAD_LOCAL_SUPPORT
 #endif
 
-// Full SFINAE support
-#define CDS_CXX11_SFINAE
-
-// Inheriting constructors
-#define CDS_CXX11_INHERITING_CTOR
-
 // Attributes
-#if CDS_COMPILER_VERSION >= 30400
-#   if __cplusplus < 201103
-#       define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
-#   elif __cplusplus == 201103 // C++11
+#if CDS_COMPILER_VERSION >= 30600
+#   if __cplusplus == CDS_CPLUSPLUS_11 // C++11
 #       define CDS_DEPRECATED( reason ) [[gnu::deprecated(reason)]]
 #   else  // C++14
 #       define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
 #   endif
-#else
-#   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
 #endif
 
 #define CDS_NORETURN __attribute__((__noreturn__))
@@ -133,7 +119,6 @@
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
 
 // Exceptions
-
 #if defined( __EXCEPTIONS ) && __EXCEPTIONS == 1
 #   define CDS_EXCEPTION_ENABLED
 #endif

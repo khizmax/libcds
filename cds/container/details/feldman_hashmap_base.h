@@ -157,7 +157,7 @@ namespace cds { namespace container {
 
                 Value \p 0 means auto-calculated <tt>sizeof( key_type )</tt>.
             */
-            static CDS_CONSTEXPR size_t const hash_size = 0;
+            static constexpr size_t const hash_size = 0;
 
             /// Hash splitter
             /**

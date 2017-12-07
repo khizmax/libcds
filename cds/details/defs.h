@@ -374,14 +374,8 @@ namespace cds {}
 // Compiler-specific defines
 #include <cds/compiler/defs.h>
 
-#define CDS_NOEXCEPT            CDS_NOEXCEPT_SUPPORT
-#define CDS_NOEXCEPT_( expr )   CDS_NOEXCEPT_SUPPORT_( expr )
-
-#ifdef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-#   define CDS_CXX11_INLINE_NAMESPACE   inline
-#else
-#   define CDS_CXX11_INLINE_NAMESPACE
-#endif
+#define CDS_NOEXCEPT            noexcept
+#define CDS_NOEXCEPT_( expr )   noexcept( expr )
 
 /*************************************************************************
  Common things

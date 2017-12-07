@@ -127,9 +127,9 @@ namespace set {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = true;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = true;
+        static constexpr bool const c_bExtractSupported = true;
+        static constexpr bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bEraseExactKey = true;
     };
 
     struct tag_FeldmanHashSet;

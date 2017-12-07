@@ -78,7 +78,7 @@ namespace cds { namespace container {
         struct traits: public cds::algo::flat_combining::traits
         {
             typedef empty_stat      stat;   ///< Internal statistics
-            static CDS_CONSTEXPR const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
+            static constexpr const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
         };
 
         /// Metafunction converting option list to traits
@@ -133,7 +133,7 @@ namespace cds { namespace container {
         typedef Traits      traits;         ///< Queue type traits
 
         typedef typename traits::stat  stat;   ///< Internal statistics type
-        static CDS_CONSTEXPR const bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
+        static constexpr const bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
 
     protected:
         //@cond

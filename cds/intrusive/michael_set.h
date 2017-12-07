@@ -266,7 +266,7 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::guarded_ptr guarded_ptr; ///< Guarded pointer
 
         /// Count of hazard pointer required for the algorithm
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount;
+        static constexpr const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount;
 
         // GC and OrderedList::gc must be the same
         static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");

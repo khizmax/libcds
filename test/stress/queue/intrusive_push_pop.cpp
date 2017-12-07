@@ -44,7 +44,7 @@ namespace {
 
     static atomics::atomic< size_t > s_nProducerCount(0);
     static size_t s_nThreadPushCount;
-    static CDS_CONSTEXPR const size_t c_nBadConsumer = 0xbadc0ffe;
+    static constexpr const size_t c_nBadConsumer = 0xbadc0ffe;
 
     struct empty {};
 

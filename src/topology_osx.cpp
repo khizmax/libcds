@@ -35,7 +35,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
-namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace OS_X {
+namespace cds { namespace OS { inline namespace OS_X {
 
     unsigned int topology::s_nProcessorCount = 0;
 

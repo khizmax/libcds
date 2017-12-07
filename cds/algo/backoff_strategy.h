@@ -403,7 +403,7 @@ namespace cds {
             {}
 
             /// Initializes timeout from \p nTimeout
-            CDS_CONSTEXPR explicit delay( unsigned int nTimeout ) CDS_NOEXCEPT
+            constexpr explicit delay( unsigned int nTimeout ) CDS_NOEXCEPT
                 : timeout( nTimeout )
             {}
 

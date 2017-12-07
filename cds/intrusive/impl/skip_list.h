@@ -51,7 +51,7 @@ namespace cds { namespace intrusive {
             typedef BackOff                             back_off;
             typedef typename node_traits::node_type     node_type;
             typedef typename node_traits::value_type    value_type;
-            static CDS_CONSTEXPR bool const c_isConst = IsConst;
+            static constexpr bool const c_isConst = IsConst;
 
             typedef typename std::conditional< c_isConst, value_type const&, value_type&>::type   value_ref;
 
@@ -1110,7 +1110,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.
-        static CDS_CONSTEXPR unsigned int max_height() CDS_NOEXCEPT
+        static constexpr unsigned int max_height() CDS_NOEXCEPT
         {
             return c_nMaxHeight;
         }

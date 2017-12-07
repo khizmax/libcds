@@ -56,7 +56,7 @@
 
 //@cond
 namespace cds { namespace cxx11_atomic {
-    namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace vc { CDS_CXX11_INLINE_NAMESPACE namespace x86 {
+    namespace platform { inline namespace vc { inline namespace x86 {
 
         static inline void fence_before( memory_order order ) CDS_NOEXCEPT
         {
@@ -574,9 +574,6 @@ namespace cds { namespace cxx11_atomic {
         }
     }} // namespace vc::x86
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using namespace vc::x86;
-#endif
     } // namespace platform
 }}  // namespace cds::cxx11_atomic
 //@endcond

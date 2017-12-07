@@ -82,9 +82,9 @@ namespace map {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = true;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+        static constexpr bool const c_bExtractSupported = true;
+        static constexpr bool const c_bLoadFactorDepended = true;
+        static constexpr bool const c_bEraseExactKey = false;
     };
 
     template <typename Key, typename T, typename Traits >
@@ -125,8 +125,8 @@ namespace map {
         {}
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = true;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+        static constexpr bool const c_bExtractSupported = true;
+        static constexpr bool const c_bLoadFactorDepended = true;
     };
 
     struct tag_SplitListMap;

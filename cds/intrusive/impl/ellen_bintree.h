@@ -188,7 +188,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::node_allocator        node_allocator;        ///< Allocator for internal node
         typedef typename traits::update_desc_allocator update_desc_allocator; ///< Update descriptor allocator
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 9; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = 9; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

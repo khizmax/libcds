@@ -57,7 +57,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext; ///< pointer to the next node in the container
             node *            m_pDelChain; ///< Deleted node chain (local for a thread)
 
-            CDS_CONSTEXPR node() CDS_NOEXCEPT
+            constexpr node() CDS_NOEXCEPT
                 : m_pNext( nullptr )
                 , m_pDelChain( nullptr )
             {}
@@ -126,7 +126,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat               stat;     ///< Internal statistics
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions do not require external locking
+        static constexpr const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions do not require external locking
 
         //@cond
         // Rebind traits (split-list support)

@@ -137,12 +137,12 @@ namespace cds { namespace sync {
         >::type internal_stat;
 
         /// Pool's default capacity
-        static CDS_CONSTEXPR size_t const c_nDefaultCapacity = 256;
+        static constexpr size_t const c_nDefaultCapacity = 256;
 
     private:
         //@cond
-        static CDS_CONSTEXPR refspin_type const c_nSpinBit = 1;
-        static CDS_CONSTEXPR refspin_type const c_nRefIncrement = 2;
+        static constexpr refspin_type const c_nSpinBit = 1;
+        static constexpr refspin_type const c_nRefIncrement = 2;
         mutable pool_type      m_Pool;
         mutable internal_stat  m_Stat;
         //@endcond

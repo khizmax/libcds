@@ -956,7 +956,7 @@ namespace cds { namespace gc {
             };
 
             /// Array capacity
-            static CDS_CONSTEXPR const size_t c_nCapacity = Count;
+            static constexpr const size_t c_nCapacity = Count;
 
         public:
             /// Default ctor allocates \p Count hazard pointers
@@ -1100,7 +1100,7 @@ namespace cds { namespace gc {
             //@endcond
 
             /// Capacity of the guard array
-            static CDS_CONSTEXPR size_t capacity()
+            static constexpr size_t capacity()
             {
                 return Count;
             }
@@ -1356,7 +1356,7 @@ namespace cds { namespace gc {
             The function always returns \p true since the guard count is unlimited for
             \p %gc::DHP garbage collector.
         */
-        static CDS_CONSTEXPR bool check_available_guards(
+        static constexpr bool check_available_guards(
 #ifdef CDS_DOXYGEN_INVOKED
             size_t nCountNeeded,
 #else

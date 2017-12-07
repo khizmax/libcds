@@ -62,10 +62,10 @@ namespace cds { namespace algo {
     public:
         typedef BitString bitstring;    ///< Bit-string type
         typedef UInt      uint_type;    ///< Result type of \p cut() function
-        static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
+        static constexpr size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
 
         //@cond
-        static CDS_CONSTEXPR unsigned const c_nBitPerByte = 8;
+        static constexpr unsigned const c_nBitPerByte = 8;
         //@endcond
 
     public:
@@ -188,7 +188,7 @@ namespace cds { namespace algo {
         }
 
         /// Returns \p true for any argument
-        static CDS_CONSTEXPR bool is_correct( unsigned /*count*/ )
+        static constexpr bool is_correct( unsigned /*count*/ )
         {
             return true;
         }
@@ -209,10 +209,10 @@ namespace cds { namespace algo {
     public:
         typedef BitString bitstring;    ///< Bit-string type
         typedef UInt      uint_type;    ///< Result type of \p cut() function
-        static CDS_CONSTEXPR size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
+        static constexpr size_t const c_bitstring_size = BitStringSize ? BitStringSize : sizeof( BitString ); ///< size of \p BitString in bytes
 
         //@cond
-        static CDS_CONSTEXPR unsigned const c_nBitPerByte = 8;
+        static constexpr unsigned const c_nBitPerByte = 8;
         //@endcond
 
     public:
@@ -314,7 +314,7 @@ namespace cds { namespace algo {
         }
 
         /// Checks if \p count is multiple of 8
-        static CDS_CONSTEXPR bool is_correct( unsigned count )
+        static constexpr bool is_correct( unsigned count )
         {
             return count % 8 == 0;
         }
@@ -342,7 +342,7 @@ namespace cds { namespace algo {
         typedef Int       uint_type;    ///< Result type of \p cut() function
 
         //@cond
-        static CDS_CONSTEXPR unsigned const c_nBitPerByte = 8;
+        static constexpr unsigned const c_nBitPerByte = 8;
         //@endcond
 
     public:
@@ -430,7 +430,7 @@ namespace cds { namespace algo {
         }
 
         /// Checks if \p count is multiple of 8
-        static CDS_CONSTEXPR bool is_correct( unsigned count )
+        static constexpr bool is_correct( unsigned count )
         {
             return count < sizeof( int_type ) * c_nBitPerByte;
         }

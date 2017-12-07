@@ -99,7 +99,7 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::hook    hook;      ///< hook type
         typedef typename hook::node_type node_type; ///< node type
-        static CDS_CONSTEXPR bool const c_bSort = traits::sort; ///< List type: ordered (\p true) or unordered (\p false)
+        static constexpr bool const c_bSort = traits::sort; ///< List type: ordered (\p true) or unordered (\p false)
 
 #   ifdef CDS_DOXYGEN_INVOKED
         /// Key comparing functor

@@ -147,7 +147,7 @@ namespace cds { namespace container {
         static bool const c_bRelaxedInsert = traits::relaxed_insert;
 
         /// Group of \p extract_xxx functions does not require external locking
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
+        static constexpr const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
         typedef typename base_class::rcu_lock   rcu_lock;  ///< RCU scoped lock
 

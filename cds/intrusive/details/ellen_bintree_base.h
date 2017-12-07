@@ -321,7 +321,7 @@ namespace cds { namespace intrusive {
         struct member_hook: public hook< opt::member_hook_tag, Options... >
         {
             //@cond
-            static CDS_CONSTEXPR const size_t c_nMemberOffset = MemberOffset;
+            static constexpr const size_t c_nMemberOffset = MemberOffset;
             //@endcond
         };
 

@@ -142,7 +142,7 @@ namespace cds { namespace container {
         typedef typename base_class::rcu_check_deadlock rcu_check_deadlock ; ///< RCU deadlock checking policy
 
         typedef typename gc::scoped_lock    rcu_lock ;  ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
+        static constexpr const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal; ///< Group of \p extract_xxx functions do not require external locking
 
         //@cond
         // Rebind traits (split-list support)

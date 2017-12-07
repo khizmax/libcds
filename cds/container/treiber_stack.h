@@ -80,7 +80,7 @@ namespace cds { namespace container {
             ///@{
 
             /// Enable elimination back-off; by default, it is disabled
-            static CDS_CONSTEXPR const bool enable_elimination = false;
+            static constexpr const bool enable_elimination = false;
 
             /// Back-off strategy to wait for elimination, default is cds::backoff::delay<>
             typedef cds::backoff::delay<>          elimination_backoff;
@@ -188,7 +188,7 @@ namespace cds { namespace container {
             {
                 typedef cds::intrusive::treiber_stack::base_hook< cds::opt::gc<gc> > hook;
                 typedef node_deallocator disposer;
-                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::treiber_stack::traits::link_checker;
+                static constexpr const opt::link_check_type link_checker = cds::intrusive::treiber_stack::traits::link_checker;
             };
 
             // Result of metafunction

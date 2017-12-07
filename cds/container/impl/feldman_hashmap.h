@@ -153,10 +153,10 @@ namespace cds { namespace container {
         typedef typename traits::stat           stat;           ///< Internal statistics type
 
         /// Count of hazard pointers required
-        static CDS_CONSTEXPR size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
+        static constexpr size_t const c_nHazardPtrCount = base_class::c_nHazardPtrCount;
 
         /// The size of \p hash_type in bytes, see \p feldman_hashmap::traits::hash_size for explanation
-        static CDS_CONSTEXPR size_t const c_hash_size = base_class::c_hash_size;
+        static constexpr size_t const c_hash_size = base_class::c_hash_size;
 
         /// Level statistics
         typedef feldman_hashmap::level_statistics level_statistics;
@@ -174,7 +174,7 @@ namespace cds { namespace container {
             typedef typename base_class::iterator_base iterator_base;
 
         protected:
-            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+            static constexpr bool const c_bConstantIterator = IsConst;
 
         public:
             typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer

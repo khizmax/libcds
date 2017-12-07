@@ -210,7 +210,7 @@ namespace cds { namespace container {
     public:
         typedef typename base_class::rcu_lock  rcu_lock;   ///< RCU scoped lock
         /// Group of \p extract_xxx functions do not require external locking
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
+        static constexpr const bool c_bExtractLockExternal = base_class::c_bExtractLockExternal;
 
         /// pointer to extracted node
         using exempt_ptr = cds::urcu::exempt_ptr< gc, node_type, value_type, typename maker::intrusive_traits::disposer >;

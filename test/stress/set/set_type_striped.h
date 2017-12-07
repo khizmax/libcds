@@ -106,9 +106,9 @@ namespace set {
             */
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
-            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bEraseExactKey = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -147,9 +147,9 @@ namespace set {
             */
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
-            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bEraseExactKey = false;
         };
 
         // for non-sequential ordered containers
@@ -181,9 +181,9 @@ namespace set {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = false;
+            static constexpr bool const c_bEraseExactKey = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -214,9 +214,9 @@ namespace set {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
-            static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bEraseExactKey = false;
         };
 
         typedef StripedHashSet_seq<
@@ -386,8 +386,8 @@ namespace set {
             */
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
         };
 
         template <class BucketEntry, typename... Options>
@@ -418,8 +418,8 @@ namespace set {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -451,8 +451,8 @@ namespace set {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = false;
         };
 
         template <class BucketEntry, typename... Options>
@@ -483,8 +483,8 @@ namespace set {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
         };
 
         typedef RefinableHashSet_seq<

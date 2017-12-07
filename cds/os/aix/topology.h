@@ -46,7 +46,7 @@
 namespace cds { namespace OS {
 
     ///  IBM AIX specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Aix {
+    inline namespace Aix {
 
         /// System topology
         /**
@@ -99,9 +99,6 @@ namespace cds { namespace OS {
         };
     }   // namespace Aix
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Aix::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_AIX_TOPOLOGY_H

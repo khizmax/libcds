@@ -94,10 +94,10 @@ namespace cds { namespace container {
         typedef typename traits::sync_monitor           sync_monitor;       ///< @ref cds_sync_monitor "Synchronization monitor" type for node-level locking
 
         /// Enabled or disabled @ref bronson_avltree::relaxed_insert "relaxed insertion"
-        static CDS_CONSTEXPR bool const c_bRelaxedInsert = traits::relaxed_insert;
+        static constexpr bool const c_bRelaxedInsert = traits::relaxed_insert;
 
         /// Group of \p extract_xxx functions does not require external locking
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false;
+        static constexpr const bool c_bExtractLockExternal = false;
 
 #   ifdef CDS_DOXYGEN_INVOKED
         /// Returned pointer to \p mapped_type of extracted node
@@ -957,7 +957,7 @@ namespace cds { namespace container {
             return pNode ? height( pNode, order ) : 0;
         }
 
-        static CDS_CONSTEXPR int const c_stackSize = 64;
+        static constexpr int const c_stackSize = 64;
 
         template <typename Q, typename Compare, typename Func>
         find_result try_find( Q const& key, Compare cmp, Func f, node_type * pNode, int nDir, version_type nVersion ) const

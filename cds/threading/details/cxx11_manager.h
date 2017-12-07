@@ -49,7 +49,7 @@ namespace cds { namespace threading {
     //@endcond
 
     /// cds::threading::Manager implementation based on c++11 thread_local declaration
-    CDS_CXX11_INLINE_NAMESPACE namespace cxx11 {
+    inline namespace cxx11 {
 
         /// Thread-specific data manager based on c++11 thread_local feature
         class Manager {

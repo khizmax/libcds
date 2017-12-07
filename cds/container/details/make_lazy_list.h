@@ -99,7 +99,7 @@ namespace cds { namespace container {
             {
                 typedef intrusive::lazy_list::base_hook< opt::gc<gc>, cds::opt::lock_type< typename original_type_traits::lock_type >>  hook;
                 typedef node_deallocator disposer;
-                static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
+                static constexpr const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
 
                 typedef typename std::conditional< std::is_same< typename original_type_traits::equal_to, cds::opt::none >::value,
                     cds::opt::none,

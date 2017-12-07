@@ -293,7 +293,7 @@ namespace cds { namespace intrusive {
             typedef optimistic_queue::empty_stat    stat;
 
             /// Link checking, see \p cds::opt::link_checker
-            static CDS_CONSTEXPR const opt::link_check_type link_checker = opt::debug_check_link;
+            static constexpr const opt::link_check_type link_checker = opt::debug_check_link;
 
             /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
             enum { padding = opt::cache_line_padding };
@@ -447,7 +447,7 @@ namespace cds { namespace intrusive {
             typedef OptimisticQueue< GC2, T2, Traits2 > other   ;   ///< Rebinding result
         };
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 5; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = 5; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond

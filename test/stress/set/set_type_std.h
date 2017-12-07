@@ -136,9 +136,9 @@ namespace set {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = true;
+        static constexpr bool const c_bExtractSupported = false;
+        static constexpr bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bEraseExactKey = true;
     };
 
     template <typename Value, typename Less, typename Lock,
@@ -225,8 +225,8 @@ namespace set {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bExtractSupported = false;
+        static constexpr bool const c_bLoadFactorDepended = false;
     };
 
     template <typename Key, typename Val>

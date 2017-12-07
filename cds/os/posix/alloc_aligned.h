@@ -42,7 +42,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace posix {
+    inline namespace posix {
         /// Allocates memory on a specified alignment boundary
         static inline void * aligned_malloc(
             size_t nSize,       ///< Size of the requested memory allocation
@@ -61,11 +61,6 @@ namespace cds { namespace OS {
             ::free( pBlock );
         }
     }   // namespace posix
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using posix::aligned_malloc;
-    using posix::aligned_free;
-#endif
 
 }} // namespace cds::OS
 //@endcond

@@ -119,7 +119,7 @@ namespace cds { namespace intrusive {
 
         typedef typename ordered_list::rcu_lock    rcu_lock;   ///< RCU scoped lock
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
+        static constexpr const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
 
         // GC and OrderedList::gc must be the same
         static_assert(std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");

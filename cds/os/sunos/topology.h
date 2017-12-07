@@ -41,7 +41,7 @@
 namespace cds { namespace OS {
 
     /// Sun Solaris-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Sun {
+    inline namespace Sun {
 
         /// System topology
         /**
@@ -80,9 +80,6 @@ namespace cds { namespace OS {
         };
     }   // namespace Sun
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Sun::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_SUNOS_TOPOLOGY_H

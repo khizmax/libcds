@@ -922,7 +922,7 @@ namespace cds { namespace gc {
             };
 
             /// Array capacity
-            static CDS_CONSTEXPR const size_t c_nCapacity = Count;
+            static constexpr const size_t c_nCapacity = Count;
 
         public:
             /// Default ctor allocates \p Count hazard pointers
@@ -1065,7 +1065,7 @@ namespace cds { namespace gc {
             //@endcond
 
             /// Capacity of the guard array
-            static CDS_CONSTEXPR size_t capacity()
+            static constexpr size_t capacity()
             {
                 return c_nCapacity;
             }

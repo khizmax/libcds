@@ -210,7 +210,7 @@ namespace cds { namespace intrusive {
 
                 Value \p 0 means <tt>sizeof( hash_type )</tt>.
             */
-            static CDS_CONSTEXPR size_t const hash_size = 0;
+            static constexpr size_t const hash_size = 0;
 
             /// Hash splitter
             /**
@@ -427,7 +427,7 @@ namespace cds { namespace intrusive {
             >::type hash_comparator;
 
             /// The size of hash_type in bytes, see \p traits::hash_size for explanation
-            static CDS_CONSTEXPR size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : static_cast<size_t>( traits::hash_size );
+            static constexpr size_t const c_hash_size = traits::hash_size == 0 ? sizeof( hash_type ) : static_cast<size_t>( traits::hash_size );
 
             typedef typename std::conditional<
                 std::is_same< typename traits::hash_splitter, cds::opt::none >::value,

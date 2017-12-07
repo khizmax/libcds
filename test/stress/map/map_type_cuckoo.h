@@ -61,9 +61,9 @@ namespace map {
         }
 
         // for testing
-        static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-        static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
-        static CDS_CONSTEXPR bool const c_bEraseExactKey = false;
+        static constexpr bool const c_bExtractSupported = false;
+        static constexpr bool const c_bLoadFactorDepended = false;
+        static constexpr bool const c_bEraseExactKey = false;
     };
 
     struct tag_CuckooMap;
@@ -108,7 +108,7 @@ namespace map {
 
         struct traits_CuckooMap_list_unord_storehash : public traits_CuckooMap_list_unord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_storehash>> CuckooStripedMap_list_unord_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_storehash>> CuckooRefinableMap_list_unord_storehash;
@@ -132,7 +132,7 @@ namespace map {
 
         struct traits_CuckooMap_list_ord_storehash : public traits_CuckooMap_list_ord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_storehash>> CuckooStripedMap_list_ord_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_storehash>> CuckooRefinableMap_list_ord_storehash;
@@ -156,7 +156,7 @@ namespace map {
 
         struct traits_CuckooMap_vector_unord_storehash : public traits_CuckooMap_vector_unord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_storehash>> CuckooStripedMap_vector_unord_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_storehash>> CuckooRefinableMap_vector_unord_storehash;
@@ -180,7 +180,7 @@ namespace map {
 
         struct traits_CuckooMap_vector_ord_storehash : public traits_CuckooMap_vector_ord
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_storehash>> CuckooStripedMap_vector_ord_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_storehash>> CuckooRefinableMap_vector_ord_storehash;
@@ -206,7 +206,7 @@ namespace map {
 
         struct traits_CuckooMap_list_unord_city64_storehash: public traits_CuckooMap_list_unord_city64
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_unord_city64_storehash>> CuckooStripedMap_list_unord_city64_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_unord_city64_storehash>> CuckooRefinableMap_list_unord_city64_storehash;
@@ -230,7 +230,7 @@ namespace map {
 
         struct traits_CuckooMap_list_ord_city64_storehash: public traits_CuckooMap_list_ord_city64
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_list_ord_city64_storehash>> CuckooStripedMap_list_ord_city64_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_list_ord_city64_storehash>> CuckooRefinableMap_list_ord_city64_storehash;
@@ -254,7 +254,7 @@ namespace map {
 
         struct traits_CuckooMap_vector_unord_city64_storehash: public traits_CuckooMap_vector_unord_city64
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_unord_city64_storehash>> CuckooStripedMap_vector_unord_city64_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_unord_city64_storehash>> CuckooRefinableMap_vector_unord_city64_storehash;
@@ -278,7 +278,7 @@ namespace map {
 
         struct traits_CuckooMap_vector_ord_city64_storehash: public traits_CuckooMap_vector_ord_city64
         {
-            static CDS_CONSTEXPR const bool store_hash = true;
+            static constexpr const bool store_hash = true;
         };
         typedef CuckooMap< Key, Value, traits_CuckooStripedMap<traits_CuckooMap_vector_ord_city64_storehash>> CuckooStripedMap_vector_ord_city64_storehash;
         typedef CuckooMap< Key, Value, traits_CuckooRefinableMap<traits_CuckooMap_vector_ord_city64_storehash>> CuckooRefinableMap_vector_ord_city64_storehash;

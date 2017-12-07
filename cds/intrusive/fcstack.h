@@ -75,7 +75,7 @@ namespace cds { namespace intrusive {
         {
             typedef cds::intrusive::opt::v::empty_disposer  disposer ; ///< Disposer to erase removed elements. Used only in \p FCStack::clear() function
             typedef empty_stat      stat;   ///< Internal statistics
-            static CDS_CONSTEXPR const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
+            static constexpr const bool enable_elimination = false; ///< Enable \ref cds_elimination_description "elimination"
         };
 
         /// Metafunction converting option list to traits
@@ -132,7 +132,7 @@ namespace cds { namespace intrusive {
 
         typedef typename traits::disposer  disposer;   ///< The disposer functor. The disposer is used only in \ref clear() function
         typedef typename traits::stat  stat;   ///< Internal statistics type
-        static CDS_CONSTEXPR const bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
+        static constexpr const bool c_bEliminationEnabled = traits::enable_elimination; ///< \p true if elimination is enabled
 
     protected:
         //@cond

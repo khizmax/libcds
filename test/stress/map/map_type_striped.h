@@ -89,8 +89,8 @@ namespace map {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -122,8 +122,8 @@ namespace map {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = false;
         };
 
 
@@ -205,8 +205,8 @@ namespace map {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = true;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = true;
         };
 
         // for non-sequential ordered containers
@@ -238,8 +238,8 @@ namespace map {
             }
 
             // for testing
-            static CDS_CONSTEXPR bool const c_bExtractSupported = false;
-            static CDS_CONSTEXPR bool const c_bLoadFactorDepended = false;
+            static constexpr bool const c_bExtractSupported = false;
+            static constexpr bool const c_bLoadFactorDepended = false;
         };
 
 

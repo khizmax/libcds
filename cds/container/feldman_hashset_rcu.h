@@ -109,11 +109,11 @@ namespace cds { namespace container {
         typedef typename traits::stat           stat;           ///< Internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename gc::scoped_lock       rcu_lock;        ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+        static constexpr const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
         typedef typename base_class::exempt_ptr exempt_ptr; ///< pointer to extracted node
 
         /// The size of hash_type in bytes, see \p feldman_hashset::traits::hash_size for explanation
-        static CDS_CONSTEXPR size_t const c_hash_size = base_class::c_hash_size;
+        static constexpr size_t const c_hash_size = base_class::c_hash_size;
 
         /// Level statistics
         typedef feldman_hashset::level_statistics level_statistics;

@@ -61,7 +61,7 @@ namespace cds { namespace intrusive {
 
             atomic_marked_ptr m_pNext ; ///< pointer to the next node in the container
 
-            CDS_CONSTEXPR node() CDS_NOEXCEPT
+            constexpr node() CDS_NOEXCEPT
                 : m_pNext( nullptr )
             {}
         };

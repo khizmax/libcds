@@ -39,7 +39,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace posix {
+    inline namespace posix {
 
         // High resolution timer
         // From Linux as an example
@@ -106,10 +106,6 @@ namespace cds { namespace OS {
             }
         };
     }    // namespace posix
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using posix::Timer;
-#endif
 
 }}    // namespace cds::OS
 //@endcond

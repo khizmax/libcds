@@ -44,7 +44,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace OS_X {
+    inline namespace OS_X {
 
         // High resolution timer
         class Timer {
@@ -120,10 +120,6 @@ namespace cds { namespace OS {
             }
         };
     }    // namespace OS_X
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    typedef OS_X::Timer    Timer;
-#endif
 
 }}    // namespace cds::OS
 //@endcond

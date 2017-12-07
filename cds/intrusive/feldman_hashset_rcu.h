@@ -109,12 +109,12 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat           stat;           ///< Internal statistics type
         typedef typename traits::rcu_check_deadlock rcu_check_deadlock; ///< Deadlock checking policy
         typedef typename gc::scoped_lock        rcu_lock;       ///< RCU scoped lock
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
+        static constexpr const bool c_bExtractLockExternal = false; ///< Group of \p extract_xxx functions does not require external locking
 
         using exempt_ptr = cds::urcu::exempt_ptr< gc, value_type, value_type, disposer, void >; ///< pointer to extracted node
 
         /// The size of hash_type in bytes, see \p feldman_hashset::traits::hash_size for explanation
-        static CDS_CONSTEXPR size_t const c_hash_size = base_class::c_hash_size;
+        static constexpr size_t const c_hash_size = base_class::c_hash_size;
 
         //@cond
         typedef feldman_hashset::level_statistics level_statistics;
@@ -742,7 +742,7 @@ namespace cds { namespace intrusive {
             friend class FeldmanHashSet;
 
         protected:
-            static CDS_CONSTEXPR bool const c_bConstantIterator = IsConst;
+            static constexpr bool const c_bConstantIterator = IsConst;
 
         public:
             typedef typename std::conditional< IsConst, value_type const*, value_type*>::type value_ptr; ///< Value pointer

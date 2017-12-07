@@ -44,7 +44,7 @@
 namespace cds { namespace OS {
 
     /// Windows-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
+    inline namespace Win32 {
 
         /// System topology
         /**
@@ -90,9 +90,6 @@ namespace cds { namespace OS {
 
     }   // namespace Win32
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Win32::topology;
-#endif
 }}  // namespace cds::OS
 
 

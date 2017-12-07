@@ -49,7 +49,7 @@ namespace cds { namespace threading {
     //@endcond
 
     /// cds::threading::Manager implementation based on GCC __thread declaration
-    CDS_CXX11_INLINE_NAMESPACE namespace gcc {
+    inline namespace gcc {
 
         /// Thread-specific data manager based on GCC __thread feature
         class Manager {

@@ -39,7 +39,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace Sun {
+    inline namespace Sun {
 
         // High resolution timer
         class Timer {
@@ -88,10 +88,6 @@ namespace cds { namespace OS {
         };
 
     }   // namespace Sun
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    typedef Sun::Timer    Timer;
-#endif
 
 }}  // namespace cds::OS
 //@endcond

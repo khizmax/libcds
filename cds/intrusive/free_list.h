@@ -232,8 +232,8 @@ namespace cds { namespace intrusive {
 
     private:
         //@cond
-        static CDS_CONSTEXPR uint32_t const c_RefsMask = 0x7FFFFFFF;
-        static CDS_CONSTEXPR uint32_t const c_ShouldBeOnFreeList = 0x80000000;
+        static constexpr uint32_t const c_RefsMask = 0x7FFFFFFF;
+        static constexpr uint32_t const c_ShouldBeOnFreeList = 0x80000000;
 
         // Implemented like a stack, but where node order doesn't matter (nodes are
         // inserted out of order under contention)

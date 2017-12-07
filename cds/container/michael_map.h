@@ -171,7 +171,7 @@ namespace cds { namespace container {
         // GC and OrderedList::gc must be the same
         static_assert( std::is_same<gc, typename ordered_list::gc>::value, "GC and OrderedList::gc must be the same");
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount; ///< Count of hazard pointer required
+        static constexpr const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount; ///< Count of hazard pointer required
 
         //@cond
         typedef typename ordered_list::template select_stat_wrapper< typename ordered_list::stat > bucket_stat;

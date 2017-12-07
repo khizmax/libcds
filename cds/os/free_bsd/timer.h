@@ -41,7 +41,7 @@
 //@cond none
 namespace cds { namespace OS {
 
-    CDS_CXX11_INLINE_NAMESPACE namespace Free_BSD {
+    inline namespace Free_BSD {
 
         // High resolution timer
         class Timer {
@@ -113,10 +113,6 @@ namespace cds { namespace OS {
 
         };
     }   // namespace Free_BSD
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    typedef Free_BSD::Timer    Timer;
-#endif
 
 }}   // namespace cds::OS
 //@endcond

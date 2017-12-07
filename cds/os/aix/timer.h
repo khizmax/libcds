@@ -42,7 +42,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace Aix {
+    inline namespace Aix {
 
         // High resolution timer
         class Timer {
@@ -109,10 +109,6 @@ namespace cds { namespace OS {
             }
         };
     }    // namespace Aix
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    typedef Aix::Timer    Timer;
-#endif
 
 }}   // namespace cds::OS
 //@endcond

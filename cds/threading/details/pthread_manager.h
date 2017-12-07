@@ -41,7 +41,7 @@
 namespace cds { namespace threading {
 
     /// cds::threading::Manager implementation based on pthread thread-specific data functions
-    CDS_CXX11_INLINE_NAMESPACE namespace pthread {
+    inline namespace pthread {
 
         /// Thread-specific data manager based on pthread thread-specific data functions
         /**

@@ -113,12 +113,6 @@
 #   define CDS_MSVC_MEMORY_LEAKS_DETECTING_ENABLED
 #endif
 
-#define CDS_CONSTEXPR constexpr
-
-// noexcept - vc14 +
-#define CDS_NOEXCEPT_SUPPORT        noexcept
-#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-
 // *************************************************
 // Alignment macro
 
@@ -132,7 +126,6 @@
 #define CDS_NORETURN __declspec(noreturn)
 
 // Exceptions
-
 #if defined( _CPPUNWIND )
 #   define CDS_EXCEPTION_ENABLED
 #endif

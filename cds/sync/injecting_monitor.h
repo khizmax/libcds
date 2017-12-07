@@ -32,9 +32,6 @@
 #define CDSLIB_SYNC_INJECTING_MONITOR_H
 
 #include <cds/sync/monitor.h>
-#ifndef CDS_CXX11_INHERITING_CTOR
-#   include <utility> // std::forward
-#endif
 
 namespace cds { namespace sync {
 
@@ -64,7 +61,7 @@ namespace cds { namespace sync {
             mutable lock_type m_Lock;   ///< Node spin-lock
 
             //@cond
-            CDS_CONSTEXPR bool check_free() const
+            constexpr bool check_free() const
             {
                 return true;
             }

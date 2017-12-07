@@ -35,7 +35,7 @@
 #include <cds/algo/atomic.h>
 #include <limits>
 
-namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Hpux {
+namespace cds { namespace OS { inline namespace Hpux {
 
     size_t topology::s_nProcMapSize = 0;
     topology::processor_map * topology::s_procMap = nullptr;

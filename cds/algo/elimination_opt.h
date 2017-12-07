@@ -41,7 +41,7 @@ namespace cds { namespace opt {
         //@cond
         template <class Base> struct pack: public Base
         {
-            static CDS_CONSTEXPR const bool enable_elimination = Enable;
+            static constexpr const bool enable_elimination = Enable;
         };
         //@endcond
     };

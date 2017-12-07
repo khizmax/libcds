@@ -36,6 +36,12 @@
 #define CDS_CPLUSPLUS_14     201402L
 #define CDS_CPLUSPLUS_17     201703L
 
+// VC 2017 is not full C++11-compatible yet
+//#if __cplusplus < CDS_CPLUSPLUS_11
+//#   error C++11 and above is required
+//#endif
+
+
 #if CDS_COMPILER == CDS_COMPILER_MSVC
 #   include <cds/compiler/vc/defs.h>
 #elif CDS_COMPILER == CDS_COMPILER_GCC

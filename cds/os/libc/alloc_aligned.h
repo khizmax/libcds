@@ -35,7 +35,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace libc {
+    inline namespace libc {
         /// Allocates memory on a specified alignment boundary
         static inline void * aligned_malloc(
             size_t nSize,       ///< Size of the requested memory allocation
@@ -53,11 +53,6 @@ namespace cds { namespace OS {
             ::free( pBlock );
         }
     }   // namespace libc
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using libc::aligned_malloc;
-    using libc::aligned_free;
-#endif
 
 }} // namespace cds::OS
 //@endcond

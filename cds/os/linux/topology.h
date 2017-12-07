@@ -43,7 +43,7 @@
 
 namespace cds { namespace OS {
     /// Linux-specific wrappers
-    CDS_CXX11_INLINE_NAMESPACE namespace Linux {
+    inline namespace Linux {
 
         /// System topology
         /**
@@ -112,9 +112,6 @@ namespace cds { namespace OS {
         };
     }   // namespace Linux
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using Linux::topology;
-#endif
 }}  // namespace cds::OS
 
 #endif  // #ifndef CDSLIB_OS_LINUX_TOPOLOGY_H

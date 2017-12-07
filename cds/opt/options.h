@@ -491,7 +491,7 @@ namespace opt {
             enum { padding = Padding & ~padding_flags };
 
         public:
-            static CDS_CONSTEXPR const size_t c_nPadding =
+            static constexpr const size_t c_nPadding =
                 static_cast<unsigned int>(padding) == static_cast<unsigned int>(cache_line_padding) ? cds::c_nCacheLineSize :
                 static_cast<unsigned int>(padding) == static_cast<unsigned int>(no_special_padding) ? 0 : padding;
 

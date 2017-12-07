@@ -36,11 +36,7 @@
 
 //@cond
 namespace cds { namespace cxx11_atomic {
-    namespace platform { CDS_CXX11_INLINE_NAMESPACE namespace gcc { CDS_CXX11_INLINE_NAMESPACE namespace amd64 {
-#   ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-        // primitives up to 32bit + fences
-        using namespace cds::cxx11_atomic::platform::gcc::x86;
-#   endif
+    namespace platform { inline namespace gcc { inline namespace amd64 {
 
         //-----------------------------------------------------------------------------
         // 64bit primitives
@@ -224,9 +220,6 @@ namespace cds { namespace cxx11_atomic {
 
     }} // namespace gcc::amd64
 
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using namespace gcc::amd64;
-#endif
     }   // namespace platform
 
 }}  // namespace cds::cxx11_atomic

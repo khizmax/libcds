@@ -92,7 +92,7 @@ namespace cds { namespace container {
 
                 Default is \p false
             */
-            static CDS_CONSTEXPR bool const single_consumer = false;
+            static constexpr bool const single_consumer = false;
         };
 
         /// Metafunction converting option list to \p vyukov_queue::traits
@@ -187,7 +187,7 @@ namespace cds { namespace container {
         typedef typename traits::back_off  back_off;          ///< back-off strategy
 
         /// \p true for single-consumer version, \p false otherwise
-        static CDS_CONSTEXPR bool const c_single_consumer = traits::single_consumer;
+        static constexpr bool const c_single_consumer = traits::single_consumer;
 
         /// Rebind template arguments
         template <typename T2, typename Traits2>
@@ -509,7 +509,7 @@ namespace cds { namespace container {
         template <typename Traits>
         struct single_consumer_traits : public Traits
         {
-            static CDS_CONSTEXPR bool const single_consumer = true;
+            static constexpr bool const single_consumer = true;
         };
     } // namespace vyukov_queue
     //@endcond

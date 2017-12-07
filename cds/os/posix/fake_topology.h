@@ -39,7 +39,7 @@
 #include <unistd.h>
 
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace posix {
+    inline namespace posix {
         /// Fake system topology
         struct topology {
             /// Logical processor count for the system. Always returns 1
@@ -71,10 +71,6 @@ namespace cds { namespace OS {
             //@endcond
         };
     }   // namespace posix
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    using posix::topology;
-#endif
 
 }}  // namespace cds::OS
 

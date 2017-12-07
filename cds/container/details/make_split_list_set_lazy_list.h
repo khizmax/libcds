@@ -115,7 +115,7 @@ namespace cds { namespace container { namespace details {
             typedef cds::atomicity::empty_item_counter item_counter;
             typedef node_deallocator                disposer;
             typedef cds::details::compare_wrapper< node_type, key_comparator, value_accessor > compare;
-            static CDS_CONSTEXPR const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
+            static constexpr const opt::link_check_type link_checker = cds::intrusive::lazy_list::traits::link_checker;
         };
 
         struct traits: public original_traits

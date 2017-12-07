@@ -40,7 +40,7 @@
 namespace cds { namespace threading {
 
     /// cds::threading::Manager implementation based on Windows TLS API
-    CDS_CXX11_INLINE_NAMESPACE namespace wintls {
+    inline namespace wintls {
 
         /// Thread-specific data manager based on Windows TLS API
         /**

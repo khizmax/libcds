@@ -1395,11 +1395,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = CDS_BUILD_BITS=64 \
                          CDS_DOXYGEN_INVOKED \
                          CDS_URCU_SIGNAL_HANDLING_ENABLED \
-                         CDS_CXX11_INLINE_NAMESPACE_SUPPORT \
-                         CDS_CXX11_INLINE_NAMESPACE=inline \
                          CDS_NOEXCEPT=noexcept() \
-                         CDS_CONSTEXPR=constexpr \
-                         CDS_CXX11_INHERITING_CTOR \
                          CDS_EXCEPTION_ENABLED \
                          CDS_SUPPRESS_SANITIZE
 

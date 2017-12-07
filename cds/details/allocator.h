@@ -61,7 +61,7 @@ namespace cds {
             >::type allocator_type;
 
             /// \p true if underlined allocator is \p std::allocator, \p false otherwise
-            static CDS_CONSTEXPR bool const c_bStdAllocator = std::is_same< allocator_type, std::allocator<T>>::value;
+            static constexpr bool const c_bStdAllocator = std::is_same< allocator_type, std::allocator<T>>::value;
 
             /// Element type
             typedef T   value_type;

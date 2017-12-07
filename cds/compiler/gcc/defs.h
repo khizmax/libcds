@@ -46,6 +46,11 @@
 #endif
 #define  CDS_COMPILER__NICK        "gcc"
 
+#if __cplusplus < CDS_CPLUSPLUS_11
+#   error C++11 and above is required
+#endif
+
+
 #include <cds/compiler/gcc/compiler_macro.h>
 
 #define alignof __alignof__
@@ -53,24 +58,8 @@
 // ***************************************
 // C++11 features
 
-// C++11 inline namespace
-#define CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-
-// constexpr
-#define CDS_CONSTEXPR    constexpr
-
-// noexcept
-#define CDS_NOEXCEPT_SUPPORT        noexcept
-#define CDS_NOEXCEPT_SUPPORT_(expr) noexcept(expr)
-
 // C++11 thread_local keyword
 #define CDS_CXX11_THREAD_LOCAL_SUPPORT
-
-// Full SFINAE support
-#define CDS_CXX11_SFINAE
-
-// Inheriting constructors
-#define CDS_CXX11_INHERITING_CTOR
 
 // *************************************************
 // Features
@@ -89,14 +78,13 @@
 
 // Attributes
 #if CDS_COMPILER_VERSION >= 40900
-#   if __cplusplus < 201103
-#       define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
-#   elif __cplusplus == 201103 // C++11
+#   if __cplusplus == CDS_CPLUSPLUS_11 // C++11
 #       define CDS_DEPRECATED( reason ) [[gnu::deprecated(reason)]]
 #   else  // C++14
 #       define CDS_DEPRECATED( reason ) [[deprecated(reason)]]
 #   endif
 #else
+    // GCC 4.8
 #   define CDS_DEPRECATED( reason ) __attribute__((deprecated( reason )))
 #endif
 
@@ -108,7 +96,6 @@
 #define cds_unlikely( expr ) __builtin_expect( !!( expr ), 0 )
 
 // Exceptions
-
 #if defined( __EXCEPTIONS ) && __EXCEPTIONS == 1
 #   define CDS_EXCEPTION_ENABLED
 #endif

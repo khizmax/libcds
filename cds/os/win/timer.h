@@ -42,7 +42,7 @@
 
 //@cond none
 namespace cds { namespace OS {
-    CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
+    inline namespace Win32 {
 
         /// High resolution timer
         /**
@@ -123,10 +123,6 @@ namespace cds { namespace OS {
 
 
     }   // namespace Win32
-
-#ifndef CDS_CXX11_INLINE_NAMESPACE_SUPPORT
-    typedef Win32::Timer    Timer;
-#endif
 
 }}  // namespae cds::OS
 //@endcond

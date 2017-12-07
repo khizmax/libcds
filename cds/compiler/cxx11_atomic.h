@@ -1439,7 +1439,7 @@ namespace cds { namespace cxx11_atomic {
             }
 
             atomic_integral() = default;
-            CDS_CONSTEXPR atomic_integral(T val) CDS_NOEXCEPT
+            constexpr atomic_integral(T val) CDS_NOEXCEPT
                 : m_val(val)
                 {}
 
@@ -1635,7 +1635,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         atomic() = default;
-        CDS_CONSTEXPR atomic(T val)
+        constexpr atomic(T val)
             : m_data( val )
             {}
 
@@ -1795,7 +1795,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         atomic() = default;
-        CDS_CONSTEXPR atomic(T * val) CDS_NOEXCEPT
+        constexpr atomic(T * val) CDS_NOEXCEPT
             : m_ptr( val )
         {}
 

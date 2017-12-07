@@ -182,7 +182,7 @@ namespace cds { namespace container {
         typedef typename base_class::stat         stat; ///< Internal statistics
 
         /// Count of hazard pointer required
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount;
+        static constexpr const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount;
 
     protected:
         //@cond

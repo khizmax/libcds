@@ -281,7 +281,7 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::guarded_ptr guarded_ptr;  ///< Guarded pointer
 
         /// Count of hazard pointer required
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount + 4; // +4 - for iterators
+        static constexpr const size_t c_nHazardPtrCount = ordered_list::c_nHazardPtrCount + 4; // +4 - for iterators
 
     protected:
         //@cond

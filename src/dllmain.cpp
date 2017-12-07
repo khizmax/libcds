@@ -186,7 +186,7 @@ static void discover_topology()
     return;
 }
 
-namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
+namespace cds { namespace OS { inline namespace Win32 {
     unsigned int    topology::processor_count()
     {
         return s_nProcessorCount;
@@ -207,7 +207,7 @@ namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
             s_fnGetCurrentProcessorNumber = (fnGetCurrentProcessorNumber) get_proc_addr( "ntdll", "NtGetCurrentProcessorNumber" );
     }
 
-    namespace cds { namespace OS { CDS_CXX11_INLINE_NAMESPACE namespace Win32 {
+    namespace cds { namespace OS { inline namespace Win32 {
         unsigned int topology::current_processor()
         {
             if ( s_fnGetCurrentProcessorNumber != nullptr )

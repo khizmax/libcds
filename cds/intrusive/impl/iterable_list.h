@@ -146,7 +146,7 @@ namespace cds { namespace intrusive {
 
         typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
 
-        static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
+        static constexpr const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
 
         //@cond
         // Rebind traits (split-list support)

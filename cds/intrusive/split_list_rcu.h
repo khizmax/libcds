@@ -117,7 +117,7 @@ namespace cds { namespace intrusive {
         typedef typename ordered_list::exempt_ptr     exempt_ptr;     ///< pointer to extracted node
         typedef typename ordered_list::raw_ptr        raw_ptr;        ///< pointer to the node for \p get() function
         /// Group of \p extract_xxx functions require external locking if underlying ordered list requires that
-        static CDS_CONSTEXPR const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
+        static constexpr const bool c_bExtractLockExternal = ordered_list::c_bExtractLockExternal;
 
         typedef typename traits::bit_reversal bit_reversal; ///< Bit reversal algorithm, see \p split_list::traits::bit_reversal
         typedef typename traits::item_counter item_counter; ///< Item counter type
