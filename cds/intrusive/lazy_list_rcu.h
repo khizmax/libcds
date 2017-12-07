@@ -1181,7 +1181,7 @@ namespace cds { namespace intrusive {
             pos.pPred = pPrev.ptr();
         }
 
-        bool validate( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
+        bool validate( node_type * pPred, node_type * pCur ) noexcept
         {
             if ( validate_link( pPred, pCur )) {
                 m_Stat.onValidationSuccess();
@@ -1192,7 +1192,7 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        static bool validate_link( node_type * pPred, node_type * pCur ) CDS_NOEXCEPT
+        static bool validate_link( node_type * pPred, node_type * pCur ) noexcept
         {
             // RCU lock should be locked
             assert( gc::is_locked());

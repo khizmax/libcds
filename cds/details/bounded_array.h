@@ -98,38 +98,38 @@ namespace cds {
                 return m_arr[nItem];
             }
 
-            size_t   size() const CDS_NOEXCEPT
+            size_t   size() const noexcept
             {
                 return capacity();
             }
 
-            size_t   capacity() const CDS_NOEXCEPT
+            size_t   capacity() const noexcept
             {
                 return m_nCapacity;
             }
 
             /// Returns pointer to the first item in the array
-            value_type * top() CDS_NOEXCEPT
+            value_type * top() noexcept
             {
                 return m_arr;
             }
 
             /// Get begin iterator
-            const_iterator  begin() const CDS_NOEXCEPT
+            const_iterator  begin() const noexcept
             {
                 return m_arr;
             }
-            iterator        begin() CDS_NOEXCEPT
+            iterator        begin() noexcept
             {
                 return m_arr;
             }
 
             /// Get end iterator
-            const_iterator  end() const CDS_NOEXCEPT
+            const_iterator  end() const noexcept
             {
                 return begin() + capacity();
             }
-            iterator        end() CDS_NOEXCEPT
+            iterator        end() noexcept
             {
                 return begin() + capacity();
             }

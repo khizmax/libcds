@@ -427,7 +427,7 @@ namespace cds { namespace container {
         }
 
         /// Returns maximum height of skip-list. The max height is a constant for each object and does not exceed 32.
-        static constexpr unsigned int max_height() CDS_NOEXCEPT
+        static constexpr unsigned int max_height() noexcept
         {
             return base_class::max_height();
         }

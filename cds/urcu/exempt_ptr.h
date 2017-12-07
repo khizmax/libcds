@@ -113,22 +113,22 @@ namespace cds { namespace urcu {
 
     public:
         /// Constructs empty pointer
-        exempt_ptr() CDS_NOEXCEPT
+        exempt_ptr() noexcept
             : m_pNode( nullptr )
         {}
 
         //@cond
         /// Creates exempt pointer for \p pNode. Only for internal use.
-        explicit exempt_ptr( node_type * pNode ) CDS_NOEXCEPT
+        explicit exempt_ptr( node_type * pNode ) noexcept
             : m_pNode( pNode )
         {}
-        explicit exempt_ptr( std::nullptr_t ) CDS_NOEXCEPT
+        explicit exempt_ptr( std::nullptr_t ) noexcept
             : m_pNode( nullptr )
         {}
         //@endcond
 
         /// Move ctor
-        exempt_ptr( exempt_ptr&& p ) CDS_NOEXCEPT
+        exempt_ptr( exempt_ptr&& p ) noexcept
             : m_pNode( p.m_pNode )
         {
             p.m_pNode = nullptr;
@@ -144,32 +144,32 @@ namespace cds { namespace urcu {
         }
 
         /// Checks if the pointer is \p nullptr
-        bool empty() const CDS_NOEXCEPT
+        bool empty() const noexcept
         {
             return m_pNode == nullptr;
         }
 
         /// \p bool operator returns <tt>!empty()</tt>
-        explicit operator bool() const CDS_NOEXCEPT
+        explicit operator bool() const noexcept
         {
             return !empty();
         }
 
         /// Dereference operator
-        value_type * operator->() const CDS_NOEXCEPT
+        value_type * operator->() const noexcept
         {
             return !empty() ? node_to_value_cast()(m_pNode) : nullptr;
         }
 
         /// Returns a reference to the value
-        value_type& operator *() CDS_NOEXCEPT
+        value_type& operator *() noexcept
         {
             assert( !empty());
             return *node_to_value_cast()( m_pNode );
         }
 
         /// Move assignment. Can be called only outside of RCU critical section
-        exempt_ptr& operator =( exempt_ptr&& p ) CDS_NOEXCEPT
+        exempt_ptr& operator =( exempt_ptr&& p ) noexcept
         {
             release();
             m_pNode = p.m_pNode;

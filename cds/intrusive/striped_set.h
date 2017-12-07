@@ -369,7 +369,7 @@ namespace cds { namespace intrusive {
             return m_Hash( v );
         }
 
-        bucket_type * bucket( size_t nHash ) const CDS_NOEXCEPT
+        bucket_type * bucket( size_t nHash ) const noexcept
         {
             return m_Buckets + (nHash & m_nBucketMask.load( atomics::memory_order_relaxed ));
         }

@@ -178,13 +178,13 @@ namespace cds { namespace intrusive {
             FeldmanHashSet const*  m_set;    ///< Hash set
 
         public:
-            iterator_base() CDS_NOEXCEPT
+            iterator_base() noexcept
                 : m_pNode( nullptr )
                 , m_idx( 0 )
                 , m_set( nullptr )
             {}
 
-            iterator_base( iterator_base const& rhs ) CDS_NOEXCEPT
+            iterator_base( iterator_base const& rhs ) noexcept
                 : m_pNode( rhs.m_pNode )
                 , m_idx( rhs.m_idx )
                 , m_set( rhs.m_set )
@@ -192,7 +192,7 @@ namespace cds { namespace intrusive {
                 m_guard.copy( rhs.m_guard );
             }
 
-            iterator_base& operator=( iterator_base const& rhs ) CDS_NOEXCEPT
+            iterator_base& operator=( iterator_base const& rhs ) noexcept
             {
                 m_pNode = rhs.m_pNode;
                 m_idx = rhs.m_idx;
@@ -218,12 +218,12 @@ namespace cds { namespace intrusive {
                 m_guard.clear();
             }
 
-            bool operator ==( iterator_base const& rhs ) const CDS_NOEXCEPT
+            bool operator ==( iterator_base const& rhs ) const noexcept
             {
                 return m_pNode == rhs.m_pNode && m_idx == rhs.m_idx && m_set == rhs.m_set;
             }
 
-            bool operator !=( iterator_base const& rhs ) const CDS_NOEXCEPT
+            bool operator !=( iterator_base const& rhs ) const noexcept
             {
                 return !( *this == rhs );
             }
@@ -243,7 +243,7 @@ namespace cds { namespace intrusive {
                 forward();
             }
 
-            value_type * pointer() const CDS_NOEXCEPT
+            value_type * pointer() const noexcept
             {
                 return m_guard.template get<value_type>();
             }
@@ -401,14 +401,14 @@ namespace cds { namespace intrusive {
             typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
 
         public:
-            bidirectional_iterator() CDS_NOEXCEPT
+            bidirectional_iterator() noexcept
             {}
 
-            bidirectional_iterator( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+            bidirectional_iterator( bidirectional_iterator const& rhs ) noexcept
                 : iterator_base( rhs )
             {}
 
-            bidirectional_iterator& operator=( bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+            bidirectional_iterator& operator=( bidirectional_iterator const& rhs ) noexcept
             {
                 iterator_base::operator=( rhs );
                 return *this;
@@ -426,12 +426,12 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            value_ptr operator ->() const CDS_NOEXCEPT
+            value_ptr operator ->() const noexcept
             {
                 return iterator_base::pointer();
             }
 
-            value_ref operator *() const CDS_NOEXCEPT
+            value_ref operator *() const noexcept
             {
                 value_ptr p = iterator_base::pointer();
                 assert( p );
@@ -444,13 +444,13 @@ namespace cds { namespace intrusive {
             }
 
             template <bool IsConst2>
-            bool operator ==( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
+            bool operator ==( bidirectional_iterator<IsConst2> const& rhs ) const noexcept
             {
                 return iterator_base::operator==( rhs );
             }
 
             template <bool IsConst2>
-            bool operator !=( bidirectional_iterator<IsConst2> const& rhs ) const CDS_NOEXCEPT
+            bool operator !=( bidirectional_iterator<IsConst2> const& rhs ) const noexcept
             {
                 return !( *this == rhs );
             }
@@ -476,15 +476,15 @@ namespace cds { namespace intrusive {
             typedef typename std::conditional< IsConst, value_type const&, value_type&>::type value_ref; ///< Value reference
 
         public:
-            reverse_bidirectional_iterator() CDS_NOEXCEPT
+            reverse_bidirectional_iterator() noexcept
                 : iterator_base()
             {}
 
-            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) CDS_NOEXCEPT
+            reverse_bidirectional_iterator( reverse_bidirectional_iterator const& rhs ) noexcept
                 : iterator_base( rhs )
             {}
 
-            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) CDS_NOEXCEPT
+            reverse_bidirectional_iterator& operator=( reverse_bidirectional_iterator const& rhs) noexcept
             {
                 iterator_base::operator=( rhs );
                 return *this;
@@ -502,12 +502,12 @@ namespace cds { namespace intrusive {
                 return *this;
             }
 
-            value_ptr operator ->() const CDS_NOEXCEPT
+            value_ptr operator ->() const noexcept
             {
                 return iterator_base::pointer();
             }
 
-            value_ref operator *() const CDS_NOEXCEPT
+            value_ref operator *() const noexcept
             {
                 value_ptr p = iterator_base::pointer();
                 assert( p );

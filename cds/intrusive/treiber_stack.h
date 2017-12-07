@@ -450,7 +450,7 @@ namespace cds { namespace intrusive {
                     }
 
                     // Wait for colliding operation
-                    bkoff( [&op]() CDS_NOEXCEPT -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_waiting; } );
+                    bkoff( [&op]() noexcept -> bool { return op.nStatus.load( atomics::memory_order_acquire ) != op_waiting; } );
 
                     {
                         slot_scoped_lock l( slot.lock );
@@ -694,7 +694,7 @@ namespace cds { namespace intrusive {
 
     protected:
         //@cond
-        void clear_links( node_type * pNode ) CDS_NOEXCEPT
+        void clear_links( node_type * pNode ) noexcept
         {
             pNode->m_pNext.store( nullptr, memory_model::memory_order_relaxed );
         }

@@ -71,7 +71,7 @@
 namespace cds { namespace cxx11_atomic {
     namespace platform { inline namespace gcc { inline namespace Sparc {
 
-        static inline void fence_before( memory_order order ) CDS_NOEXCEPT
+        static inline void fence_before( memory_order order ) noexcept
         {
             switch(order) {
             case memory_order_relaxed:
@@ -88,7 +88,7 @@ namespace cds { namespace cxx11_atomic {
             }
         }
 
-        static inline void fence_after( memory_order order ) CDS_NOEXCEPT
+        static inline void fence_after( memory_order order ) noexcept
         {
             switch(order) {
             case memory_order_relaxed:
@@ -109,7 +109,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
         // fences
         //-----------------------------------------------------------------------------
-        static inline void thread_fence(memory_order order) CDS_NOEXCEPT
+        static inline void thread_fence(memory_order order) noexcept
         {
             switch(order)
             {
@@ -132,7 +132,7 @@ namespace cds { namespace cxx11_atomic {
             }
         }
 
-        static inline void signal_fence(memory_order order) CDS_NOEXCEPT
+        static inline void signal_fence(memory_order order) noexcept
         {
             // C++11: 29.8.8: only compiler optimization, no hardware instructions
             switch(order)
@@ -155,7 +155,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         typedef unsigned char atomic_flag_type;
-        static inline bool atomic_flag_tas( atomic_flag_type volatile * pFlag, memory_order order ) CDS_NOEXCEPT
+        static inline bool atomic_flag_tas( atomic_flag_type volatile * pFlag, memory_order order ) noexcept
         {
             atomic_flag_type fCur;
             fence_before( order );
@@ -169,7 +169,7 @@ namespace cds { namespace cxx11_atomic {
             return fCur != 0;
         }
 
-        static inline void atomic_flag_clear( atomic_flag_type volatile * pFlag, memory_order order ) CDS_NOEXCEPT
+        static inline void atomic_flag_clear( atomic_flag_type volatile * pFlag, memory_order order ) noexcept
         {
             fence_before( order );
             __asm__ __volatile__(
@@ -186,7 +186,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         template <typename T>
-        static inline void store32( T volatile * pDest, T src, memory_order order ) CDS_NOEXCEPT
+        static inline void store32( T volatile * pDest, T src, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -201,7 +201,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline T load32( T volatile const * pSrc, memory_order order ) CDS_NOEXCEPT
+        static inline T load32( T volatile const * pSrc, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -218,7 +218,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas32_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas32_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
             assert( pDest );
@@ -245,13 +245,13 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas32_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas32_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             return cas32_strong( pDest, expected, desired, mo_success, mo_fail );
         }
 
         template <typename T>
-        static inline T exchange32( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
+        static inline T exchange32( T volatile * pDest, T v, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 4, "Illegal size of operand" );
             assert( pDest );
@@ -268,7 +268,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         template <typename T>
-        static inline T load64( T volatile const * pSrc, memory_order order ) CDS_NOEXCEPT
+        static inline T load64( T volatile const * pSrc, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -285,7 +285,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline void store64( T volatile * pDest, T val, memory_order order ) CDS_NOEXCEPT
+        static inline void store64( T volatile * pDest, T val, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -301,7 +301,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas64_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas64_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
             assert( pDest );
@@ -329,13 +329,13 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas64_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas64_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             return cas64_strong( pDest, expected, desired, mo_success, mo_fail );
         }
 
         template <typename T>
-        static inline T exchange64( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
+        static inline T exchange64( T volatile * pDest, T v, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 8, "Illegal size of operand" );
             assert( pDest );
@@ -350,7 +350,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         template <typename T>
-        static inline void store8( T volatile * pDest, T src, memory_order order ) CDS_NOEXCEPT
+        static inline void store8( T volatile * pDest, T src, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -365,7 +365,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline T load8( T volatile const * pSrc, memory_order order ) CDS_NOEXCEPT
+        static inline T load8( T volatile const * pSrc, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -382,7 +382,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas8_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas8_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
             assert( pDest );
@@ -415,7 +415,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas8_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas8_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
             assert( pDest );
@@ -443,7 +443,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline T exchange8( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
+        static inline T exchange8( T volatile * pDest, T v, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 1, "Illegal size of operand" );
             assert( pDest );
@@ -458,7 +458,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         template <typename T>
-        static inline T load16( T volatile const * pSrc, memory_order order ) CDS_NOEXCEPT
+        static inline T load16( T volatile const * pSrc, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -475,7 +475,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline void store16( T volatile * pDest, T src, memory_order order ) CDS_NOEXCEPT
+        static inline void store16( T volatile * pDest, T src, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -490,7 +490,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas16_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas16_strong( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
             assert( pDest );
@@ -523,7 +523,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas16_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas16_weak( T volatile * pDest, T& expected, T desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
             assert( pDest );
@@ -551,7 +551,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline T exchange16( T volatile * pDest, T v, memory_order order ) CDS_NOEXCEPT
+        static inline T exchange16( T volatile * pDest, T v, memory_order order ) noexcept
         {
             static_assert( sizeof(T) == 2, "Illegal size of operand" );
             assert( pDest );
@@ -566,7 +566,7 @@ namespace cds { namespace cxx11_atomic {
         //-----------------------------------------------------------------------------
 
         template <typename T>
-        static inline void store_ptr( T * volatile * pDest, T * src, memory_order order ) CDS_NOEXCEPT
+        static inline void store_ptr( T * volatile * pDest, T * src, memory_order order ) noexcept
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -581,7 +581,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline T * load_ptr( T * volatile const * pSrc, memory_order order ) CDS_NOEXCEPT
+        static inline T * load_ptr( T * volatile const * pSrc, memory_order order ) noexcept
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal size of operand" );
             assert( order ==  memory_order_relaxed
@@ -598,7 +598,7 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas_ptr_strong( T * volatile * pDest, T *& expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas_ptr_strong( T * volatile * pDest, T *& expected, T * desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal size of operand" );
 
@@ -606,13 +606,13 @@ namespace cds { namespace cxx11_atomic {
         }
 
         template <typename T>
-        static inline bool cas_ptr_weak( T * volatile * pDest, T *& expected, T * desired, memory_order mo_success, memory_order mo_fail ) CDS_NOEXCEPT
+        static inline bool cas_ptr_weak( T * volatile * pDest, T *& expected, T * desired, memory_order mo_success, memory_order mo_fail ) noexcept
         {
             return cas_ptr_strong( pDest, expected, desired, mo_success, mo_fail );
         }
 
         template <typename T>
-        static inline T * exchange_ptr( T * volatile * pDest, T * v, memory_order order ) CDS_NOEXCEPT
+        static inline T * exchange_ptr( T * volatile * pDest, T * v, memory_order order ) noexcept
         {
             static_assert( sizeof(T *) == sizeof(void *), "Illegal size of operand" );
             return (T *) exchange64( (uint64_t volatile *) pDest, (uint64_t) v, order );

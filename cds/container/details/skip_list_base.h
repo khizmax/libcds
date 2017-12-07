@@ -195,7 +195,7 @@ namespace cds { namespace container {
                 static size_t const c_nNodePadding = sizeof(node_type) % c_nTowerItemSize;
                 static size_t const c_nNodeSize = sizeof(node_type) + (c_nNodePadding ? (c_nTowerItemSize - c_nNodePadding) : 0);
 
-                static constexpr size_t node_size( unsigned int nHeight ) CDS_NOEXCEPT
+                static constexpr size_t node_size( unsigned int nHeight ) noexcept
                 {
                     return c_nNodeSize + (nHeight - 1) * c_nTowerItemSize;
                 }

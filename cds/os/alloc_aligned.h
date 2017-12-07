@@ -134,16 +134,16 @@ namespace cds {
             }
 
             // construct default allocator (do nothing)
-            aligned_allocator() CDS_NOEXCEPT
+            aligned_allocator() noexcept
             {}
 
             /// construct by copying (do nothing)
-            aligned_allocator(const aligned_allocator<T>&) CDS_NOEXCEPT
+            aligned_allocator(const aligned_allocator<T>&) noexcept
             {}
 
             /// construct from a related allocator (do nothing)
             template <class OTHER>
-            aligned_allocator(const aligned_allocator<OTHER>&) CDS_NOEXCEPT
+            aligned_allocator(const aligned_allocator<OTHER>&) noexcept
             {}
 
             /// assign from a related allocator (do nothing)
@@ -210,7 +210,7 @@ namespace cds {
             }
 
             /// estimate maximum array size
-            size_type max_size() const CDS_NOEXCEPT
+            size_type max_size() const noexcept
             {
                 prototype a;
                 return a.max_size();

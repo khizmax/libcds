@@ -163,7 +163,7 @@ namespace cds { namespace algo {
         }
 
         /// Resets the splitter
-        void reset() CDS_NOEXCEPT
+        void reset() noexcept
         {
             cur_ = first_;
             offset_ = 0;
@@ -290,7 +290,7 @@ namespace cds { namespace algo {
         }
 
         /// Resets the splitter
-        void reset() CDS_NOEXCEPT
+        void reset() noexcept
         {
             cur_ = first_;
         }
@@ -406,7 +406,7 @@ namespace cds { namespace algo {
         }
 
         /// Resets the splitter
-        void reset() CDS_NOEXCEPT
+        void reset() noexcept
         {
             shift_ = 0;
         }

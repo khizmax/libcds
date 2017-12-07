@@ -97,21 +97,21 @@ namespace cds { namespace memory {
         };
 
     public:
-        pool_allocator() CDS_NOEXCEPT
+        pool_allocator() noexcept
         {}
 
-        pool_allocator(const pool_allocator&) CDS_NOEXCEPT
+        pool_allocator(const pool_allocator&) noexcept
         {}
-        template <class U> pool_allocator(const pool_allocator<U, accessor_type>&) CDS_NOEXCEPT
+        template <class U> pool_allocator(const pool_allocator<U, accessor_type>&) noexcept
         {}
         ~pool_allocator()
         {}
 
-        pointer address(reference x) const CDS_NOEXCEPT
+        pointer address(reference x) const noexcept
         {
             return &x;
         }
-        const_pointer address(const_reference x) const CDS_NOEXCEPT
+        const_pointer address(const_reference x) const noexcept
         {
             return &x;
         }
@@ -121,11 +121,11 @@ namespace cds { namespace memory {
 
             return reinterpret_cast<pointer>( accessor_type()().allocate( n ));
         }
-        void deallocate(pointer p, size_type n) CDS_NOEXCEPT
+        void deallocate(pointer p, size_type n) noexcept
         {
             accessor_type()().deallocate( reinterpret_cast<typename accessor_type::value_type *>( p ), n );
         }
-        size_type max_size() const CDS_NOEXCEPT
+        size_type max_size() const noexcept
         {
             return size_t(-1) / sizeof(value_type);
         }

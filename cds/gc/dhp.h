@@ -111,7 +111,7 @@ namespace cds { namespace gc {
         {
             friend class smr;
         public:
-            thread_hp_storage( guard* arr, size_t nSize ) CDS_NOEXCEPT
+            thread_hp_storage( guard* arr, size_t nSize ) noexcept
                 : free_head_( arr )
                 , array_( arr )
                 , initial_capacity_( nSize )
@@ -148,7 +148,7 @@ namespace cds { namespace gc {
                 return g;
             }
 
-            void free( guard* g ) CDS_NOEXCEPT
+            void free( guard* g ) noexcept
             {
                 if ( g ) {
                     g->clear();
@@ -172,7 +172,7 @@ namespace cds { namespace gc {
             }
 
             template <size_t Capacity>
-            void free( guard_array<Capacity>& arr ) CDS_NOEXCEPT
+            void free( guard_array<Capacity>& arr ) noexcept
             {
                 guard* gList = free_head_;
                 for ( size_t i = 0; i < Capacity; ++i ) {
@@ -301,7 +301,7 @@ namespace cds { namespace gc {
         {
             friend class smr;
         public:
-            retired_array() CDS_NOEXCEPT
+            retired_array() noexcept
                 : current_block_( nullptr )
                 , current_cell_( nullptr )
                 , list_head_( nullptr )
@@ -322,7 +322,7 @@ namespace cds { namespace gc {
                 fini();
             }
 
-            bool push( retired_ptr const& p ) CDS_NOEXCEPT
+            bool push( retired_ptr const& p ) noexcept
             {
                 assert( current_block_ != nullptr );
                 assert( current_block_->first() <= current_cell_ );
@@ -348,7 +348,7 @@ namespace cds { namespace gc {
                 return true;
             }
 
-            bool repush( retired_ptr* p ) CDS_NOEXCEPT
+            bool repush( retired_ptr* p ) noexcept
             {
                 bool ret = push( *p );
                 CDS_HPSTAT( --retire_call_count_ );
@@ -568,7 +568,7 @@ namespace cds { namespace gc {
             }
 
             /// Checks if global SMR object is constructed and may be used
-            static bool isUsed() CDS_NOEXCEPT
+            static bool isUsed() noexcept
             {
                 return instance_ != nullptr;
             }
@@ -737,17 +737,17 @@ namespace cds { namespace gc {
         {
         public:
             /// Default ctor allocates a guard (hazard pointer) from thread-private storage
-            Guard() CDS_NOEXCEPT
+            Guard() noexcept
                 : guard_( dhp::smr::tls()->hazards_.alloc())
             {}
 
             /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
-            explicit Guard( std::nullptr_t ) CDS_NOEXCEPT
+            explicit Guard( std::nullptr_t ) noexcept
                 : guard_( nullptr )
             {}
 
             /// Move ctor - \p src guard becomes unlinked (transfer internal guard ownership)
-            Guard( Guard&& src ) CDS_NOEXCEPT
+            Guard( Guard&& src ) noexcept
                 : guard_( src.guard_ )
             {
                 src.guard_ = nullptr;
@@ -757,7 +757,7 @@ namespace cds { namespace gc {
             /**
                 @warning \p src will become in unlinked state if \p this was unlinked on entry.
             */
-            Guard& operator=( Guard&& src ) CDS_NOEXCEPT
+            Guard& operator=( Guard&& src ) noexcept
             {
                 std::swap( guard_, src.guard_ );
                 return *this;
@@ -1093,7 +1093,7 @@ namespace cds { namespace gc {
             }
 
             //@cond
-            dhp::guard* release( size_t nIndex ) CDS_NOEXCEPT
+            dhp::guard* release( size_t nIndex ) noexcept
             {
                 return guards_.release( nIndex );
             }
@@ -1174,28 +1174,28 @@ namespace cds { namespace gc {
 
         public:
             /// Creates empty guarded pointer
-            guarded_ptr() CDS_NOEXCEPT
+            guarded_ptr() noexcept
                 : guard_( nullptr )
             {}
 
             //@cond
-            explicit guarded_ptr( dhp::guard* g ) CDS_NOEXCEPT
+            explicit guarded_ptr( dhp::guard* g ) noexcept
                 : guard_( g )
             {}
 
             /// Initializes guarded pointer with \p p
-            explicit guarded_ptr( guarded_type * p ) CDS_NOEXCEPT
+            explicit guarded_ptr( guarded_type * p ) noexcept
                 : guard_( nullptr )
             {
                 reset( p );
             }
-            explicit guarded_ptr( std::nullptr_t ) CDS_NOEXCEPT
+            explicit guarded_ptr( std::nullptr_t ) noexcept
                 : guard_( nullptr )
             {}
             //@endcond
 
             /// Move ctor
-            guarded_ptr( guarded_ptr&& gp ) CDS_NOEXCEPT
+            guarded_ptr( guarded_ptr&& gp ) noexcept
                 : guard_( gp.guard_ )
             {
                 gp.guard_ = nullptr;
@@ -1203,14 +1203,14 @@ namespace cds { namespace gc {
 
             /// Move ctor
             template <typename GT, typename VT, typename C>
-            guarded_ptr( guarded_ptr<GT, VT, C>&& gp ) CDS_NOEXCEPT
+            guarded_ptr( guarded_ptr<GT, VT, C>&& gp ) noexcept
                 : guard_( gp.guard_ )
             {
                 gp.guard_ = nullptr;
             }
 
             /// Ctor from \p Guard
-            explicit guarded_ptr( Guard&& g ) CDS_NOEXCEPT
+            explicit guarded_ptr( Guard&& g ) noexcept
                 : guard_( g.release())
             {}
 
@@ -1221,20 +1221,20 @@ namespace cds { namespace gc {
             /**
                 \ref release is called if guarded pointer is not \ref empty
             */
-            ~guarded_ptr() CDS_NOEXCEPT
+            ~guarded_ptr() noexcept
             {
                 release();
             }
 
             /// Move-assignment operator
-            guarded_ptr& operator=( guarded_ptr&& gp ) CDS_NOEXCEPT
+            guarded_ptr& operator=( guarded_ptr&& gp ) noexcept
             {
                 std::swap( guard_, gp.guard_ );
                 return *this;
             }
 
             /// Move-assignment from \p Guard
-            guarded_ptr& operator=( Guard&& g ) CDS_NOEXCEPT
+            guarded_ptr& operator=( Guard&& g ) noexcept
             {
                 std::swap( guard_, g.guard_ref());
                 return *this;
@@ -1244,34 +1244,34 @@ namespace cds { namespace gc {
             guarded_ptr& operator=(guarded_ptr const& gp) = delete;
 
             /// Returns a pointer to guarded value
-            value_type * operator ->() const CDS_NOEXCEPT
+            value_type * operator ->() const noexcept
             {
                 assert( !empty());
                 return value_cast()( guard_->get_as<guarded_type>());
             }
 
             /// Returns a reference to guarded value
-            value_type& operator *() CDS_NOEXCEPT
+            value_type& operator *() noexcept
             {
                 assert( !empty());
                 return *value_cast()( guard_->get_as<guarded_type>());
             }
 
             /// Returns const reference to guarded value
-            value_type const& operator *() const CDS_NOEXCEPT
+            value_type const& operator *() const noexcept
             {
                 assert( !empty());
                 return *value_cast()(reinterpret_cast<guarded_type *>(guard_->get()));
             }
 
             /// Checks if the guarded pointer is \p nullptr
-            bool empty() const CDS_NOEXCEPT
+            bool empty() const noexcept
             {
                 return guard_ == nullptr || guard_->get( atomics::memory_order_relaxed ) == nullptr;
             }
 
             /// \p bool operator returns <tt>!empty()</tt>
-            explicit operator bool() const CDS_NOEXCEPT
+            explicit operator bool() const noexcept
             {
                 return !empty();
             }
@@ -1281,14 +1281,14 @@ namespace cds { namespace gc {
                 If the guarded pointer has been released, the pointer can be disposed (freed) at any time.
                 Dereferncing the guarded pointer after \p release() is dangerous.
             */
-            void release() CDS_NOEXCEPT
+            void release() noexcept
             {
                 free_guard();
             }
 
             //@cond
             // For internal use only!!!
-            void reset(guarded_type * p) CDS_NOEXCEPT
+            void reset(guarded_type * p) noexcept
             {
                 alloc_guard();
                 assert( guard_ );

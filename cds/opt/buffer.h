@@ -120,7 +120,7 @@ namespace cds { namespace opt {
             //@endcond
         public:
             /// Construct static buffer
-            uninitialized_static_buffer() CDS_NOEXCEPT
+            uninitialized_static_buffer() noexcept
             {}
 
             /// Construct buffer of given capacity
@@ -128,7 +128,7 @@ namespace cds { namespace opt {
                 This ctor ignores \p nCapacity argument. The capacity of static buffer
                 is defined by template argument \p Capacity
             */
-            uninitialized_static_buffer( size_t nCapacity ) CDS_NOEXCEPT
+            uninitialized_static_buffer( size_t nCapacity ) noexcept
             {
                 CDS_UNUSED( nCapacity );
             }
@@ -151,7 +151,7 @@ namespace cds { namespace opt {
             }
 
             /// Returns buffer capacity
-            constexpr size_t capacity() const CDS_NOEXCEPT
+            constexpr size_t capacity() const noexcept
             {
                 return c_nCapacity;
             }
@@ -163,13 +163,13 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() CDS_NOEXCEPT
+            value_type * buffer() noexcept
             {
                 return &( m_buffer[0].v );
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() const CDS_NOEXCEPT
+            value_type * buffer() const noexcept
             {
                 return &( m_buffer[0].v );
             }
@@ -236,7 +236,7 @@ namespace cds { namespace opt {
             //@endcond
         public:
             /// Construct static buffer
-            initialized_static_buffer() CDS_NOEXCEPT
+            initialized_static_buffer() noexcept
             {}
 
             /// Construct buffer of given capacity
@@ -244,7 +244,7 @@ namespace cds { namespace opt {
                 This ctor ignores \p nCapacity argument. The capacity of static buffer
                 is defined by template argument \p Capacity
             */
-            initialized_static_buffer( size_t nCapacity ) CDS_NOEXCEPT
+            initialized_static_buffer( size_t nCapacity ) noexcept
             {
                 CDS_UNUSED( nCapacity );
             }
@@ -267,7 +267,7 @@ namespace cds { namespace opt {
             }
 
             /// Returns buffer capacity
-            constexpr size_t capacity() const CDS_NOEXCEPT
+            constexpr size_t capacity() const noexcept
             {
                 return c_nCapacity;
             }
@@ -279,13 +279,13 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() CDS_NOEXCEPT
+            value_type * buffer() noexcept
             {
                 return m_buffer;
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() const CDS_NOEXCEPT
+            value_type * buffer() const noexcept
             {
                 return m_buffer;
             }
@@ -393,7 +393,7 @@ namespace cds { namespace opt {
             }
 
             /// Returns buffer capacity
-            size_t capacity() const CDS_NOEXCEPT
+            size_t capacity() const noexcept
             {
                 return m_nCapacity;
             }
@@ -405,13 +405,13 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() CDS_NOEXCEPT
+            value_type * buffer() noexcept
             {
                 return m_buffer;
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() const CDS_NOEXCEPT
+            value_type * buffer() const noexcept
             {
                 return m_buffer;
             }
@@ -521,7 +521,7 @@ namespace cds { namespace opt {
             }
 
             /// Returns buffer capacity
-            size_t capacity() const CDS_NOEXCEPT
+            size_t capacity() const noexcept
             {
                 return m_nCapacity;
             }
@@ -533,13 +533,13 @@ namespace cds { namespace opt {
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() CDS_NOEXCEPT
+            value_type * buffer() noexcept
             {
                 return m_buffer;
             }
 
             /// Returns pointer to buffer array
-            value_type * buffer() const CDS_NOEXCEPT
+            value_type * buffer() const noexcept
             {
                 return m_buffer;
             }

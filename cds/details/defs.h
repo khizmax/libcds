@@ -374,9 +374,6 @@ namespace cds {}
 // Compiler-specific defines
 #include <cds/compiler/defs.h>
 
-#define CDS_NOEXCEPT            noexcept
-#define CDS_NOEXCEPT_( expr )   noexcept( expr )
-
 /*************************************************************************
  Common things
 **************************************************************************/

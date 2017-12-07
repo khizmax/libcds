@@ -86,7 +86,7 @@ namespace cds { namespace beans {
     }
 
     /// Checks if \p n is power of 2
-    constexpr static inline bool is_power2( size_t n ) CDS_NOEXCEPT
+    constexpr static inline bool is_power2( size_t n ) noexcept
     {
         return (n & (n - 1)) == 0 && n;
     }
@@ -153,7 +153,7 @@ namespace cds { namespace beans {
     }
 
 /// Checks if \p n is power of 2
-    constexpr static inline bool is_power2( uint64_t n ) CDS_NOEXCEPT
+    constexpr static inline bool is_power2( uint64_t n ) noexcept
     {
         return (n & (n - 1)) == 0 && n;
     }

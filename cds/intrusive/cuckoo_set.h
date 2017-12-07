@@ -147,7 +147,7 @@ namespace cds { namespace intrusive {
 
             node *  m_pNext;
 
-            constexpr node() CDS_NOEXCEPT
+            constexpr node() noexcept
                 : m_pNext( nullptr )
             {}
 
@@ -179,7 +179,7 @@ namespace cds { namespace intrusive {
             node *  m_pNext;
             size_t  m_arrHash[ hash_array_size ];
 
-            node() CDS_NOEXCEPT
+            node() noexcept
                 : m_pNext( nullptr )
             {
                 memset( m_arrHash, 0, sizeof(m_arrHash));
@@ -210,7 +210,7 @@ namespace cds { namespace intrusive {
             static unsigned int const hash_array_size = 0;
             static unsigned int const probeset_size = probeset_type::c_nCapacity;
 
-            node() CDS_NOEXCEPT
+            node() noexcept
             {}
 
             void store_hash( size_t const* )
@@ -238,7 +238,7 @@ namespace cds { namespace intrusive {
 
             size_t  m_arrHash[ hash_array_size ];
 
-            node() CDS_NOEXCEPT
+            node() noexcept
             {
                 memset( m_arrHash, 0, sizeof(m_arrHash));
             }
@@ -547,7 +547,7 @@ namespace cds { namespace intrusive {
             //@endcond
 
             /// Returns the arity of striping mutex policy
-            constexpr unsigned int arity() const CDS_NOEXCEPT
+            constexpr unsigned int arity() const noexcept
             {
                 return c_nArity;
             }
@@ -972,7 +972,7 @@ namespace cds { namespace intrusive {
             }
 
             /// Returns the arity of \p refinable mutex policy
-            constexpr unsigned int arity() const CDS_NOEXCEPT
+            constexpr unsigned int arity() const noexcept
             {
                 return c_nArity;
             }
@@ -2214,7 +2214,7 @@ namespace cds { namespace intrusive {
             free_bucket_tables( pOldTable, nOldCapacity );
         }
 
-        constexpr static unsigned int calc_probeset_size( unsigned int nProbesetSize ) CDS_NOEXCEPT
+        constexpr static unsigned int calc_probeset_size( unsigned int nProbesetSize ) noexcept
         {
             return std::is_same< probeset_class, cuckoo::vector_probeset_class >::value
                 ? node_type::probeset_size

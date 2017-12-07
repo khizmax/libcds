@@ -57,7 +57,7 @@ namespace cds { namespace intrusive {
             atomic_marked_ptr m_pNext; ///< pointer to the next node in the container
             node *            m_pDelChain; ///< Deleted node chain (local for a thread)
 
-            constexpr node() CDS_NOEXCEPT
+            constexpr node() noexcept
                 : m_pNext( nullptr )
                 , m_pDelChain( nullptr )
             {}

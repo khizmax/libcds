@@ -64,7 +64,7 @@ namespace cds { namespace intrusive {
 
             atomic_node_ptr m_pNext ; ///< pointer to the next node in the container
 
-            node() CDS_NOEXCEPT
+            node() noexcept
             {
                 m_pNext.store( nullptr, atomics::memory_order_release );
             }

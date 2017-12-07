@@ -137,7 +137,7 @@ namespace cds { namespace urcu {
         /**
             This operator may be called only inside RCU-lock.
         */
-        raw_ptr& operator=( raw_ptr&& p ) CDS_NOEXCEPT
+        raw_ptr& operator=( raw_ptr&& p ) noexcept
         {
             assert( rcu::is_locked());
             m_ptr = p.m_ptr;
@@ -150,7 +150,7 @@ namespace cds { namespace urcu {
         raw_ptr& operator=( raw_ptr const& ) = delete;
 
         /// Returns a pointer to stored value
-        value_type * operator ->() const CDS_NOEXCEPT
+        value_type * operator ->() const noexcept
         {
             return m_ptr;
         }
@@ -170,13 +170,13 @@ namespace cds { namespace urcu {
         }
 
         /// Checks if the \p %raw_ptr is \p nullptr
-        bool empty() const CDS_NOEXCEPT
+        bool empty() const noexcept
         {
             return m_ptr == nullptr;
         }
 
         /// Checks if the \p %raw_ptr is not empty
-        explicit operator bool() const CDS_NOEXCEPT
+        explicit operator bool() const noexcept
         {
             return !empty();
         }
@@ -241,7 +241,7 @@ namespace cds { namespace urcu {
 
             In general, move assignment is intented for internal use.
         */
-        raw_ptr_adaptor& operator=( raw_ptr_adaptor&& p ) CDS_NOEXCEPT
+        raw_ptr_adaptor& operator=( raw_ptr_adaptor&& p ) noexcept
         {
             intrusive_raw_ptr::operator =(std::move(p));
             return *this;
@@ -251,7 +251,7 @@ namespace cds { namespace urcu {
         raw_ptr_adaptor& operator=( raw_ptr_adaptor const& ) = delete;
 
         // Returns a pointer to stored value
-        value_type * operator ->() const CDS_NOEXCEPT
+        value_type * operator ->() const noexcept
         {
             return converter_type()( intrusive_raw_ptr::operator->());
         }
@@ -269,13 +269,13 @@ namespace cds { namespace urcu {
         }
 
         // Checks if the \p %raw_ptr is \p nullptr
-        bool empty() const CDS_NOEXCEPT
+        bool empty() const noexcept
         {
             return intrusive_raw_ptr::empty();
         }
 
         // Checks if the \p %raw_ptr is not empty
-        explicit operator bool() const CDS_NOEXCEPT
+        explicit operator bool() const noexcept
         {
             return !empty();
         }

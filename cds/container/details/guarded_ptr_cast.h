@@ -38,7 +38,7 @@ namespace cds { namespace container { namespace details {
 
     template <typename Node, typename T>
     struct guarded_ptr_cast_set {
-        T * operator()(Node* pNode ) const CDS_NOEXCEPT
+        T * operator()(Node* pNode ) const noexcept
         {
             return &(pNode->m_Value);
         }
@@ -46,7 +46,7 @@ namespace cds { namespace container { namespace details {
 
     template <typename Node, typename T>
     struct guarded_ptr_cast_map {
-        T * operator()(Node* pNode ) const CDS_NOEXCEPT
+        T * operator()(Node* pNode ) const noexcept
         {
             return &(pNode->m_Data);
         }

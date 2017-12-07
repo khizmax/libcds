@@ -57,39 +57,39 @@ namespace cds { namespace gc {
             free_retired_ptr_func   m_funcFree; ///< pointer to the destructor function
 
             /// Comparison of two retired pointers
-            static bool less( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
+            static bool less( const retired_ptr& p1, const retired_ptr& p2 ) noexcept
             {
                 return p1.m_p < p2.m_p;
             }
 
             /// Default ctor initializes pointer to \p nullptr
-            retired_ptr() CDS_NOEXCEPT
+            retired_ptr() noexcept
                 : m_p( nullptr )
                 , m_funcFree( nullptr )
             {}
 
             /// Ctor
-            retired_ptr( pointer p, free_retired_ptr_func func ) CDS_NOEXCEPT
+            retired_ptr( pointer p, free_retired_ptr_func func ) noexcept
                 : m_p( p )
                 , m_funcFree( func )
             {}
 
             /// Typecasting ctor
             template <typename T>
-            retired_ptr( T* p, free_retired_ptr_func func) CDS_NOEXCEPT
+            retired_ptr( T* p, free_retired_ptr_func func) noexcept
                 : m_p( reinterpret_cast<pointer>(p))
                 , m_funcFree( func )
             {}
 /*
             template <typename T>
-            retired_ptr( T * p, void (* pFreeFunc)(T *)) CDS_NOEXCEPT
+            retired_ptr( T * p, void (* pFreeFunc)(T *)) noexcept
                 : m_p( reinterpret_cast<pointer>(p))
                 , m_funcFree( reinterpret_cast< free_retired_ptr_func >( pFreeFunc ))
             {}
 */
 
             /// Assignment operator
-            retired_ptr& operator =( retired_ptr const& s) CDS_NOEXCEPT
+            retired_ptr& operator =( retired_ptr const& s) noexcept
             {
                 m_p = s.m_p;
                 m_funcFree = s.m_funcFree;
@@ -107,7 +107,7 @@ namespace cds { namespace gc {
             }
 
             /// Checks if the retired pointer is not empty
-            explicit operator bool() const CDS_NOEXCEPT
+            explicit operator bool() const noexcept
             {
                 return m_p != nullptr;
             }
@@ -120,17 +120,17 @@ namespace cds { namespace gc {
             }
         };
 
-        static inline bool operator <( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
+        static inline bool operator <( const retired_ptr& p1, const retired_ptr& p2 ) noexcept
         {
             return retired_ptr::less( p1, p2 );
         }
 
-        static inline bool operator ==( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
+        static inline bool operator ==( const retired_ptr& p1, const retired_ptr& p2 ) noexcept
         {
             return p1.m_p == p2.m_p;
         }
 
-        static inline bool operator !=( const retired_ptr& p1, const retired_ptr& p2 ) CDS_NOEXCEPT
+        static inline bool operator !=( const retired_ptr& p1, const retired_ptr& p2 ) noexcept
         {
             return !(p1 == p2);
         }
