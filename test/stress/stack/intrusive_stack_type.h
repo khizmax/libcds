@@ -33,6 +33,7 @@
 
 #include <cds/intrusive/treiber_stack.h>
 #include <cds/intrusive/fcstack.h>
+#include <cds/intrusive/segmented_stack.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -369,6 +370,49 @@ namespace istack {
         typedef details::StdStack< T, std::stack< T*, std::list<T*> >, std::mutex >  StdStack_List_Mutex;
         typedef details::StdStack< T, std::stack< T*, std::list<T*> >, cds::sync::spin > StdStack_List_Spin;
 
+        // SegmentedStack
+        class traits_SegmentedStack_spin_stat :
+            public cds::intrusive::segmented_stack::make_traits<
+            cds::opt::stat< cds::intrusive::segmented_stack::stat<> >
+            >::type
+        {};
+        class traits_SegmentedStack_spin_padding :
+            public cds::intrusive::segmented_stack::make_traits<
+            cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+        class traits_SegmentedStack_mutex_stat :
+            public cds::intrusive::segmented_stack::make_traits<
+            cds::opt::stat< cds::intrusive::segmented_stack::stat<> >
+            , cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_SegmentedStack_mutex :
+            public cds::intrusive::segmented_stack::make_traits<
+            cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_SegmentedStack_mutex_padding :
+            public cds::intrusive::segmented_stack::make_traits<
+            cds::opt::lock_type< std::mutex >
+            , cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T >  SegmentedStack_HP_spin;
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_spin_padding >  SegmentedStack_HP_spin_padding;
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_spin_stat >  SegmentedStack_HP_spin_stat;
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex >  SegmentedStack_HP_mutex;
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex_padding >  SegmentedStack_HP_mutex_padding;
+        typedef cds::intrusive::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex_stat >  SegmentedStack_HP_mutex_stat;
+
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T >  SegmentedStack_DHP_spin;
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_spin_padding >  SegmentedStack_DHP_spin_padding;
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_spin_stat >  SegmentedStack_DHP_spin_stat;
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex >  SegmentedStack_DHP_mutex;
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_padding >  SegmentedStack_DHP_mutex_padding;
+        typedef cds::intrusive::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_stat >  SegmentedStack_DHP_mutex_stat;
+
     };
 } // namespace istack
 
@@ -455,6 +499,17 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Elimination_DHP_stat ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_DHP_dyn ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_DHP_dyn_stat )
+
+#define CDSSTRESS_SegmentedStack( test_fixture ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin         ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin_padding ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin_stat    ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_mutex        ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_mutex_stat   ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_DHP_spin        ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_DHP_spin_stat   ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_DHP_mutex       ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_DHP_mutex_stat  ) \
 
 #define CDSSTRESS_FCStack_slist( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist ) \
