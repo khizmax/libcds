@@ -100,7 +100,7 @@ namespace cds_test {
             for ( size_t i = 0; i < val.size(); ++i ) {
                 ASSERT_TRUE( s.push( val[i] ));
 
-                ASSERT_CONTAINER_SIZE( q, i + 1 );
+                ASSERT_CONTAINER_SIZE( s, i + 1 );
             }
             EXPECT_TRUE( !s.empty());
 
