@@ -371,7 +371,6 @@ namespace stack {
         typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex >  SegmentedStack_DHP_mutex;
         typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_padding >  SegmentedStack_DHP_mutex_padding;
         typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_stat >  SegmentedStack_DHP_mutex_stat;
-    };
 
     // FCStack
         typedef cds::container::FCStack< T > FCStack_deque;
