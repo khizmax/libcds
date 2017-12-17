@@ -9,9 +9,9 @@ set(CDSGTEST_STACK_SOURCES
     treiber_stack_dhp.cpp
     treiber_stack_hp.cpp
     segmented_stack_hp.cpp
-    segmented_queue_dhp.cpp
-    intrusive_segmented_queue_hp.cpp
-    intrusive_segmented_queue_dhp.cpp
+    segmented_stack_dhp.cpp
+    intrusive_segmented_stack_hp.cpp
+    intrusive_segmented_stack_dhp.cpp
 )
 
 include_directories(
