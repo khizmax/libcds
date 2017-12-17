@@ -89,7 +89,7 @@ namespace cds_test {
         void test( Stack& s, Data& val )
         {
             typedef typename Stack::value_type value_type;
-            val.resize( 10 );
+            val.resize( 100 );
             for ( size_t i = 0; i < val.size(); ++i )
                 val[i].nValue = static_cast<int>( i );
 
@@ -111,11 +111,6 @@ namespace cds_test {
                 pVal = s.pop();
 
                 ASSERT_TRUE( pVal != nullptr );
-
-                int nSegment = int( nCount / s.quasi_factor());
-                int nMin = nSegment * int( s.quasi_factor());
-                int nMax = nMin + int( s.quasi_factor()) - 1;
-                EXPECT_TRUE( nMin <= pVal->nValue && pVal->nValue <= nMax ) << nMin << " <= " << pVal->nValue << " <= " << nMax;
 
                 ++nCount;
                 EXPECT_CONTAINER_SIZE( s, val.size() - nCount );
