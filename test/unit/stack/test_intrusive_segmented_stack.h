@@ -89,7 +89,7 @@ namespace cds_test {
         void test( Stack& s, Data& val )
         {
             typedef typename Stack::value_type value_type;
-            val.resize( 100 );
+            val.resize( 10 );
             for ( size_t i = 0; i < val.size(); ++i )
                 val[i].nValue = static_cast<int>( i );
 

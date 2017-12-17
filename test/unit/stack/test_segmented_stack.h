@@ -59,18 +59,11 @@ namespace cds_test {
 
             for ( size_t i = 0; i < nSize; ++i ) {
                 it = -1;
-                ASSERT_TRUE( s.pop( it ));
+                ASSERT_TRUE( s.pop(it));
                 ASSERT_CONTAINER_SIZE( s, nSize - i - 1 );
-
-                int nSegment = int( i / s.quasi_factor());
-                int nMin = nSegment * int( s.quasi_factor());
-                int nMax = nMin + int( s.quasi_factor()) - 1;
-                EXPECT_LE( nMin, it );
-                EXPECT_LE( it, nMax );
             }
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );
-
 
             // clear
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -78,7 +71,6 @@ namespace cds_test {
             }
             ASSERT_FALSE( s.empty());
             ASSERT_CONTAINER_SIZE( s, nSize );
-
             s.clear();
             ASSERT_TRUE( s.empty());
             ASSERT_CONTAINER_SIZE( s, 0 );

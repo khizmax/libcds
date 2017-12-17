@@ -324,8 +324,8 @@ namespace cds { namespace intrusive {
                 segment * pNew = allocate_segment();
                 m_Stat.onSegmentCreated();
 
-                if ( m_List.empty())
-                    m_pTail.store(pNew, memory_model::memory_order_release);
+//                if ( m_List.empty())
+//                    m_pTail.store(pNew, memory_model::memory_order_release);
                 m_List.push_front( *pNew );
                 m_pHead.store(pNew, memory_model::memory_order_release);
                 return guard.assign( pNew );
@@ -341,7 +341,7 @@ namespace cds { namespace intrusive {
                     scoped_lock l( m_Lock );
             
                     if ( m_List.empty()) {
-                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
+//                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
                         m_pHead.store( nullptr, memory_model::memory_order_relaxed );
                         return guard.assign( nullptr );
                     }
@@ -358,7 +358,7 @@ namespace cds { namespace intrusive {
                     m_List.pop_front();
                     if ( m_List.empty()) {
                         pRet = guard.assign( nullptr );
-                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
+//                        m_pTail.store( nullptr, memory_model::memory_order_relaxed );
                     }
                     else
                         pRet = guard.assign( &m_List.front());
@@ -427,7 +427,7 @@ namespace cds { namespace intrusive {
         }
 
         /// Inserts a new element at last segment of the stack
-        bool _push( value_type& val )
+        bool push( value_type& val )
         {
             // LSB is used as a flag in marked pointer
             assert( (reinterpret_cast<uintptr_t>( &val ) & 1) == 0 );
@@ -478,7 +478,7 @@ namespace cds { namespace intrusive {
             }
         }
 
-        value_type * _pop()
+        value_type * pop()
         {
             typename gc::Guard itemGuard;
             if ( do_pop( itemGuard )) {
@@ -488,18 +488,6 @@ namespace cds { namespace intrusive {
             }
             return nullptr;
 
-        }
-
-        /// Synonym for \p _push(value_type&) member function
-        bool push( value_type& val )
-        {
-            return _push( val );
-        }
-
-        /// Synonym for \p pop() member function
-        value_type * pop()
-        {
-            return _pop();
         }
 
         /// Checks if the stack is empty
@@ -551,63 +539,61 @@ namespace cds { namespace intrusive {
             segment * pHeadSegment = m_SegmentList.head( segmentGuard );
 
             permutation_generator gen( quasi_factor());
-            while ( true ) {
-                if ( !pHeadSegment ) {
-                    // Stack is empty
-                    m_Stat.onPopEmpty();
-                    return false;
-                }
-
-                bool bHadNullValue = false;
-                regular_cell item;
-                CDS_DEBUG_ONLY( size_t nLoopCount = 0 );
-                do {
-                    typename permutation_generator::integer_type i = gen;
-                    CDS_DEBUG_ONLY( ++nLoopCount );
-
-                    // Guard the item
-                    // In segmented stack the cell cannot be reused
-                    // So no loop is needed here to protect the cell
-                    item = pHeadSegment->cells[i].data.load( memory_model::memory_order_relaxed );
-                    itemGuard.assign( item.ptr());
-
-                    // Check if this cell is empty, which means an element
-                    // can be pushed to this cell in the future
-                    if ( !item.ptr())
-                        bHadNullValue = true;
-                    else {
-                        // If the item is not deleted yet
-                        if ( !item.bits()) {
-                            // Try to mark the cell as deleted
-                            if ( pHeadSegment->cells[i].data.compare_exchange_strong( item, item | 1,
-                                memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
-                            {
-                                --m_ItemCounter;
-                                m_Stat.onPop();
-
-                                return true;
-                            }
-                            assert( item.bits());
-                            m_Stat.onPopContended();
-                        }
+            do{
+                while ( true ) {
+                    if ( !pHeadSegment ) {
+                        // Stack is empty
+                        m_Stat.onPopEmpty();
+                        return false;
                     }
-                } while ( gen.next());
+                    bool bHadNullValue = false;
+                    regular_cell item;
+                    CDS_DEBUG_ONLY( size_t nLoopCount = 0 );
+                    do {
+                        typename permutation_generator::integer_type i = gen;
+                        CDS_DEBUG_ONLY( ++nLoopCount );
 
-                assert( nLoopCount == quasi_factor());
+                        // Guard the item
+                        // In segmented stack the cell cannot be reused
+                        // So no loop is needed here to protect the cell
+                        item = pHeadSegment->cells[i].data.load( memory_model::memory_order_relaxed );
+                        itemGuard.assign( item.ptr());
 
-                // scanning the entire segment without finding a candidate to pop
-                // If there was an empty cell, the stack is considered empty
-                if ( bHadNullValue ) {
-                    m_Stat.onPopEmpty();
-                    return false;
+                        // Check if this cell is empty, which means an element
+                        // can be pushed to this cell in the future
+                        if ( !item.ptr())
+                            bHadNullValue = true;
+                        else {
+                            // If the item is not deleted yet
+                            if ( !item.bits()) {
+                                // Try to mark the cell as deleted
+                                if ( pHeadSegment->cells[i].data.compare_exchange_strong( item, item | 1,
+                                    memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
+                                {
+                                    --m_ItemCounter;
+                                    m_Stat.onPop();
+
+                                    return true;
+                                }
+                                assert( item.bits());
+                                m_Stat.onPopContended();
+                            }
+                        }
+                    } while ( gen.next());
+
+                    assert( nLoopCount == quasi_factor());
+
+                    // All nodes have been poped, we can safely remove the first segment
+                    pHeadSegment = m_SegmentList.remove_head( pHeadSegment, segmentGuard );
+
+                    // Get new permutation
+                    gen.reset();
                 }
-
-                // All nodes have been poped, we can safely remove the first segment
-                pHeadSegment = m_SegmentList.remove_head( pHeadSegment, segmentGuard );
-
-                // Get new permutation
-                gen.reset();
             }
+            while (!pHeadSegment);
+            // Stack is empty
+            m_Stat.onPopEmpty();
+            return false;
         }
         //@endcond
     };

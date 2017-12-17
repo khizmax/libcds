@@ -196,10 +196,10 @@ namespace cds { namespace container {
         ~SegmentedStack()
         {}
 
-        bool _push( value_type const& val )
+        bool push( value_type const& val )
         {
             scoped_node_ptr p( alloc_node(val));
-            if ( base_class::_push( *p )) {
+            if ( base_class::push( *p )) {
                 p.release();
                 return true;
             }
@@ -207,53 +207,34 @@ namespace cds { namespace container {
         }
 
         /// Inserts a new element at last segment of the stack, move semantics
-        bool _push( value_type&& val )
-        {
-            scoped_node_ptr p( alloc_node_move( std::move( val )));
-            if ( base_class::_push( *p )) {
-                p.release();
-                return true;
-            }
-            return false;
-        }
-
-        template <typename Func>
-        bool _push_with( Func f )
-        {
-            scoped_node_ptr p( alloc_node());
-            f( *p );
-            if ( base_class::_push( *p )) {
-                p.release();
-                return true;
-            }
-            return false;
-        }
-
-
-        /// Synonym for \p _push ( value_type const& ) member function
-        bool push( value_type const& val )
-        {
-            return _push( val );
-        }
-
-        /// Synonym for \p _push( value_type&& ) member function
         bool push( value_type&& val )
         {
-            return _push( std::move( val ));
+            scoped_node_ptr p( alloc_node_move( std::move( val )));
+            if ( base_class::push( *p )) {
+                p.release();
+                return true;
+            }
+            return false;
         }
 
-        /// Synonym for \p _push_with() member function
         template <typename Func>
         bool push_with( Func f )
         {
-            return _push_with( f );
+            scoped_node_ptr p( alloc_node());
+            f( *p );
+            if ( base_class::push( *p )) {
+                p.release();
+                return true;
+            }
+            return false;
         }
+
 
         template <typename... Args>
         bool emplace( Args&&... args )
         {
             scoped_node_ptr p( alloc_node_move( std::forward<Args>(args)... ));
-            if ( base_class::_push( *p )) {
+            if ( base_class::push( *p )) {
                 p.release();
                 return true;
             }
@@ -261,16 +242,16 @@ namespace cds { namespace container {
         }
 
         /// Pop a value from the stack
-        bool _pop( value_type& dest )
+        bool pop( value_type& dest )
         {
-            return _pop_with( [&dest]( value_type& src ) { dest = std::move( src );});
+            return pop_with( [&dest]( value_type& src ) { dest = std::move( src );});
         }
 
         /// Pop a value using a functor
         template <typename Func>
-        bool _pop_with( Func f )
+        bool pop_with( Func f )
         {
-            value_type * p = base_class::_pop();
+            value_type * p = base_class::pop();
             if ( p ) {
                 f( *p );
                 gc::template retire< typename maker::node_disposer >( p );
@@ -279,18 +260,6 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Synonym for \p _pop_with() function
-        template <typename Func>
-        bool pop_with( Func f )
-        {
-            return _pop_with( f );
-        }
-
-        /// Synonym for \p _pop() function
-        bool pop( value_type& dest )
-        {
-            return _pop( dest );
-        }
 
         /// Checks if the stack is empty
         bool empty() const
