@@ -75,9 +75,6 @@ namespace cds { namespace container {
 
             /// Lock type used to maintain an internal list of allocated segments
             typedef cds::sync::spin lock_type;
-
-            /// Random \ref cds::opt::permutation_generator "permutation generator" for sequence [0, quasi_factor)
-            typedef cds::opt::v::random2_permutation<int>    permutation_generator;
         };
 
         template <typename... Options>
@@ -158,7 +155,6 @@ namespace cds { namespace container {
         typedef typename base_class::item_counter  item_counter;   ///< Item counting policy, see cds::opt::item_counter option setter
         typedef typename base_class::stat          stat        ;   ///< Internal statistics policy
         typedef typename base_class::lock_type     lock_type   ;   ///< Type of mutex for maintaining an internal list of allocated segments.
-        typedef typename base_class::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
 
         static const size_t c_nHazardPtrCount = base_class::c_nHazardPtrCount ; ///< Count of hazard pointer required for the algorithm
 

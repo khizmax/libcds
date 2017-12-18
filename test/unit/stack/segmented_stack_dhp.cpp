@@ -71,7 +71,6 @@ namespace {
         struct traits : public cds::container::segmented_stack::traits
         {
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::opt::v::random_shuffle_permutation<> permutation_generator;
         };
         typedef cds::container::SegmentedStack< gc_type, int, traits > test_stack;
 
@@ -85,7 +84,6 @@ namespace {
         struct traits : public cds::container::segmented_stack::traits
         {
             typedef cds::atomicity::item_counter item_counter;
-            typedef cds::opt::v::random_shuffle_permutation<> permutation_generator;
         };
         typedef cds::container::SegmentedStack< gc_type, int, traits > test_stack;
 
@@ -99,7 +97,6 @@ namespace {
         struct traits : public
             cds::container::segmented_stack::make_traits <
                 cds::opt::item_counter< cds::atomicity::item_counter >
-                , cds::opt::permutation_generator< cds::opt::v::random_permutation<> >
                 , cds::opt::stat < cds::container::segmented_stack::stat<> >
             > ::type
         {};

@@ -105,25 +105,6 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveSegmentedStack_HP, shuffle )
-    {
-        typedef cds::intrusive::SegmentedStack< gc_type, item,
-            cds::intrusive::segmented_stack::make_traits<
-                cds::intrusive::opt::disposer< Disposer >
-                ,cds::opt::item_counter< cds::atomicity::item_counter >
-                ,cds::opt::permutation_generator< cds::opt::v::random_shuffle_permutation<> >
-            >::type
-        > stack_type;
-
-        std::vector<typename stack_type::value_type> arr;
-        {
-            stack_type s( c_QuasiFactor );
-            test( s, arr );
-        }
-        stack_type::gc::force_dispose();
-        check_array( arr );
-    }
-
     TEST_F( IntrusiveSegmentedStack_HP, padding )
     {
         struct stack_traits : public cds::intrusive::segmented_stack::traits

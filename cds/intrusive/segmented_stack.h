@@ -134,9 +134,6 @@ namespace cds { namespace intrusive {
 
             /// Lock type used to maintain an internal list of allocated segments
             typedef cds::sync::spin lock_type;
-
-            /// Random \ref cds::opt::permutation_generator "permutation generator" for sequence [0, quasi_factor)
-            typedef cds::opt::v::random2_permutation<int>    permutation_generator;
         };
 
         template <typename... Options>
@@ -180,7 +177,6 @@ namespace cds { namespace intrusive {
         typedef typename traits::item_counter  item_counter;   ///< Item counting policy, see cds::opt::item_counter option setter
         typedef typename traits::stat          stat;   ///< Internal statistics policy
         typedef typename traits::lock_type     lock_type;   ///< Type of mutex for maintaining an internal list of allocated segments.
-        typedef typename traits::permutation_generator permutation_generator; ///< Random permutation generator for sequence [0, quasi-factor)
 
         static const size_t c_nHazardPtrCount = 2 ; ///< Count of hazard pointer required for the algorithm
 
@@ -439,15 +435,12 @@ namespace cds { namespace intrusive {
                 pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard );
                 assert(pHeadSegment);
             }
-
-            permutation_generator gen( quasi_factor());
-
             ++m_ItemCounter;
 
             while ( true ) {
                 CDS_DEBUG_ONLY( size_t nLoopCount = 0);
+				int i = quasi_factor();
                 do {
-                    typename permutation_generator::integer_type i = gen;
                     CDS_DEBUG_ONLY( ++nLoopCount );
                     if (pHeadSegment->cells[i].data.load(memory_model::memory_order_relaxed).all()) {
                         // Cell is not empty, go next
@@ -466,15 +459,11 @@ namespace cds { namespace intrusive {
                         assert( nullCell.ptr());
                         m_Stat.onPushContended();
                     }
-                } while ( gen.next());
-
-                assert( nLoopCount == quasi_factor());
+                    i--;
+                } while (i >= 0);
 
                 // No available position, create a new segment
                 pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard );
-
-                // Get new permutation
-                gen.reset();
             }
         }
 
@@ -538,19 +527,17 @@ namespace cds { namespace intrusive {
             typename gc::Guard segmentGuard;
             segment * pHeadSegment = m_SegmentList.head( segmentGuard );
 
-            permutation_generator gen( quasi_factor());
-            do{
+//            do{
                 while ( true ) {
                     if ( !pHeadSegment ) {
                         // Stack is empty
                         m_Stat.onPopEmpty();
                         return false;
                     }
-                    bool bHadNullValue = false;
                     regular_cell item;
                     CDS_DEBUG_ONLY( size_t nLoopCount = 0 );
+                    int i = quasi_factor();
                     do {
-                        typename permutation_generator::integer_type i = gen;
                         CDS_DEBUG_ONLY( ++nLoopCount );
 
                         // Guard the item
@@ -562,7 +549,10 @@ namespace cds { namespace intrusive {
                         // Check if this cell is empty, which means an element
                         // can be pushed to this cell in the future
                         if ( !item.ptr())
-                            bHadNullValue = true;
+                        {
+                            i--;
+                            continue;
+                        }
                         else {
                             // If the item is not deleted yet
                             if ( !item.bits()) {
@@ -579,21 +569,12 @@ namespace cds { namespace intrusive {
                                 m_Stat.onPopContended();
                             }
                         }
-                    } while ( gen.next());
-
-                    assert( nLoopCount == quasi_factor());
+                        i--;
+                    } while ( i >= 0);
 
                     // All nodes have been poped, we can safely remove the first segment
                     pHeadSegment = m_SegmentList.remove_head( pHeadSegment, segmentGuard );
-
-                    // Get new permutation
-                    gen.reset();
                 }
-            }
-            while (!pHeadSegment);
-            // Stack is empty
-            m_Stat.onPopEmpty();
-            return false;
         }
         //@endcond
     };
