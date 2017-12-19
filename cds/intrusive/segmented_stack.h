@@ -439,7 +439,8 @@ namespace cds { namespace intrusive {
 
             while ( true ) {
                 CDS_DEBUG_ONLY( size_t nLoopCount = 0);
-				int i = quasi_factor();
+                size_t i = 0;
+                size_t qf = quasi_factor();
                 do {
                     CDS_DEBUG_ONLY( ++nLoopCount );
                     if (pHeadSegment->cells[i].data.load(memory_model::memory_order_relaxed).all()) {
@@ -456,11 +457,13 @@ namespace cds { namespace intrusive {
                             m_Stat.onPush();
                             return true;
                         }
+                        else
+                            continue;
                         assert( nullCell.ptr());
                         m_Stat.onPushContended();
                     }
-                    i--;
-                } while (i >= 0);
+                    ++i;
+                } while (i <= qf);
 
                 // No available position, create a new segment
                 pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard );
@@ -536,28 +539,29 @@ namespace cds { namespace intrusive {
                     }
                     regular_cell item;
                     CDS_DEBUG_ONLY( size_t nLoopCount = 0 );
-                    int i = quasi_factor();
+                    size_t i = 0;
+                    size_t qf = quasi_factor();
                     do {
                         CDS_DEBUG_ONLY( ++nLoopCount );
 
                         // Guard the item
                         // In segmented stack the cell cannot be reused
                         // So no loop is needed here to protect the cell
-                        item = pHeadSegment->cells[i].data.load( memory_model::memory_order_relaxed );
+                        item = pHeadSegment->cells[qf-i].data.load( memory_model::memory_order_relaxed );
                         itemGuard.assign( item.ptr());
 
                         // Check if this cell is empty, which means an element
                         // can be pushed to this cell in the future
                         if ( !item.ptr())
                         {
-                            i--;
+                            ++i;
                             continue;
                         }
                         else {
                             // If the item is not deleted yet
                             if ( !item.bits()) {
                                 // Try to mark the cell as deleted
-                                if ( pHeadSegment->cells[i].data.compare_exchange_strong( item, item | 1,
+                                if ( pHeadSegment->cells[qf-i].data.compare_exchange_strong( item, item | 1,
                                     memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
                                 {
                                     --m_ItemCounter;
@@ -565,12 +569,14 @@ namespace cds { namespace intrusive {
 
                                     return true;
                                 }
+                                else
+                                    continue;
                                 assert( item.bits());
                                 m_Stat.onPopContended();
                             }
                         }
-                        i--;
-                    } while ( i >= 0);
+                        ++i;
+                    } while ( i <= qf);
 
                     // All nodes have been poped, we can safely remove the first segment
                     pHeadSegment = m_SegmentList.remove_head( pHeadSegment, segmentGuard );
