@@ -1,8 +1,23 @@
 struct EValue {
+
+private:
 	int ADR;
 	double value;
 	bool del;
 	bool old;
+
+public:
+	void setValue(double value) {
+		this->value = value;
+	}
+
+	int getADR() {
+		return ADR;
+	}
+
+	void setDel() {
+		this->del = true;
+	}
 
 	double val() {
 		if (del == true) {
@@ -39,13 +54,12 @@ int currInd; // 1..2P
 class Process {
 	int index; // 1..2P
 
+	// ----------- HASHTABLE METHODS -----------
+
 	int key(int a, int l, int n) {
 		return a % l;
 		// ÇÄÅÑÜ ×ÒÎ-òî íåïîíÿòíîå Inc(a,l,n-1)
 	}
-
-
-	// HASHTABLE METHODS
 
 	double find(int a) {
 		EValue r;
@@ -67,7 +81,7 @@ class Process {
 				n++;
 			}
 
-		} while (r.val() != 0 && a != r.ADR);
+		} while (r.val() != 0 && a != r.getADR());
 
 		return r.val();
 	}
@@ -93,10 +107,10 @@ class Process {
 				l = h->size;
 				n = 0;
 			}
-			else if (a == r.ADR) {
+			else if (a == r.getADR()) {
 				if (r == h->table[k]) { // ATOMIC
 					suc = true; // ATOMIC
-					h->table[k].del = true; // ATOMIC
+					h->table[k].setDel(); // ATOMIC
 				}
 			}
 			else {
@@ -118,7 +132,7 @@ class Process {
 
 	}
 
-	// HEAP methods
+	// ----------- HEAP methods -----------
 
 	int allocate(int s, int b) {
 
@@ -162,7 +176,10 @@ class Process {
 	}
 
 	void newTable() {
+		int i;
+		bool b, bb;
 
+		// TODO implement
 	}
 
 	void migrate() {
@@ -180,12 +197,11 @@ class Process {
 			if (index == currInd) {
 				moveContents(H[index], h);
 				b = (currInd == index); // ATOMIC
-				if (b) { // ATOMIC
-						 // ATOMIC
-				} // ATOMIC
+				if (b) currInd = i; // ATOMIC
 				
 				if (b) {
-
+					busy[index]--;
+					prot[index]--;
 				}
 			}
 			releaseAccess(i);
@@ -203,13 +219,37 @@ class Process {
 	}
 
 	void moveContents(Hashtable* from, Hashtable* to) {
+		int i;
+		bool b;
+		EValue v;
 
+		// TODO implement
 	}
 
 	void moveElement(double v, Hashtable* to) {
+		int a;
+		int k, m, n;
+		EValue w;
+		bool b;
 
+		n = 0;
+		b = false;
+		a = w.getADR();
+		m = to->size;
+
+		do{
+			k = key(a, m, n);
+			w = to->table[k];
+			if (w.val() == 0) {
+				b = to->table[k].val() == 0; // ATOMIC
+				if (b) to->table[k].setValue(v); // ATOMIC
+			}
+			else {
+				n++;
+			}
+
+		} while (!(b || a == w.getADR() || currInd != index));
+		if (b) to->occ++;
 	}
-
-
 };
 
