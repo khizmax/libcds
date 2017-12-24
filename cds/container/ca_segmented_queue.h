@@ -168,35 +168,16 @@ namespace cds { namespace container {
     /** @ingroup cds_nonintrusive_queue
 
         The queue is based on work
-        - [2010] Afek, Korland, Yanovsky "Quasi-Linearizability: relaxed consistency for improved concurrency"
+        - [2010] Gidenstam,Sundell,Tsigas Cache-Aware Lock-free Queues for Multiple Producers-Consumers and Weak Memory Consistenc
 
-        In this paper the authors offer a relaxed version of linearizability, so-called quasi-linearizability,
-        that preserves some of the intuition, provides a flexible way to control the level of relaxation
-        and supports th implementation of more concurrent and scalable data structure.
-        Intuitively, the linearizability requires each run to be equivalent in some sense to a serial run
-        of the algorithm. This equivalence to some serial run imposes strong synchronization requirements
-        that in many cases results in limited scalability and synchronization bottleneck.
-
-        The general idea is that the queue maintains a linked list of segments, each segment is an array of
-        nodes in the size of the quasi factor, and each node has a deleted boolean marker, which states
-        if it has been dequeued. Each producer iterates over last segment in the linked list in some random
-        permutation order. Whet it finds an empty cell it performs a CAS operation attempting to enqueue its
-        new element. In case the entire segment has been scanned and no available cell is found (implying
-        that the segment is full), then it attempts to add a new segment to the list.
-
-        The dequeue operation is similar: the consumer iterates over the first segment in the linked list
-        in some random permutation order. When it finds an item which has not yet been dequeued, it performs
-        CAS on its deleted marker in order to "delete" it, if succeeded this item is considered dequeued.
-        In case the entire segment was scanned and all the nodes have already been dequeued (implying that
-        the segment is empty), then it attempts to remove this segment from the linked list and starts
-        the same process on the next segment. If there is no next segment, the queue is considered empty.
-
-        Based on the fact that most of the time threads do not add or remove segments, most of the work
-        is done in parallel on different cells in the segments. This ensures a controlled contention
-        depending on the segment size, which is quasi factor.
-
-        The segmented queue is an <i>unfair</i> queue since it violates the strong FIFO order but no more than
-        quasi factor. It means that the consumer dequeues any item from the current first segment.
+        A lock-free FIFO queue data structure is presented in this paper. The
+        algorithm supports multiple producers and multiple consumers and weak mem-
+        ory models. It has been designed to be cache-aware and work directly on weak
+        memory models. It utilizes the cache behavior in concert with lazy updates of
+        shared data, and a dynamic lock-free memory management scheme to decrease
+        unnecessary synchronization and increase performance. Experiments on an 8-
+        way multi-core platform show significantly better performance for the new algo-
+        rithm compared to previous fast lock-free algorithms.
 
         Template parameters:
         - \p GC - a garbage collector, possible types are cds::gc::HP, cds::gc::DHP
