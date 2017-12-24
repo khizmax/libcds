@@ -98,16 +98,18 @@ namespace cds { namespace intrusive {
             //@endcond
         };
 
+        /// conventional linear generator, 0 - 1 - 2 - 3 etc.
         class SkewGenerator {
-        public:
-
-            typedef int integer_type;
 
             /// Generator Size
             size_t size;
 
             /// Current element index
             size_t current;
+
+        public:
+
+            typedef int integer_type;
 
             /// Initializes the generator of length nLength
             SkewGenerator( size_t nLength )
