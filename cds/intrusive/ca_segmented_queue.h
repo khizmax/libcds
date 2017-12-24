@@ -99,6 +99,10 @@ namespace cds { namespace intrusive {
         };
 
         class SkewGenerator {
+        public:
+
+            typedef int integer_type;
+
             /// Generator Size
             size_t size;
 
@@ -106,14 +110,14 @@ namespace cds { namespace intrusive {
             size_t current;
 
             /// Initializes the generator of length nLength
-            generator( size_t nLength )
+            SkewGenerator( size_t nLength )
             {
               size = nLength;
               current = 0;
             }
 
             /// Returns current value
-            operator int()
+            operator int() const
             {
               return current;
             }
