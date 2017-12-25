@@ -125,22 +125,89 @@ class Process {
 	}
 
 	bool insert(double v) {
-
+	EValue r; int k,l,n;Hashtable* h;
+	bool suc;
+	int a=v.getADR;//??? 
+	h=H[index];
+	if h.occ>h.bound {
+		newTable();
+		h=H[index];
+	}
+	n=0;l=h.size;suc=false;
+	do{
+		k=key(a,l,n);
+		r=h.table[k];//atomic
+		if (r.oldp()){
+			refresh();
+			h=H[index];
+			n=0;l=h.size;
+		}else {
+			if(r.val()==0){
+				if(h.table[k]->val()==0){//atmic
+				suc=true;h.table[k]=v;//atmic
+				}//atmic
+			}
+			else{
+			n++;
+			}
+		}
+	}while(!(suc || a != r.getADR()));
+	if (suc) {
+			h->occ++;
+		}
+		return suc;
 	}
 
 	void assign(double v) {
-
+	EValue r; int k,l,n;Hashtable* h;
+	bool suc;
+	int a=v.getADR;//???
+	h=H[index];
+	if h.occ>h.bound {
+		newTable();
+		h=H[index];
+	}
+	n=0;l=h.size;suc=false;
+	do{
+		k=key(a,l,n);
+		r=h.table[k];//atomic
+		if (r.oldp()){
+			refresh();
+			h=H[index];
+			n=0;l=h.size;
+		}else {
+			if(r.val()==0 || a=r.getADR()){
+				if(h.table[k]==r){//atmic
+				suc=true;h.table[k]=v;//atmic
+				}//atmic
+			}
+			else{
+			n++;
+			}
+		}
+	}while(!(suc));
+	if(r.val()==0){
+		h.occ++;
+	}
 	}
 
 	// ----------- HEAP methods -----------
 
-	int allocate(int s, int b) {
-
+	Hashtable* allocate(int s, int b) {
+		Hashtable* h=(Hashtable*)void *malloc(sizeof(Hashtable));//atomic
+		h->table=(EValue*) void *malloc(s*sizeof(EValue));//atomic
+		h->size=s;//atomic
+		h->bound=b;//atomic
+		h->occ=0;//atomic
+		h->dels=0;//atomic
 	}
 
 	void deAlloc(int h) {
-		// assert(Heap(h) != null);
-		// Heap(h) = null;
+		if(H[h]==null)//atomic
+		{
+		free(H[h]);//atomic
+		H[h]==null;//atomic
+		}		//atomic
 	}
 
 	void getAccess() {
@@ -169,7 +236,7 @@ class Process {
 		if (h != 0 && busy[i] == 0) {
 			if (H[i] = h) { // ATOMIC
 				H[i] = 0; // ATOMIC
-				deAlloc(h);
+				deAlloc(i);//change h
 			}
 		}
 		prot[i]--;
