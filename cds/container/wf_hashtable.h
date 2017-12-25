@@ -1,6 +1,8 @@
 #ifndef CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
 #define CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
 
+#include <stdlib.h>
+
 namespace cds { namespace container {
 
 /*
@@ -10,7 +12,7 @@ namespace cds { namespace container {
 
 class WfHashtable
 {
-
+protected:
 	struct EValue {
 
 	private:
@@ -58,11 +60,17 @@ class WfHashtable
 		EValue* table;
 	};
 
+	int P;
 	Hashtable** H; // 1..2P
 	int* busy; // 1..2P
 	int* prot; // 1..2P
 	Hashtable* next; // 1..2P
 	int currInd; // 1..2P
+
+public:
+	WfHashtable(int P){
+		this->P  = P;
+	};
 
 	class Process {
 		int index; // 1..2P
@@ -256,10 +264,28 @@ class WfHashtable
 		}
 
 		void newTable() {
-			int i;
+			int i; // 1..2P
 			bool b, bb;
-
-			// TODO implement
+			while(next[index] == 0){
+				i = rand() % (2*P) + 1;
+				{ // ATOMIC
+					b = prot[i] == 0;
+					if(b) prot[i] = 1;
+				}
+				if(b){
+					busy[i] = 1;
+					bound = H[index].bound - H[index].dels + 2*P + 1;
+					size = bound + 2*P + 1;
+					H[i] = allocate(size, bound);
+					next[i] = 0;
+					{
+						bb = next[index] == 0;
+						if(bb) next[index] = 1;
+					}
+					if(!bb) releaseAccess(i);
+				}
+			}
+			refresh();
 		}
 
 		void migrate() {
@@ -335,5 +361,7 @@ class WfHashtable
 		}
 	};
 
-}
+};
 }}
+
+#endif // #ifndef CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
