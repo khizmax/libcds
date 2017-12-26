@@ -41,6 +41,8 @@
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
 #include <cds/container/weak_ringbuffer.h>
+#include <cds/container/ca_segmented_queue.h>
+
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -582,6 +584,50 @@ namespace fc_details{
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex >  SegmentedQueue_DHP_mutex;
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_padding >  SegmentedQueue_DHP_mutex_padding;
         typedef cds::container::SegmentedQueue< cds::gc::DHP, Value, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
+
+        // CASegmentedQueue
+        class traits_CASegmentedQueue_spin_stat:
+            public cds::container::ca_segmented_queue::make_traits<
+                cds::opt::stat< cds::intrusive::ca_segmented_queue::stat<> >
+            >::type
+        {};
+        class traits_CASegmentedQueue_spin_padding:
+            public cds::container::ca_segmented_queue::make_traits<
+                cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex_stat:
+            public cds::container::ca_segmented_queue::make_traits<
+                cds::opt::stat< cds::intrusive::ca_segmented_queue::stat<> >
+                ,cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex:
+            public cds::container::ca_segmented_queue::make_traits<
+                cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex_padding:
+            public cds::container::ca_segmented_queue::make_traits<
+                cds::opt::lock_type< std::mutex >
+                , cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value >  CASegmentedQueue_HP_spin;
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value, traits_CASegmentedQueue_spin_padding >  CASegmentedQueue_HP_spin_padding;
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value, traits_CASegmentedQueue_spin_stat >  CASegmentedQueue_HP_spin_stat;
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value, traits_CASegmentedQueue_mutex >  CASegmentedQueue_HP_mutex;
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value, traits_CASegmentedQueue_mutex_padding >  CASegmentedQueue_HP_mutex_padding;
+        typedef cds::container::CASegmentedQueue< cds::gc::HP, Value, traits_CASegmentedQueue_mutex_stat >  CASegmentedQueue_HP_mutex_stat;
+
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value >  CASegmentedQueue_DHP_spin;
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value, traits_CASegmentedQueue_spin_padding >  CASegmentedQueue_DHP_spin_padding;
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value, traits_CASegmentedQueue_spin_stat >  CASegmentedQueue_DHP_spin_stat;
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value, traits_CASegmentedQueue_mutex >  CASegmentedQueue_DHP_mutex;
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value, traits_CASegmentedQueue_mutex_padding >  CASegmentedQueue_DHP_mutex_padding;
+        typedef cds::container::CASegmentedQueue< cds::gc::DHP, Value, traits_CASegmentedQueue_mutex_stat >  CASegmentedQueue_DHP_mutex_stat;
+
     };
 
     template <typename Value>
@@ -786,6 +832,7 @@ namespace cds_test {
 #   define CDSSTRESS_FCDeque_HeavyValue_1( test_fixture )
 #   define CDSSTRESS_RWQueue_1( test_fixture )
 #   define CDSSTRESS_SegmentedQueue_1( test_fixture )
+#   define CDSSTRESS_CASegmentedQueue_1( test_fixture )
 #   define CDSSTRESS_StdQueue_1( test_fixture )
 #endif
 
@@ -872,6 +919,18 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex       ) \
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_DHP_mutex_stat  ) \
     CDSSTRESS_SegmentedQueue_1( test_fixture )
+
+#define CDSSTRESS_CASegmentedQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_HP_spin         ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_HP_spin_padding ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_HP_spin_stat    ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_HP_mutex        ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_HP_mutex_stat   ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_DHP_spin        ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_DHP_spin_stat   ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_DHP_mutex       ) \
+    CDSSTRESS_Queue_F( test_fixture, CASegmentedQueue_DHP_mutex_stat  ) \
+    CDSSTRESS_CASegmentedQueue_1( test_fixture )
 
 #define CDSSTRESS_VyukovQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, VyukovMPMCCycleQueue_dyn       ) \

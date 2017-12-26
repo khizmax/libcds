@@ -120,6 +120,26 @@ namespace cds_test {
         return o;
     }
 
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::ca_segmented_queue::stat<> const& s )
+    {
+        return o
+            << CDSSTRESS_STAT_OUT( s, m_nPush )
+            << CDSSTRESS_STAT_OUT( s, m_nPushPopulated )
+            << CDSSTRESS_STAT_OUT( s, m_nPushContended )
+            << CDSSTRESS_STAT_OUT( s, m_nPop )
+            << CDSSTRESS_STAT_OUT( s, m_nPopEmpty )
+            << CDSSTRESS_STAT_OUT( s, m_nPopContended )
+            << CDSSTRESS_STAT_OUT( s, m_nCreateSegmentReq )
+            << CDSSTRESS_STAT_OUT( s, m_nDeleteSegmentReq )
+            << CDSSTRESS_STAT_OUT( s, m_nSegmentCreated )
+            << CDSSTRESS_STAT_OUT( s, m_nSegmentDeleted );
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::ca_segmented_queue::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
 } // namespace cds_test
 
 #endif // CDSSTRESS_QUEUE_PRINT_STAT_H

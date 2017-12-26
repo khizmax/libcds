@@ -243,6 +243,7 @@ namespace {
     }
 
     CDSSTRESS_SegmentedQueue( segmented_queue_push )
+    CDSSTRESS_CASegmentedQueue( segmented_queue_push )
 
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
