@@ -28,10 +28,10 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_intrusive_msqueue.h"
+#include "test_intrusive_speculative_pairing_queue.h"
 
 #include <cds/gc/hp.h>
-#include <cds/intrusive/msqueue.h>
+#include <cds/intrusive/speculative_pairing_queue.h>
 #include <vector>
 
 namespace {
@@ -39,17 +39,17 @@ namespace {
     typedef cds::gc::HP gc_type;
 
 
-    class IntrusiveMSQueue_HP : public cds_test::intrusive_msqueue
+    class IntrusiveSPQueue_HP : public cds_test::intrusive_speculative_pairing_queue
     {
-        typedef cds_test::intrusive_msqueue base_class;
+        typedef cds_test::intrusive_speculative_pairing_queue base_class;
 
     protected:
-        typedef typename base_class::base_hook_item< ci::msqueue::node<gc_type>> base_item_type;
-        typedef typename base_class::member_hook_item< ci::msqueue::node<gc_type>> member_item_type;
+        typedef typename base_class::base_hook_item< ci::speculative_pairing_queue::node<gc_type>> base_item_type;
+        typedef typename base_class::member_hook_item< ci::speculative_pairing_queue::node<gc_type>> member_item_type;
 
         void SetUp()
         {
-            typedef ci::MSQueue< gc_type, base_item_type > queue_type;
+            typedef ci::SPQueue< gc_type, base_item_type > queue_type;
 
             cds::gc::hp::GarbageCollector::Construct( queue_type::c_nHazardPtrCount, 1, 16 );
             cds::threading::Manager::attachThread();
@@ -71,11 +71,31 @@ namespace {
         }
     };
 
-    TEST_F( IntrusiveMSQueue_HP, defaulted )
+    TEST_F( IntrusiveSPQueue_HP, defaulted )
     {
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type,
-            typename ci::msqueue::make_traits<
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type,
+            typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
+            >::type
+        > test_queue;
+
+        
+        std::vector<base_item_type> arr;
+        arr.resize(100);
+        {
+            test_queue q;
+            test(q, arr);
+        }
+        gc_type::scan();
+        //check_array( arr );*/
+    }
+
+/*    TEST_F( IntrusiveSPQueue_HP, base_hook )
+    {
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type,
+            typename ci::speculative_pairing_queue::make_traits<
+                ci::opt::disposer< mock_disposer >
+                ,ci::opt::hook< ci::speculative_pairing_queue::base_hook< ci::opt::gc<gc_type>>>
             >::type
         > test_queue;
 
@@ -89,32 +109,13 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_HP, base_hook )
+    TEST_F( IntrusiveSPQueue_HP, base_item_counting )
     {
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type,
-            typename ci::msqueue::make_traits<
-                ci::opt::disposer< mock_disposer >
-                ,ci::opt::hook< ci::msqueue::base_hook< ci::opt::gc<gc_type>>>
-            >::type
-        > test_queue;
-
-        std::vector<base_item_type> arr;
-        arr.resize(100);
-        {
-            test_queue q;
-            test(q, arr);
-        }
-        gc_type::scan();
-        check_array( arr );
-    }
-
-    TEST_F( IntrusiveMSQueue_HP, base_item_counting )
-    {
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type,
-            typename ci::msqueue::make_traits<
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type,
+            typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
                 , cds::opt::item_counter< cds::atomicity::item_counter >
-                , ci::opt::hook< ci::msqueue::base_hook< ci::opt::gc<gc_type>>>
+                , ci::opt::hook< ci::speculative_pairing_queue::base_hook< ci::opt::gc<gc_type>>>
             >::type
         > test_queue;
 
@@ -128,16 +129,16 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_HP, base_stat )
+    TEST_F( IntrusiveSPQueue_HP, base_stat )
     {
-        struct traits : public ci::msqueue::traits
+        struct traits : public ci::speculative_pairing_queue::traits
         {
             typedef mock_disposer disposer;
             typedef cds::atomicity::item_counter item_counter;
-            typedef ci::msqueue::stat<> stat;
+            typedef ci::speculative_pairing_queue::stat<> stat;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type, traits > test_queue;
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type, traits > test_queue;
 
         std::vector<base_item_type> arr;
         arr.resize(100);
@@ -149,12 +150,12 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_HP, member_hook )
+    TEST_F( IntrusiveSPQueue_HP, member_hook )
     {
-        typedef cds::intrusive::MSQueue< gc_type, member_item_type,
-            typename ci::msqueue::make_traits<
+        typedef cds::intrusive::SPQueue< gc_type, member_item_type,
+            typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
-                ,ci::opt::hook< ci::msqueue::member_hook<
+                ,ci::opt::hook< ci::speculative_pairing_queue::member_hook<
                     offsetof( member_item_type, hMember ),
                     ci::opt::gc<gc_type>
                 >>
@@ -171,20 +172,20 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_HP, member_hook_stat )
+    TEST_F( IntrusiveSPQueue_HP, member_hook_stat )
     {
-        struct traits : public ci::msqueue::traits
+        struct traits : public ci::speculative_pairing_queue::traits
         {
-            typedef ci::msqueue::member_hook<
+            typedef ci::speculative_pairing_queue::member_hook<
                 offsetof( member_item_type, hMember ),
                 ci::opt::gc<gc_type>
             > hook;
             typedef mock_disposer disposer;
             typedef cds::atomicity::item_counter item_counter;
-            typedef ci::msqueue::stat<> stat;
+            typedef ci::speculative_pairing_queue::stat<> stat;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cds::intrusive::MSQueue< gc_type, member_item_type, traits > test_queue;
+        typedef cds::intrusive::SPQueue< gc_type, member_item_type, traits > test_queue;
 
         std::vector<member_item_type> arr;
         arr.resize( 100 );
@@ -195,6 +196,6 @@ namespace {
         gc_type::scan();
         check_array( arr );
     }
-
+*/
 } // namespace
 
