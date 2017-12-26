@@ -2,7 +2,7 @@
 #define CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
 
 #include <stdlib.h>
-
+#include <vector>
 namespace cds { namespace container {
 
 /*
@@ -32,6 +32,10 @@ protected:
 
 		void setDel() {
 			this->del = true;
+		}
+
+		void setOld() {
+			this->old = true;
 		}
 
 		double val() {
@@ -328,8 +332,38 @@ public:
 			int i;
 			bool b;
 			EValue v;
+			std::vector<int> toBeMoved(from->size);
+			for (int j=0;j<from->size)
+			{
+				toBeMoved[j]=j;
+			};
+			while(currInd==index && )
+			{	
+				i=toBeMoved.back();
+				v=from->table[i];
+				if (from->table[i]->done())
+				{
+					toBeMoved.pop_back();
+				}
+				else
+				{
+					b=v==from->table[i]; //atomic
+					if (b)//atomic
+					{//atomic
+						rom->table[i]->setOld();//atomic
+					}//atomic
+					if (b)
+					{
+						if (v.val()!=0)
+						{
+							moveElement(v.val(),to);
+						}
+						from->table[i]=0;
+						toBeMoved.pop_back();
+					}
+				}
 
-			// TODO implement
+			}
 		}
 
 		void moveElement(double v, Hashtable* to) {
