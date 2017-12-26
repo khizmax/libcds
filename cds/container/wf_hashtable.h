@@ -271,7 +271,6 @@ public:
 				}
 				return suc;
 			}
-		}
 
 		void assign(int a, T* v) {
 			EValue r; 
