@@ -2,6 +2,9 @@
 #define CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
 
 #include <stdlib.h>
+#include <atomic>  
+
+
 
 namespace cds { namespace container {
 
@@ -37,8 +40,9 @@ protected:
 			this->value = value;
 		}
 
-		void setDel(){
+		EValue setDel(){
 			type = DEL;
+			return this;
 			//value = NULL; // ???
 		}
 
@@ -79,7 +83,7 @@ protected:
 		
 		Hashtable(int size, int bound){
 			this->size = size;
-			this->table = new EValue[size];
+			this->table = new EValue<KEY,T>[size];
 			this->bound = bound;
 			this->occ = 0;
 			this->dels = 0;
@@ -158,8 +162,7 @@ public:
 			h = wh->H[i];
 			wh->busy[i]--;
 			if (h != 0 && wh->busy[i] == 0) {
-				if (wh->H[i] = h) { // ATOMIC
-					wh->H[i] = 0; // ATOMIC
+				if (atomic_compare_exchange_strong(wh->H[i], h, 0)) { // ATOMIC
 					deAlloc(i);//change h
 				}
 			}
@@ -170,12 +173,12 @@ public:
 
 		int key(int a, int l, int n) {
 			return a % l;
-			// ЗДЕСЬ ЧТО-то непонятное Inc(a,l,n-1)
+			// ?????? ????? Inc(a,l,n-1)
 		}
 
 		T* find(int a) {
-			EValue r;
-			int n, l;
+			EValue<KEY,T> r;
+			int n, l, k;
 			Hashtable* h;
 
 			h = wh->H[index];
@@ -183,7 +186,8 @@ public:
 			l = h->size;
 
 			do {
-				r = h->table[key(a, l, n)]; // ATOMIC
+				k = key(a, l, n);
+				atomic_store_explicit(&r,  h->table[k]); // ATOMIC
 				if (r.done()) {
 					refresh();
 					h = wh->H[index];
@@ -200,7 +204,7 @@ public:
 
 		bool del(int a)
 		{
-			EValue r;
+			EValue<KEY,T> r;
 			int k, l, n;
 			Hashtable* h;
 			bool suc;
@@ -212,7 +216,7 @@ public:
 
 			do {
 				k = key(a, l, n);
-				r = h->table[k]; // ATOMIC
+				atomic_store_explicit(&r,  h->table[k]); // ATOMIC
 				if (r.oldp()) {
 					refresh();
 					h = wh->H[index];
@@ -220,10 +224,10 @@ public:
 					n = 0;
 				}
 				else if (a == r.ADR()) {
-					if (r == h->table[k]) { // ATOMIC
-						suc = true; // ATOMIC
-						h->table[k].setDel(); // ATOMIC
-					}
+					if(atomic_compare_exchange_strong(h.table[k] , &r, h->table[k].setDel()))//atmic
+						{
+							suc = true;
+						}
 				}
 				else {
 					n++;
@@ -237,29 +241,30 @@ public:
 		}
 
 		bool insert(int a, T* v) {
-			EValue r; 
+			EValue<KEY,T> r; 
 			int k,l,n;
 			Hashtable* h;
 			bool suc;
-
+			T temp=NULL;
 			h = wh->H[index];
-			if h.occ > h.bound {
+			if (h.occ > h.bound) {
 				newTable();
 				h = wh->H[index];
 			}
 			n=0; l=h.size; suc=false;
 			do{
 				k=key(a,l,n);
-				r=h.table[k];//atomic
+				atomic_store_explicit(&r, h.table[k]);//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
 					n = 0; l = h.size;
 				}else {
 					if(r.val()==0){
-						if(h.table[k]->val() == 0){//atmic
-							suc=true; h.table[k].setValue(a, v);//atmic
-						}//atmic
+						if(atomic_compare_exchange_strong(h.table[k] , NULL, v))//atmic
+						{
+							suc=true;
+						}
 					}
 					else{
 						n++;
@@ -273,29 +278,30 @@ public:
 			}
 
 		void assign(int a, T* v) {
-			EValue r; 
+			EValue<KEY,T> r; 
 			int k,l,n;
 			Hashtable* h;
 			bool suc;
 
 			h = wh->H[index];
-			if h.occ>h.bound {
+			if (h.occ>h.bound) {
 				newTable();
 				h = wh->H[index];
 			}
 			n=0; l=h.size; suc=false;
 			do{
 				k = key(a,l,n);
-				r = h.table[k]; //atomic
+				atomic_store_explicit(&r, h.table[k]);//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
 					n=0; l=h.size;
 				}else {
 					if(r.val()==0 || a=r.ADR()){
-						if(h.table[k] == r){//atmic
-							suc=true; h.table[k].setValue(a, v);//atmic
-						}//atmic
+						if( atomic_compare_exchange_strong(h.table[k]->val() , &r, v))//atmic
+						{
+							suc=true;
+						}
 					}
 					else{
 						n++;
@@ -309,38 +315,28 @@ public:
 
 		// ----------- HEAP methods -----------
 	protected:
-		Hashtable* allocate(int s, int b) {
-			Hashtable* h = new Hashtable(s, b);
-			return h;
+		Hashtable* allocate(int i,int s, int b) {
+			
+			return atomic_exchange(H[i], new Hashtable(s, b));//atomic
 		}
 
 		void deAlloc(int h) {
-			if(wh->H[h] == null) //atomic
-			{
-				delete wh->H[h]; //atomic
-				wh->H[h]==null; //atomic
-			}		//atomic
+			atomic_exchange(H[h], NULL);//atomic
 		}
 
 		void newTable() {
 			int i; // 1..2P
-			bool b, bb;
+			bool b, bb;int temp =0;
 			while(next[index] == 0){
 				i = rand() % (2*wh->P) + 1;
-				{ // ATOMIC
-					b = prot[i] == 0;
-					if(b) prot[i] = 1;
-				}
-				if(b){
+				
+				if(atomic_compare_exchange_strong(&prot[i] , &temp, 0)){// ATOMIC
 					busy[i] = 1;
-					bound = wh->H[index].bound - wh->H[index].dels + 2*P + 1;
-					size = bound + 2*P + 1;
-					H[i] = allocate(size, bound);
+					int bound = wh->H[index].bound - wh->H[index].dels + 2*P + 1;
+					int size = bound + 2*P + 1;
+					allocate(i,size, bound);
 					next[i] = 0;
-					{
-						bb = next[index] == 0;
-						if(bb) next[index] = 1;
-					}
+					bb = atomic_compare_exchange_strong(& next[index] , &temp, 1);//atomic
 					if(!bb) releaseAccess(i);
 				}
 			}
@@ -361,12 +357,9 @@ public:
 				h = wh->H[i];
 				if (index == currInd) {
 					moveContents(wh->H[index], h);
-					b = (wh->currInd == index); // ATOMIC
-					if (b) wh->currInd = i; // ATOMIC
-				
-					if (b) {
-						wh->busy[index]--;
-						wh->prot[index]--;
+					if (atomic_compare_exchange_strong(&wh->currInd , &index, i)) { // ATOMIC
+					wh->busy[index]--;
+					wh->prot[index]--;
 					}
 				}
 				releaseAccess(i);
@@ -386,52 +379,47 @@ public:
 		void moveContents(Hashtable* from, Hashtable* to) {
 			int i;
 			bool b;
-			EValue v;
+			EValue<KEY,T> v;
 			int* toBeMoved;
 			toBeMoved = new int[from.size];
 			for(int j=0; j<from.size; ++j){
 				toBeMoved[j] = j;
 			}
-			toBeMovedSize = from.size;
+			int toBeMovedSize = from.size;
 			while(currInd == index && toBeMovedSize > 0){
 				i = toBeMoved[toBeMovedSize - 1];
-				EValue v = from.table[i];
+				EValue<KEY,T> v = from.table[i];
 				if(from.table[i].done()){
 					toBeMovedSize--;
 				}
 				else{
-					{ // ATOMIC
-						b = (v == from.table[i]);
-						if(b) from.table[i] = v.setOld();
-					}
-					if(b){
-						if(val(v) != null) moveElement(val(v), to);
+					if(atomic_compare_exchange_strong(from.table[i], &v, v.setOld())){// ATOMIC
+						if(val(v) != NULL) moveElement(val(v), to);
 						from.table[i].setDone();
 						toBeMovedSize--;
-					}
-				}
+					
+						}
+					}	
 			}
 		}
 
-		void moveElement(T* v, Hashtable* to) {
+		void moveElement(T* v, Hashtable* to) 
+		{
 			int a;
 			int k, m, n;
-			EValue w;
+			EValue<KEY,T> w;
 			bool b;
 
 			n = 0;
 			b = false;
 			a = v.ADR();
 			m = to->size;
-
+			T temp=NULL;
 			do{
 				k = key(a, m, n);
 				w = to->table[k];
 				if (w.val() == NULL) {
-					{	// ATOMIC
-						b = to->table[k].val() == NULL;
-						if (b) to->table[k].setValue(a, v); 
-					}
+						b=atomic_compare_exchange_strong(to->table[k].val() , &temp, v); // ATOMIC
 				}
 				else {
 					n++;
