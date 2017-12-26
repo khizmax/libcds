@@ -92,23 +92,23 @@ namespace cds_test {
 
 
             ASSERT_TRUE(true);
-            /*pv = q.pop();
+            pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
-            pv =q.dequeue();
+            pv = q.dequeue();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-            */
+            
             // push/pop test
 /*
             for ( size_t i = 0; i < nSize; ++i ) {
                 if ( i & 1 )
                     q.push( arr[i] );
                 else
-                q.enqueue( arr[i] );
+					q.enqueue( arr[i] );
                 ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
@@ -137,16 +137,16 @@ namespace cds_test {
             */
             
             // clear test
-            /*for ( size_t i = 0; i < nSize; ++i )
+            for ( size_t i = 0; i < nSize; ++i )
                 q.push( arr[i] );
-*/
-            /*ASSERT_FALSE( q.empty());
+
+            ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
 
             q.clear();
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-*/
+
 /*
             Queue::gc::scan();
             for ( size_t i = 0; i < nSize - 1; ++i ) {

@@ -248,8 +248,10 @@ namespace cds { namespace intrusive {
             static constexpr const size_t c_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
         protected:
             typedef typename node_type::atomic_node_ptr atomic_node_ptr;
-
-                       //@cond
+			static_assert((std::is_same<gc, typename node_type::gc>::value),"GC and node_type::gc must be the same");
+			
+			
+            //@cond
             /// Slot type
             typedef struct SlotType {
                 atomic_node_ptr m_pHead;
@@ -263,16 +265,18 @@ namespace cds { namespace intrusive {
             /// Queue type
             typedef struct QueueType {
                 bool m_Invalid;
-                int  m_Cntdeq;
+                typedef typename gc::template atomic_type<int> atomic_int;
+                atomic_int m_Cntdeq;
                 int  m_Tail;
                 Slot m_pair[10];
             } Queue;
             //@endcond
-
-            stat                m_Stat          ;   ///< internal statistics accumulator
+			
+			item_counter        			m_ItemCounter   ;   ///< Item counter
+            stat               			    m_Stat          ;   ///< internal statistics accumulator
             std::atomic<Queue*>				m_Queue			;	///< Global queue
 
-//            const node_type* PICKET = new node_type(-1);
+            const node_type* PICKET = new node_type();
         public:
             /// Constructs empty speculative pairing queue
             /**
@@ -281,6 +285,7 @@ namespace cds { namespace intrusive {
             {
                 m_Queue.store(new Queue, memory_model::memory_order_relaxed);
                 m_Queue.load(memory_model::memory_order_relaxed)->m_Invalid = false;
+                //PICKET->m_nVer = -1;
             }
 
             /// Clears priority queue and destructs the object
@@ -293,38 +298,40 @@ namespace cds { namespace intrusive {
             /**
 
             */
-            bool enque( value_type& val )
+            bool enqueue( value_type& val )
             {
-
-                /*while (true) {
-                    std::atomic<Queue*> pQueue = m_Queue;
-                    if (pQueue.load(memory_order_relaxed)->m_Invalid) {
+                Queue* pQueue; 
+                int tail;
+                while (true) {
+                    std::atomic<Queue*> apQueue = m_Queue;
+                    if (apQueue.load(memory_model::memory_order_relaxed)->m_Invalid) {
                         Queue* pNewQueue = createNewQueue(val);
-                        if (std::atomic_compare_exchange_strong(&m_Queue, pQueue, pNewQueue)) {
+                        if (std::atomic_compare_exchange_strong(&m_Queue, apQueue, pNewQueue)) {
                             m_Stat.onCreateQueue();
                             return true;
                         }
                         m_Stat.onRepeatEnque();
                         continue;
                     }
-
-                    int tail = pQueue.load(memory_order_relaxed)->m_Tail;
+					
+					pQueue = apQueue.load(memory_model::memory_order_relaxed);
+                    tail = pQueue->m_Tail;
                     int idx = tail % C_SIZE;
-                    Node* pNode = pQueue.load(memory_order_relaxed)->m_pair[idx].m_pLast;
+                    node_type* pNode = pQueue->m_pair[idx].m_pLast;
 
                     if (tail == idx) {
                         if (pNode == nullptr) {
-                            Node* pNewNode = new Node(val, tail);
-                            if (std::atomic_compare_exchange_strong(&pQueue.load(memory_order_relaxed)->
-                                    m_pair[idx].m_pHead.load(memory_order_relaxed), nullptr, pNewNode)) {
-                                pQueue.load(memory_order_relaxed)->m_pair[idx].m_Last = pNewNode;
+                            node_type* pNewNode = node_traits::to_node_ptr( val );
+							pNewNode->m_nVer = tail;
+                            if (std::atomic_compare_exchange_strong(&pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed), nullptr, pNewNode)) {
+                                pQueue->m_pair[idx].m_Last = pNewNode;
                                 break;
                             }
                             else {
-                                if (pQueue.load(memory_order_relaxed)->m_pair[idx].m_pHead == PICKET)
-                                    pQueue.load(memory_order_relaxed)->m_Invalid = true;
+                                if (pQueue->m_pair[idx].m_pHead == PICKET)
+                                    pQueue->m_Invalid = true;
                                 else
-                                    std::atomic_compare_exchange_strong(&pQueue.load(memory_order_relaxed)->m_Tail, tail, tail+1);
+                                    std::atomic_compare_exchange_strong(&pQueue->m_Tail, tail, tail+1);
 
                                 m_Stat.onRepeatEnque();
                                 continue;
@@ -332,9 +339,9 @@ namespace cds { namespace intrusive {
                         }
                         else {
                             if (pNode == PICKET)
-                                pQueue.load(memory_order_relaxed)->m_Invalid = true;
+                                pQueue->m_Invalid = true;
                             else
-                                std::atomic_compare_exchange_strong(&pQueue.load(memory_order_relaxed)->m_Tail, tail, tail + 1);
+                                std::atomic_compare_exchange_strong(&pQueue->m_Tail, tail, tail + 1);
 
                             m_Stat.onRepeatEnque();
                             continue;
@@ -342,12 +349,12 @@ namespace cds { namespace intrusive {
                     }
 
                     if (pNode == nullptr) {
-                        pNode = pQueue.load(memory_order_relaxed)->m_pair[idx].m_pHead.load(memory_order_relaxed);
+                        pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
                     }
 
                     if (pNode == PICKET) {
                         Queue* pNewQueue = createNewQueue(val);
-                        if (std::atomic_compare_exchange_strong(&m_Queue, pQueue.load(memory_order_relaxed), pNewQueue))
+                        if (std::atomic_compare_exchange_strong(&m_Queue, pQueue, pNewQueue))
                         {
                             m_Stat.onCreateQueue();
                             return true;
@@ -357,29 +364,30 @@ namespace cds { namespace intrusive {
                         continue;
                     }
 
-                    while (pNode->m_pNext.load(memory_order_relaxed) != nullptr && node->m_Ver < tail)
-                        pNode = pNode->m_pNext.load(memory_order_relaxed);
+                    while (pNode->m_pNext.load(memory_model::memory_order_relaxed) != nullptr && pNode->m_nVer < tail)
+                        pNode = pNode->m_pNext.load(memory_model::memory_order_relaxed);
 
-                    if (pNode->m_Ver >= tail) {
-                        std::atomic_compare_exchange_weak(&pQueue.load(memory_order_relaxed)->m_Tail, tail, tail + 1);
+                    if (pNode->m_nVer >= tail) {
+                        std::atomic_compare_exchange_weak(&pQueue->m_Tail, tail, tail + 1);
 
                         m_Stat.onRepeatEnque();
                         continue;
                     }
 
-                    if (pNode != C_PICKET) {
-                        Node* pNewNode = new Node(val, tail);
-                        if (std::atomic_compare_exchange_strong(&pNode->m_pNext.load(memory_order_relaxed), nullptr, pNewNode)) {
-                            pQueue.load(memory_order_relaxed)->m_pair[idx].m_pLast = pNewNode;
+                    if (pNode != PICKET) {
+                        node_type* pNewNode = node_traits::to_node_ptr(val);
+						pNewNode->m_nVer = tail;
+                        if (pNode->m_pNext.compare_exchange_strong(nullptr, pNewNode)) {
+                            pQueue->m_pair[idx].m_pLast = pNewNode;
                             break;
                         }
                     }
                     else {
-                        pQueue.load(memory_order_relaxed)->m_Invalid = true;
+                        pQueue->m_Invalid = true;
                     }
                 }
-                std::atomic_compare_exchange_weak(&pQueue.load(memory_order_relaxed)->m_Tail, tail, tail + 1);
-                m_Stat.onEnqueSuccess();*/
+                std::atomic_compare_exchange_weak(&pQueue->m_Tail, tail, tail + 1);
+                m_Stat.onEnqueSuccess();
                 return true;
             }
 
@@ -387,20 +395,23 @@ namespace cds { namespace intrusive {
             /**
 
             */
-            value_type* deque()
+            value_type* dequeue()
             {
-                /*Queue* pQueue = m_Queue;
+                Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
                 if (pQueue->m_Invalid) {
                     m_Stat.onReturnEmpty();
                     return nullptr;
                 }
 
 
-                int ticket = _ATOMIC_FETCH_ADD(pQueue->m_CntDeq);
+                int ticket = 
+                /*_ATOMIC_FETCH_ADD(*/
+                    pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_relaxed);
+                /*);*/
                 int idx = ticket % C_SIZE;
 
                 if (ticket > pQueue->m_Tail && ticket == idx) {//Error in article. may be must be >=
-                    if (_ATOMIC_COMPARE_EXCHANGE_STRONG(&pQueue->m_Pair[idx].m_pHead, nullptr, C_PICKET)) {
+                    if (_ATOMIC_COMPARE_EXCHANGE_STRONG(&pQueue->m_pair[idx].m_pHead, nullptr, PICKET)) {
 
                         CloseQueue(pQueue, idx);
                         m_Stat.onCloseQueue();
@@ -408,71 +419,71 @@ namespace cds { namespace intrusive {
                     }
                 }
 
-                Node* pNode = pQueue->m_Pair[idx].m_pRemoved;
+                node_type* pNode = pQueue->m_pair[idx].m_pRemoved;
                 if (pNode == nullptr)
-                    pNode = pQueue->m_Pair[idx].m_pHead;
+                    pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
 
-                if (pNode == C_PICKET) {
+                if (pNode == PICKET) {
                     CloseQueue(pQueue, idx);
                     m_Stat.onCloseQueue();
                     return nullptr;
                 }
 
-                if (pNode->m_Ver > ticket)
-                    pNode = pQueue->m_Pair[idx].m_pHead;
+                if (pNode->m_nVer > ticket)
+                    pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
 
-                while (pNode->m_ver < ticket) {
-                    if (pNode->m_pNext == nullptr) {
-                        if (_ATOMIC_COMPARE_EXCHANGE_STRONG(&pNode->m_pNext, nullptr, C_PICKET)) {
+                while (pNode->m_nVer < ticket) {
+                    if (pNode->m_pNext.load(memory_model::memory_order_relaxed) == nullptr) {
+                        if (pNode->m_pNext.compare_exchange_strong(nullptr, PICKET)) {
                             CloseQueue(pQueue, idx);
                             m_Stat.onCloseQueue();
                             return nullptr;
                         }
                     }
-                    pNode = pNode->m_pNext;
-                    if (pNode == C_PICKET) {
+                    pNode = pNode->m_pNext.load(memory_model::memory_order_relaxed);
+                    if (pNode == PICKET) {
                         CloseQueue(pQueue, idx);
                         m_Stat.onCloseQueue();
                         return nullptr;
                     }
                 }
-                value_type* x = pNode->m_Val;
-                pQueue->m_Pair[idx].m_pRemoved = pNode;
-                onDequeSuccess();
-                return x;*/
+                value_type* x = node_traits::to_value_ptr(pNode);
+                pQueue->m_pair[idx].m_pRemoved = pNode;
+                m_Stat.onDequeSuccess();
+                return x;
             }
 
+            bool push(value_type& val){
+                return enqueue(val);
+            }
+
+            value_type* pop(){
+                return dequeue();
+            }
             /// Clears the queue (not atomic)
             /**
 
             */
             void clear()
             {
-                //clear_with( []( value_type const& /*src*/ ) {} );
-            }
-
-            /// Clears the queue (not atomic)
-            /**
-
-            */
-            template <typename Func>
-            void clear_with( Func f )
-            {
-                //value_type * pVal;
-                //while (( pVal = pop()) != nullptr )
-                //    f( *pVal );
+                 while ( dequeue());
             }
 
             /// Checks is the priority queue is empty
             bool empty() const
             {
-
+				Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
+				for (int idx = 0; idx < C_SIZE; ++idx){
+					if (pQueue->m_pair[idx].m_pRemoved != pQueue->m_pair[idx].m_pLast)
+						return false;
+				}
+				return true;
             }
 
             /// Returns current size of priority queue
             size_t size() const
             {
-
+				return m_ItemCounter.value();
             }
 
             /// Returns const reference to internal statistics
@@ -482,14 +493,15 @@ namespace cds { namespace intrusive {
             }
 
         protected:
-           /* Queue* createNewQueue(value_type* x) {
-                Queue* pNewQueue = new Queue(C_SIZE);
+            Queue* createNewQueue(value_type* x) {
+                Queue* pNewQueue = new Queue();
                 pNewQueue->m_Invalid = false;
                 pNewQueue->m_CntDeq = 0;
                 pNewQueue->m_Tail = 1;
 
-                pNewNode = new NodeType(x, 0);
-                pNewQueue->m_pair[0].m_pHead.store(pNewNode, memory_order_relaxed);
+                node_type* pNewNode = node_traits::to_node_ptr(x);
+				pNewNode->m_nVer = 0;
+                pNewQueue->m_pair[0].m_pHead.store(pNewNode, memory_model::memory_order_relaxed);
                 pNewQueue->m_pair[0].m_pLast = pNewNode;
                 return pNewQueue;
             }
@@ -497,7 +509,7 @@ namespace cds { namespace intrusive {
             void CloseQueue(Queue* q, int idx) {
                 q->m_Invalid = true;
                 q->m_pair[idx].m_pRemoved = PICKET;
-            }*/
+            }
         };
 
     }} // namespace cds::intrusive
