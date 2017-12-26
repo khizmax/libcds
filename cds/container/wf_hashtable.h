@@ -190,23 +190,23 @@ public:
 			int k,l,n;
 			Hashtable* h;
 			bool suc;
-			T temp=NULL;
 			h = wh->H[index];
-			if (h.occ > h.bound) {
+			if (h->occ > h->bound) {
 				newTable();
 				h = wh->H[index];
 			}
-			n=0; l=h.size; suc=false;
+			n=0; l=h->size; suc=false;
 			do{
 				k=key(a,l,n);
-				atomic_store_explicit(&r, h.table[k]);//atomic
+				std::atomic_store_explicit(&r, h->table[k]);//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
-					n = 0; l = h.size;
+					n = 0; l = h->size;
 				}else {
-					if(r.val()==0){
-						if(atomic_compare_exchange_strong(h.table[k] , NULL, v))//atmic
+					if(r.val() == NULL){
+						Hashtable* null_ptr = NULL;
+						if(std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, v))//atmic
 						{
 							suc=true;
 						}
@@ -229,18 +229,18 @@ public:
 			bool suc;
 
 			h = wh->H[index];
-			if (h.occ>h.bound) {
+			if (h->occ > h->bound) {
 				newTable();
 				h = wh->H[index];
 			}
-			n=0; l=h.size; suc=false;
+			n=0; l=h->size; suc=false;
 			do{
 				k = key(a,l,n);
-				atomic_store_explicit(&r, h.table[k]);//atomic
+				std::atomic_store_explicit(&r, h->table[k]);//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
-					n=0; l=h.size;
+					n=0; l=h->size;
 				}else {
 					if(r.val()==0 || a=r.ADR()){
 						if( atomic_compare_exchange_strong(h.table[k]->val() , &r, v))//atmic
@@ -254,7 +254,7 @@ public:
 				}
 			}while(!(suc));
 			if(r.val()==0){
-				h.occ++;
+				h->occ++;
 			}
 		}
 		
