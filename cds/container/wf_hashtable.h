@@ -94,7 +94,7 @@ protected:
 	};
 
 	int P;
-	Hashtable** H; // 1..2P
+	std::atomic<Hashtable*>* H; // 1..2P
 	int currInd; // 1..2P = index of the currently valid hashtable
 	int* busy; // 1..2P = number of processes that are using a hashtable
 	Hashtable* next; // 1..2P = next hashtable to which the contents of hashtable H[i] is being copied
@@ -102,29 +102,9 @@ protected:
 			   // against being reused for a new table, before all processes have discarded these
 
 public:
-	WfHashtable(int P){
-		this->P  = P;
-		this->H = new Hashtable[2*P];
-		this->busy = new int[2*P];
-		this->prot = new int[2*P];
-	};
-
-	~WfHashtable(){
-		for(int i=0; i<2*P; ++i){
-			delete H[i];
-		}
-		delete H;
-		delete busy;
-		delete prot;
-	}
-
-	WfHashtableProcess* getProcess(){
-		WfHashtableProcess* process = new WfHashtableProcess(this);
-		return process;
-	}
-
+	template <typename KEY, typename T>
 	class WfHashtableProcess {
-	protected
+	protected:
 		WfHashtable* wh;
 		int index; // 1..2P
 
@@ -132,49 +112,14 @@ public:
 
 		WfHashtableProcess(WfHashtable* wh){
 			this->wh = wh;
+			getAccess();
 		}
 		
-		~WfHashtableProcess(){}
-
-		// ----------- ACCESS METHODS -----------
-
-		void getAccess() {
-			while (true) {
-				index = wh->currInd;
-				wh->prot[index] ++;
-				if (index == wh->currInd) {
-					wh->busy[index]++;
-					if (index == wh->currInd) {
-						return;
-					}
-					else {
-						releaseAccess(index);
-					}
-				}
-				else {
-					wh->prot[index]--;
-				}
-			}
-		}
-
-		void releaseAccess(int i) {
-			Hashtable* h;
-			h = wh->H[i];
-			wh->busy[i]--;
-			if (h != 0 && wh->busy[i] == 0) {
-				if (atomic_compare_exchange_strong(wh->H[i], h, 0)) { // ATOMIC
-					deAlloc(i);//change h
-				}
-			}
-			wh->prot[i]--;
+		~WfHashtableProcess(){
+			releaseAccess(index);
 		}
 
 		// ----------- HASHTABLE METHODS -----------
-
-		int key(int a, int l, int n) {
-			return a % l;
-			// ?????? ????? Inc(a,l,n-1)
-		}
 
 		T* find(int a) {
 			EValue<KEY,T> r;
@@ -312,16 +257,64 @@ public:
 				h.occ++;
 			}
 		}
+		
+	protected:
+
+		// ----------- ACCESS METHODS -----------
+
+		void getAccess() {
+			while (true) {
+				index = wh->currInd;
+				wh->prot[index] ++;
+				if (index == wh->currInd) {
+					wh->busy[index]++;
+					if (index == wh->currInd) {
+						return;
+					}
+					else {
+						releaseAccess(index);
+					}
+				}
+				else {
+					wh->prot[index]--;
+				}
+			}
+		}
+
+		void releaseAccess(int i) {
+			Hashtable* h;
+			h = wh->H[i];
+			wh->busy[i]--;
+			if (h != NULL && wh->busy[i] == 0) {
+				Hashtable* null_ptr = NULL;
+				if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
+					deAlloc(i);
+				}
+			}
+			wh->prot[i]--;
+		}
+
+		int key(int a, int l, int n) {
+			return a % l;
+			// ?????? ????? Inc(a,l,n-1)
+		}
 
 		// ----------- HEAP methods -----------
-	protected:
-		Hashtable* allocate(int i,int s, int b) {
-			
-			return atomic_exchange(H[i], new Hashtable(s, b));//atomic
+
+		void allocate(int i, int s, int b) {
+			Hashtable* tmp = new Hashtable(s, b)
+			std::atomic_exchange(&wh->H[i], tmp);
+			if (wh->H[i] != tmp) delete tmp;
 		}
 
 		void deAlloc(int h) {
-			atomic_exchange(H[h], NULL);//atomic
+			Hashtable* tmp = wh->H[h];
+			if (tmp != NULL) {
+				atomic_exchange(&wh->H[h], NULL);
+				if (tmp != NULL) {
+					delete tmp;
+				}
+			}
 		}
 
 		void newTable() {
@@ -429,6 +422,31 @@ public:
 			if (b) to->occ++;
 		}
 	};
+
+	// ----------- WfHashtable API -----------
+
+	typedef WfHashtableProcess<KEY, T> process;
+
+	WfHashtable(int P) {
+		this->P = P;
+		this->H = new std::atomic<Hashtable*>[2 * P];
+		this->busy = new int[2 * P];
+		this->prot = new int[2 * P];
+	};
+
+	~WfHashtable() {
+		for (int i = 0; i<2 * P; ++i) {
+			delete H[i];
+		}
+		delete H;
+		delete busy;
+		delete prot;
+	}
+
+	WfHashtableProcess<KEY, T>* getProcess() {
+		WfHashtableProcess<KEY, T>* process = new WfHashtableProcess<KEY, T>(this);
+		return process;
+	}
 
 };
 }}
