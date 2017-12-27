@@ -1,9 +1,11 @@
-2.4.0
+2.3.2 31.12.2017
+    Maintenance release
     - Added: apply( Func f ) method to containers based on flat combining.
       This method allows to execute any function over underlying container
       in exclusive mode.
     - Removed: -fno-strict-aliasing requirement
     - Fixed: a serious bug in WeakRingBuffer::front()
+    - Fixed: memcpy bug in CuckooHash with store_hash feature
 
 2.3.1 01.09.2017
     Maintenance release
