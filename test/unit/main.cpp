@@ -28,15 +28,15 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <cds_test/ext_gtest.h>
+//#include <cds_test/ext_gtest.h>
 #include <cds/init.h>
 #include <cds/container/concurrent_hopscotch_hash_set.h>
-#include <cds_test/fixture.h>
+//#include <cds_test/fixture.h>
 #include <iostream>
 
 namespace cds_test {
-    /*static*/ std::random_device fixture::random_dev_;
-    /*static*/ std::mt19937 fixture::random_gen_( random_dev_() );
+    /*static*/ //std::random_device fixture::random_dev_;
+    /*static*/ //std::mt19937 fixture::random_gen_( random_dev_() );
 } // namespace cds_test
 
 
