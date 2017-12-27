@@ -91,7 +91,6 @@ namespace cds_test {
                 arr[i].nVal = static_cast<int>(i);
 
 
-            ASSERT_TRUE(true);
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
@@ -103,7 +102,7 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( q, 0 );
             
             // push/pop test
-/*
+  
             for ( size_t i = 0; i < nSize; ++i ) {
                 if ( i & 1 )
                     q.push( arr[i] );
@@ -112,8 +111,7 @@ namespace cds_test {
                 ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-*/
-            /*
+  
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, nSize - i );
@@ -126,19 +124,22 @@ namespace cds_test {
             }
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-            */
-
-            /*Queue::gc::scan();
+/*
+            Queue::gc::scan();
             --nSize; // last element of array is in queue yet as a dummy item
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 1 );
             }
             ASSERT_EQ( arr[nSize].nDisposeCount, 0 );
-            */
+*/          
             
             // clear test
+            q.clear();
             for ( size_t i = 0; i < nSize; ++i )
+            {
                 q.push( arr[i] );
+                ASSERT_CONTAINER_SIZE( q, i + 1 );
+            }
 
             ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize );
