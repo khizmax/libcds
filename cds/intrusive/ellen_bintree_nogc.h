@@ -74,19 +74,16 @@ namespace cds {
         protected:
             typedef cds::details::Allocator< update_desc, update_desc_allocator >   cxx_update_desc_allocator;
             struct search_result{
-                internal_node *     pGrandParent;
                 internal_node      *pParent;
                 leaf_node *         pLeaf;
-                bool                bRightLeaf;   // true if pLeaf is right child of pParent, false otherwise
-                //  bool                bRightParent; // true if pParent is right child of pGrandParent, false otherwise
+                bool                bRightLeaf;
+
 
                 update_ptr          updParent;
                 search_result()
-                        :pGrandParent( nullptr )
-                        ,pParent( nullptr )
+                        :pParent( nullptr )
                         ,pLeaf( nullptr )
                         ,bRightLeaf( false )
-//                            ,bRightParent( false )
                 {}
             };
 
@@ -120,7 +117,6 @@ namespace cds {
 
             EllenBinTreeNogc()
             {
-                //static_assert( !std::is_same< key_extractor, opt::none >::value, "The key extractor option must be specified" );
                 make_empty_tree();
             }
 
@@ -130,7 +126,6 @@ namespace cds {
             bool search(search_result& res, KeyValue const& key, Compare cmp) const
             {
                 internal_node * pParent;
-                internal_node * pGrandParent = nullptr;
                 tree_node *     pLeaf;
                 update_ptr      updParent;
 
@@ -139,21 +134,15 @@ namespace cds {
 
                 int nCmp = 0;
 
-
-                retry:
-
                 pParent = nullptr;
                 pLeaf = const_cast<internal_node *>( &m_Root );
                 updParent = nullptr;
                 bRightLeaf = false;
                 while ( pLeaf->is_internal())
                 {
-                    pGrandParent = pParent;
                     pParent = static_cast<internal_node *>( pLeaf );
                     bRightParent = bRightLeaf;
-
                     updParent = pParent->m_pUpdate.load( memory_model::memory_order_acquire );
-
                     nCmp = cmp( key, *pParent );
                     bRightLeaf = nCmp >= 0;
                     pLeaf = pParent->get_child( nCmp >= 0, memory_model::memory_order_acquire );
@@ -167,8 +156,6 @@ namespace cds {
                 res.pLeaf           = static_cast<leaf_node *>( pLeaf );
                 res.updParent       = updParent;
                 res.bRightLeaf      = bRightLeaf;
-                res.pGrandParent    = pGrandParent;
-
                 return nCmp == 0;
             }
 
@@ -187,7 +174,9 @@ namespace cds {
 
                     if (res.updParent.bits() == update_desc::Clean) {
                         if (!pNewInternal.get())
+                        {
                             pNewInternal.reset(alloc_internal_node());
+                        }
 
                         if (try_insert(val, pNewInternal.get(), res)) {
                             f( val );
@@ -195,10 +184,8 @@ namespace cds {
                             break;
                         }
                     }
-                    int z = res.updParent.bits();
                     bkoff();
                 }
-                //my_printf_tree(m_Root);
                 ++m_ItemCounter;
                 return true;
               }
@@ -348,14 +335,14 @@ namespace cds {
                     int nCmp = node_compare()(val, *res.pLeaf);
                     if ( nCmp < 0 )
                     {
-                        if( res.pGrandParent )
+                        if( res.pLeaf->infinite_key() )
                         {
-                            pNewInternal->infinite_key( 0 );
-                            key_extractor()(pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ));
+                            pNewInternal->infinite_key( 1 );
                         }
                         else
                         {
-                            pNewInternal->infinite_key( 1 );
+                            pNewInternal->infinite_key( 0 );
+                            key_extractor()(pNewInternal->m_Key, *node_traits::to_value_ptr( res.pLeaf ));
                         }
                         pNewInternal->m_pLeft.store( static_cast<tree_node *>(pNewLeaf), memory_model::memory_order_relaxed );
                         pNewInternal->m_pRight.store( static_cast<tree_node *>(res.pLeaf), memory_model::memory_order_relaxed );
@@ -382,8 +369,6 @@ namespace cds {
 
                         // do insert
                         help_insert( pOp );
-
-                        //retire_update_desc( pOp );
                         return true;
                     }
                     else
@@ -421,19 +406,18 @@ namespace cds {
 
                 tree_node * pLeaf = static_cast<tree_node *>( pOp->iInfo.pLeaf );
                 if ( pOp->iInfo.bRightLeaf ) {
-                    CDS_VERIFY( pOp->iInfo.pParent->m_pRight.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
-                                                                                      memory_model::memory_order_release, atomics::memory_order_relaxed ));
+                    pOp->iInfo.pParent->m_pRight.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
+                                                                                      memory_model::memory_order_release, atomics::memory_order_relaxed );
                 }
                 else {
-                    CDS_VERIFY( pOp->iInfo.pParent->m_pLeft.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
-                                                                                     memory_model::memory_order_release, atomics::memory_order_relaxed ));
+                    pOp->iInfo.pParent->m_pLeft.compare_exchange_strong( pLeaf, static_cast<tree_node *>( pOp->iInfo.pNew ),
+                                                                                     memory_model::memory_order_release, atomics::memory_order_relaxed );
                 }
 
                 // Unflag parent
                 update_ptr cur( pOp, update_desc::IFlag );
                 CDS_VERIFY( pOp->iInfo.pParent->m_pUpdate.compare_exchange_strong( cur, pOp->iInfo.pParent->null_update_desc(),
                                                                                    memory_model::memory_order_release, atomics::memory_order_relaxed ));
-
             }
 
             void make_empty_tree()
