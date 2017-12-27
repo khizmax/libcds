@@ -659,6 +659,7 @@
     <ClInclude Include="..\..\..\cds\compiler\vc\x86\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\container\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h" />
+    <ClInclude Include="..\..\..\cds\container\concurrent_hopscotch_hash_set.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_map.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\base.h" />

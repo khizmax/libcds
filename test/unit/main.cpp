@@ -30,7 +30,7 @@
 
 #include <cds_test/ext_gtest.h>
 #include <cds/init.h>
-#include <cds/container/ConcurrentHopscotchHashSet.h>
+#include <cds/container/concurrent_hopscotch_hash_set.h>
 #include <cds_test/fixture.h>
 #include <iostream>
 
@@ -43,9 +43,9 @@ namespace cds_test {
 using namespace std;
 
 
-ConcurrentHopscotchHashSet<int, int> *obj;
+cds::container::concurrent_hopscotch_hash_set<int, int> *obj;
 void testInt() {
-	obj = new ConcurrentHopscotchHashSet<int, int>();
+	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>();
 	int key1 = 0;
 	int val1 = 100;
 	int key2 = 1;
@@ -80,7 +80,7 @@ void* adding() {
 }
 
 void testIntAddParallel() {
-	obj = new ConcurrentHopscotchHashSet<int, int>();
+	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>();
 	pthread_t threads[1000];
 	for (int r = 0; r<1000; r++) {
 		pthread_create(&threads[r], NULL, adding);
@@ -99,7 +99,7 @@ void* contains(void * arg) {
 }
 
 void testIntContainsParallel() {
-	obj = new ConcurrentHopscotchHashSet<int, int>();
+	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>();
 	for (int r = 0; r<1000; r++) {
 		obj->add(&r, &r);
 	}
@@ -121,7 +121,7 @@ void* removing(void * arg) {
 }
 
 void testIntRemoveParallel() {
-	obj = new ConcurrentHopscotchHashSet<int, int>();
+	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>();
 	for (int r = 0; r<1000; r++) {
 		obj->add(&r, &r);
 	}
@@ -148,7 +148,7 @@ void* getting(void * arg) {
 }
 
 void testIntGetParallel() {
-	obj = new ConcurrentHopscotchHashSet<int, int>();
+	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>();
 	for (int r = 0; r<1000; r++) {
 		obj->add(&r, &r);
 	}
