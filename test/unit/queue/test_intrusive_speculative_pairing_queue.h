@@ -103,7 +103,7 @@ namespace cds_test {
             
             // push/pop test
   
-            for ( size_t i = 0; i < nSize; ++i ) {
+            for ( size_t i = 0; i < 50; ++i ) {
                 if ( i & 1 )
                     q.push( arr[i] );
                 else
@@ -112,9 +112,9 @@ namespace cds_test {
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
   
-            for ( size_t i = 0; i < nSize; ++i ) {
+            for ( size_t i = 0; i < 50; ++i ) {
                 ASSERT_FALSE( q.empty());
-                ASSERT_CONTAINER_SIZE( q, nSize - i );
+                ASSERT_CONTAINER_SIZE( q, 50 - i );
                 if ( i & 1 )
                     pv = q.pop();
                 else
@@ -135,18 +135,18 @@ namespace cds_test {
             
             // clear test
             q.clear();
-            for ( size_t i = 0; i < nSize; ++i )
+            for ( size_t i = 50; i < 100; ++i )
             {
                 q.push( arr[i] );
-                ASSERT_CONTAINER_SIZE( q, i + 1 );
+                ASSERT_CONTAINER_SIZE( q, i - 49 );
             }
 
             ASSERT_FALSE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, nSize );
+            ASSERT_CONTAINER_SIZE( q, 50);
 
             q.clear();
-            ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
+            ASSERT_TRUE( q.empty());
 
 /*
             Queue::gc::scan();

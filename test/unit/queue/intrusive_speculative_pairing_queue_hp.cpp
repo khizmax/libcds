@@ -105,8 +105,8 @@ namespace {
             test_queue q;
             test(q, arr);
         }
-        //gc_type::scan();
-        //check_array( arr );
+//        gc_type::scan();
+//        check_array( arr );
     }
 
     TEST_F( IntrusiveSPQueue_HP, base_item_counting )
@@ -125,8 +125,8 @@ namespace {
             test_queue q;
             test(q, arr);
         }
-        //gc_type::scan();
-        //check_array( arr );
+//        gc_type::scan();
+//        check_array( arr );
     }
 
     TEST_F( IntrusiveSPQueue_HP, base_stat )
@@ -146,8 +146,8 @@ namespace {
             test_queue q;
             test(q, arr);
         }
-        //gc_type::scan();
-        //check_array( arr );
+//        gc_type::scan();
+//        check_array( arr );
     }
 
     TEST_F( IntrusiveSPQueue_HP, member_hook )
@@ -168,8 +168,8 @@ namespace {
             test_queue q;
             test( q, arr );
         }
-        //gc_type::scan();
-        //check_array( arr );
+//        gc_type::scan();
+//        check_array( arr );
     }
 
     TEST_F( IntrusiveSPQueue_HP, member_hook_stat )
@@ -193,8 +193,8 @@ namespace {
             test_queue q;
             test( q, arr );
         }
-        //gc_type::scan();
-        //check_array( arr );
+//        gc_type::scan();
+//        check_array( arr );
     }
 
 } // namespace
