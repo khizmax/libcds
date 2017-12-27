@@ -34,20 +34,30 @@ protected:
 			value = NULL;
 		}
 
-		// ----------- Setters -----------
-
-		void setValue(T* value) {
+		EValue(int address, T* value) {
+			this->type = VALUE;
+			this->address = address;
 			this->value = value;
 		}
 
-		EValue setDel(){
+		// ----------- Setters -----------
+
+		void setValue(int address, T* value) {
+			this->address = address;
+			this->value = value;
+		}
+
+		void setDel(){
 			type = DEL;
-			return this;
-			//value = NULL; // ???
 		}
 
 		void setOld(){
 			type = OLDV;
+		}
+
+		void setDone() {
+			type = OLDV;
+			value = NULL;
 		}
 
 		// ----------- Getters -----------
@@ -79,11 +89,11 @@ protected:
 		int occ; // number of occupied positions in the table
 		int dels; // number of deleted positions
 		int bound; // the maximal number of places that can be occupied before refreshing the table
-		EValue* table;
+		std::atomic<EValue<KEY, T>>* table;
 		
 		Hashtable(int size, int bound){
 			this->size = size;
-			this->table = new EValue<KEY,T>[size];
+			this->table = new std::atomic<EValue<KEY,T>>[size];
 			this->bound = bound;
 			this->occ = 0;
 			this->dels = 0;
@@ -95,10 +105,10 @@ protected:
 
 	int P;
 	std::atomic<Hashtable*>* H; // 1..2P
-	int currInd; // 1..2P = index of the currently valid hashtable
+	std::atomic<int> currInd; // 1..2P = index of the currently valid hashtable
 	int* busy; // 1..2P = number of processes that are using a hashtable
-	Hashtable* next; // 1..2P = next hashtable to which the contents of hashtable H[i] is being copied
-	int* prot; // 1..2P = is used to guard the variables busy[i], next[i] and H[i]
+	std::atomic<int>* next; // 1..2P = next hashtable to which the contents of hashtable H[i] is being copied
+	std::atomic<int>* prot; // 1..2P = is used to guard the variables busy[i], next[i] and H[i]
 			   // against being reused for a new table, before all processes have discarded these
 
 public:
@@ -186,7 +196,7 @@ public:
 		}
 
 		bool insert(int a, T* v) {
-			EValue<KEY,T> r; 
+			EValue<KEY, T>* r;
 			int k,l,n;
 			Hashtable* h;
 			bool suc;
@@ -198,15 +208,17 @@ public:
 			n=0; l=h->size; suc=false;
 			do{
 				k=key(a,l,n);
-				std::atomic_store_explicit(&r, h->table[k]);//atomic
-				if (r.oldp()){
+				r = &(h->table[k].load());
+
+				if (r->oldp()){
 					refresh();
 					h = wh->H[index];
 					n = 0; l = h->size;
 				}else {
-					if(r.val() == NULL){
-						Hashtable* null_ptr = NULL;
-						if(std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, v))//atmic
+					if(r->val() == NULL){
+						EValue<KEY, T>* null_ptr = NULL;
+						EValue<KEY, T> newValue(a, v);
+						if(std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, newValue))//atmic
 						{
 							suc=true;
 						}
@@ -215,7 +227,7 @@ public:
 						n++;
 					}
 				}
-			}while(!(suc || a != r.ADR()));
+			}while(!(suc || a != r->ADR()));
 			if (suc) {
 					h->occ++;
 				}
@@ -302,7 +314,7 @@ public:
 		// ----------- HEAP methods -----------
 
 		void allocate(int i, int s, int b) {
-			Hashtable* tmp = new Hashtable(s, b)
+			Hashtable* tmp = new Hashtable(s, b);
 			std::atomic_exchange(&wh->H[i], tmp);
 			if (wh->H[i] != tmp) delete tmp;
 		}
@@ -319,17 +331,18 @@ public:
 
 		void newTable() {
 			int i; // 1..2P
-			bool b, bb;int temp =0;
-			while(next[index] == 0){
+			bool b, bb;
+			int temp = 0;
+			while(wh->next[index] == NULL){
 				i = rand() % (2*wh->P) + 1;
 				
-				if(atomic_compare_exchange_strong(&prot[i] , &temp, 0)){// ATOMIC
-					busy[i] = 1;
-					int bound = wh->H[index].bound - wh->H[index].dels + 2*P + 1;
-					int size = bound + 2*P + 1;
-					allocate(i,size, bound);
-					next[i] = 0;
-					bb = atomic_compare_exchange_strong(& next[index] , &temp, 1);//atomic
+				if(std::atomic_compare_exchange_strong(&wh->prot[i] , &temp, 0)){// ATOMIC
+					wh->busy[i] = 1;
+					int bound = (wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P + 1;
+					int size = bound + 2 * wh->P + 1;
+					allocate(i, size, bound);
+					wh->next[i] = 0;
+					bb = std::atomic_compare_exchange_strong(&wh->next[index] , &temp, 1);//atomic
 					if(!bb) releaseAccess(i);
 				}
 			}
@@ -340,19 +353,19 @@ public:
 			int i; // 0..2P
 			Hashtable* h;
 			bool b;
-			i = next[index];
-			prot[i]++;
+			i = wh->next[index];
+			wh->prot[i]++;
 			if (index != wh->currInd) {
 				wh->prot[i]--;
 			}
 			else {
 				wh->busy[i]++;
 				h = wh->H[i];
-				if (index == currInd) {
-					moveContents(wh->H[index], h);
-					if (atomic_compare_exchange_strong(&wh->currInd , &index, i)) { // ATOMIC
-					wh->busy[index]--;
-					wh->prot[index]--;
+				if (index == wh->currInd) {
+						moveContents(wh->H[index], h);
+						if (std::atomic_compare_exchange_strong(&wh->currInd , &index, i)) { // ATOMIC
+						wh->busy[index]--;
+						wh->prot[index]--;
 					}
 				}
 				releaseAccess(i);
@@ -374,25 +387,27 @@ public:
 			bool b;
 			EValue<KEY,T> v;
 			int* toBeMoved;
-			toBeMoved = new int[from.size];
-			for(int j=0; j<from.size; ++j){
+			toBeMoved = new int[from->size];
+			for(int j=0; j<from->size; ++j){
 				toBeMoved[j] = j;
 			}
-			int toBeMovedSize = from.size;
-			while(currInd == index && toBeMovedSize > 0){
+			int toBeMovedSize = from->size;
+			while(wh->currInd == index && toBeMovedSize > 0){
 				i = toBeMoved[toBeMovedSize - 1];
-				EValue<KEY,T> v = from.table[i];
-				if(from.table[i].done()){
+				EValue<KEY,T> v = from->table[i];
+				if(from->table[i].load().done()){
 					toBeMovedSize--;
 				}
 				else{
-					if(atomic_compare_exchange_strong(from.table[i], &v, v.setOld())){// ATOMIC
-						if(val(v) != NULL) moveElement(val(v), to);
-						from.table[i].setDone();
+					EValue<KEY, T> tmp(v.ADR(), v.val());
+					tmp.setOld();
+					if(std::atomic_compare_exchange_strong(&from->table[i], &v, tmp)){
+
+						if(v.val() != NULL) moveElement(v.val(), to);
+						from->table[i].load().setDone();
 						toBeMovedSize--;
-					
-						}
-					}	
+					}
+				}	
 			}
 		}
 
@@ -431,7 +446,8 @@ public:
 		this->P = P;
 		this->H = new std::atomic<Hashtable*>[2 * P];
 		this->busy = new int[2 * P];
-		this->prot = new int[2 * P];
+		this->prot = new std::atomic<int>[2 * P];
+		this->next = new std::atomic<int>[2 * P];
 	};
 
 	~WfHashtable() {
@@ -441,6 +457,7 @@ public:
 		delete H;
 		delete busy;
 		delete prot;
+		delete next;
 	}
 
 	WfHashtableProcess<KEY, T>* getProcess() {
