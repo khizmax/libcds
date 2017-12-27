@@ -241,6 +241,7 @@ namespace {
     CDSSTRESS_FCDeque( queue_random )
     CDSSTRESS_RWQueue( queue_random )
     CDSSTRESS_StdQueue( queue_random )
+    CDSSTRESS_WilliamsQueue( queue_random )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \

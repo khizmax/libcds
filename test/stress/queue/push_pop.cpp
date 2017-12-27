@@ -354,6 +354,7 @@ namespace {
     CDSSTRESS_FCDeque_HeavyValue( fc_with_heavy_value )
     CDSSTRESS_RWQueue( simple_queue_push_pop )
     CDSSTRESS_StdQueue( simple_queue_push_pop )
+    CDSSTRESS_WilliamsQueue( simple_queue_push_pop )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \

@@ -1246,6 +1246,9 @@
     <ClInclude Include="..\..\..\cds\details\throw_exception.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\williams_queue.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\cds\compiler\gcc\arm8\backoff.h">
       <Filter>Header Files\cds\compiler\gcc\arm8</Filter>
     </ClInclude>

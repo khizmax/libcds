@@ -2,7 +2,7 @@ set(PACKAGE_NAME unit-queue)
 
 set(CDSGTEST_QUEUE_SOURCES
     ../main.cpp
-    basket_queue_hp.cpp
+        basket_queue_hp.cpp
     basket_queue_dhp.cpp
     fcqueue.cpp
     moirqueue_hp.cpp
@@ -16,6 +16,7 @@ set(CDSGTEST_QUEUE_SOURCES
     segmented_queue_dhp.cpp
     vyukov_mpmc_queue.cpp
     weak_ringbuffer.cpp
+    williams_queue.cpp
     intrusive_basket_queue_hp.cpp
     intrusive_basket_queue_dhp.cpp
     intrusive_fcqueue.cpp
