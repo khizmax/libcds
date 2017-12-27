@@ -381,6 +381,55 @@ namespace cds { namespace container {
             };
 
             template < class GC, typename Key, typename T, class Traits>
+            struct make_ellen_bintree_set_nogc
+            {
+                typedef GC      gc;
+                typedef Key     key_type;
+                typedef T       value_type;
+                typedef Traits  original_traits;
+
+                typedef node< gc, value_type >  leaf_node;
+
+                struct intrusive_key_extractor
+                {
+                    void operator()( key_type& dest, leaf_node const& src ) const
+                    {
+                        typename original_traits::key_extractor()( dest, src.m_Value );
+                    }
+                };
+
+                struct value_accessor
+                {
+                    value_type const& operator()( leaf_node const& node ) const
+                    {
+                        return node.m_Value;
+                    }
+                };
+
+                typedef typename cds::opt::details::make_comparator< value_type, original_traits, false >::type key_comparator;
+
+                typedef cds::details::Allocator< leaf_node, typename original_traits::allocator> cxx_leaf_node_allocator;
+                struct leaf_deallocator
+                {
+                    void operator()( leaf_node * p ) const
+                    {
+                        cxx_leaf_node_allocator().Delete( p );
+                    }
+                };
+
+                struct intrusive_traits: public original_traits
+                {
+                    typedef cds::intrusive::ellen_bintree::base_hook< cds::opt::gc< gc >> hook;
+                    typedef intrusive_key_extractor key_extractor;
+                    typedef leaf_deallocator        disposer;
+                    typedef cds::details::compare_wrapper< leaf_node, key_comparator, value_accessor > compare;
+                };
+
+                // Metafunction result
+                typedef cds::intrusive::EllenBinTreeNogc< key_type, leaf_node, intrusive_traits > type;
+            };
+
+            template < class GC, typename Key, typename T, class Traits>
             struct make_ellen_bintree_map
             {
                 typedef GC      gc;

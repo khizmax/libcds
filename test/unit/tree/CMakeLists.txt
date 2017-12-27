@@ -31,6 +31,7 @@ set(CDSGTEST_TREE_SOURCES
     intrusive_ellenbintree_rcu_gpi.cpp
     intrusive_ellenbintree_rcu_gpt.cpp
     intrusive_ellenbintree_rcu_shb.cpp
+    test_intrusive_ellen_bintree_nogc.cpp
 )
 
 include_directories(
