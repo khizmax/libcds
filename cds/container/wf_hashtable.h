@@ -19,7 +19,7 @@ class WfHashtable
 protected:
 	typedef enum { DEL, VALUE, OLDV } eType;
 
-        template <typename KEY, typename T>
+	template <typename KEY, typename T>
 	struct EValue {
 
 	private:
@@ -73,17 +73,17 @@ protected:
 			return oldp() && val() == NULL;
 		}
 	};
-template <typename KEY, typename T>
+
 	struct Hashtable {
 		int size; // size of the hashtable
 		int occ; // number of occupied positions in the table
 		int dels; // number of deleted positions
 		int bound; // the maximal number of places that can be occupied before refreshing the table
-                EValue<KEY,T>* table;
+		EValue* table;
 		
 		Hashtable(int size, int bound){
 			this->size = size;
-                        this->table = new EValue<KEY,T>[size];
+			this->table = new EValue<KEY,T>[size];
 			this->bound = bound;
 			this->occ = 0;
 			this->dels = 0;
@@ -94,15 +94,15 @@ template <typename KEY, typename T>
 	};
 
 	int P;
-        std::atomic<Hashtable<KEY,T>*>* H; // 1..2P
+	std::atomic<Hashtable*>* H; // 1..2P
 	int currInd; // 1..2P = index of the currently valid hashtable
 	int* busy; // 1..2P = number of processes that are using a hashtable
-        Hashtable<KEY,T>* next; // 1..2P = next hashtable to which the contents of hashtable H[i] is being copied
+	Hashtable* next; // 1..2P = next hashtable to which the contents of hashtable H[i] is being copied
 	int* prot; // 1..2P = is used to guard the variables busy[i], next[i] and H[i]
 			   // against being reused for a new table, before all processes have discarded these
 
 public:
-        template <typename KEY, typename T>
+	template <typename KEY, typename T>
 	class WfHashtableProcess {
 	protected:
 		WfHashtable* wh;
@@ -124,7 +124,7 @@ public:
 		T* find(int a) {
 			EValue<KEY,T> r;
 			int n, l, k;
-                        Hashtable<KEY,T>* h;
+			Hashtable* h;
 
 			h = wh->H[index];
 			n = 0;
@@ -151,7 +151,7 @@ public:
 		{
 			EValue<KEY,T> r;
 			int k, l, n;
-                        Hashtable<KEY,T> * h;
+			Hashtable* h;
 			bool suc;
 
 			h = wh->H[index];
@@ -185,10 +185,10 @@ public:
 			return suc;
 		}
 
-                bool insert(int a, EValue<KEY,T> v) {
-                        EValue<KEY,T> r;
+		bool insert(int a, T* v) {
+			EValue<KEY,T> r; 
 			int k,l,n;
-                        Hashtable<KEY,T> * h;
+			Hashtable* h;
 			bool suc;
 			h = wh->H[index];
 			if (h->occ > h->bound) {
@@ -198,15 +198,15 @@ public:
 			n=0; l=h->size; suc=false;
 			do{
 				k=key(a,l,n);
-                                std::atomic_store_explicit(&r, h->table[k]);//atomic
+				std::atomic_store_explicit(&r, h->table[k]);//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
 					n = 0; l = h->size;
 				}else {
 					if(r.val() == NULL){
-                                                Hashtable<KEY,T>* null_ptr = NULL;
-                                                if(std::atomic_compare_exchange_strong(h->table[k] , null_ptr, v))//atmic
+						Hashtable* null_ptr = NULL;
+						if(std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, v))//atmic
 						{
 							suc=true;
 						}
@@ -225,7 +225,7 @@ public:
 		void assign(int a, T* v) {
 			EValue<KEY,T> r; 
 			int k,l,n;
-                        Hashtable<KEY,T>* h;
+			Hashtable* h;
 			bool suc;
 
 			h = wh->H[index];
@@ -282,11 +282,11 @@ public:
 		}
 
 		void releaseAccess(int i) {
-                        Hashtable<KEY,T>* h;
+			Hashtable* h;
 			h = wh->H[i];
 			wh->busy[i]--;
 			if (h != NULL && wh->busy[i] == 0) {
-                                Hashtable<KEY,T>* null_ptr = NULL;
+				Hashtable* null_ptr = NULL;
 				if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
 					deAlloc(i);
 				}
@@ -302,16 +302,15 @@ public:
 		// ----------- HEAP methods -----------
 
 		void allocate(int i, int s, int b) {
-                        Hashtable<KEY,T>* tmp = new Hashtable<KEY,T>(s, b);
+			Hashtable* tmp = new Hashtable(s, b)
 			std::atomic_exchange(&wh->H[i], tmp);
 			if (wh->H[i] != tmp) delete tmp;
 		}
 
 		void deAlloc(int h) {
-                        Hashtable<KEY,T>* tmp = wh->H[h];
+			Hashtable* tmp = wh->H[h];
 			if (tmp != NULL) {
-                                Hashtable<KEY,T>* null_ptr = NULL;
-                                std::atomic_exchange(&wh->H[h], null_ptr);
+				atomic_exchange(&wh->H[h], NULL);
 				if (tmp != NULL) {
 					delete tmp;
 				}
@@ -321,11 +320,10 @@ public:
 		void newTable() {
 			int i; // 1..2P
 			bool b, bb;int temp =0;
-                        Hashtable<KEY,T> *t_next=next[index];
-                        while(t_next == 0){
+			while(next[index] == 0){
 				i = rand() % (2*wh->P) + 1;
 				
-                                if(std::atomic_compare_exchange_strong(&prot[i] , &temp, 0)){// ATOMIC
+				if(atomic_compare_exchange_strong(&prot[i] , &temp, 0)){// ATOMIC
 					busy[i] = 1;
 					int bound = wh->H[index].bound - wh->H[index].dels + 2*P + 1;
 					int size = bound + 2*P + 1;
@@ -340,7 +338,7 @@ public:
 
 		void migrate() {
 			int i; // 0..2P
-                        Hashtable<KEY,T>* h;
+			Hashtable* h;
 			bool b;
 			i = next[index];
 			prot[i]++;
@@ -371,7 +369,7 @@ public:
 			}
 		}
 
-                void moveContents(Hashtable<KEY,T>* from, Hashtable<KEY,T>* to) {
+		void moveContents(Hashtable* from, Hashtable* to) {
 			int i;
 			bool b;
 			EValue<KEY,T> v;
@@ -398,7 +396,7 @@ public:
 			}
 		}
 
-                void moveElement(T* v, Hashtable<KEY,T>* to)
+		void moveElement(T* v, Hashtable* to) 
 		{
 			int a;
 			int k, m, n;
@@ -431,7 +429,7 @@ public:
 
 	WfHashtable(int P) {
 		this->P = P;
-                this->H = new std::atomic<Hashtable<KEY,T>*>[2 * P];
+		this->H = new std::atomic<Hashtable*>[2 * P];
 		this->busy = new int[2 * P];
 		this->prot = new int[2 * P];
 	};
