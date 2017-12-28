@@ -19,7 +19,7 @@ class WfHashtable
 protected:
 	typedef enum { DEL, VALUE, OLDV } eType;
 
-	template <typename KEY, typename T>
+        template <typename KEY1, typename T1>
 	struct EValue {
 
 	private:
@@ -93,7 +93,8 @@ protected:
 		
 		Hashtable(int size, int bound){
 			this->size = size;
-			this->table = new std::atomic<EValue<KEY,T>>[size];
+                        EValue<KEY, T>* temp= new EValue<KEY,T>[size];
+                        std::atomic_init(this->table,*temp);
 			this->bound = bound;
 			this->occ = 0;
 			this->dels = 0;
@@ -112,7 +113,7 @@ protected:
 			   // against being reused for a new table, before all processes have discarded these
 
 public:
-	template <typename KEY, typename T>
+        template <typename KEY2, typename T2>
 	class WfHashtableProcess {
 	protected:
 		WfHashtable* wh;
@@ -142,7 +143,7 @@ public:
 
 			do {
 				k = key(a, l, n);
-				atomic_store_explicit(&r,  h->table[k]); // ATOMIC
+                                r=h->table[k].load(); // ATOMIC
 				if (r.done()) {
 					refresh();
 					h = wh->H[index];
@@ -171,7 +172,7 @@ public:
 
 			do {
 				k = key(a, l, n);
-				atomic_store_explicit(&r,  h->table[k]); // ATOMIC
+                                r=h->table[k].load(); // ATOMIC
 				if (r.oldp()) {
 					refresh();
 					h = wh->H[index];
@@ -179,10 +180,9 @@ public:
 					n = 0;
 				}
 				else if (a == r.ADR()) {
-					if(atomic_compare_exchange_strong(h.table[k] , &r, h->table[k].setDel()))//atmic
-						{
-							suc = true;
-						}
+                                        EValue<KEY, T> newValue(a, NULL);
+                                        newValue.setDel();
+                                        suc =std::atomic_compare_exchange_strong(&h->table[k] , &r, newValue);//atmic
 				}
 				else {
 					n++;
@@ -196,7 +196,7 @@ public:
 		}
 
 		bool insert(int a, T* v) {
-			EValue<KEY, T>* r;
+                        EValue<KEY, T> r;
 			int k,l,n;
 			Hashtable* h;
 			bool suc;
@@ -208,26 +208,23 @@ public:
 			n=0; l=h->size; suc=false;
 			do{
 				k=key(a,l,n);
-				r = &(h->table[k].load());
+                                r = h->table[k].load();
 
-				if (r->oldp()){
+                                if (r.oldp()){
 					refresh();
 					h = wh->H[index];
 					n = 0; l = h->size;
 				}else {
-					if(r->val() == NULL){
+                                        if(r.val() == NULL){
 						EValue<KEY, T>* null_ptr = NULL;
 						EValue<KEY, T> newValue(a, v);
-						if(std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, newValue))//atmic
-						{
-							suc=true;
-						}
+                                                suc=std::atomic_compare_exchange_strong(&h->table[k] , null_ptr, newValue);//atmic
 					}
 					else{
 						n++;
 					}
 				}
-			}while(!(suc || a != r->ADR()));
+                        }while(!(suc || a != r.ADR()));
 			if (suc) {
 					h->occ++;
 				}
@@ -248,17 +245,16 @@ public:
 			n=0; l=h->size; suc=false;
 			do{
 				k = key(a,l,n);
-				std::atomic_store_explicit(&r, h->table[k]);//atomic
+                                r=h->table[k].load();//atomic
 				if (r.oldp()){
 					refresh();
 					h = wh->H[index];
 					n=0; l=h->size;
 				}else {
-					if(r.val()==0 || a=r.ADR()){
-						if( atomic_compare_exchange_strong(h.table[k]->val() , &r, v))//atmic
-						{
-							suc=true;
-						}
+                                        if(r.val()==0 || a==r.ADR()){
+                                                EValue<KEY, T> newValue(a, v);
+                                                suc=std::atomic_compare_exchange_strong(&h->table[k] , &r, newValue);//atmic
+
 					}
 					else{
 						n++;
@@ -320,20 +316,15 @@ public:
 		}
 
 		void deAlloc(int h) {
-			Hashtable* tmp = wh->H[h];
-			if (tmp != NULL) {
-				atomic_exchange(&wh->H[h], NULL);
-				if (tmp != NULL) {
-					delete tmp;
-				}
-			}
+                        Hashtable* tmp=new Hashtable(0,0);
+                        std::atomic_compare_exchange_strong(&wh->H[h],&tmp,tmp);
 		}
 
 		void newTable() {
 			int i; // 1..2P
 			bool b, bb;
 			int temp = 0;
-			while(wh->next[index] == NULL){
+                        while(wh->next[index] == 0){
 				i = rand() % (2*wh->P) + 1;
 				
 				if(std::atomic_compare_exchange_strong(&wh->prot[i] , &temp, 0)){// ATOMIC
@@ -403,7 +394,7 @@ public:
 					tmp.setOld();
 					if(std::atomic_compare_exchange_strong(&from->table[i], &v, tmp)){
 
-						if(v.val() != NULL) moveElement(v.val(), to);
+                                                if(v.val() != NULL) moveElement(v.ADR(),v.val(), to);
 						from->table[i].load().setDone();
 						toBeMovedSize--;
 					}
@@ -411,29 +402,29 @@ public:
 			}
 		}
 
-		void moveElement(T* v, Hashtable* to) 
+                void moveElement(int a,T* v, Hashtable* to)
 		{
-			int a;
 			int k, m, n;
 			EValue<KEY,T> w;
 			bool b;
 
 			n = 0;
 			b = false;
-			a = v.ADR();
 			m = to->size;
-			T temp=NULL;
+                        EValue<KEY, T> temp(a,NULL);
 			do{
 				k = key(a, m, n);
 				w = to->table[k];
 				if (w.val() == NULL) {
-						b=atomic_compare_exchange_strong(to->table[k].val() , &temp, v); // ATOMIC
+                                                EValue<KEY, T> newValue(a, v);
+                                                EValue<KEY, T>* null_ptr = NULL;
+                                                b=std::atomic_compare_exchange_strong(&to->table[k] , null_ptr, newValue); // ATOMIC
 				}
 				else {
 					n++;
 				}
 
-			} while (!(b || a == w.ADR() || currInd != index));
+                        } while (!(b || a == w.ADR() || wh->currInd != index));
 			if (b) to->occ++;
 		}
 	};
