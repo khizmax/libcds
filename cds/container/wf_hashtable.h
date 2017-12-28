@@ -149,7 +149,7 @@ namespace cds {
 
 					do {
 						k = key(a, l, n);
-						r = h->table[k].load();
+						r = *h->table[k].load();
 						if (r.done()) {
 							refresh();
 							h = wh->H[index];
@@ -159,14 +159,14 @@ namespace cds {
 							n++;
 						}
 
-					} while (r.val() != 0 && a != r.ADR());
+					} while (r.val() != NULL && a != r.ADR());
 
 					return r.val();
 				}
 
 				bool del(int a)
 				{
-					EValue<KEY, T> r;
+					EValue<KEY, T>* r;
 					int k, l, n;
 					Hashtable* h;
 					bool suc;
@@ -179,22 +179,24 @@ namespace cds {
 					do {
 						k = key(a, l, n);
 						r = h->table[k].load();
-						if (r.oldp()) {
+						if (r->oldp()) {
 							refresh();
 							h = wh->H[index];
 							l = h->size;
 							n = 0;
 						}
-						else if (a == r.ADR()) {
-							EValue<KEY, T> newValue(a, NULL);
-							newValue.setDel();
+						else if (a == r->ADR()) {
+							EValue<KEY, T>* newValue = new EValue<KEY, T>(a, NULL);
+							newValue->setDel();
 							suc = std::atomic_compare_exchange_strong(&h->table[k], &r, newValue);
+							if (suc) delete r;
+							else delete newValue;
 						}
 						else {
 							n++;
 						}
 
-					} while (!(suc || r.val() == 0));
+					} while (!(suc || r->val() == NULL));
 					if (suc) {
 						h->dels++;
 					}
@@ -202,7 +204,7 @@ namespace cds {
 				}
 
 				bool insert(int a, T* v) {
-					EValue<KEY, T> r;
+					EValue<KEY, T>* r;
 					int k, l, n;
 					Hashtable* h;
 					bool suc;
@@ -214,25 +216,25 @@ namespace cds {
 					n = 0; l = h->size; suc = false;
 					do {
 						k = key(a, l, n);
-						r = *h->table[k].load();
+						r = h->table[k].load();
 
-						if (r.oldp()) {
+						if (r->oldp()) {
 							refresh();
 							h = wh->H[index];
 							n = 0; l = h->size;
 						}
 						else {
-							if (r.val() == NULL) {
-								EValue<KEY, T>* null_ptr = NULL;
+							if (r->val() == NULL) {
 								EValue<KEY, T>* newValue = new EValue<KEY, T>(a, v);
-								suc = std::atomic_compare_exchange_strong(&h->table[k], &null_ptr, newValue);
-								if (!suc) delete newValue;
+								suc = std::atomic_compare_exchange_strong(&h->table[k], &r, newValue);
+								if (suc) delete r;
+								else delete newValue;
 							}
 							else {
 								n++;
 							}
 						}
-					} while (!(suc || a != r.ADR()));
+					} while (!(suc || a != r->ADR()));
 					if (suc) {
 						h->occ++;
 					}
@@ -336,8 +338,8 @@ namespace cds {
 					int temp = 0;
 					while (wh->next[index] == 0) {
 						i = rand() % (2 * wh->P) + 1;
-
-						if (std::atomic_compare_exchange_strong(&wh->prot[i], &temp, 0)) {
+						b = std::atomic_compare_exchange_strong(&wh->prot[i], &temp, 0);
+						if (b) {
 							wh->busy[i] = 1;
 							int bound = (wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P + 1;
 							int size = bound + 2 * wh->P + 1;
@@ -353,7 +355,6 @@ namespace cds {
 				void migrate() {
 					int i; // 0..2P
 					Hashtable* h;
-					bool b;
 					i = wh->next[index];
 					wh->prot[i]++;
 					if (index != wh->currInd) {
