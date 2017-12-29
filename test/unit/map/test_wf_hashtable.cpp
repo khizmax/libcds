@@ -104,13 +104,5 @@ int main( int argc, char **argv )
 {
 	testfunc();
 	testParallel();
-    int result;
-    cds::Initialize();
-    {
-        ::testing::InitGoogleTest( &argc, argv );
-        result =  RUN_ALL_TESTS();
-    }
-    cds::Terminate();
-    return result;
 }
 #endif
