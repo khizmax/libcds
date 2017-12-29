@@ -1,3 +1,6 @@
+#ifndef CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
+#define CDSLIB_CONTAINER_EAWfPAD_HASHTABLE_H
+
 #include <cds/init.h>
 #include <cds/container/wf_hashtable.h>
 
@@ -110,3 +113,4 @@ int main( int argc, char **argv )
     cds::Terminate();
     return result;
 }
+#endif
