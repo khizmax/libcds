@@ -12,9 +12,9 @@ pthread_mutex_t myMutex[2];
 pthread_cond_t cond;
 volatile bool isAssignStarted = false;
 
-cds::container::concurrent_hopscotch_hash_set<int, int> *obj;
+cds::container::WfHashtable<int, int> *obj;
 void testfunc() {
-	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>(10)->getProcess();
+	obj = new cds::container::WfHashtable<int, int>(10)->getProcess();
 	int key1 = 0;
 	int val1 = 100;
 	int key2 = 1;
@@ -88,7 +88,7 @@ void* assging(void * arg, void * arg1) {
 }
 
 void testParallel() {
-	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>(6);
+	obj = new cds::container::WfHashtable<int, int>(6);
 	pthread_t threads[6];
 	for (int r = 0; r<2; r++) {
 		pthread_create(&threads[2*r], NULL, adding, new int (500*r),new int (500*(r+1)));
