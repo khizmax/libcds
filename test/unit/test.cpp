@@ -84,7 +84,7 @@ void* assging(void * arg, void * arg1) {
 	pthread_mutex_unlock(&myMutex[*data/500]);
 }
 
-void testParalleladddel() {
+void testParallel() {
 	obj = new cds::container::concurrent_hopscotch_hash_set<int, int>(6);
 	pthread_t threads[6];
 	for (int r = 0; r<2; r++) {
