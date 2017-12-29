@@ -130,6 +130,7 @@ namespace cds {
 									// against being reused for a new table, before all processes have discarded these
 
 			std::atomic<int> numProc; // number of processes currently using hashtable
+			std::atomic<bool> consist;
 
 		public:
 			template <typename KEY2, typename T2>
@@ -157,6 +158,7 @@ namespace cds {
 					int n, l, k;
 					Hashtable* h;
 
+					check_consistency();
 					h = wh->H[index];
 					n = 0;
 					l = h->size;
@@ -185,6 +187,7 @@ namespace cds {
 					Hashtable* h;
 					bool suc;
 
+					check_consistency();
 					h = wh->H[index];
 					suc = false;
 					l = h->size;
@@ -222,6 +225,8 @@ namespace cds {
 					int k, l, n;
 					Hashtable* h;
 					bool suc;
+
+					check_consistency();
 					h = wh->H[index];
 					if (h->occ > h->bound) {
 						newTable();
@@ -261,6 +266,7 @@ namespace cds {
 					Hashtable* h;
 					bool suc;
 
+					check_consistency();
 					h = wh->H[index];
 					if (h->occ > h->bound) {
 						newTable();
@@ -312,8 +318,7 @@ namespace cds {
 				}
 
 				void releaseAccess(int i) {
-					Hashtable* h;
-					h = wh->H[i];
+					Hashtable* h = wh->H[i];
 					wh->busy[i]--;
 					if (h != NULL && wh->busy[i] == 0) {
 						Hashtable* null_ptr = NULL;
@@ -322,6 +327,13 @@ namespace cds {
 						}
 					}
 					wh->prot[i]--;
+				}
+
+				void check_consistency() {
+					bool inconsistent = false;
+					if (std::atomic_compare_exchange_strong(&wh->consist, &inconsistent, false)) {
+						throw std::logic_error("Container is inconsistent");
+					}
 				}
 
 				// ----------- HASHING METHODS -----------
@@ -475,11 +487,13 @@ namespace cds {
 				numProc = 0;
 				currInd = 0;
 				H[currInd] = new Hashtable(size, bound);
+				consist = true;
 			}
 
 			WfHashtable(int P) : WfHashtable(P, INITIAL_BOUND + 2 * P + 1, INITIAL_BOUND) {}
 
 			~WfHashtable() {
+				std::atomic_store(&consist, false);
 				for (int i = 0; i<2 * P; ++i) {
 					delete H[i];
 				}
