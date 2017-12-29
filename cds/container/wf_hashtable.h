@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <atomic>
+#include <stdexcept>
 
 #define INITIAL_BOUND 5
 
@@ -126,6 +127,8 @@ namespace cds {
 			std::atomic<int>* prot; // 1..2P = is used to guard the variables busy[i], next[i] and H[i]
 									// against being reused for a new table, before all processes have discarded these
 
+			std::atomic<int> numProc; // number of processes currently using hashtable
+
 		public:
 			template <typename KEY2, typename T2>
 			class WfHashtableProcess {
@@ -142,6 +145,7 @@ namespace cds {
 
 				~WfHashtableProcess() {
 					releaseAccess(index);
+					wh->numProc--;
 				}
 
 				// ----------- HASHTABLE METHODS -----------
@@ -468,6 +472,7 @@ namespace cds {
 					next[i] = 0;
 				}
 
+				numProc = 0;
 				currInd = 0;
 				H[currInd] = new Hashtable(size, bound);
 			}
@@ -485,8 +490,18 @@ namespace cds {
 			}
 
 			WfHashtableProcess<KEY, T>* getProcess() {
-				WfHashtableProcess<KEY, T>* process = new WfHashtableProcess<KEY, T>(this);
-				return process;
+				while (true) {
+					int curNumProc = numProc;
+					if (numProc < P) {
+						if (std::atomic_compare_exchange_strong(&numProc, &curNumProc, curNumProc + 1)) {
+							WfHashtableProcess<KEY, T>* process = new WfHashtableProcess<KEY, T>(this);
+							return process;
+						}
+					}
+					else {
+						throw std::logic_error("Max number of processes exceeded");
+					}
+				}
 			}
 
 			int size() {
