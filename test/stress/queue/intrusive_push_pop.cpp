@@ -356,7 +356,7 @@ namespace {
 
             analyze( q, nLeftOffset, nRightOffset );
 
-            propout() << q.statistics();
+            //propout() << q.statistics();
         }
     };
 
@@ -372,6 +372,10 @@ namespace {
         } \
         queue_type::gc::force_dispose(); \
     }
+
+    CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
 
     CDSSTRESS_QUEUE_F( MSQueue_HP,       cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_ic,    cds::intrusive::msqueue::node<cds::gc::HP> )
