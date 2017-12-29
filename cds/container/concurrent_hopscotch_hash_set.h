@@ -22,7 +22,6 @@ namespace cds {
 			static const int MAX_SEGMENTS = 1048576;
 			static const int MAX_TRIES = 2;
 			KEY* BUSY;
-
 			struct Bucket {
 
 				unsigned int volatile _hop_info;
@@ -67,7 +66,7 @@ namespace cds {
 
 			int calc_hash(KEY* key) {
 				std::hash<KEY*> hash_fn;
-				return hash_fn(key);
+				return hash_fn(key) % MAX_SEGMENTS;
 			}
 
 			void resize() {
@@ -78,7 +77,6 @@ namespace cds {
 			concurrent_hopscotch_hashset() {
 				segments_arys = new Bucket[MAX_SEGMENTS + 256];
 				BUSY = (KEY*)std::malloc(sizeof(KEY));
-				*BUSY = -1;
 			}
 
 			~concurrent_hopscotch_hashset() {
@@ -86,6 +84,10 @@ namespace cds {
 			}
 
 			bool contains(KEY* key) {
+				return get(key) != NULL;
+			}
+
+			DATA* get(KEY* key) {
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				unsigned int try_counter = 0;
@@ -101,7 +103,7 @@ namespace cds {
 
 						if (temp & 1) {
 							if (*key == *(check_bucket->_key)) {
-								return true;
+								return check_bucket->_data;
 							}
 						}
 						++check_bucket;
@@ -113,12 +115,13 @@ namespace cds {
 					Bucket* check_bucket = start_bucket;
 					for (int i = 0; i<HOP_RANGE; i++) {
 						if (*key == *(check_bucket->_key))
-							return true;
+							return check_bucket->_data;
 						++check_bucket;
 					}
 				}
-				return false;
+				return NULL;
 			}
+
 			bool add(KEY *key, DATA *data) {
 				int val = 1;
 				unsigned int hash = calc_hash(key);
@@ -132,8 +135,9 @@ namespace cds {
 				Bucket* free_bucket = start_bucket;
 				int free_distance = 0;
 				for (; free_distance<ADD_RANGE; ++free_distance) {
-					//					if (NULL == free_bucket->_key && NULL == __sync_val_compare_and_swap(&(free_bucket->_key), NULL, BUSY))
-					if (NULL == free_bucket->_key)
+					std::atomic<KEY*> _atomic = free_bucket->_key;
+					KEY* _null_key = NULL;
+					if (NULL == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY))
 						break;
 					++free_bucket;
 				}
@@ -167,7 +171,7 @@ namespace cds {
 					if (mask & hop_info) {
 						Bucket* check_bucket = start_bucket + i;
 						if (*key == *(check_bucket->_key)) {
-							int* rc = check_bucket->_data;
+							DATA* rc = check_bucket->_data;
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
 							start_bucket->_hop_info &= ~(1 << i);
