@@ -6,6 +6,8 @@
 #include <stdexcept>
 
 #define INITIAL_BOUND 5
+#define RESIZE_FACTOR 1.5
+#define LOAD_FACTOR 0.75
 
 namespace cds {
 	namespace container {
@@ -316,33 +318,31 @@ namespace cds {
 					if (h != NULL && wh->busy[i] == 0) {
 						Hashtable* null_ptr = NULL;
 						if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
-							deAlloc(h);
+							delete h;
 						}
 					}
 					wh->prot[i]--;
 				}
 
-				unsigned int hash(unsigned int x) {
+				// ----------- HASHING METHODS -----------
+
+				static unsigned int hash(unsigned int x) {
 					x = ((x >> 16) ^ x) * 0x45d9f3b;
 					x = ((x >> 16) ^ x) * 0x45d9f3b;
 					x = (x >> 16) ^ x;
 					return x;
 				}
 
-				int key(int a, int l, int n) {
+				static int key(int a, int l, int n) {
 					return (hash(a) + n) % l;
 				}
 
-				// ----------- HEAP methods -----------
+				// ----------- MIGRATION METHODS -----------
 
 				void allocate(int i, int s, int b) {
 					Hashtable* tmp = new Hashtable(s, b);
 					std::atomic_exchange(&wh->H[i], tmp);
 					if (wh->H[i] != tmp) delete tmp;
-				}
-
-				void deAlloc(Hashtable* h) {
-					delete h;
 				}
 
 				void newTable() {
@@ -354,8 +354,8 @@ namespace cds {
 						b = std::atomic_compare_exchange_strong(&wh->prot[i], &tmp, 1);
 						if (b) {
 							wh->busy[i] = 1;
-							int bound = (wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P + 1;
-							int size = bound + 2 * wh->P + 1;
+							int bound = (int)(((wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P) * RESIZE_FACTOR);
+							int size = (int)((bound + 2 * wh->P) / LOAD_FACTOR);
 							allocate(i, size, bound);
 							wh->next[i] = 0;
 							bb = std::atomic_compare_exchange_strong(&wh->next[index], &tmp, i);
