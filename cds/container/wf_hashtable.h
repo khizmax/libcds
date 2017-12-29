@@ -18,7 +18,7 @@ namespace cds {
 		class WfHashtable
 		{
 		protected:
-			typedef enum { DEL, VALUE, OLDV } eType;
+			typedef enum { EMPTY, DEL, VALUE, OLDV } eType;
 
 			template <typename KEY1, typename T1>
 			struct EValue {
@@ -30,7 +30,7 @@ namespace cds {
 
 			public:
 				EValue() {
-					type = VALUE;
+					type = EMPTY;
 					address = 0;
 					value = NULL;
 				}
@@ -74,6 +74,14 @@ namespace cds {
 					else {
 						return value;
 					}
+				}
+
+				bool empty() {
+					return type == EMPTY;
+				}
+
+				bool del() {
+					return type == DEL;
 				}
 
 				bool oldp() {
@@ -123,7 +131,7 @@ namespace cds {
 			class WfHashtableProcess {
 			protected:
 				WfHashtable * wh;
-				int index; // 1..2P
+				int index; // 1..2P = index of the hashtable currently used by the process
 
 			public:
 
@@ -159,7 +167,7 @@ namespace cds {
 							n++;
 						}
 
-					} while (r.val() != NULL && a != r.ADR());
+					} while (!r.empty() && a != r.ADR());
 
 					return r.val();
 				}
@@ -185,7 +193,7 @@ namespace cds {
 							l = h->size;
 							n = 0;
 						}
-						else if (a == r->ADR()) {
+						else if (!r->empty() && r->ADR() == a) {
 							EValue<KEY, T>* newValue = new EValue<KEY, T>(a, NULL);
 							newValue->setDel();
 							suc = std::atomic_compare_exchange_strong(&h->table[k], &r, newValue);
@@ -196,7 +204,7 @@ namespace cds {
 							n++;
 						}
 
-					} while (!(suc || r->val() == NULL));
+					} while (!(suc || r->empty()));
 					if (suc) {
 						h->dels++;
 					}
@@ -224,7 +232,7 @@ namespace cds {
 							n = 0; l = h->size;
 						}
 						else {
-							if (r->val() == NULL) {
+							if (r->empty()) {
 								EValue<KEY, T>* newValue = new EValue<KEY, T>(a, v);
 								suc = std::atomic_compare_exchange_strong(&h->table[k], &r, newValue);
 								if (suc) delete r;
@@ -234,7 +242,7 @@ namespace cds {
 								n++;
 							}
 						}
-					} while (!(suc || a != r->ADR()));
+					} while (!(suc || a == r->ADR()));
 					if (suc) {
 						h->occ++;
 					}
@@ -262,7 +270,7 @@ namespace cds {
 							n = 0; l = h->size;
 						}
 						else {
-							if (r->val() == NULL || a == r->ADR()) {
+							if (r->empty() || a == r->ADR()) {
 								EValue<KEY, T>* newValue = new EValue<KEY, T>(a, v);
 								suc = std::atomic_compare_exchange_strong(&h->table[k], &r, newValue);
 								if (suc) { delete r; r = NULL; }
@@ -288,12 +296,8 @@ namespace cds {
 						wh->prot[index] ++;
 						if (index == wh->currInd) {
 							wh->busy[index]++;
-							if (index == wh->currInd) {
-								return;
-							}
-							else {
-								releaseAccess(index);
-							}
+							if (index == wh->currInd) return;
+							else releaseAccess(index);
 						}
 						else {
 							wh->prot[index]--;
@@ -308,14 +312,21 @@ namespace cds {
 					if (h != NULL && wh->busy[i] == 0) {
 						Hashtable* null_ptr = NULL;
 						if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
-							deAlloc(i);
+							deAlloc(h);
 						}
 					}
 					wh->prot[i]--;
 				}
 
+				unsigned int hash(unsigned int x) {
+					x = ((x >> 16) ^ x) * 0x45d9f3b;
+					x = ((x >> 16) ^ x) * 0x45d9f3b;
+					x = (x >> 16) ^ x;
+					return x;
+				}
+
 				int key(int a, int l, int n) {
-					return a % l;
+					return (hash(a) + n) % l;
 				}
 
 				// ----------- HEAP methods -----------
@@ -326,26 +337,24 @@ namespace cds {
 					if (wh->H[i] != tmp) delete tmp;
 				}
 
-				void deAlloc(int h) {
-					Hashtable* tmp = NULL;
-					std::atomic_compare_exchange_strong(&wh->H[h], &tmp, tmp);
-					if (tmp != NULL) delete tmp;
+				void deAlloc(Hashtable* h) {
+					delete h;
 				}
 
 				void newTable() {
-					int i; // 1..2P
+					int i;
 					bool b, bb;
-					int temp = 0;
 					while (wh->next[index] == 0) {
-						i = rand() % (2 * wh->P) + 1;
-						b = std::atomic_compare_exchange_strong(&wh->prot[i], &temp, 0);
+						i = rand() % (2 * wh->P);
+						int tmp = 0;
+						b = std::atomic_compare_exchange_strong(&wh->prot[i], &tmp, 1);
 						if (b) {
 							wh->busy[i] = 1;
 							int bound = (wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P + 1;
 							int size = bound + 2 * wh->P + 1;
 							allocate(i, size, bound);
 							wh->next[i] = 0;
-							bb = std::atomic_compare_exchange_strong(&wh->next[index], &temp, 1);
+							bb = std::atomic_compare_exchange_strong(&wh->next[index], &tmp, i);
 							if (!bb) releaseAccess(i);
 						}
 					}
@@ -353,7 +362,7 @@ namespace cds {
 				}
 
 				void migrate() {
-					int i; // 0..2P
+					int i;
 					Hashtable* h;
 					i = wh->next[index];
 					wh->prot[i]++;
@@ -386,7 +395,6 @@ namespace cds {
 
 				void moveContents(Hashtable* from, Hashtable* to) {
 					int i;
-					bool b;
 					EValue<KEY, T> v;
 					int* toBeMoved;
 					toBeMoved = new int[from->size];
@@ -479,6 +487,15 @@ namespace cds {
 			WfHashtableProcess<KEY, T>* getProcess() {
 				WfHashtableProcess<KEY, T>* process = new WfHashtableProcess<KEY, T>(this);
 				return process;
+			}
+
+			int size() {
+				int result = 0;
+				Hashtable* cur = H[currInd];
+				for (int i = 0; i<cur->size; ++i) {
+					if (!cur->table[i].load()->empty() && !cur->table[i].load()->del()) result++;
+				}
+				return result;
 			}
 
 		};
