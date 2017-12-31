@@ -29,6 +29,7 @@ my $ldflags=get_prop("ldflags");
 my $cmake_exe_ldflags=get_prop("exe-ldflags");
 my $ext_lib=get_prop("extlib");
 my $ld_lib_path=get_prop("ld-lib-path");
+my $sys_path=get_prop("path");
 my $cmake_flags=get_prop("cmake-flags");
 
 my $filename="cds-$build-$compiler-$bitness";
@@ -40,6 +41,7 @@ print $out "CDS_SOURCE=\$root/$cds_source\n";
 print $out "OBJ_ROOT=\$root/obj\n";
 print $out "BIN_ROOT=\$root/bin\n";
 print $out "GTEST_ROOT=$gtest\n" if $gtest;
+print $out "export PATH=$sys_path:\$PATH\n" if $sys_path;
 print $out "\n";
 print $out "rm -fr \$OBJ_ROOT\n";
 print $out "rm -fr \$BIN_ROOT\n";

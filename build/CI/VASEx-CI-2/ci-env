@@ -4,6 +4,8 @@
 
 #PATH=$CMAKE_2_8_12:$PATH:$HOME/.local/bin:$HOME/bin
 
+DEVTOOLSET6_BIN=/opt/rh/devtoolset-6/root/usr/bin
+
 TOOLSET_ROOT=$HOME/bin
 
 GCC48_ROOT=$TOOLSET_ROOT/gcc-4.8
