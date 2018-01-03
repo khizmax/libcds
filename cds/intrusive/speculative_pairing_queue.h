@@ -221,7 +221,7 @@ namespace cds { namespace intrusive {
                 typedef SPQueue< GC2, T2, Traits2 > other;   ///< Rebinding result
             };
 
-            static constexpr const size_t c_nHazardPtrCount = 5; ///< Count of hazard pointer required for the algorithm
+            static constexpr const size_t c_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
         protected:
             typedef typename node_type::atomic_node_ptr atomic_node_ptr;
 			static_assert((std::is_same<gc, typename node_type::gc>::value),"GC and node_type::gc must be the same");
@@ -254,7 +254,7 @@ namespace cds { namespace intrusive {
             stat               			    m_Stat          ;   ///< internal statistics accumulator
             atomic_queue_ptr			    m_Queue			;	///< Global queue
 
-            node_type* PICKET;
+            node_type* PICKET = new node_type();
             //atomic_node_ptr PICKET;
             node_type* DUMMY = nullptr;
 
@@ -281,7 +281,8 @@ namespace cds { namespace intrusive {
                         disposer()(p);
                     }
                 };
-
+				
+				
                 if (p->m_nVer != -1)
                 {
                     gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ));
@@ -292,24 +293,27 @@ namespace cds { namespace intrusive {
 
             static void dispose_queue( Queue* queue)
             {
-                struct disposer_thunk {
+				
+				struct disposer_thunk {
                     void operator()( Queue* queue ) const
                     {
-                        node_type* current_node;
-                        for (int i = 0; i < C_SIZE; i++) 
-                        {
-                            current_node = queue->m_pair[i].m_pHead;
-                            while (current_node->m_pNext != nullptr) 
-                            {
-                                dispose_node(current_node);
-                                current_node = current_node->m_pNext;
-                            }
-                        }
+
                     }
                 };
 
-
-                gc::template retire<disposer_thunk>(queue); 
+				node_type* current_node;
+				for (int i = 0; i < C_SIZE; i++) 
+				{
+					current_node = queue->m_pair[i].m_pHead;
+					while (current_node != nullptr) 
+					{
+						node_type* next_node = current_node->m_pNext;
+						dispose_node(current_node);
+						current_node = next_node;
+					}
+				}
+				
+				gc::template retire<disposer_thunk>(queue);
             }
 
 
@@ -329,6 +333,7 @@ namespace cds { namespace intrusive {
             ~SPQueue()
             {
                 clear();
+				delete PICKET;
             }
 
             /// Inserts a item into priority queue
@@ -338,7 +343,7 @@ namespace cds { namespace intrusive {
             bool enqueue( value_type& val )
             {
                 Queue* pQueue; 
-                typename gc::template GuardArray<5>  guards;
+                typename gc::template GuardArray<2>  guards;
                 int tail = 0;
                 while (true){
                     pQueue = guards.protect(0, m_Queue);
@@ -357,7 +362,7 @@ namespace cds { namespace intrusive {
                     tail = pQueue->m_Tail.load(memory_model::memory_order_relaxed);
                     int idx = tail % C_SIZE;
                     node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pLast, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
-
+					
                     if (tail == idx) {
                         if (pNode == nullptr) {
                             node_type* pNewNode = node_traits::to_node_ptr( val );
@@ -392,9 +397,8 @@ namespace cds { namespace intrusive {
                             continue;
                         }
                     }
-
-                    if (pNode == nullptr) {
-                       // pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
+					
+                    if (pNode == nullptr) {                   
                         pNode = guards.protect(1, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                     }
 
@@ -410,7 +414,7 @@ namespace cds { namespace intrusive {
                         m_Stat.onRepeatEnque();
                         continue;
                     }
-
+					
                     while (pNode->m_pNext.load(memory_model::memory_order_relaxed) != nullptr && pNode->m_nVer < tail)
                         pNode = guards.protect(1, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 
@@ -420,7 +424,7 @@ namespace cds { namespace intrusive {
                         m_Stat.onRepeatEnque();
                         continue;
                     }
-
+					
                     if (pNode != PICKET) {
                         node_type* pNewNode = node_traits::to_node_ptr(val);
 						pNewNode->m_nVer = tail;
@@ -446,8 +450,7 @@ namespace cds { namespace intrusive {
             */
             value_type* dequeue()
             {
-                typename gc::template GuardArray<5>  guards;
-//                Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
+                typename gc::template GuardArray<2>  guards;
                 Queue* pQueue = guards.protect(0, m_Queue);
                 if (pQueue->m_Invalid) {
                     m_Stat.onReturnEmpty();
@@ -455,12 +458,9 @@ namespace cds { namespace intrusive {
                 }
                  
 
-                int ticket = 
-                /*_ATOMIC_FETCH_ADD(*/
-                    pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_relaxed);
-                /*);*/
+                int ticket = pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_relaxed);
                 int idx = ticket % C_SIZE;
-
+				
                 if (ticket >= pQueue->m_Tail && ticket == idx) {//Error in article. may be must be >=
                     if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_relaxed,memory_model::memory_order_relaxed)) {
                         CloseQueue(pQueue, idx);
@@ -468,11 +468,10 @@ namespace cds { namespace intrusive {
                         return nullptr;
                     }
                 }
-
+				
                 node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pRemoved, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                 if (pNode == nullptr)
                     pNode = guards.protect(1, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
-//                    pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
 
                 if (pNode == PICKET) {
                     CloseQueue(pQueue, idx);
@@ -482,7 +481,7 @@ namespace cds { namespace intrusive {
 
                 if (pNode->m_nVer > ticket)
                     pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_relaxed);
-
+				
                 while (pNode->m_nVer < ticket) {
                     if (pNode->m_pNext.load(memory_model::memory_order_relaxed) == nullptr) {
                         if (pNode->m_pNext.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed)) {
@@ -491,7 +490,6 @@ namespace cds { namespace intrusive {
                             return nullptr;
                         }
                     }
-//                    pNode = pNode->m_pNext.load(memory_model::memory_order_relaxed);
                     pNode = guards.protect(1, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                     if (pNode == PICKET) {
                         CloseQueue(pQueue, idx);
@@ -499,9 +497,9 @@ namespace cds { namespace intrusive {
                         return nullptr;
                     }
                 }
+				
                 value_type* x = node_traits::to_value_ptr(pNode);
                 pQueue->m_pair[idx].m_pRemoved.store(pNode, memory_model::memory_order_relaxed);
-//                dispose_node(pNode);
                 --m_ItemCounter;
                 m_Stat.onDequeSuccess();
                 return x;
@@ -527,22 +525,15 @@ namespace cds { namespace intrusive {
             bool empty() const
             {
 				Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
-/*				for (int idx = 0; idx < C_SIZE; ++idx){
-					if (pQueue->m_pair[idx].m_pRemoved != pQueue->m_pair[idx].m_pLast)
-						return false;
-				}
-*/				return pQueue->m_Tail.load(memory_model::memory_order_relaxed) <=
-                        pQueue->m_Cntdeq.load(memory_model::memory_order_relaxed);
+				
+				return pQueue->m_Tail.load(memory_model::memory_order_relaxed) <=
+                       pQueue->m_Cntdeq.load(memory_model::memory_order_relaxed);
             }
 
             /// Returns current size of priority queue
             size_t size() const
             {
 				return m_ItemCounter.value();
-				/*Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
-                return (size_t) pQueue->m_Tail.load(memory_model::memory_order_relaxed) -
-                        pQueue->m_Cntdeq.load(memory_model::memory_order_relaxed);
-                */
             }
 
             /// Returns const reference to internal statistics

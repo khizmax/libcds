@@ -1,21 +1,15 @@
 /*
     This file is a part of libcds - Concurrent Data Structures library
-
     (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
-
     Source code repo: http://github.com/khizmax/libcds/
     Download: http://sourceforge.net/projects/libcds/files/
-
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-
     * Redistributions of source code must retain the above copyright notice, this
       list of conditions and the following disclaimer.
-
     * Redistributions in binary form must reproduce the above copyright notice,
       this list of conditions and the following disclaimer in the documentation
       and/or other materials provided with the distribution.
-
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -102,7 +96,7 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( q, 0 );
             
             // push/pop test
-/*  
+ 
             for ( size_t i = 0; i < nSize; ++i ) {
                 if ( i & 1 )
                     q.push( arr[i] );
@@ -124,39 +118,30 @@ namespace cds_test {
             }
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-*/
-/*
+
+			q.pop();
             Queue::gc::scan();
-            --nSize; // last element of array is in queue yet as a dummy item
             for ( size_t i = 0; i < nSize; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 1 );
+                ASSERT_EQ( arr[i].nDisposeCount, 1 ) << "i=" << i;
             }
-            ASSERT_EQ( arr[nSize].nDisposeCount, 0 );
-*/          
+          
             
-            // clear test
-/*            q.clear();
+            //clear memory test
             for ( size_t i = 0; i < nSize; ++i )
             {
                 q.push( arr[i] );
                 ASSERT_CONTAINER_SIZE( q, i + 1);
             }
-
             ASSERT_FALSE( q.empty());
             ASSERT_CONTAINER_SIZE( q, nSize);
-
             q.clear();
             ASSERT_CONTAINER_SIZE( q, 0 );
             ASSERT_TRUE( q.empty());
-*/
-/*
+
             Queue::gc::scan();
-            for ( size_t i = 0; i < nSize - 1; ++i ) {
+            for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 2 ) << "i=" << i;
             }
-            ASSERT_EQ( arr[nSize - 1].nDisposeCount, 1 ); // this element is in the queue yet
-            ASSERT_EQ( arr[nSize].nDisposeCount, 1 );
-*/
         }
     };
 
