@@ -1261,7 +1261,7 @@
     <ClInclude Include="..\..\..\cds\details\size_t_cast.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\concurrent_hopscotch_hash_set.h">
+    <ClInclude Include="..\..\..\cds\container\hopscotch_hashmap.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
   </ItemGroup>

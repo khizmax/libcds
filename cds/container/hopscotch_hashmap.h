@@ -1,12 +1,15 @@
 /*
 * concurrent_hopscotch_hash_set.h
 *
-*  Created on: 23 дек. 2017 г.
-*      Author: LEONID, ANDREY, ROMAN
+* Created on: 23.12.2017
+* Original idea by Maurice Herlihy, Nir Shavit, Moran Tzafrir: http://people.csail.mit.edu/shanir/publications/disc2008_submission_98.pdf
+* Based on implementation by Sathya Hariesh Prakash, Royston Monteiro, Mohan Pandiyan: https://github.com/harieshsathya/Hopscotch-Hashing
+* 
+* This version modifiers: Leonid Skorospelov, Andrey Chulanov, Roman Stetskevich
 */
 
-#ifndef CONCURRENTHOPSCOTCHHASHSET_H_
-#define CONCURRENTHOPSCOTCHHASHSET_H_
+#ifndef HOPSCOTCHHASHMAP_H_
+#define HOPSCOTCHHASHMAP_H_
 #include <iostream>
 #include <atomic>
 #include <mutex>
@@ -15,7 +18,7 @@
 namespace cds {
 	namespace container {
 		template<class KEY, class DATA>
-		class concurrent_hopscotch_hashset {
+		class hopscotch_hashmap {
 		private:
 			static const int HOP_RANGE = 32;
 			static const int ADD_RANGE = 256;
@@ -24,13 +27,12 @@ namespace cds {
 			KEY* BUSY;
 			struct Bucket {
 
-				unsigned int volatile _hop_info;
-				KEY* volatile _key;
-				DATA* volatile _data;
-				unsigned int volatile _lock;
-				unsigned int volatile _timestamp;
+				std::atomic<unsigned int> _hop_info;
+				std::atomic<KEY *> volatile _key;
+				std::atomic<DATA *> volatile _data;
+				std::atomic<unsigned int> _lock;
+				std::atomic<unsigned int> _timestamp;
 				std::mutex lock_mutex;
-				//				pthread_cond_t lock_cv;
 
 				Bucket() {
 					_hop_info = 0;
@@ -42,21 +44,18 @@ namespace cds {
 
 				void lock() {
 					lock_mutex.lock();
-					//					pthread_mutex_lock(&lock_mutex);
 					while (1) {
 						if (_lock == 0) {
 							_lock = 1;
 							lock_mutex.unlock();
 							break;
 						}
-						//pthread_cond_wait(&lock_cv, &lock_mutex); 
 					}
 				}
 
 				void unlock() {
 					lock_mutex.lock();
 					_lock = 0;
-					//					pthread_cond_signal(&lock_cv);
 					lock_mutex.unlock();
 				}
 
@@ -70,17 +69,18 @@ namespace cds {
 			}
 
 			void resize() {
-
+				// TODO need to find out if we need one
 			}
 
 		public:
-			concurrent_hopscotch_hashset() {
+			hopscotch_hashmap() {
 				segments_arys = new Bucket[MAX_SEGMENTS + 256];
 				BUSY = (KEY*)std::malloc(sizeof(KEY));
 			}
 
-			~concurrent_hopscotch_hashset() {
+			~hopscotch_hashmap() {
 				std::free(BUSY);
+				std::free(segments_arys);
 			}
 
 			bool contains(KEY* key) {
@@ -114,8 +114,9 @@ namespace cds {
 				if (timestamp != start_bucket->_timestamp) {
 					Bucket* check_bucket = start_bucket;
 					for (int i = 0; i<HOP_RANGE; i++) {
-						if (*key == *(check_bucket->_key))
+						if (*key == *(check_bucket->_key)) {
 							return check_bucket->_data;
+						}
 						++check_bucket;
 					}
 				}
@@ -137,8 +138,9 @@ namespace cds {
 				for (; free_distance<ADD_RANGE; ++free_distance) {
 					std::atomic<KEY*> _atomic = free_bucket->_key;
 					KEY* _null_key = NULL;
-					if (NULL == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY))
+					if (NULL == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
 						break;
+					}
 					++free_bucket;
 				}
 
@@ -159,7 +161,8 @@ namespace cds {
 				this->resize();
 
 				return false;
-			};
+			}
+
 			DATA* remove(KEY *key) {
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
@@ -183,6 +186,7 @@ namespace cds {
 				start_bucket->unlock();
 				return NULL;
 			}
+
 			void find_closer_bucket(Bucket** free_bucket, int* free_distance, int &val) {
 				Bucket* move_bucket = *free_bucket - (HOP_RANGE - 1);
 				for (int free_dist = (HOP_RANGE - 1); free_dist>0; --free_dist) {
@@ -224,4 +228,4 @@ namespace cds {
 	}
 }
 
-#endif /* CONCURRENTHOPSCOTCHHASHSET_H_ */
+#endif /* HOPSCOTCHHASHMAP_H_ */
