@@ -3,250 +3,231 @@
 #ifndef CDS_VALOIS_LIST_H
 #define CDS_VALOIS_LIST_H
 
-#include <cds/intrusive/details/base.h>
-#include <cds/gc/default_gc.h>
-#include <cds/algo/atomic.h>
+#include <cds/intrusive/details/valois_list_base.h>
+#include <cds/details/make_const_type.h>
 
-namespace cds
-{
-    namespace intrusive{
-        namespace valois_list{
+namespace cds { namespace intrusive {
+    namespace valois_list{
 
-            struct traits
-            {
-                /// Key comparison functor
-                /**
-                    No default functor is provided. If the option is not specified, the \p less is used.
-                */
-                typedef opt::none                       compare;
+        template<class CG, typename T, class Traits>
+        class ValoisList{
 
-                /// Specifies binary predicate used for key compare.
-                /**
-                    Default is \p std::less<T>
-                */
-                typedef opt::none                       less;
+        public:
+            typedef GC                                  gc;
+            typedef T                                   value_type; ///< type of value stored in the list
+            typedef Traits                              traits;     ///< Traits template parameter
+            typedef valois_list::node< value_type >     node_type;  ///< node type
 
-                /// Node allocator
-                typedef CDS_DEFAULT_ALLOCATOR           node_allocator;
+            typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
-                /// Back-off strategy
-                typedef cds::backoff::Default           back_off;
+            typedef typename traits::disposer  disposer;            ///< disposer for \p value_type
 
-                /// Disposer for removing items
-                typedef opt::v::empty_disposer          disposer;
+            typedef GC  gc;                                         ///< Garbage collector
+            typedef typename traits::back_off       back_off;       ///< back-off strategy
+            typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
+            typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
+            typedef typename traits::node_allocator node_allocator; ///< Node allocator
+            typedef typename traits::stat           stat;           ///< Internal statistics
 
+            typedef typename gc::template guarded_ptr< value_type > guarded_ptr;    ///< Guarded pointer
 
-                /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter or \p atomicity::cache_friendly_item_counter to enable item counting
-                typedef atomicity::empty_item_counter   item_counter;
+            static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4;    ///< Count of hazard pointer required for the algorithm
 
-                /// C++ memory ordering model
-                /**
-                    Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                    or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-                */
-                typedef opt::v::relaxed_ordering        memory_model;
-            };
+        protected:
+            typedef typename atomics::atomic< node_type* >  atomic_node_ptr;
+            typedef typename node_type::marked_data_ptr     marked_data_ptr;
 
-            template <typename T>
-            struct node
-            {
-                typedef T value_type; ///< Value type
-                typedef cds::details::marked_ptr<T, 1>   marked_data_ptr; ///< marked pointer to the value
+            atomic_node_ptr m_pHead;        ///< Head pointer
+            atomic_node_ptr m_pTail;        ///< Tail pointer
+            item_counter    m_ItemCounter;  ///< Item counter
 
-                atomics::atomic< node* >            next;  ///< pointer to next node in the list
-                atomics::atomic< node* >            prev;  ///< pointer to previous node in the list
-                atomics::atomic< marked_data_ptr >  data;  ///< pointer to user data, \p nullptr if the node is free
+            node_type * m_Head;
+            node_type * m_Tail;
 
-                node()
-                {
-                    next.store( nullptr, atomics::memory_order_release );
-                    data.store( marked_data_ptr(), atomics::memory_order_release );
-                }
-
-                node( value_type * pVal )
-                {
-                    next.store( nullptr, atomics::memory_order_release );
-                    data.store( marked_data_ptr( pVal ), atomics::memory_order_release );
-                }
-
-            };
-
-            template<class CG, typename T, class Traits>
-            class ValoisList{
-            public:
-
-                typedef T       value_type; ///< type of value stored in the list
-                typedef Traits  traits;     ///< Traits template parameter
-
-//                typedef typename traits::hook    hook;      ///< hook type
-                typedef valois_list::node< value_type > node_type; ///< node type
-
-                typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
-
-                typedef typename traits::disposer  disposer; ///< disposer used
-//                typedef typename traits::stat      stat;     ///< Internal statistics
-//                typedef typename get_node_traits< value_type, node_type, hook>::type node_traits ;    ///< node traits
-//                typedef typename michael_list::get_link_checker< node_type, traits::link_checker >::type link_checker;   ///< link checker
-
-                typedef GC  gc;   ///< Garbage collector
-                typedef typename traits::back_off       back_off;       ///< back-off strategy
-                typedef typename traits::item_counter   item_counter;   ///< Item counting policy used
-                typedef typename traits::memory_model   memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
-//                typedef typename traits::node_allocator node_allocator; ///< Node allocator
-
-                typedef typename gc::template guarded_ptr< value_type > guarded_ptr; ///< Guarded pointer
-
-                static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4; ///< Count of hazard pointer required for the algorithm
-
-            protected:
-//                typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;   ///< Atomic node pointer
-//                typedef typename node_type::marked_ptr          marked_node_ptr;   ///< Node marked pointer
-//
-//                atomic_node_ptr m_pHead;        ///< Head pointer
-                item_counter    m_ItemCounter;  ///< Item counter
-//
-//                node_type *head;
-//                node_type *tail;
-
-//                typedef atomics::atomic< node_type* > atomic_node_ptr;  ///< Atomic node pointer
-//                typedef atomic_node_ptr               auxiliary_head;   ///< Auxiliary head type (for split-list support)
-//                typedef typename node_type::marked_data_ptr marked_data_ptr;
-
-
-//                typedef cds::details::Allocator< node_type, node_allocator > cxx_node_allocator;
-
-                /// Position pointer for item search
-//                struct position {
-//                    node_type const*  pHead;
-//                    node_type *       pPrev;  ///< Previous node
-//                    node_type *       pCur;   ///< Current node
-//
-//                    value_type *      pFound;       ///< Value of \p pCur->data, valid only if data found
-//
-//                    typename gc::Guard guard;       ///< guard for \p pFound
-//                };
-//
-//                struct insert_position: public position
-//                {
-//                    value_type *        pPrevVal;     ///< Value of \p pPrev->data, can be \p nullptr
-//                    typename gc::Guard  prevGuard;   ///< guard for \p pPrevVal
-//                };
-
-            protected:
-                class iterator
-                {
-                    friend class ValoisList;
-                protected:
-                    node_type * consider_node;
-
-                    iterator(node_type * consider_node){
-                        if (!m_Guard.protect(consider_node->data, []( marked_data_ptr p ) {return p.ptr(); }).ptr())
-                            next();
-                    }
-
-                    void next()
-                    {
-                        for ( node_type* p = consider_node->next.load( memory_model::memory_order_relaxed ); p != m_pNode; p = p->next.load( memory_model::memory_order_relaxed ))
-                        {
-                            m_pNode = p;
-                            if ( m_Guard.protect( p->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr())
-                                return;
-                        }
-                        m_Guard.clear();
-                    }
-
-                    value_type* data() const
-                    {
-                        return m_Guard.template get<value_type>();
-                    }
-
-                };
+        protected:
+            class iterator {
+                friend class ValoisList;
 
             public:
-                ValoisList(){
-                    init_list();
-                }
+                node_type *m_pNode;        // Valois target - current real node
+                node_type *aux_pNode;      // Valois pre_aux - aux node before the real node
+                node_type *cell_pNode;     // Valois pre_cell - real node before the current real node
+                typename gc::Guard m_Guard;
 
-                ~ValoisList(){
-                    destroy();
-                }
+                bool next() {
+                    if (m_pNode->next == nullptr) {     //if tail
+                        return false;
+                    }
 
-                iterator begin(){
-                    return iterator( &head );
-                }
+                    cell_pNode->next.store(&m_pNode, memory_model::memory_order_consume);
+                    aux_pNode->next.store(m_pNode->next, memory_model::memory_order_relaxed);
 
-                iterator end(){
-                    return iterator( &tail );
-                }
-
-                bool insert( value_type &val ){
-
-                    return true;
-                }
-//TODO: template Q - key
-                bool erase(  ){
-
+                    update_iterator();
                     return true;
                 }
 
-                bool empty(){
-                    return size() == 0;
+            public:
+                typedef typename cds::details::make_const_type<value_type, IsConst>::pointer value_ptr;
+                typedef typename cds::details::make_const_type<value_type, IsConst>::reference value_ref;
+
+                iterator()
+                        : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
+
+                //TODO: implement iterator( node_type )
+
+//                iterator( node_type & node )
+//                        :m_pNode( node ), aux_pNode( node.next ), cell_pNode( ){
+//                }
+
+                void update_iterator(){
+                    if ( aux_pNode->next == target ){
+                        return;
+                    }
+                    node_type * p = aux_pNode;
+                    node_type * n = p->next;
+
+                    while( n != m_Tail && n->data == NULL ){    //while not last and is aux node
+                        cell_pNode->next.compare_exchange_strong( p, n, memory_model::memory_order_release, atomics::memory_order_relaxed );
+                        p = n;
+                        n = p->next.load( memory_order_consume );
+                    }
+
+                    aux_pNode = p;
+                    m_pNode = n;
                 }
 
-                size_t size() const{
-                    return m_ItemCounter.value();
+                value_ptr operator ->() const {
+                    return m_Guard.template get<value_type>();
                 }
 
-            protected:
-
-                node_type* head(){
-                    return head;
+                value_ref operator *() const {
+                    assert( m_Guard.get_native() != nullptr );
+                    return * m_Guard.template get<value_type>();
                 }
 
-                node_type* tail(){
-                    return tail;
+                iterator& operator ++(){
+                    iterator temp  = *this;
+                    next();
+                    return temp;
                 }
 
-            private:
-
-                void init_list(){
-                    head.next.store( &tail, memory_model::memory_order_relaxed );
-                    tail.next.store( NULL, memory_model::memory_order_release );
+                iterator& operator =( iterator & second ){
+                    m_pNode = second.m_pNode;
+                    aux_pNode = second.aux_pNode;
+                    cell_pNode = second.cell_pNode;
+                    m_Guard.copy( second.m_Guard );
+                    return * this;
                 }
 
-                void destroy(){
-                    typename gc::Guard guard;
-                    marked_node_ptr head;
-                    while ( true ) {
-                        head = m_pHead.load(memory_model::memory_order_relaxed);
-                        if ( head.ptr())
-                            guard.assign( node_traits::to_value_ptr( *head.ptr()));
-                        if ( cds_likely( m_pHead.load(memory_model::memory_order_acquire) == head )) {
-                            if ( head.ptr() == nullptr )
-                                break;
-                            value_type& val = *node_traits::to_value_ptr( *head.ptr());
-                            unlink( val );
+                bool operator ==( const iterator & second ) const {
+                    return (m_pNode->data == second.m_pNode->data );
+                }
+
+                bool operator !=( const iterator & second ) const {
+                    return (m_pNode->data != second.m_pNode->data );
+                }
+            };
+
+        public:
+            ValoisList(){
+                init_list();
+            }
+
+            ~ValoisList(){
+                destroy();
+            }
+
+//  FIX: begin(), end()
+            iterator begin() const {
+                return iterator( &m_Head );
+            }
+
+//            iterator end(){
+//                return iterator( &m_Tail );
+//            }
+
+            bool insert( iterator i, value_type & val ){
+                i.update_iterator();
+
+                node_type * real_node = new node_type(val);
+                node_type * aux_node  = new node_type();
+
+                real_node->next = aux_node;
+                aux_node->next = i.m_pNode;
+
+                bool insert_status = i.aux_pNode->next.compare_exchange_strong(i.m_pNode, real_node, memory_model::memory_order_release, memory_model::memory_order_relaxed );
+                if( insert_status ){
+                    ++m_ItemCounter;
+                }
+                return insert_status;
+            }
+
+            bool erase( iterator & i ){
+                if( i.cell_pNode != nullptr ){      //if not Head
+                    while( true ){
+                        i.update_iterator();
+                        if( delete_node( i ) ){
+                            return true;
                         }
+                        i.update_iterator();
                     }
                 }
+                return false;
+            }
 
+//            TODO: implement contains( value_type )
+//                bool contains( value_type & val ){
+//
+//                    return true;
+//                }
 
-                    node_type * alloc_node( value_type * pVal ){
-                    return cxx_node_allocator().New( pVal );
+//        TODO: implement find()
+//        TODO: make functions overloading
+
+            bool empty() const {
+                return size() == 0;
+            }
+
+            size_t size() const {
+                return m_ItemCounter.value();
+            }
+
+        private:
+
+            void init_list(){
+                m_Head->next.store( new node_type<value_type>(), memory_model::memory_order_relaxed );  //link to aux node
+                m_Head->next->next.store( &m_Tail, memory_model::memory_order_relaxed );
+                m_Tail->next.store( nullptr, memory_model::memory_order_release );
+            }
+
+            void destroy(){
+
+                node_type * pNode = m_Head.next.load( memory_model::memory_order_relaxed );
+
+                while ( pNode != pNode->next.load( memory_model::memory_order_relaxed )) {
+                    value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
+                    if ( pVal )
+                        node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
+                        erase( pNode );
+                    pNode = pNext;
+                }
+            }
+
+            bool delete_node( iterator i ){
+
+                node_type * for_delete = i.m_pNode;
+                node_type * adjacent = i.m_pNode->next;
+
+                bool delete_status = i.aux_pNode->next.compare_exchange_strong( for_delete, adjacent, memory_order_relaxed, memory_order_release );
+
+                if ( delete_status ){
+                    --m_ItemCounter;
                 }
 
-                void delete_node( node_type * consider_node ){
-                    cxx_node_allocator().Delete( consider_node );
-                }
-
-                void retire_data( value_type * pVal ){
-                    assert( pVal != nullptr );
-                    gc::template retire<disposer>( pVal );
-                }
-
-            };
-        }
+                return delete_status;
+            }
+        };
     }
-}
+}}
 
 #endif //CDS_VALOIS_LIST_H
