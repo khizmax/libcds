@@ -223,12 +223,11 @@ namespace cds {
 				bool insert(int a, T* v) {
 					EValue<KEY, T>* r;
 					int k, l, n;
-					Hashtable* h;
+                    Hashtable* h=0;
 					bool suc;
-
 					check_consistency();
-					h = wh->H[index];
-					if (h->occ > h->bound) {
+                    h = wh->H[index];
+                    if (h->occ > h->bound) {
 						newTable();
 						h = wh->H[index];
 					}
@@ -319,8 +318,10 @@ namespace cds {
 
 				void releaseAccess(int i) {
 					Hashtable* h = wh->H[i];
-					wh->busy[i]--;
-					if (h != NULL && wh->busy[i] == 0) {
+                    int temp=wh->busy[i].load();
+                    temp--;
+                    wh->busy[i]--;
+                    if (h != NULL && temp == 0) {
 						Hashtable* null_ptr = NULL;
 						if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
 							delete h;
@@ -359,14 +360,14 @@ namespace cds {
 
 				void newTable() {
 					int i;
-					bool b, bb;
+                    bool b, bb;
 					while (wh->next[index] == 0) {
 						i = rand() % (2 * wh->P);
-						int tmp = 0;
+                        int tmp = 0;
 						b = std::atomic_compare_exchange_strong(&wh->prot[i], &tmp, 1);
 						if (b) {
 							wh->busy[i] = 1;
-							int bound = (int)(((wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P) * RESIZE_FACTOR);
+                            int bound = (int)(((wh->H[index].load())->bound - (wh->H[index].load())->dels + 2 * wh->P) * RESIZE_FACTOR);
 							int size = (int)((bound + 2 * wh->P) / LOAD_FACTOR);
 							allocate(i, size, bound);
 							wh->next[i] = 0;
@@ -379,7 +380,7 @@ namespace cds {
 
 				void migrate() {
 					int i;
-					Hashtable* h;
+                    Hashtable* h;
 					i = wh->next[index];
 					wh->prot[i]++;
 					if (index != wh->currInd) {
@@ -390,7 +391,8 @@ namespace cds {
 						h = wh->H[i];
 						if (index == wh->currInd) {
 							moveContents(wh->H[index], h);
-							if (std::atomic_compare_exchange_strong(&wh->currInd, &index, i)) {
+                            int temp=index;
+                            if (std::atomic_compare_exchange_strong(&wh->currInd, &temp, i)) {
 								wh->busy[index]--;
 								wh->prot[index]--;
 							}
@@ -490,7 +492,7 @@ namespace cds {
 				consist = true;
 			}
 
-			WfHashtable(int P) : WfHashtable(P, INITIAL_BOUND + 2 * P + 1, INITIAL_BOUND) {}
+            WfHashtable(int P) : WfHashtable(2*P, INITIAL_BOUND + 2 * P + 1, INITIAL_BOUND) {}
 
 			~WfHashtable() {
 				std::atomic_store(&consist, false);
