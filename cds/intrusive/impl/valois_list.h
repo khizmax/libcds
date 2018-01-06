@@ -1,4 +1,4 @@
-//
+//TODO: maybe add DOXYGEN docs
 
 #ifndef CDS_VALOIS_LIST_H
 #define CDS_VALOIS_LIST_H
@@ -12,7 +12,7 @@ namespace cds { namespace intrusive {
     class ValoisList{
 
     public:
-        typedef GC  gc;                                         ///< Garbage collector
+        typedef GC                                  gc;         ///< Garbage collector
         typedef T                                   value_type; ///< type of value stored in the list
         typedef Traits                              traits;     ///< Traits template parameter
         typedef valois_list::node< value_type >     node_type;  ///< node type
@@ -42,6 +42,7 @@ namespace cds { namespace intrusive {
         node_type * m_Tail;
 
     protected:
+        //template <bool IsConst>
         class iterator {
             friend class ValoisList;
 
@@ -64,17 +65,17 @@ namespace cds { namespace intrusive {
             }
 
         public:
-            typedef typename cds::details::make_const_type<value_type, IsConst>::pointer value_ptr;
-            typedef typename cds::details::make_const_type<value_type, IsConst>::reference value_ref;
+            typedef typename cds::details::make_const_type<value_type, false>::pointer value_ptr;
+            typedef typename cds::details::make_const_type<value_type, false>::reference value_ref;
 
             iterator()
                     : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
 
             //TODO: implement iterator( node_type )
 
-//                iterator( node_type & node )
-//                        :m_pNode( node ), aux_pNode( node.next ), cell_pNode( ){
-//                }
+            //iterator( node_type & node )
+            //        :m_pNode( node ), aux_pNode( node.next ), cell_pNode( ){
+            //}
 
             void update_iterator(){
                 if ( aux_pNode->next == m_pNode ){
@@ -134,14 +135,14 @@ namespace cds { namespace intrusive {
             destroy();
         }
 
-//  FIX: begin(), end()
-        iterator begin() const {
-            return iterator( &m_Head );
-        }
-
-//            iterator end(){
-//                return iterator( &m_Tail );
-//            }
+        //FIX: begin(), end()
+        //iterator begin() const {
+        //    return iterator( &m_Head );
+        //}
+        //
+        //iterator end(){
+        //    return iterator( &m_Tail );
+        //}
 
         bool insert( iterator i, value_type & val ){
             i.update_iterator();
@@ -172,14 +173,15 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-//            TODO: implement contains( value_type )
-//                bool contains( value_type & val ){
-//
-//                    return true;
-//                }
+        //TODO: implement contains( value_type )
+        //    bool contains( value_type & val ){
+        //
+        //        return true;
+        //    }
 
-//        TODO: implement find()
-//        TODO: make functions overloading
+        //TODO: implement find()
+        //TODO: after find() make list realy ordered
+        //TODO: make functions overloading
 
         bool empty() const {
             return size() == 0;
@@ -192,7 +194,7 @@ namespace cds { namespace intrusive {
     private:
 
         void init_list(){
-            m_Head->next.store( new node_type<value_type>(), memory_model::memory_order_relaxed );  //link to aux node
+            m_Head->next.store( new node_type(), memory_model::memory_order_relaxed );  //link to aux node
             m_Head->next->next.store( &m_Tail, memory_model::memory_order_relaxed );
             m_Tail->next.store( nullptr, memory_model::memory_order_release );
         }
@@ -204,8 +206,8 @@ namespace cds { namespace intrusive {
             while ( pNode != pNode->next.load( memory_model::memory_order_relaxed )) {
                 value_type * pVal = pNode->data.load( memory_model::memory_order_relaxed ).ptr();
                 if ( pVal )
-                    node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
                     erase( pNode );
+                node_type * pNext = pNode->next.load( memory_model::memory_order_relaxed );
                 pNode = pNext;
             }
         }
