@@ -492,7 +492,7 @@ namespace cds {
 				consist = true;
 			}
 
-            WfHashtable(int P) : WfHashtable(2*P, INITIAL_BOUND + 2 * P + 1, INITIAL_BOUND) {}
+            WfHashtable(int P) : WfHashtable(P, INITIAL_BOUND + 2 * P + 1, INITIAL_BOUND) {}
 
 			~WfHashtable() {
 				std::atomic_store(&consist, false);
