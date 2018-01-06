@@ -6,11 +6,15 @@
 #include <cds/intrusive/details/valois_list_base.h>
 #include <cds/details/make_const_type.h>
 
+//CRITICAL: cheak all functions use safe read/write
+//CRITICAL: cheak nullptr/NULL values for aux, Head, Tail nodes
+
 namespace cds { namespace intrusive {
 
-    template<class GC, typename T, class Traits>
+        template<class GC, typename T, class Traits>
     class ValoisList{
 
+        friend class iterator;
     public:
         typedef GC                                  gc;         ///< Garbage collector
         typedef T                                   value_type; ///< type of value stored in the list
@@ -46,22 +50,27 @@ namespace cds { namespace intrusive {
         class iterator {
             friend class ValoisList;
 
-        public:
-            node_type *m_pNode;        // Valois target - current real node
-            node_type *aux_pNode;      // Valois pre_aux - aux node before the real node
-            node_type *cell_pNode;     // Valois pre_cell - real node before the current real node
+        protected:
+            node_type *m_pNode;         // Valois target - current real node
+            node_type *aux_pNode;       // Valois pre_aux - aux node before the real node
+            node_type *cell_pNode;      // Valois pre_cell - real node before the current real node
             typename gc::Guard m_Guard;
 
             bool next() {
-                if (m_pNode->next == nullptr) {     //if tail
+                if ( m_pNode->next == nullptr ) {     // if tail
                     return false;
                 }
 
-                cell_pNode->next.store(&m_pNode, memory_model::memory_order_consume);
-                aux_pNode->next.store(m_pNode->next, memory_model::memory_order_relaxed);
-
+                cell_pNode->next.store( &m_pNode, memory_model::memory_order_consume );
+                aux_pNode->next.store( m_pNode->next, memory_model::memory_order_consume );
                 update_iterator();
                 return true;
+            }
+
+            iterator begin(){
+                m_pNode->next.store( NULL, memory_model::memory_order_consume );
+                aux_pNode->next.store( m_Head->next.load( memory_model::memory_order_seq_cst ), memory_model::memory_order_consume );
+                cell_pNode->next.store( m_pHead.load( memory_model::memory_order_seq_cst ), memory_model::memory_order_comsume );
             }
 
         public:
@@ -71,18 +80,12 @@ namespace cds { namespace intrusive {
             iterator()
                     : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
 
-            //TODO: implement iterator( node_type )
-
-            //iterator( node_type & node )
-            //        :m_pNode( node ), aux_pNode( node.next ), cell_pNode( ){
-            //}
-
             void update_iterator(){
                 if ( aux_pNode->next == m_pNode ){
                     return;
                 }
                 node_type * p = aux_pNode;
-                node_type * n = p->next;
+                node_type * n = p->next.load( atomics::memory_order_consume );
 
                 while( n != m_Tail && n->data == NULL ){    //while not last and is aux node
                     cell_pNode->next.compare_exchange_strong( p, n, memory_model::memory_order_release, atomics::memory_order_relaxed );
@@ -135,14 +138,11 @@ namespace cds { namespace intrusive {
             destroy();
         }
 
-        //FIX: begin(), end()
-        //iterator begin() const {
-        //    return iterator( &m_Head );
-        //}
-        //
-        //iterator end(){
-        //    return iterator( &m_Tail );
-        //}
+        iterator begin(){
+            return iterator().begin();
+        }
+
+        //TODO: implement insert( value_type & val ), which will make sorted insert
 
         bool insert( iterator i, value_type & val ){
             i.update_iterator();
@@ -161,7 +161,7 @@ namespace cds { namespace intrusive {
         }
 
         bool erase( iterator & i ){
-            if( i.cell_pNode != nullptr ){      //if not Head
+            if( i.cell_pNode != nullptr ){      // if not Head
                 while( true ){
                     i.update_iterator();
                     if( delete_node( i ) ){
@@ -173,15 +173,27 @@ namespace cds { namespace intrusive {
             return false;
         }
 
-        //TODO: implement contains( value_type )
-        //    bool contains( value_type & val ){
-        //
-        //        return true;
-        //    }
+        bool contains( value_type & val ){
+            return find( iterator().begin(), val );
+        }
 
-        //TODO: implement find()
-        //TODO: after find() make list realy ordered
-        //TODO: make functions overloading
+        bool find( iterator * i, value_type & val ) {
+            while ( i->m_pNode != nullptr ){
+                //FIX: safe read
+                if ( i->m_pNode.data == val ){
+                    return true;
+                }
+                else if ( i->m_pNode.data > val ){
+                    return false;
+                }
+                else{
+                    i->next();
+                }
+            }
+            return false;
+        }
+
+        //TODO: implement get_iterator( val )
 
         bool empty() const {
             return size() == 0;
@@ -195,8 +207,8 @@ namespace cds { namespace intrusive {
 
         void init_list(){
             m_Head->next.store( new node_type(), memory_model::memory_order_relaxed );  //link to aux node
-            m_Head->next->next.store( &m_Tail, memory_model::memory_order_relaxed );
-            m_Tail->next.store( nullptr, memory_model::memory_order_release );
+            m_Head->next->next.store( &m_Tail, memory_model::memory_order_relaxed );    //link aux node to tail
+            m_Tail->next.store( nullptr, memory_model::memory_order_release );          //link tail to nullptr
         }
 
         void destroy(){
