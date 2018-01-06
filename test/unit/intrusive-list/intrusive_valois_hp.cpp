@@ -28,12 +28,42 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_intrusive_iterable_list_hp.h"
-#include <cds/intrusive/iterable_list_hp.h>
+#include "test_intrusive_list_hp.h"
+#include <cds/intrusive/valois_list_hp.h>
 
 namespace {
     namespace ci = cds::intrusive;
     typedef cds::gc::HP gc_type;
 
+    class IntrusiveValoisList_HP : public cds_test::intrusive_list_hp
+    {
+    public:
+        typedef cds_test::intrusive_list_hp::base_item< ci::valois_list::node< gc_type>> base_item;
+        typedef cds_test::intrusive_list_hp::member_item< ci::valois_list::node< gc_type>> member_item;
+
+    protected:
+        void SetUp()
+        {
+            /*
+            struct traits: public ci::michael_list::traits
+            {
+                typedef ci::michael_list::base_hook< cds::opt::gc< gc_type >> hook;
+            };
+            typedef ci::MichaelList< gc_type, base_item, traits > list_type;
+
+            // +1 - for guarded_ptr
+            cds::gc::hp::GarbageCollector::Construct( list_type::c_nHazardPtrCount + 1, 1, 16 );
+            cds::threading::Manager::attachThread();
+            */
+        }
+
+        void TearDown()
+        {
+            /*
+            cds::threading::Manager::detachThread();
+            cds::gc::hp::GarbageCollector::Destruct( true );
+             */
+        }
+    };
 
 } // namespace
