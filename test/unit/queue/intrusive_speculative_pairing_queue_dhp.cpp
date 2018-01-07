@@ -22,7 +22,7 @@
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "test_intrusive_speculative_queue.h"
+#include "test_intrusive_speculative_pairing_queue.h"
 
 #include <cds/gc/dhp.h>
 #include <cds/intrusive/speculative_pairing_queue.h>
@@ -43,7 +43,7 @@ namespace {
 
         void SetUp()
         {
-            typedef ci::MSQueue< gc_type, base_item_type,
+            typedef ci::SPQueue< gc_type, base_item_type,
                 typename ci::speculative_pairing_queue::make_traits<
                     ci::opt::hook< ci::speculative_pairing_queue::base_hook< ci::opt::gc<gc_type>>>
                 >::type
@@ -62,16 +62,15 @@ namespace {
         template <typename V>
         void check_array( V& arr )
         {
-            for ( size_t i = 0; i < arr.size() - 1; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 2 );
+            for ( size_t i = 0; i < arr.size(); ++i ) {
+                ASSERT_EQ( arr[i].nDisposeCount, 3 );
             }
-            ASSERT_EQ( arr.back().nDisposeCount, 1 );
         }
     };
 
-    TEST_F( IntrusiveMSQueue_DHP, base_hook )
+    TEST_F( IntrusiveSPQueue_DHP, base_hook )
     {
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type,
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type,
             typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
                 ,ci::opt::hook< ci::speculative_pairing_queue::base_hook< ci::opt::gc<gc_type>>>
@@ -88,9 +87,9 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_DHP, base_item_counting )
+    TEST_F( IntrusiveSPQueue_DHP, base_item_counting )
     {
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type,
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type,
             typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
                 , cds::opt::item_counter< cds::atomicity::item_counter >
@@ -108,7 +107,7 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_DHP, base_stat )
+    TEST_F( IntrusiveSPQueue_DHP, base_stat )
     {
         struct traits : public ci::speculative_pairing_queue::traits
         {
@@ -118,7 +117,7 @@ namespace {
             typedef ci::speculative_pairing_queue::stat<> stat;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cds::intrusive::MSQueue< gc_type, base_item_type, traits > test_queue;
+        typedef cds::intrusive::SPQueue< gc_type, base_item_type, traits > test_queue;
 
         std::vector<base_item_type> arr;
         arr.resize(100);
@@ -130,9 +129,9 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_DHP, member_hook )
+    TEST_F( IntrusiveSPQueue_DHP, member_hook )
     {
-        typedef cds::intrusive::MSQueue< gc_type, member_item_type,
+        typedef cds::intrusive::SPQueue< gc_type, member_item_type,
             typename ci::speculative_pairing_queue::make_traits<
                 ci::opt::disposer< mock_disposer >
                 ,ci::opt::hook< ci::speculative_pairing_queue::member_hook<
@@ -152,7 +151,7 @@ namespace {
         check_array( arr );
     }
 
-    TEST_F( IntrusiveMSQueue_DHP, member_hook_stat )
+    TEST_F( IntrusiveSPQueue_DHP, member_hook_stat )
     {
         struct traits : public ci::speculative_pairing_queue::traits
         {
@@ -165,7 +164,7 @@ namespace {
             typedef ci::speculative_pairing_queue::stat<> stat;
             typedef cds::opt::v::sequential_consistent memory_model;
         };
-        typedef cds::intrusive::MSQueue< gc_type, member_item_type, traits > test_queue;
+        typedef cds::intrusive::SPQueue< gc_type, member_item_type, traits > test_queue;
 
         std::vector<member_item_type> arr;
         arr.resize( 100 );

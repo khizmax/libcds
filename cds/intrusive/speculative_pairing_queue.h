@@ -57,15 +57,15 @@ namespace cds { namespace intrusive {
             /// MSPriorityQueue statistics
             template <typename Counter = cds::atomicity::event_counter>
             struct stat {
-                typedef Counter   event_counter ; ///< Event counter type
+                typedef Counter   counter_type ; ///< Event counter type
 
-                event_counter   m_nEnqueCount;           ///< Count of success enque operation
-                event_counter   m_nQueueCreatingCount;   ///< Count of ccd reating Queue on enque
-                event_counter   m_nRepeatEnqueCount;	 ///< Count of repeat iteration
+                counter_type   m_nEnqueCount;           ///< Count of success enque operation
+                counter_type   m_nQueueCreatingCount;   ///< Count of ccd reating Queue on enque
+                counter_type   m_nRepeatEnqueCount;	 ///< Count of repeat iteration
 
-                event_counter   m_nDequeCount;           ///< Count of success deque operation
-                event_counter	m_nReturnEmptyInvalid;   ///< Count of EMPTY returning because of invalid queue
-                event_counter   m_nClosingQueue;		 ///< Count of closing queue(made it invalid)
+                counter_type   m_nDequeCount;           ///< Count of success deque operation
+                counter_type	m_nReturnEmptyInvalid;   ///< Count of EMPTY returning because of invalid queue
+                counter_type   m_nClosingQueue;		 ///< Count of closing queue(made it invalid)
 
                 //@cond
                 void onEnqueSuccess()           { ++m_nEnqueCount           ;}
