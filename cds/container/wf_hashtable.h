@@ -318,10 +318,8 @@ namespace cds {
 
 				void releaseAccess(int i) {
 					Hashtable* h = wh->H[i];
-                    int temp=wh->busy[i].load();
-                    temp--;
                     wh->busy[i]--;
-                    if (h != NULL && temp == 0) {
+                    if (h != NULL && wh->busy[i] == 0) {
 						Hashtable* null_ptr = NULL;
 						if (std::atomic_compare_exchange_strong(&wh->H[i], &h, null_ptr)) {
 							delete h;
@@ -526,7 +524,7 @@ namespace cds {
 				for (int i = 0; i<cur->size; ++i) {
 					if (!cur->table[i].load()->empty() && !cur->table[i].load()->del()) result++;
 				}
-				return result;
+                return result;
 			}
 
 		};
