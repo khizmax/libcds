@@ -31,6 +31,8 @@
 #include <cds/opt/compare.h>
 #include <cds/algo/atomic.h>
 #include <cds/intrusive/details/sp_queue_base.h>
+#include <random>
+#include <list>
 
 namespace cds { namespace intrusive {
 
@@ -221,7 +223,7 @@ namespace cds { namespace intrusive {
                 typedef SPQueue< GC2, T2, Traits2 > other;   ///< Rebinding result
             };
 
-            static constexpr const size_t c_nHazardPtrCount = 2; ///< Count of hazard pointer required for the algorithm
+            static constexpr const size_t c_nHazardPtrCount = 5; ///< Count of hazard pointer required for the algorithm
         protected:
             typedef typename node_type::atomic_node_ptr atomic_node_ptr;
 			static_assert((std::is_same<gc, typename node_type::gc>::value),"GC and node_type::gc must be the same");
@@ -236,7 +238,7 @@ namespace cds { namespace intrusive {
             } Slot;
             //@endcond
             const static size_t C_SIZE   = 10; ///< size
-					
+			int probStale = 50; //< propability of dispose stale nodes
             //@cond
             /// Queue type
             typedef struct QueueType {
@@ -255,24 +257,17 @@ namespace cds { namespace intrusive {
             atomic_queue_ptr			    m_Queue			;	///< Global queue
 
             node_type* PICKET = new node_type();
-            //atomic_node_ptr PICKET;
             node_type* DUMMY = nullptr;
 
             
             static void clear_links( node_type * pNode )
             {
                 pNode->m_pNext.store( nullptr, memory_model::memory_order_release );
+				pNode->m_removed = false;
             }
 
             static void dispose_node( node_type * p )
             {
-                // Note about the dummy node:
-                // We cannot clear m_Dummy here since it leads to ABA.
-                // On the other hand, we cannot use deferred clear_links( &m_Dummy ) call via
-                // HP retiring cycle since m_Dummy is member of MSQueue and may be destroyed
-                // before HP retiring cycle invocation.
-                // So, we will never clear m_Dummy
-
                 struct disposer_thunk {
                     void operator()( value_type * p ) const
                     {
@@ -282,13 +277,13 @@ namespace cds { namespace intrusive {
                     }
                 };
 				
-				
+				//retire all except PICKET
                 if (p->m_nVer != -1)
                 {
+					//EXPECT_TRUE(false) << "Dis node " << node_traits::to_value_ptr(p)->nVal;
                     gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ));
                 }
             }
-            //@endcond
 
 
             static void dispose_queue( Queue* queue)
@@ -297,14 +292,16 @@ namespace cds { namespace intrusive {
 				struct disposer_thunk {
                     void operator()( Queue* queue ) const
                     {
-
+						assert(queue != nullptr);
+						//there must be queue disposer, buuuuuut...
                     }
                 };
-
+				
+				//retire all nodes in queue
 				node_type* current_node;
 				for (int i = 0; i < C_SIZE; i++) 
 				{
-					current_node = queue->m_pair[i].m_pHead;
+					current_node = queue->m_pair[i].m_pHead;	
 					while (current_node != nullptr) 
 					{
 						node_type* next_node = current_node->m_pNext;
@@ -312,15 +309,58 @@ namespace cds { namespace intrusive {
 						current_node = next_node;
 					}
 				}
-				
+									
+				//retire queue
 				gc::template retire<disposer_thunk>(queue);
             }
-
-
+			
+			void dispose_stale_nodes( Slot &slot){
+				std::random_device rd;
+				std::mt19937 rng(rd());
+				std::uniform_int_distribution<int> uni(0,99);
+				
+				int random_int = uni(rng);
+				if (random_int < probStale)
+				{
+					typename std::list<node_type*> stale_nodes;
+					node_type* head = slot.m_pHead;
+					node_type* curr = head;
+					//EXPECT_TRUE(false) << "head" << node_traits::to_value_ptr(head->m_pNext)->nVal;
+					
+					while (curr != nullptr && curr->m_nVer != -1 && curr->m_removed){
+						stale_nodes.push_back(curr);
+						curr = curr->m_pNext;
+					}	
+					
+					if (stale_nodes.size() > 0)
+					{
+						node_type* last = stale_nodes.back();
+						if (slot.m_pHead.compare_exchange_strong(head, 
+																 last, 
+																 memory_model::memory_order_relaxed, 
+																 memory_model::memory_order_relaxed)){
+							stale_nodes.pop_back();
+							
+							for (typename std::list<node_type*>::iterator it = stale_nodes.begin(); it != stale_nodes.end(); it++){
+								//EXPECT_TRUE(false) << "Dis stale" << node_traits::to_value_ptr(*it)->nVal;
+								dispose_node(*it);
+							}
+						}
+					}
+					
+				}
+			}
+			
+			
         public:
             /// Constructs empty speculative pairing queue
             /**
             */
+			void changeProbStale(int prob)
+			{
+				probStale = prob;
+			}
+			
             SPQueue()
             {
                 m_Queue.store(new Queue, memory_model::memory_order_relaxed);
@@ -332,7 +372,7 @@ namespace cds { namespace intrusive {
             /// Clears priority queue and destructs the object
             ~SPQueue()
             {
-                clear();
+                //clear();
 				delete PICKET;
             }
 
@@ -343,7 +383,7 @@ namespace cds { namespace intrusive {
             bool enqueue( value_type& val )
             {
                 Queue* pQueue; 
-                typename gc::template GuardArray<2>  guards;
+                typename gc::template GuardArray<5>  guards;
                 int tail = 0;
                 while (true){
                     pQueue = guards.protect(0, m_Queue);
@@ -351,7 +391,8 @@ namespace cds { namespace intrusive {
                     if (pQueue->m_Invalid) {
                         Queue* pNewQueue = createNewQueue(val);
                         if (m_Queue.compare_exchange_strong(pQueue, pNewQueue, memory_model::memory_order_relaxed,memory_model::memory_order_relaxed)) {
-                            m_Stat.onQueueCreate();
+                            //EXPECT_TRUE(false) << "Create new queue" << val.nVal;
+						    m_Stat.onQueueCreate();
                             ++m_ItemCounter;
                             return true;
                         }
@@ -361,6 +402,11 @@ namespace cds { namespace intrusive {
 					
                     tail = pQueue->m_Tail.load(memory_model::memory_order_relaxed);
                     int idx = tail % C_SIZE;
+					
+					guards.protect(2, pQueue->m_pair[idx].m_pLast);
+					guards.protect(3, pQueue->m_pair[idx].m_pRemoved);
+					guards.protect(4, pQueue->m_pair[idx].m_pHead);
+					
                     node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pLast, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 					
                     if (tail == idx) {
@@ -450,7 +496,7 @@ namespace cds { namespace intrusive {
             */
             value_type* dequeue()
             {
-                typename gc::template GuardArray<2>  guards;
+                typename gc::template GuardArray<5>  guards;
                 Queue* pQueue = guards.protect(0, m_Queue);
                 if (pQueue->m_Invalid) {
                     m_Stat.onReturnEmpty();
@@ -460,6 +506,11 @@ namespace cds { namespace intrusive {
 
                 int ticket = pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_relaxed);
                 int idx = ticket % C_SIZE;
+				guards.protect(2, pQueue->m_pair[idx].m_pLast);
+				guards.protect(3, pQueue->m_pair[idx].m_pRemoved);
+				guards.protect(4, pQueue->m_pair[idx].m_pHead);
+				
+				dispose_stale_nodes(pQueue->m_pair[idx]);
 				
                 if (ticket >= pQueue->m_Tail && ticket == idx) {//Error in article. may be must be >=
                     if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_relaxed,memory_model::memory_order_relaxed)) {
@@ -472,7 +523,7 @@ namespace cds { namespace intrusive {
                 node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pRemoved, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                 if (pNode == nullptr)
                     pNode = guards.protect(1, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
-
+				
                 if (pNode == PICKET) {
                     CloseQueue(pQueue, idx);
                     m_Stat.onCloseQueue();
@@ -500,6 +551,7 @@ namespace cds { namespace intrusive {
 				
                 value_type* x = node_traits::to_value_ptr(pNode);
                 pQueue->m_pair[idx].m_pRemoved.store(pNode, memory_model::memory_order_relaxed);
+				pNode->m_removed = true;
                 --m_ItemCounter;
                 m_Stat.onDequeSuccess();
                 return x;
@@ -553,6 +605,7 @@ namespace cds { namespace intrusive {
 				pNewNode->m_nVer = 0;
                 pNewQueue->m_pair[0].m_pHead.store(pNewNode, memory_model::memory_order_relaxed);
                 pNewQueue->m_pair[0].m_pLast.store(pNewNode, memory_model::memory_order_relaxed);
+
                 return pNewQueue;
             }
 

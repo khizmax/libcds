@@ -84,7 +84,8 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i )
                 arr[i].nVal = static_cast<int>(i);
 
-
+			q.changeProbStale(0);
+			
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
@@ -96,7 +97,7 @@ namespace cds_test {
             ASSERT_CONTAINER_SIZE( q, 0 );
             
             // push/pop test
- 
+			//------------------------------------
             for ( size_t i = 0; i < nSize; ++i ) {
                 if ( i & 1 )
                     q.push( arr[i] );
@@ -119,28 +120,75 @@ namespace cds_test {
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 
+			//make invalid and dispose queue
 			q.pop();
             Queue::gc::scan();
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 1 ) << "i=" << i;
             }
-          
+            //------------------------------------
+			//end push/pop test
             
-            //clear memory test
-            for ( size_t i = 0; i < nSize; ++i )
+            //clear test
+			//------------------------------------
+			for ( size_t i = 0; i < nSize; ++i )
             {
                 q.push( arr[i] );
-                ASSERT_CONTAINER_SIZE( q, i + 1);
-            }
+				ASSERT_CONTAINER_SIZE( q, i+1);
+			}
+			
             ASSERT_FALSE( q.empty());
-            ASSERT_CONTAINER_SIZE( q, nSize);
+            ASSERT_CONTAINER_SIZE( q, nSize);		
             q.clear();
             ASSERT_CONTAINER_SIZE( q, 0 );
             ASSERT_TRUE( q.empty());
-
-            Queue::gc::scan();
+			
+			Queue::gc::scan();
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 2 ) << "i=" << i;
+            }
+			//------------------------------------
+			//end clear test
+			
+			//clear stale nodes test
+			//------------------------------------
+			q.changeProbStale(100);
+			for ( size_t i = 0; i < nSize; ++i )
+            {
+                q.push( arr[i] );
+				ASSERT_CONTAINER_SIZE( q, i+1);
+			}
+			ASSERT_FALSE( q.empty());
+            ASSERT_CONTAINER_SIZE( q, nSize);
+			
+			
+			for ( size_t i = 0; i <  nSize; ++i ) {
+                ASSERT_FALSE( q.empty());
+                ASSERT_CONTAINER_SIZE( q,  nSize - i );
+                if ( i & 1 )
+                    pv = q.pop();
+                else
+                    pv = q.dequeue();
+                ASSERT_FALSE( pv == nullptr );
+                ASSERT_EQ( pv->nVal, static_cast<int>(i));
+            }
+
+			Queue::gc::scan();
+            for ( size_t i = 0; i < nSize-20; ++i ) {
+                ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
+            }
+			for ( size_t i = nSize-20; i < nSize; ++i )
+			{
+				ASSERT_EQ( arr[i].nDisposeCount, 2 ) << "i=" << i;
+			}
+			//------------------------------------
+			//end clear stale nodes test
+			
+			//clear queue
+			q.clear();
+			Queue::gc::scan();
+            for ( size_t i = 0; i < nSize; ++i ) {
+                ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
             }
         }
     };

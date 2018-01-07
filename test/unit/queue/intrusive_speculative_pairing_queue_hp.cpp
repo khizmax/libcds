@@ -64,10 +64,9 @@ namespace {
         template <typename V>
         void check_array( V& arr )
         {
-            for ( size_t i = 0; i < arr.size() - 1; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 2 ) << "i=" << i;
+            for ( size_t i = 0; i < arr.size(); ++i ) {
+                ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
             }
-            ASSERT_EQ( arr.back().nDisposeCount, 2 );
         }
     };
 
