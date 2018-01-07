@@ -44,26 +44,41 @@ namespace {
     protected:
         void SetUp()
         {
-            /*
-            struct traits: public ci::michael_list::traits
-            {
-                typedef ci::michael_list::base_hook< cds::opt::gc< gc_type >> hook;
-            };
-            typedef ci::MichaelList< gc_type, base_item, traits > list_type;
+            struct traits: public ci::valois_list::traits{};
+
+            typedef ci::ValoisList< gc_type, base_item, traits > list_type;
 
             // +1 - for guarded_ptr
             cds::gc::hp::GarbageCollector::Construct( list_type::c_nHazardPtrCount + 1, 1, 16 );
+
             cds::threading::Manager::attachThread();
-            */
+
         }
 
         void TearDown()
         {
-            /*
+
             cds::threading::Manager::detachThread();
             cds::gc::hp::GarbageCollector::Destruct( true );
-             */
         }
     };
+
+    TEST_F( IntrusiveValoisList_HP, base_hook )
+    {
+    /*
+        typedef ci::ValoisList< gc_type, base_item,
+                typename ci::valois_list::make_traits<
+                        ci::opt::hook< ci::valois_list::base_hook< cds::opt::gc< gc_type >>>
+                        ,ci::opt::disposer< mock_disposer >
+                        ,cds::opt::less< less< base_item >>
+        >::type
+        > list_type;
+/*
+        list_type l;
+        test_common( l );
+        test_ordered_iterator( l );
+        test_hp( l );
+*/
+    }
 
 } // namespace
