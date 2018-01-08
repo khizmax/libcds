@@ -53,13 +53,13 @@ namespace cds { namespace intrusive {
 
             node()
             {
-                next.store( nullptr, atomics::memory_order_release );
+                next.store( nullptr, atomics::memory_order_relaxed );
                 data.store( marked_data_ptr(), atomics::memory_order_release );
             }
 
             node( value_type * pVal )
             {
-                next.store( nullptr, atomics::memory_order_release );
+                next.store( nullptr, atomics::memory_order_relaxed );
                 data.store( marked_data_ptr( pVal ), atomics::memory_order_release );
             }
 
