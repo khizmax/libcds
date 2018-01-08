@@ -63,22 +63,57 @@ namespace {
         }
     };
 
+    /**
+     *
+     * @tparam List
+     * @param list
+     */
+    template <typename List>
+    void test_list(List& list)
+    {
+        /**
+         * 1) testing method is empty
+         * 2) test adding 10 element in the container
+         * 3) test comtainig 10 element on the container
+         * 4) test deleting element in the containing
+         */
+
+        // test empty method();
+        ASSERT_TRUE( list.empty());
+
+        static const size_t nSize = 20;
+        typedef typename List::value_type value_type;
+        int size = 10;
+
+        // insert and contains method
+        for ( size_t i = 0; i < nSize; i++ ) {
+
+            ASSERT_FALSE(list.find(i));
+            list.insert(i);
+            ASSERT_TRUE( list.find(i));
+            ASSERT_FALSE( list.empty());
+        }
+
+        // delete and contains method
+        for(size_t i = nSize; i > 0; i--){
+            ASSERT_TRUE( list.find(i));
+            list.insert(i);
+            ASSERT_FALSE(list.find(i));
+        }
+        // test empty method();
+        ASSERT_TRUE( list.empty());
+
+    }
+
+
     TEST_F( IntrusiveValoisList_HP, base_hook )
     {
-    /*
-        typedef ci::ValoisList< gc_type, base_item,
-                typename ci::valois_list::make_traits<
-                        ci::opt::hook< ci::valois_list::base_hook< cds::opt::gc< gc_type >>>
-                        ,ci::opt::disposer< mock_disposer >
-                        ,cds::opt::less< less< base_item >>
-        >::type
-        > list_type;
-/*
+        struct traits: public ci::valois_list::traits{};
+
+        typedef ci::ValoisList< gc_type, base_item, traits > list_type;
         list_type l;
-        test_common( l );
-        test_ordered_iterator( l );
-        test_hp( l );
-*/
+        test_list(l);
+
     }
 
 } // namespace
