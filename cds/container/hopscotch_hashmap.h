@@ -164,11 +164,7 @@ namespace cds {
 			template <typename K, typename... Args>
 			bool emplace(K&& key, Args&&... args)
 			{
-				mapped_type val = std::forward<Args>(args);
-				if (insert(key, val)) {
-					return true;
-				}
-				return false;
+				return insert(std::forward<K>(key), mapped_type(std::forward<Args>(args)...))
 			}
 
 			/// Updates the node
@@ -276,7 +272,13 @@ namespace cds {
 				return make_pair(false, inserted);
 			}
 
-			DATA get(KEY key) {
+			template<typename K, typename V>
+			V get(K const& key) {
+				return get(key, [=](K const& one, K const& two) { return one != two; });
+			}
+
+			template<typename K, typename V, typename Pred>
+			V get(K const& key, Pred cmp) {
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				unsigned int try_counter = 0;
@@ -291,7 +293,7 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (key == *(check_bucket->_key)) {
+							if (cmp(key, *(check_bucket->_key)) == 0) {
 								return *(check_bucket->_data);
 							}
 						}
@@ -303,7 +305,7 @@ namespace cds {
 				if (timestamp != start_bucket->_timestamp) {
 					Bucket* check_bucket = start_bucket;
 					for (int i = 0; i < HOP_RANGE; i++) {
-						if (key == *(check_bucket->_key)) {
+						if (cmp(key, *(check_bucket->_key)) == 0) {
 							return *(check_bucket->_data);
 						}
 						++check_bucket;
@@ -413,7 +415,23 @@ namespace cds {
 			bool insert(K const& key)
 			{
 				mapped_type def_data;
-				return insert(key, def_data, [](mapped_type&) {});
+				return insert_with(key, def_data, [](mapped_type&) {});
+			}
+
+			/// Inserts new node with key and default value
+			/**
+			The function creates a node with \p key and \p value, and then inserts the node created into the map.
+
+			Preconditions:
+			- The \ref key_type should be constructible from a value of type \p K.
+			In trivial case, \p K is equal to \ref key_type.
+
+			Returns \p true if inserting successful, \p false otherwise.
+			*/
+			template <typename K, typename V>
+			bool insert(K const& key, V const& val)
+			{
+				return insert_with(key, val, [](mapped_type&) {});
 			}
 
 			/// Delete \p key from the map
