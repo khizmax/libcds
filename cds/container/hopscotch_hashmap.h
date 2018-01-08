@@ -110,8 +110,170 @@ namespace cds {
 				return counter;
 			}
 
-			bool contains(KEY key) {
-				return get(key) != NULL;
+			/// Checks whether the map contains \p key
+			/**
+			The function searches the item with key equal to \p key
+			and returns \p true if it is found, and \p false otherwise.
+			*/
+			template <typename K>
+			bool contains(K const& key)
+			{
+				return get(key, [](map_pair const&) {
+					(false);
+				}) != NULL;
+			}
+
+			/// Checks whether the map contains \p key using \p pred predicate for searching
+			/**
+			The function is similar to <tt>contains( key )</tt> but \p pred is used for key comparing.
+			\p Less functor has the interface like \p std::less.
+			\p Less must imply the same element order as the comparator used for building the map.
+			*/
+			template <typename K, typename Predicate>
+			bool contains(K const& key, Predicate pred)
+			{
+				return get(key, pred) != NULL;
+			}
+
+			/// Find the key \p key
+			/** \anchor cds_nonintrusive_CuckooMap_find_func
+
+			The function searches the item with key equal to \p key and calls the functor \p f for item found.
+			The interface of \p Func functor is:
+			\code
+			struct functor {
+			void operator()( value_type& item );
+			};
+			\endcode
+			where \p item is the item found.
+
+			The functor may change \p item.second.
+
+			The function returns \p true if \p key is found, \p false otherwise.
+			*/
+			template <typename K, typename Func>
+			bool find(K const& key, Func f)
+			{
+				return find(key, [&f](node_type& item, K const&) { f(item.m_val); });
+			}
+
+			/// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
+			/**
+			Returns \p true if inserting successful, \p false otherwise.
+			*/
+			template <typename K, typename... Args>
+			bool emplace(K&& key, Args&&... args)
+			{
+				mapped_type val = std::forward<Args>(args);
+				if (insert(key, val)) {
+					return true;
+				}
+				return false;
+			}
+
+			/// Updates the node
+			/**
+			The operation performs inserting or changing data with lock-free manner.
+
+			If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
+			Otherwise, the functor \p func is called with item found.
+			The functor \p func signature is:
+			\code
+			struct my_functor {
+			void operator()( bool bNew, value_type& item );
+			};
+			\endcode
+			with arguments:
+			- \p bNew - \p true if the item has been inserted, \p false otherwise
+			- \p item - an item of the map for \p key
+
+			Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+			i.e. the node has been inserted or updated,
+			\p second is \p true if new item has been added or \p false if the item with \p key
+			already exists.
+			*/
+			template <typename K, typename Func>
+			std::pair<bool, bool> update(K const& key, Func func, bool bAllowInsert = true)
+			{
+				mapped_type def_val;
+				return update(key, def_val, func, bAllowInsert);
+			}
+
+			/// Updates the node
+			/**
+			The operation performs inserting or changing data with lock-free manner.
+
+			If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
+			Otherwise, the functor \p func is called with item found.
+			The functor \p func signature is:
+			\code
+			struct my_functor {
+			void operator()( bool bNew, value_type& item );
+			};
+			\endcode
+			with arguments:
+			- \p bNew - \p true if the item has been inserted, \p false otherwise
+			- \p item - an item of the map for \p key
+
+			Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+			i.e. the node has been inserted or updated,
+			\p second is \p true if new item has been added or \p false if the item with \p key
+			already exists.
+			*/
+			template <typename K, typename V, typename Func>
+			std::pair<bool, bool> update(K const& key, V const& val, Func func, bool bAllowInsert = true)
+			{
+				bool inserted = false;
+
+				if (!contains(key)) {
+					if (bAllowInsert) {
+						if (insert(key, val)) {
+							inserted = true;
+						}
+						else {
+							return make_pair(false, false);
+						}
+					}
+					else {
+						return make_pair(false, false);
+					}
+				}
+
+				unsigned int hash = calc_hash(key);
+				Bucket* start_bucket = segments_arys + hash;
+				unsigned int try_counter = 0;
+				unsigned int timestamp;
+				do {
+					timestamp = start_bucket->_timestamp;
+					unsigned int hop_info = start_bucket->_hop_info;
+					Bucket* check_bucket = start_bucket;
+					unsigned int temp;
+					for (int i = 0; i < HOP_RANGE; i++) {
+						temp = hop_info;
+						temp = temp >> i;
+
+						if (temp & 1) {
+							if (key == *(check_bucket->_key)) {
+								*(check_bucket->_data) = val;
+								return make_pair(true, inserted);
+							}
+						}
+						++check_bucket;
+					}
+					++try_counter;
+				} while (timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES);
+
+				if (timestamp != start_bucket->_timestamp) {
+					Bucket* check_bucket = start_bucket;
+					for (int i = 0; i < HOP_RANGE; i++) {
+						if (key == *(check_bucket->_key)) {
+							*(check_bucket->_data) = val;
+							return make_pair(true, inserted);
+						}
+						++check_bucket;
+					}
+				}
+				return make_pair(false, inserted);
 			}
 
 			DATA get(KEY key) {
@@ -149,9 +311,54 @@ namespace cds {
 				}
 				return NULL;
 			}
+			
+			/// Inserts new node and initialize it by a functor
+			/**
+			This function inserts new node with key \p key and if inserting is successful then it calls
+			\p func functor with signature
+			\code
+			struct functor {
+			void operator()( value_type& item );
+			};
+			\endcode
 
-			bool add(KEY key, DATA data) {
-				int val = 1;
+			The argument \p item of user-defined functor \p func is the reference
+			to the map's item inserted:
+			- <tt>item.first</tt> is a const reference to item's key that cannot be changed.
+			- <tt>item.second</tt> is a reference to item's value that may be changed.
+
+			The key_type should be constructible from value of type \p K.
+
+			The function allows to split creating of new item into two part:
+			- create item from \p key;
+			- insert new item into the map;
+			- if inserting is successful, initialize the value of item by calling \p func functor
+
+			This can be useful if complete initialization of object of \p value_type is heavyweight and
+			it is preferable that the initialization should be completed only if inserting is successful.
+			*/
+			template <typename K, typename Func>
+			bool insert_with(const K& key, Func func)
+			{
+				mapped_type def_val;
+				return insert_with(key, def_val, func);
+			}
+
+			/// Inserts new node
+			/**
+			The function creates a node with copy of \p val value
+			and then inserts the node created into the map.
+
+			Preconditions:
+			- The \ref key_type should be constructible from \p key of type \p K.
+			- The \ref value_type should be constructible from \p val of type \p V.
+
+			Returns \p true if \p val is inserted into the set, \p false otherwise.
+			*/
+			template <typename K, typename V, typename Func>
+			bool insert_with(K const& key, V const& val, Func func)
+			{
+				int tmp_val = 1;
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				start_bucket->lock();
@@ -163,8 +370,8 @@ namespace cds {
 				Bucket* free_bucket = start_bucket;
 				int free_distance = 0;
 				for (; free_distance < ADD_RANGE; ++free_distance) {
-					std::atomic<KEY *> _atomic = free_bucket->_key;
-					KEY* _null_key = Bucket::_empty_key;
+					std::atomic<K *> _atomic = free_bucket->_key;
+					K* _null_key = Bucket::_empty_key;
 					if (_null_key == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
 						break;
 					}
@@ -175,18 +382,123 @@ namespace cds {
 					do {
 						if (free_distance < HOP_RANGE) {
 							start_bucket->_hop_info |= (1 << free_distance);
-							*(free_bucket->_data) = data;
+							*(free_bucket->_data) = val;
 							*(free_bucket->_key) = key;
 							start_bucket->unlock();
+							func(*(free_bucket->_data));
 							return true;
 						}
-						find_closer_bucket(&free_bucket, &free_distance, val);
-					} while (0 != val);
+						find_closer_bucket(&free_bucket, &free_distance, tmp_val);
+					} while (0 != tmp_val);
 				}
 				start_bucket->unlock();
 
 				this->resize();
 
+				return false;
+			}
+
+			/// Inserts new node with key and default value
+			/**
+			The function creates a node with \p key and default value, and then inserts the node created into the map.
+
+			Preconditions:
+			- The \ref key_type should be constructible from a value of type \p K.
+			In trivial case, \p K is equal to \ref key_type.
+			- The \ref mapped_type should be default-constructible.
+
+			Returns \p true if inserting successful, \p false otherwise.
+			*/
+			template <typename K>
+			bool insert(K const& key)
+			{
+				mapped_type def_data;
+				return insert(key, def_data, [](mapped_type&) {});
+			}
+
+			/// Delete \p key from the map
+			/** \anchor cds_nonintrusive_CuckooMap_erase_val
+
+			Return \p true if \p key is found and deleted, \p false otherwise
+			*/
+			template <typename K>
+			bool erase(K const& key)
+			{
+				node_type * pNode = base_class::erase(key);
+				if (pNode) {
+					free_node(pNode);
+					return true;
+				}
+				return false;
+			}
+
+			/// Deletes the item from the list using \p pred predicate for searching
+			/**
+			The function is an analog of \ref cds_nonintrusive_CuckooMap_erase_val "erase(Q const&)"
+			but \p pred is used for key comparing.
+			If cuckoo map is ordered, then \p Predicate should have the interface and semantics like \p std::less.
+			If cuckoo map is unordered, then \p Predicate should have the interface and semantics like \p std::equal_to.
+			\p Predicate must imply the same element order as the comparator used for building the map.
+			*/
+			template <typename K, typename Predicate>
+			bool erase_with(K const& key, Predicate pred)
+			{
+				CDS_UNUSED(pred);
+				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				if (pNode) {
+					free_node(pNode);
+					return true;
+				}
+				return false;
+			}
+
+			/// Delete \p key from the map
+			/** \anchor cds_nonintrusive_CuckooMap_erase_func
+
+			The function searches an item with key \p key, calls \p f functor
+			and deletes the item. If \p key is not found, the functor is not called.
+
+			The functor \p Func interface:
+			\code
+			struct extractor {
+			void operator()(value_type& item) { ... }
+			};
+			\endcode
+
+			Return \p true if key is found and deleted, \p false otherwise
+
+			See also: \ref erase
+			*/
+			template <typename K, typename Func>
+			bool erase(K const& key, Func f)
+			{
+				node_type * pNode = base_class::erase(key);
+				if (pNode) {
+					f(pNode->m_val);
+					free_node(pNode);
+					return true;
+				}
+				return false;
+			}
+
+			/// Deletes the item from the list using \p pred predicate for searching
+			/**
+			The function is an analog of \ref cds_nonintrusive_CuckooMap_erase_func "erase(Q const&, Func)"
+			but \p pred is used for key comparing.
+			If cuckoo map is ordered, then \p Predicate should have the interface and semantics like \p std::less.
+			If cuckoo map is unordered, then \p Predicate should have the interface and semantics like \p std::equal_to.
+			\p Predicate must imply the same element order as the comparator used for building the map.
+			*/
+			template <typename K, typename Predicate, typename Func>
+			bool erase_with(K const& key, Predicate pred, Func f)
+			{
+				CDS_UNUSED(pred);
+				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				if (pNode) {
+					f(pNode->m_val);
+					free_node(pNode);
+					return true;
+				}
 				return false;
 			}
 
