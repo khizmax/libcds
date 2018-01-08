@@ -38,7 +38,6 @@ namespace cds_test {
     /*static*/ std::mt19937 fixture::random_gen_( random_dev_() );
 } // namespace cds_test
 
-
 using namespace std;
 
 int main( int argc, char **argv )
