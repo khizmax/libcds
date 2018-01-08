@@ -54,7 +54,7 @@ namespace cds { namespace intrusive {
             node()
             {
                 next.store( nullptr, atomics::memory_order_relaxed );
-                data.store( marked_data_ptr(), atomics::memory_order_release );
+                data.store( marked_data_ptr( NULL ), atomics::memory_order_release );
             }
 
             node( value_type * pVal )

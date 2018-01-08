@@ -77,6 +77,11 @@ namespace cds {
                         : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
 
                 iterator( node_type * node) {
+
+                    m_pNode = new node_type();
+                    aux_pNode = new node_type();
+                    cell_pNode = new node_type();
+
                     m_pNode->next.store(NULL, memory_model::memory_order_consume);
 
                     aux_pNode->next.store(
@@ -96,6 +101,7 @@ namespace cds {
                     if (aux_pNode->next == m_pNode) {
                         return;
                     }
+
                     node_type *p = aux_pNode;
                     node_type *n = p->next.load(atomics::memory_order_release);
 
@@ -150,30 +156,6 @@ namespace cds {
                 return iterator(m_Head);
             }
 
-            bool insert(value_type val) {
-                //TODO fix bug with interrupting the method.
-                while (true) {
-                    auto iter = begin();
-                    while (true) {
-                        auto current_data = iter->m_pNode.data;
-                        auto next_data = iter->m_pNode->next.data;
-                        if (current_data == val) {
-                            return true;
-                        }
-                        if (current_data < val && next_data > val) {
-                            if (insert(iter, val)) {
-                                return true;
-                            } else {
-                                break;
-                            }
-                        }
-                        iter++;
-                    }
-
-                }
-                return false;
-            }
-
             /**
              * try insert in the position
              * @param i
@@ -181,27 +163,70 @@ namespace cds {
              * @return
              */
 
-            bool insert(iterator i, value_type &val) {
-                i.update_iterator();
+            template <typename Q, typename Compare >
+            bool search_insert(node_type * start_node, Q* val, Compare cmp) {
+
+                std::cout << "val " << val << std::endl;
+
+                iterator *i = new iterator(start_node);
+                while (i->m_pNode->next.load() != nullptr && i->m_pNode->data.load().ptr() != NULL ) {
+                    value_type *nVal = i->m_pNode->data.load( memory_model::memory_order_relaxed ).ptr();
+                    //value_type *nVal = i->m_pNode->data.load().all();
+                    int const nCmp = cmp(*nVal, *val);
+
+                    if (nCmp == 0) {
+                        delete i;
+                        return true;
+                    } else if (nCmp > 0) {
+                        bool k = try_insert(i, val);
+                        delete i;
+                        return k;
+                    } else {
+                        i->next();
+                    }
+                }
+
+                std::cout << "after while " << std::endl;
+                bool k = try_insert(i, val);
+                delete i;
+                return k;
+            }
+
+            bool try_insert(iterator *i, value_type * val) {
+                std::cout << "val " << val << std::endl;
+                i->update_iterator();
 
                 node_type *real_node = new node_type(val);
+                std::cout << "insert  " << real_node->data.load().ptr();
                 node_type *aux_node = new node_type();
 
                 real_node->next = aux_node;
-                aux_node->next = i.m_pNode;
+                aux_node->next = i->m_pNode;
 
-                bool insert_status = i.aux_pNode->next.compare_exchange_strong(
-                        i.m_pNode,
+                bool insert_status = i->aux_pNode->next.compare_exchange_strong(
+                        i->m_pNode,
                         real_node,
-                        memory_model::memory_order_release,
+                        memory_model::memory_order_relaxed,
                         memory_model::memory_order_relaxed
                 );
-                if (insert_status) {
-                    ++m_ItemCounter;
-                }
+
+                std::cout << "insert_status " << insert_status << std::endl;
+
                 return insert_status;
             }
 
+            bool insert( value_type &val){
+                std::cout << "val " << val << std::endl;
+                return search_insert( m_Head, &val, key_comparator() );
+            }
+
+            void print_all(){
+                iterator * i = new iterator(m_Head);
+                while(i->m_pNode->next != nullptr){
+                    std::cout << i->m_pNode->data.load().ptr() << std::endl;
+                    i->next();
+                }
+            }
             /**
              *
              * It's true delete algorithm
@@ -261,37 +286,42 @@ namespace cds {
             }
 
             template <typename Q, typename Compare >
-            bool find( node_type * start_node, Q const& val, Compare cmp) const {
-                iterator * i = new iterator( start_node );
-                while (i->m_pNode != nullptr) {
-                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_relaxed).ptr();
+            bool find( Q * val, Compare cmp) {
+                iterator * i = new iterator( m_Head );
+                while (i->m_pNode->next.load() != nullptr && i->m_pNode->data.load().ptr() != NULL ) {
+                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_release ).ptr();
+
                     int const nCmp = cmp( *nVal, val );
 
                     if ( nCmp == 0 ){
+                        delete i;
                         return true;
                     }
                     else if ( nCmp > 0 ){
+                        delete i;
                         return false;
                     }
                     else{
                         i->next();
                     }
                 }
+                delete i;
                 return false;
             }
 
-            bool find(value_type val) {
-                return find( m_Head, val, key_comparator());
+            bool find(value_type &val) {
+                return find( &val, key_comparator() );
             }
 
-            //TODO: implement get_iterator( value_type & val )
 
             bool empty() {
-                iterator * iter = new iterator(m_Head);
-                if (iter->next()) {
+                iterator * i = new iterator(m_Head);
+                if (i->next()) {
                     // if next is not exist() container is empty()
+                    delete i;
                     return false;
                 } else {
+                    delete i;
                     return true;
                 }
             }
