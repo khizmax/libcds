@@ -442,12 +442,7 @@ namespace cds {
 			template <typename K>
 			bool erase(K const& key)
 			{
-				node_type * pNode = base_class::erase(key);
-				if (pNode) {
-					free_node(pNode);
-					return true;
-				}
-				return false;
+				return erase(key, [](mapped_type&) {});
 			}
 
 			/// Deletes the item from the list using \p pred predicate for searching
@@ -461,13 +456,7 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool erase_with(K const& key, Predicate pred)
 			{
-				CDS_UNUSED(pred);
-				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
-				if (pNode) {
-					free_node(pNode);
-					return true;
-				}
-				return false;
+				return erase(key, pred, [](mapped_type&) {});
 			}
 
 			/// Delete \p key from the map
@@ -490,12 +479,26 @@ namespace cds {
 			template <typename K, typename Func>
 			bool erase(K const& key, Func f)
 			{
-				node_type * pNode = base_class::erase(key);
-				if (pNode) {
-					f(pNode->m_val);
-					free_node(pNode);
-					return true;
+				unsigned int hash = calc_hash(key);
+				Bucket* start_bucket = segments_arys + hash;
+				start_bucket->lock();
+
+				unsigned int hop_info = start_bucket->_hop_info;
+				unsigned int mask = 1;
+				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
+					if (mask & hop_info) {
+						Bucket* check_bucket = start_bucket + i;
+						if (key == *(check_bucket->_key)) {
+							f(*(check_bucket->_data));
+							check_bucket->_key = NULL;
+							check_bucket->_data = NULL;
+							start_bucket->_hop_info &= ~(1 << i);
+							start_bucket->unlock();
+							return true;
+						}
+					}
 				}
+				start_bucket->unlock();
 				return false;
 			}
 
@@ -510,13 +513,26 @@ namespace cds {
 			template <typename K, typename Predicate, typename Func>
 			bool erase_with(K const& key, Predicate pred, Func f)
 			{
-				CDS_UNUSED(pred);
-				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
-				if (pNode) {
-					f(pNode->m_val);
-					free_node(pNode);
-					return true;
+				unsigned int hash = calc_hash(key);
+				Bucket* start_bucket = segments_arys + hash;
+				start_bucket->lock();
+
+				unsigned int hop_info = start_bucket->_hop_info;
+				unsigned int mask = 1;
+				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
+					if (mask & hop_info) {
+						Bucket* check_bucket = start_bucket + i;
+						if (pred(key, *(check_bucket->_key)) == 0) {
+							f(*(check_bucket->_data));
+							check_bucket->_key = NULL;
+							check_bucket->_data = NULL;
+							start_bucket->_hop_info &= ~(1 << i);
+							start_bucket->unlock();
+							return true;
+						}
+					}
 				}
+				start_bucket->unlock();
 				return false;
 			}
 
