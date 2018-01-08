@@ -195,6 +195,38 @@ namespace cds {
 				return update(key, def_val, func, bAllowInsert);
 			}
 
+			template <typename K, typename V, typename Func>
+			std::pair<bool, bool> update(K const& key, V const& val)
+			{
+				return update(key, val, [](V const&) {});
+			}
+			/// Updates the node
+			/**
+			The operation performs inserting or changing data with lock-free manner.
+
+			If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
+			Otherwise, the functor \p func is called with item found.
+			The functor \p func signature is:
+			\code
+			struct my_functor {
+			void operator()( bool bNew, value_type& item );
+			};
+			\endcode
+			with arguments:
+			- \p bNew - \p true if the item has been inserted, \p false otherwise
+			- \p item - an item of the map for \p key
+
+			Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
+			i.e. the node has been inserted or updated,
+			\p second is \p true if new item has been added or \p false if the item with \p key
+			already exists.
+			*/
+			template <typename K, typename V, typename Func>
+			std::pair<bool, bool> update(K const& key, V const& val, Func func, bool bAllowInsert = true)
+			{
+				return update(key, val, func, bAllowInsert);
+			}
+
 			/// Updates the node
 			/**
 			The operation performs inserting or changing data with lock-free manner.
@@ -251,6 +283,7 @@ namespace cds {
 						if (temp & 1) {
 							if (key == *(check_bucket->_key)) {
 								*(check_bucket->_data) = val;
+								func(*(check_bucket->_data));
 								return make_pair(true, inserted);
 							}
 						}
@@ -264,6 +297,7 @@ namespace cds {
 					for (int i = 0; i < HOP_RANGE; i++) {
 						if (key == *(check_bucket->_key)) {
 							*(check_bucket->_data) = val;
+							func(*(check_bucket->_data));
 							return make_pair(true, inserted);
 						}
 						++check_bucket;
