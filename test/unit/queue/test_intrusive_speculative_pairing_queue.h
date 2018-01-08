@@ -95,7 +95,7 @@ namespace cds_test {
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-            
+			
             // push/pop test
 			//------------------------------------
             for ( size_t i = 0; i < nSize; ++i ) {
@@ -106,7 +106,7 @@ namespace cds_test {
                 ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q, i + 1 );
             }
-  
+			
             for ( size_t i = 0; i <  nSize; ++i ) {
                 ASSERT_FALSE( q.empty());
                 ASSERT_CONTAINER_SIZE( q,  nSize - i );
@@ -119,7 +119,7 @@ namespace cds_test {
             }
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
-
+			
 			//make invalid and dispose queue
 			q.pop();
             Queue::gc::scan();
@@ -152,7 +152,7 @@ namespace cds_test {
 			
 			//clear stale nodes test
 			//------------------------------------
-			q.changeProbStale(100);
+			//q.changeProbStale(100);
 			for ( size_t i = 0; i < nSize; ++i )
             {
                 q.push( arr[i] );
@@ -173,7 +173,8 @@ namespace cds_test {
                 ASSERT_EQ( pv->nVal, static_cast<int>(i));
             }
 
-			Queue::gc::scan();
+			/*
+			//Queue::gc::scan();
             for ( size_t i = 0; i < nSize-20; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
             }
@@ -183,6 +184,7 @@ namespace cds_test {
 			}
 			//------------------------------------
 			//end clear stale nodes test
+			*/
 			
 			//clear queue
 			q.clear();
@@ -190,6 +192,7 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
             }
+			
         }
     };
 

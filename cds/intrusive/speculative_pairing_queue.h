@@ -31,7 +31,10 @@
 #include <cds/opt/compare.h>
 #include <cds/algo/atomic.h>
 #include <cds/intrusive/details/sp_queue_base.h>
-#include <random>
+
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <list>
 
 namespace cds { namespace intrusive {
@@ -256,19 +259,18 @@ namespace cds { namespace intrusive {
             stat               			    m_Stat          ;   ///< internal statistics accumulator
             atomic_queue_ptr			    m_Queue			;	///< Global queue
 
-            node_type* PICKET = new node_type();
+            static node_type* PICKET;
             node_type* DUMMY = nullptr;
 
             
             static void clear_links( node_type * pNode )
             {
                 pNode->m_pNext.store( nullptr, memory_model::memory_order_release );
+				pNode->m_nVer = 0;
 				pNode->m_removed = false;
             }
 
-            static void dispose_node( node_type * p )
-            {
-                struct disposer_thunk {
+			struct disposer_node_thunk {
                     void operator()( value_type * p ) const
                     {
                         assert( p != nullptr );
@@ -277,11 +279,13 @@ namespace cds { namespace intrusive {
                     }
                 };
 				
+            static void dispose_node( node_type * p )
+            {			
 				//retire all except PICKET
                 if (p->m_nVer != -1)
                 {
 					//EXPECT_TRUE(false) << "Dis node " << node_traits::to_value_ptr(p)->nVal;
-                    gc::template retire<disposer_thunk>( node_traits::to_value_ptr( p ));
+                    gc::template retire<disposer_node_thunk>( node_traits::to_value_ptr( p ));
                 }
             }
 
@@ -293,48 +297,68 @@ namespace cds { namespace intrusive {
                     void operator()( Queue* queue ) const
                     {
 						assert(queue != nullptr);
-						//there must be queue disposer, buuuuuut...
+							
+						node_type* current_node;
+						for (int i = 0; i < C_SIZE; i++) 
+						{	
+							current_node = queue->m_pair[i].m_pHead;	
+							while (current_node != nullptr) 
+							{
+								node_type* next_node =  current_node->m_pNext;
+								if (current_node != PICKET)
+									disposer_node_thunk()(node_traits::to_value_ptr( current_node ));
+								current_node = next_node;
+							}
+						}
+						//there must be queue disposer, buuuuuut...	
+						//delete queue;
                     }
                 };
-				
-				//retire all nodes in queue
+				/*
+				typename gc::template Guard node_guard;
 				node_type* current_node;
 				for (int i = 0; i < C_SIZE; i++) 
-				{
-					current_node = queue->m_pair[i].m_pHead;	
+				{	
+					current_node = node_guard.protect(queue->m_pair[i].m_pHead);	
 					while (current_node != nullptr) 
 					{
-						node_type* next_node = current_node->m_pNext;
-						dispose_node(current_node);
+						node_type* next_node =  node_guard.protect(current_node->m_pNext);
+						if (current_node != PICKET)
+							dispose_node( current_node );
 						current_node = next_node;
 					}
 				}
-									
+				*/
+				//EXPECT_TRUE(false) << "lol";
 				//retire queue
 				gc::template retire<disposer_thunk>(queue);
             }
 			
 			void dispose_stale_nodes( Slot &slot){
-				std::random_device rd;
-				std::mt19937 rng(rd());
-				std::uniform_int_distribution<int> uni(0,99);
+				boost::mt19937 gen;
+				boost::uniform_int<> dist(0,99);
+				boost::variate_generator<boost::mt19937&, boost::uniform_int<> > roll(gen, dist);
 				
-				int random_int = uni(rng);
+				int random_int = roll();
+				//EXPECT_TRUE(false) << "lol";
 				if (random_int < probStale)
-				{
+				{	
+					
+					typename gc::template Guard node_guard;
 					typename std::list<node_type*> stale_nodes;
-					node_type* head = slot.m_pHead;
+					node_type* head = node_guard.protect(slot.m_pHead);
 					node_type* curr = head;
+					node_type* last = curr;
 					//EXPECT_TRUE(false) << "head" << node_traits::to_value_ptr(head->m_pNext)->nVal;
 					
-					while (curr != nullptr && curr->m_nVer != -1 && curr->m_removed){
+					while (curr != nullptr && curr->m_removed){
+						//if (current_node != PICKET)
 						stale_nodes.push_back(curr);
-						curr = curr->m_pNext;
+						curr = node_guard.protect(curr->m_pNext);
 					}	
 					
 					if (stale_nodes.size() > 0)
 					{
-						node_type* last = stale_nodes.back();
 						if (slot.m_pHead.compare_exchange_strong(head, 
 																 last, 
 																 memory_model::memory_order_relaxed, 
@@ -373,7 +397,7 @@ namespace cds { namespace intrusive {
             ~SPQueue()
             {
                 //clear();
-				delete PICKET;
+				//delete PICKET;
             }
 
             /// Inserts a item into priority queue
@@ -382,11 +406,12 @@ namespace cds { namespace intrusive {
             */
             bool enqueue( value_type& val )
             {
-                Queue* pQueue; 
-                typename gc::template GuardArray<5>  guards;
+                Queue* pQueue;
+				typename gc::template Guard queue_guard;
+                typename gc::template GuardArray<3>  guards;
                 int tail = 0;
                 while (true){
-                    pQueue = guards.protect(0, m_Queue);
+                    pQueue = queue_guard.protect(m_Queue);
 
                     if (pQueue->m_Invalid) {
                         Queue* pNewQueue = createNewQueue(val);
@@ -403,11 +428,10 @@ namespace cds { namespace intrusive {
                     tail = pQueue->m_Tail.load(memory_model::memory_order_relaxed);
                     int idx = tail % C_SIZE;
 					
-					guards.protect(2, pQueue->m_pair[idx].m_pLast);
-					guards.protect(3, pQueue->m_pair[idx].m_pRemoved);
-					guards.protect(4, pQueue->m_pair[idx].m_pHead);
+					guards.protect(0, pQueue->m_pair[idx].m_pLast);					
+					guards.protect(1, pQueue->m_pair[idx].m_pHead);
 					
-                    node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pLast, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                    node_type* pNode = guards.protect(2, pQueue->m_pair[idx].m_pLast, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 					
                     if (tail == idx) {
                         if (pNode == nullptr) {
@@ -445,7 +469,7 @@ namespace cds { namespace intrusive {
                     }
 					
                     if (pNode == nullptr) {                   
-                        pNode = guards.protect(1, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                        pNode = guards.protect(2, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                     }
 
                     if (pNode == PICKET) {
@@ -462,7 +486,7 @@ namespace cds { namespace intrusive {
                     }
 					
                     while (pNode->m_pNext.load(memory_model::memory_order_relaxed) != nullptr && pNode->m_nVer < tail)
-                        pNode = guards.protect(1, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                        pNode = guards.protect(2, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 
                     if (pNode->m_nVer >= tail) {
                         pQueue->m_Tail.compare_exchange_weak(tail, tail + 1,memory_model::memory_order_relaxed,memory_model::memory_order_relaxed);
@@ -496,21 +520,23 @@ namespace cds { namespace intrusive {
             */
             value_type* dequeue()
             {
-                typename gc::template GuardArray<5>  guards;
-                Queue* pQueue = guards.protect(0, m_Queue);
+                typename gc::template Guard queue_guard;
+				typename gc::template GuardArray<3>  guards;
+                
+				Queue* pQueue = guards.protect(0, m_Queue);
                 if (pQueue->m_Invalid) {
                     m_Stat.onReturnEmpty();
                     return nullptr;
                 }
                  
-
                 int ticket = pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_relaxed);
                 int idx = ticket % C_SIZE;
-				guards.protect(2, pQueue->m_pair[idx].m_pLast);
-				guards.protect(3, pQueue->m_pair[idx].m_pRemoved);
-				guards.protect(4, pQueue->m_pair[idx].m_pHead);
+				guards.protect(0, pQueue->m_pair[idx].m_pRemoved);
+				guards.protect(1, pQueue->m_pair[idx].m_pHead);
 				
-				dispose_stale_nodes(pQueue->m_pair[idx]);
+				//dispose_stale_nodes(pQueue->m_pair[idx]);
+				
+				guards.protect(1, pQueue->m_pair[idx].m_pHead);
 				
                 if (ticket >= pQueue->m_Tail && ticket == idx) {//Error in article. may be must be >=
                     if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_relaxed,memory_model::memory_order_relaxed)) {
@@ -520,9 +546,9 @@ namespace cds { namespace intrusive {
                     }
                 }
 				
-                node_type* pNode = guards.protect(1, pQueue->m_pair[idx].m_pRemoved, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                node_type* pNode = guards.protect(2, pQueue->m_pair[idx].m_pRemoved, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                 if (pNode == nullptr)
-                    pNode = guards.protect(1, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                    pNode = guards.protect(2, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 				
                 if (pNode == PICKET) {
                     CloseQueue(pQueue, idx);
@@ -541,7 +567,7 @@ namespace cds { namespace intrusive {
                             return nullptr;
                         }
                     }
-                    pNode = guards.protect(1, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
+                    pNode = guards.protect(2, pNode->m_pNext, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
                     if (pNode == PICKET) {
                         CloseQueue(pQueue, idx);
                         m_Stat.onCloseQueue();
@@ -577,7 +603,6 @@ namespace cds { namespace intrusive {
             bool empty() const
             {
 				Queue* pQueue = m_Queue.load(memory_model::memory_order_relaxed);
-				
 				return pQueue->m_Tail.load(memory_model::memory_order_relaxed) <=
                        pQueue->m_Cntdeq.load(memory_model::memory_order_relaxed);
             }
@@ -615,7 +640,9 @@ namespace cds { namespace intrusive {
                 dispose_queue(q);
             }
         };
-
+		
+		template <typename GC, typename T, class Traits>
+		typename SPQueue<GC, T, Traits>::node_type* SPQueue<GC, T, Traits>::PICKET = new SPQueue<GC, T, Traits>::node_type();
     }} // namespace cds::intrusive
 
 #endif // #ifndef CDSLIB_INTRUSIVE_MSPRIORITY_QUEUE_H
