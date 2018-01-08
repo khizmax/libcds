@@ -346,6 +346,9 @@ namespace {
     using simple_queue_push_pop = queue_push_pop<>;
 /*
     CDSSTRESS_MSQueue( simple_queue_push_pop )
+*/
+    CDSSTRESS_SPQueue( simple_queue_push_pop )
+/*
     CDSSTRESS_MoirQueue( simple_queue_push_pop )
     CDSSTRESS_BasketQueue( simple_queue_push_pop )
     CDSSTRESS_OptimsticQueue( simple_queue_push_pop )

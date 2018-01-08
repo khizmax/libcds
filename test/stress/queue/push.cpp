@@ -169,14 +169,18 @@ namespace {
         }
     };
 
+/*
     CDSSTRESS_MSQueue( queue_push )
-    CDSSTRESS_MoirQueue( queue_push )
+*/
+    CDSSTRESS_SPQueue( queue_push )
+/*  CDSSTRESS_MoirQueue( queue_push )
     CDSSTRESS_BasketQueue( queue_push )
     CDSSTRESS_OptimsticQueue( queue_push )
     CDSSTRESS_FCQueue( queue_push )
     CDSSTRESS_FCDeque( queue_push )
     CDSSTRESS_RWQueue( queue_push )
     CDSSTRESS_StdQueue( queue_push )
+*/
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
@@ -186,9 +190,9 @@ namespace {
         queue_type queue( s_nQueueSize ); \
         test( queue ); \
     }
-
+/*
     CDSSTRESS_VyukovQueue( queue_push )
-
+*/
 #undef CDSSTRESS_Queue_F
 
 
@@ -241,9 +245,9 @@ namespace {
         typedef typename queue::Types<value_type>::type_name queue_type; \
         test< queue_type >(); \
     }
-
+/*
     CDSSTRESS_SegmentedQueue( segmented_queue_push )
-
+*/
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
     {

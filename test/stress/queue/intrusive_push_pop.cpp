@@ -379,9 +379,9 @@ namespace {
     CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
 /* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
 
 /* ===== DISABLE ANOTHER TESTS ======================================

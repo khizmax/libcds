@@ -220,7 +220,40 @@ namespace fc_details{
         typedef cds::container::MSQueue< cds::gc::DHP, Value, traits_MSQueue_stat > MSQueue_DHP_stat;
         typedef cds::container::MoirQueue< cds::gc::HP, Value, traits_MSQueue_stat > MoirQueue_HP_stat;
         typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_stat > MoirQueue_DHP_stat;
+        
+/* ========== SPECULATIVE QUEUE STARTS ================ */
 
+        // SPQueue
+        typedef cds::container::SPQueue<cds::gc::HP,  Value > SPQueue_HP;
+        typedef cds::container::SPQueue<cds::gc::DHP, Value > SPQueue_DHP;
+
+        struct traits_SPQueue_seqcst : public
+           cds::container::speculative_pairing_queue::make_traits <
+                   cds::opt::memory_model < cds::opt::v::sequential_consistent >
+           > ::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_seqcst > SPQueue_HP_seqcst;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_seqcst > SPQueue_DHP_seqcst;
+
+        // SPQueue + item counter
+        struct traits_SPQueue_ic : public
+           cds::container::speculative_pairing_queue::make_traits <
+                   cds::opt::item_counter < cds::atomicity::item_counter >
+           >::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_ic > SPQueue_HP_ic;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_ic > SPQueue_DHP_ic;
+
+        // SPQueue + stat
+        struct traits_SPQueue_stat: public
+            cds::container::speculative_pairing_queue::make_traits <
+                    cds::opt::stat< cds::container::speculative_pairing_queue::stat<> >
+            >::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_stat > SPQueue_HP_stat;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_stat > SPQueue_DHP_stat;
+    
+/* ========== SPECULATIVE QUEUE ENDS ================== */
 
         // OptimisticQueue
         typedef cds::container::OptimisticQueue< cds::gc::HP, Value > OptimisticQueue_HP;
@@ -779,6 +812,9 @@ namespace cds_test {
 
 #else
 #   define CDSSTRESS_MSQueue_1( test_fixture )
+/* ========== SPECULATIVE QUEUE STARTS ================ */
+#   define CDSSTRESS_SPQueue_1( test_fixture )
+/* ========== SPECULATIVE QUEUE ENDS ================ */
 #   define CDSSTRESS_MoirQueue_1( test_fixture )
 #   define CDSSTRESS_OptimsticQueue_1( test_fixture )
 #   define CDSSTRESS_BasketQueue_1( test_fixture )
@@ -796,6 +832,15 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP        ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_stat   ) \
     CDSSTRESS_MSQueue_1( test_fixture )
+
+/* ========== SPECULATIVE QUEUE STARTS ================ */
+#define CDSSTRESS_SPQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_HP         ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_HP_stat    ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_DHP        ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_DHP_stat   ) \
+    CDSSTRESS_SPQueue_1( test_fixture )
+/* ========== SPECULATIVE QUEUE ENDS ================ */
 
 #define CDSSTRESS_MoirQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP       ) \
