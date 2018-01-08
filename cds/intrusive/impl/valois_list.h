@@ -42,7 +42,7 @@ namespace cds {
 
             atomic_node_ptr m_pHead;        ///< Head pointer
             atomic_node_ptr m_pTail;        ///< Tail pointer
-            item_counter m_ItemCounter;  ///< Item counter
+            item_counter m_ItemCounter;     ///< Item counter
 
             node_type *m_Head;
             node_type *m_Tail;
@@ -63,23 +63,10 @@ namespace cds {
                         return false;
                     }
 
-                    cell_pNode->next.store(&m_pNode, memory_model::memory_order_consume);
-                    aux_pNode->next.store(m_pNode->next, memory_model::memory_order_consume);
+                    cell_pNode->next.store( m_pNode, memory_model::memory_order_consume);
+                    aux_pNode->next.store( m_pNode->next, memory_model::memory_order_consume);
                     update_iterator();
                     return true;
-                }
-
-                iterator begin() {
-                    m_pNode->next.store(NULL, memory_model::memory_order_consume);
-                    aux_pNode->next.store(
-                            m_Head->next.load(memory_model::memory_order_seq_cst),
-                            memory_model::memory_order_consume
-                    );
-                    cell_pNode->next.store(
-                            m_pHead.load(memory_model::memory_order_seq_cst),
-                            memory_model::memory_order_comsume
-                    );
-                    return this;
                 }
 
             public:
@@ -89,14 +76,30 @@ namespace cds {
                 iterator()
                         : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
 
+                iterator( node_type * node) {
+                    m_pNode->next.store(NULL, memory_model::memory_order_consume);
+
+                    aux_pNode->next.store(
+                            node->next.load(memory_model::memory_order_seq_cst),
+                            memory_model::memory_order_consume
+                    );
+
+                    cell_pNode->next.store(
+                            node,
+                            memory_model::memory_order_consume
+                    );
+
+                    update_iterator();
+                }
+
                 void update_iterator() {
                     if (aux_pNode->next == m_pNode) {
                         return;
                     }
                     node_type *p = aux_pNode;
-                    node_type *n = p->next.load(atomics::memory_order_consume);
+                    node_type *n = p->next.load(atomics::memory_order_release);
 
-                    while (n != m_Tail && n->data == NULL) {    //while not last and is aux node
+                    while ( n->next != nullptr && n->data == NULL) {    //while not last and is aux node
                         cell_pNode->next.compare_exchange_strong(
                                 p,
                                 n,
@@ -109,15 +112,6 @@ namespace cds {
 
                     aux_pNode = p;
                     m_pNode = n;
-                }
-
-                value_ptr operator->() const {
-                    return m_Guard.template get<value_type>();
-                }
-
-                value_ref operator*() const {
-                    assert(m_Guard.get_native() != nullptr);
-                    return *m_Guard.template get<value_type>();
                 }
 
                 iterator &operator++() {
@@ -153,7 +147,7 @@ namespace cds {
             }
 
             iterator begin() {
-                return iterator().begin();
+                return iterator(m_Head);
             }
 
             bool insert(value_type val) {
@@ -266,18 +260,20 @@ namespace cds {
                 }
             }
 
-            bool contains(value_type &val) {
-                return find(iterator().begin(), val);
-            }
-
-            bool find(iterator *i, value_type &val) {
+            template <typename Q, typename Compare >
+            bool find( node_type * start_node, Q const& val, Compare cmp) const {
+                iterator * i = new iterator( start_node );
                 while (i->m_pNode != nullptr) {
-                    //FIX: safe read
-                    if (i->m_pNode.data == val) {
+                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_relaxed).ptr();
+                    int const nCmp = cmp( *nVal, val );
+
+                    if ( nCmp == 0 ){
                         return true;
-                    } else if (i->m_pNode.data > val) {
+                    }
+                    else if ( nCmp > 0 ){
                         return false;
-                    } else {
+                    }
+                    else{
                         i->next();
                     }
                 }
@@ -285,28 +281,13 @@ namespace cds {
             }
 
             bool find(value_type val) {
-                return contains(val);
+                return find( m_Head, val, key_comparator());
             }
-
 
             //TODO: implement get_iterator( value_type & val )
-            iterator interator(value_type &val) {
-                auto iter = begin();
-                if (find(iter, val)) {
-                    return iter;
-                } else {
-                    return NULL;
-                }
-            }
 
-
-            iterator interator() {
-                return begin();
-            }
-
-            bool empty() const {
-                auto iter = this->begin();
-                int size = 0;
+            bool empty() {
+                iterator * iter = new iterator(m_Head);
                 if (iter->next()) {
                     // if next is not exist() container is empty()
                     return false;
@@ -315,28 +296,30 @@ namespace cds {
                 }
             }
 
-            size_t size() const {
-                return m_ItemCounter.value();
-            }
         private:
 
             void init_list() {
-                m_Head->next.store(new node_type(), memory_model::memory_order_relaxed);  //link to aux node
-                m_Head->next->next.store(&m_Tail, memory_model::memory_order_relaxed);    //link aux node to tail
-                m_Tail->next.store(nullptr, memory_model::memory_order_release);          //link tail to nullptr
+                node_type * aux_temp = new node_type();
+                m_Head = new node_type();
+                m_Tail = new node_type();
+                m_Head->next.store( aux_temp, memory_model::memory_order_relaxed);  //link to aux node
+                aux_temp->next.store( m_Tail, memory_model::memory_order_relaxed );
+                m_Tail->next.store(nullptr, memory_model::memory_order_relaxed );          //link tail to nullptr
             }
 
             void destroy() {
-
-                node_type *pNode = m_Head.next.load(memory_model::memory_order_relaxed);
-
-                while (pNode != pNode->next.load(memory_model::memory_order_relaxed)) {
-                    value_type *pVal = pNode->data.load(memory_model::memory_order_relaxed).ptr();
-                    if (pVal)
-                        erase(pNode);
-                    node_type *pNext = pNode->next.load(memory_model::memory_order_relaxed);
-                    pNode = pNext;
-                }
+                //TODO: fix destroy()
+                //node_type *pNode = m_Head.next.load(memory_model::memory_order_relaxed);
+                //
+                //node_type *pNode = m_Head->next;
+                //
+                //while (pNode != pNode->next.load(memory_model::memory_order_relaxed)) {
+                //    value_type *pVal = pNode->data.load(memory_model::memory_order_relaxed).ptr();
+                //    if (pVal)
+                //        erase(pNode);
+                //    node_type *pNext = pNode->next.load(memory_model::memory_order_relaxed);
+                //    pNode = pNext;
+                //}
             }
 
             bool delete_node(iterator i) {
