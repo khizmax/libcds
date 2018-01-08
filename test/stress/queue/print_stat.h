@@ -76,6 +76,25 @@ namespace cds_test {
         return o;
     }
 
+/* ===== SPECULATIVE QUEUE IDP CHANGES STARTS =========================== */
+    template <typename Counter>
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::speculative_pairing_queue::stat<Counter> const& s )
+    {
+        return o
+                << CDSSTRESS_STAT_OUT( s, m_nEnqueCount )
+                << CDSSTRESS_STAT_OUT( s, m_nQueueCreatingCount )
+                << CDSSTRESS_STAT_OUT( s, m_nRepeatEnqueCount )
+                << CDSSTRESS_STAT_OUT( s, m_nDequeCount )
+                << CDSSTRESS_STAT_OUT( s, m_nReturnEmptyInvalid )
+                << CDSSTRESS_STAT_OUT( s, m_nClosingQueue );
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::speculative_pairing_queue::empty_stat const&  )
+    {
+        return o;
+    }
+/* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
+
     template <typename Counter>
     static inline property_stream& operator <<( property_stream& o, cds::intrusive::optimistic_queue::stat<Counter> const& s )
     {

@@ -64,7 +64,7 @@ namespace cds { namespace intrusive {
                 counter_type   m_nRepeatEnqueCount;	 ///< Count of repeat iteration
 
                 counter_type   m_nDequeCount;           ///< Count of success deque operation
-                counter_type	m_nReturnEmptyInvalid;   ///< Count of EMPTY returning because of invalid queue
+                counter_type   m_nReturnEmptyInvalid;   ///< Count of EMPTY returning because of invalid queue
                 counter_type   m_nClosingQueue;		 ///< Count of closing queue(made it invalid)
 
                 //@cond
@@ -238,7 +238,7 @@ namespace cds { namespace intrusive {
             } Slot;
             //@endcond
             const static size_t C_SIZE   = 10; ///< size
-			int probStale = 50; //< propability of dispose stale nodes
+			int probStale = 0; //< propability of dispose stale nodes
             //@cond
             /// Queue type
             typedef struct QueueType {

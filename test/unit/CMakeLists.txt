@@ -14,16 +14,16 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
 
 add_custom_target(unit-all
     DEPENDS 
-        unit-deque
-        unit-ilist
-        unit-list
-        unit-map
-        unit-misc
-        unit-pqueue
+ #       unit-deque
+ #       unit-ilist
+ #       unit-list
+ #       unit-map
+ #       unit-misc
+ #       unit-pqueue
         unit-queue
-        unit-iset
-        unit-set
-        unit-striped-set
-        unit-stack
-        unit-tree
+ #       unit-iset
+ #       unit-set
+ #       unit-striped-set
+ #       unit-stack
+ #       unit-tree
 )

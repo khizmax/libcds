@@ -344,7 +344,7 @@ namespace {
 
     using fc_with_heavy_value = queue_push_pop< fc_test::heavy_value<36000> >;
     using simple_queue_push_pop = queue_push_pop<>;
-
+/*
     CDSSTRESS_MSQueue( simple_queue_push_pop )
     CDSSTRESS_MoirQueue( simple_queue_push_pop )
     CDSSTRESS_BasketQueue( simple_queue_push_pop )
@@ -354,6 +354,7 @@ namespace {
     CDSSTRESS_FCDeque_HeavyValue( fc_with_heavy_value )
     CDSSTRESS_RWQueue( simple_queue_push_pop )
     CDSSTRESS_StdQueue( simple_queue_push_pop )
+*/
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
@@ -363,9 +364,9 @@ namespace {
         queue_type queue( s_nQueueSize ); \
         test( queue ); \
     }
-
+/*
     CDSSTRESS_VyukovQueue( simple_queue_push_pop )
-
+*/
 #undef CDSSTRESS_Queue_F
 
 
@@ -420,9 +421,10 @@ namespace {
         typedef typename queue::Types<value_type>::type_name queue_type; \
         test< queue_type >(); \
     }
-
+/*
     CDSSTRESS_SegmentedQueue( segmented_queue_push_pop )
-
+*/
+/*
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
     {
@@ -436,5 +438,5 @@ namespace {
         segmented_queue_push_pop,
         ::testing::ValuesIn( segmented_queue_push_pop::get_test_parameters()));
 #endif
-
+*/
 } // namespace
