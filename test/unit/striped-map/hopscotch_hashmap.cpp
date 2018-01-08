@@ -43,8 +43,8 @@ namespace {
         template <typename Map>
         void test(Map& m )
         {
-            // Precondition: set is empty
-            // Postcondition: set is empty
+            // Precondition: map is empty
+            // Postcondition: map is empty
 
             base_class::test_< Map::c_isSorted >( m );
         }

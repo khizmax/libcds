@@ -24,6 +24,9 @@ namespace cds {
 			typedef DATA mapped_type; ///< type of value stored in the map
 			typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
 
+			typedef cds::atomicity::item_counter item_counter;
+			item_counter m_item_counter;
+
 		private:
 			static const int HOP_RANGE = 32;
 			static const int ADD_RANGE = 256;
@@ -87,6 +90,7 @@ namespace cds {
 
 			hopscotch_hashmap() {
 				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
+				m_item_counter.reset();
 				BUSY = (KEY*)std::malloc(sizeof(KEY));
 			}
 
@@ -100,6 +104,8 @@ namespace cds {
 			}
 
 			int size() {
+				return m_item_counter;
+				/*
 				unsigned int counter = 0;
 				const unsigned int num_elm(MAX_SEGMENTS + ADD_RANGE);
 				for (unsigned int iElm = 0; iElm < num_elm; ++iElm) {
@@ -108,6 +114,7 @@ namespace cds {
 					}
 				}
 				return counter;
+				*/
 			}
 
 			/// Checks whether the map contains \p key
@@ -118,9 +125,7 @@ namespace cds {
 			template <typename K>
 			bool contains(K const& key)
 			{
-				return get(key, [](map_pair const&) {
-					(false);
-				}) != NULL;
+				return get(key, [=](K const& one, K const& two) { return one != two; }) != NULL;
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -152,7 +157,7 @@ namespace cds {
 			The function returns \p true if \p key is found, \p false otherwise.
 			*/
 			template <typename K, typename Func>
-			bool find(K const& key, Func f)
+			bool find_with(K const& key, Func f)
 			{
 				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
 				f(data);
@@ -188,9 +193,20 @@ namespace cds {
 			template <typename K, typename... Args>
 			bool emplace(K&& key, Args&&... args)
 			{
-				return insert(std::forward<K>(key), mapped_type(std::forward<Args>(args)...))
+				return insert(std::forward<K>(key), mapped_type(std::forward<Args>(args)...));
 			}
 
+			/// Clears the map
+			void clear()
+			{
+				const unsigned int num_elm(MAX_SEGMENTS + ADD_RANGE);
+				Bucket *start = segments_arys;
+				for (unsigned int iElm = 0; iElm < num_elm; ++iElm, ++start) {
+					start->lock();
+				}
+				m_item_counter.reset();
+				segments_arys = (Bucket *)memset(segments_arys, 0, (MAX_SEGMENTS + ADD_RANGE) * sizeof(Bucket));
+			}
 			/// Updates the node
 			/**
 			The operation performs inserting or changing data with lock-free manner.
@@ -223,32 +239,6 @@ namespace cds {
 			std::pair<bool, bool> update(K const& key, V const& val)
 			{
 				return update(key, val, [](V const&) {});
-			}
-			/// Updates the node
-			/**
-			The operation performs inserting or changing data with lock-free manner.
-
-			If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
-			Otherwise, the functor \p func is called with item found.
-			The functor \p func signature is:
-			\code
-			struct my_functor {
-			void operator()( bool bNew, value_type& item );
-			};
-			\endcode
-			with arguments:
-			- \p bNew - \p true if the item has been inserted, \p false otherwise
-			- \p item - an item of the map for \p key
-
-			Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-			i.e. the node has been inserted or updated,
-			\p second is \p true if new item has been added or \p false if the item with \p key
-			already exists.
-			*/
-			template <typename K, typename V, typename Func>
-			std::pair<bool, bool> update(K const& key, V const& val, Func func, bool bAllowInsert = true)
-			{
-				return update(key, val, func, bAllowInsert);
 			}
 
 			/// Updates the node
@@ -444,6 +434,7 @@ namespace cds {
 							start_bucket->_hop_info |= (1 << free_distance);
 							*(free_bucket->_data) = val;
 							*(free_bucket->_key) = key;
+							++m_item_counter;
 							start_bucket->unlock();
 							func(*(free_bucket->_data));
 							return true;
@@ -551,6 +542,7 @@ namespace cds {
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
 							start_bucket->_hop_info &= ~(1 << i);
+							--m_item_counter;
 							start_bucket->unlock();
 							return true;
 						}
@@ -586,36 +578,13 @@ namespace cds {
 							check_bucket->_data = NULL;
 							start_bucket->_hop_info &= ~(1 << i);
 							start_bucket->unlock();
+							--m_item_counter;
 							return true;
 						}
 					}
 				}
 				start_bucket->unlock();
 				return false;
-			}
-
-			DATA remove(KEY key) {
-				unsigned int hash = calc_hash(key);
-				Bucket* start_bucket = segments_arys + hash;
-				start_bucket->lock();
-
-				unsigned int hop_info = start_bucket->_hop_info;
-				unsigned int mask = 1;
-				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
-					if (mask & hop_info) {
-						Bucket* check_bucket = start_bucket + i;
-						if (key == *(check_bucket->_key)) {
-							DATA rc = *(check_bucket->_data);
-							check_bucket->_key = NULL;
-							check_bucket->_data = NULL;
-							start_bucket->_hop_info &= ~(1 << i);
-							start_bucket->unlock();
-							return rc;
-						}
-					}
-				}
-				start_bucket->unlock();
-				return NULL;
 			}
 
 			void find_closer_bucket(Bucket** free_bucket, int* free_distance, int &val) {
