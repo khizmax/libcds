@@ -118,9 +118,7 @@ namespace cds {
 			template <typename K>
 			bool contains(K const& key)
 			{
-				return get(key, [](map_pair const&) {
-					(false);
-				}) != NULL;
+				return get(key, [=](K const& one, K const& two) { return one != two; }) != NULL;
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
