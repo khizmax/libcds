@@ -154,7 +154,31 @@ namespace cds {
 			template <typename K, typename Func>
 			bool find(K const& key, Func f)
 			{
-				return find(key, [&f](node_type& item, K const&) { f(item.m_val); });
+				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
+				f(data);
+				return *data != NULL;
+			}
+
+			template <typename K, typename Predicate>
+			bool find(K const& key, Predicate pred)
+			{
+				DATA data = get(key, pred);
+				return *data != NULL;
+			}
+
+			template <typename K>
+			bool find(K const& key)
+			{
+				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
+				return *data != NULL;
+			}
+
+			template <typename K, typename Predicate, typename Func>
+			bool find_with(K const& key, Predicate pred, Func f)
+			{
+				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
+				f(data);
+				return *data != NULL;
 			}
 
 			/// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
