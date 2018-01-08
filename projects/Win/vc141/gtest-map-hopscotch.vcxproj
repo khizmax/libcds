@@ -77,6 +77,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\map\skiplist_hp_inl.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_feldman_hashmap.h" />
+    <ClInclude Include="..\..\..\test\unit\map\test_hopscotch_hashmap.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map_data.h" />
     <ClInclude Include="..\..\..\test\unit\map\test_map_hp.h" />

@@ -18,27 +18,37 @@
 namespace cds {
 	namespace container {
 		template<class KEY, class DATA>
-		class hopscotch_hashmap {
+		struct hopscotch_hashmap {
+
+			typedef KEY key_type;    ///< key type
+			typedef DATA mapped_type; ///< type of value stored in the map
+			typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
+
 		private:
 			static const int HOP_RANGE = 32;
 			static const int ADD_RANGE = 256;
 			static const int MAX_SEGMENTS = 1048576;
 			static const int MAX_TRIES = 2;
 			KEY* BUSY;
+			DATA* BUSYD;
 			struct Bucket {
 
+				static const unsigned int _empty_hop_info = 0;
+				KEY* _empty_key = NULL;
+				DATA* _empty_data = NULL;
+
 				std::atomic<unsigned int> _hop_info;
-				std::atomic<KEY *> volatile _key;
-				std::atomic<DATA *> volatile _data;
+				KEY* _key;
+				DATA* _data;
 				std::atomic<unsigned int> _lock;
 				std::atomic<unsigned int> _timestamp;
 				std::mutex lock_mutex;
 
 				Bucket() {
-					_hop_info = 0;
+					_hop_info = _empty_hop_info;
 					_lock = 0;
-					_key = NULL;
-					_data = NULL;
+					_key = _empty_key;
+					_data = _empty_data;
 					_timestamp = 0;
 				}
 
@@ -63,8 +73,8 @@ namespace cds {
 
 			Bucket* segments_arys;
 
-			int calc_hash(KEY* key) {
-				std::hash<KEY*> hash_fn;
+			int calc_hash(KEY key) {
+				std::hash<KEY> hash_fn;
 				return hash_fn(key) % MAX_SEGMENTS;
 			}
 
@@ -73,8 +83,10 @@ namespace cds {
 			}
 
 		public:
+			static bool const c_isSorted = false; ///< whether the probe set should be ordered
+
 			hopscotch_hashmap() {
-				segments_arys = new Bucket[MAX_SEGMENTS + 256];
+				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
 				BUSY = (KEY*)std::malloc(sizeof(KEY));
 			}
 
@@ -83,11 +95,26 @@ namespace cds {
 				std::free(segments_arys);
 			}
 
-			bool contains(KEY* key) {
+			bool empty() {
+				return size() == 0;
+			}
+
+			int size() {
+				unsigned int counter = 0;
+				const unsigned int num_elm(MAX_SEGMENTS + ADD_RANGE);
+				for (unsigned int iElm = 0; iElm < num_elm; ++iElm) {
+					if (Bucket::_empty_hop_info != (segments_arys + iElm)->_hop_info) {
+						counter += __popcnt((segments_arys + iElm)->_hop_info);
+					}
+				}
+				return counter;
+			}
+
+			bool contains(KEY key) {
 				return get(key) != NULL;
 			}
 
-			DATA* get(KEY* key) {
+			DATA get(KEY key) {
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				unsigned int try_counter = 0;
@@ -102,8 +129,8 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (*key == *(check_bucket->_key)) {
-								return check_bucket->_data;
+							if (key == *(check_bucket->_key)) {
+								return *(check_bucket->_data);
 							}
 						}
 						++check_bucket;
@@ -113,9 +140,9 @@ namespace cds {
 
 				if (timestamp != start_bucket->_timestamp) {
 					Bucket* check_bucket = start_bucket;
-					for (int i = 0; i<HOP_RANGE; i++) {
-						if (*key == *(check_bucket->_key)) {
-							return check_bucket->_data;
+					for (int i = 0; i < HOP_RANGE; i++) {
+						if (key == *(check_bucket->_key)) {
+							return *(check_bucket->_data);
 						}
 						++check_bucket;
 					}
@@ -123,7 +150,7 @@ namespace cds {
 				return NULL;
 			}
 
-			bool add(KEY *key, DATA *data) {
+			bool add(KEY key, DATA data) {
 				int val = 1;
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
@@ -135,10 +162,10 @@ namespace cds {
 
 				Bucket* free_bucket = start_bucket;
 				int free_distance = 0;
-				for (; free_distance<ADD_RANGE; ++free_distance) {
-					std::atomic<KEY*> _atomic = free_bucket->_key;
-					KEY* _null_key = NULL;
-					if (NULL == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
+				for (; free_distance < ADD_RANGE; ++free_distance) {
+					std::atomic<KEY *> _atomic = free_bucket->_key;
+					KEY* _null_key = Bucket::_empty_key;
+					if (_null_key == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
 						break;
 					}
 					++free_bucket;
@@ -148,8 +175,8 @@ namespace cds {
 					do {
 						if (free_distance < HOP_RANGE) {
 							start_bucket->_hop_info |= (1 << free_distance);
-							free_bucket->_data = data;
-							free_bucket->_key = key;
+							*(free_bucket->_data) = data;
+							*(free_bucket->_key) = key;
 							start_bucket->unlock();
 							return true;
 						}
@@ -163,18 +190,18 @@ namespace cds {
 				return false;
 			}
 
-			DATA* remove(KEY *key) {
+			DATA remove(KEY key) {
 				unsigned int hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				start_bucket->lock();
 
 				unsigned int hop_info = start_bucket->_hop_info;
 				unsigned int mask = 1;
-				for (int i = 0; i<HOP_RANGE; ++i, mask <<= 1) {
+				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
 					if (mask & hop_info) {
 						Bucket* check_bucket = start_bucket + i;
-						if (*key == *(check_bucket->_key)) {
-							DATA* rc = check_bucket->_data;
+						if (key == *(check_bucket->_key)) {
+							DATA rc = *(check_bucket->_data);
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
 							start_bucket->_hop_info &= ~(1 << i);
@@ -189,11 +216,11 @@ namespace cds {
 
 			void find_closer_bucket(Bucket** free_bucket, int* free_distance, int &val) {
 				Bucket* move_bucket = *free_bucket - (HOP_RANGE - 1);
-				for (int free_dist = (HOP_RANGE - 1); free_dist>0; --free_dist) {
+				for (int free_dist = (HOP_RANGE - 1); free_dist > 0; --free_dist) {
 					unsigned int start_hop_info = move_bucket->_hop_info;
 					int move_free_distance = -1;
 					unsigned int mask = 1;
-					for (int i = 0; i<free_dist; ++i, mask <<= 1) {
+					for (int i = 0; i < free_dist; ++i, mask <<= 1) {
 						if (mask & start_hop_info) {
 							move_free_distance = i;
 							break;
@@ -208,7 +235,7 @@ namespace cds {
 							(*free_bucket)->_key = new_free_bucket->_key;
 							++(move_bucket->_timestamp);
 							new_free_bucket->_key = BUSY;
-							new_free_bucket->_data = BUSY;
+							new_free_bucket->_data = BUSYD;
 							move_bucket->_hop_info &= ~(1 << move_free_distance);
 							*free_bucket = new_free_bucket;
 							*free_distance -= free_dist;
