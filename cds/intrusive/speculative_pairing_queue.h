@@ -331,7 +331,7 @@ namespace cds { namespace intrusive {
 				*/
 				//EXPECT_TRUE(false) << "lol";
 				//retire queue
-				//gc::template retire<disposer_thunk>(queue);
+				gc::template retire<disposer_thunk>(queue);
             }
 			
 /*			void dispose_stale_nodes( Slot &slot){
