@@ -49,19 +49,61 @@ namespace cds {
                 friend class ValoisList;
 
             protected:
-                node_type *m_pNode;         // Valois target - current real node
-                node_type *aux_pNode;       // Valois pre_aux - aux node before the real node
-                node_type *cell_pNode;      // Valois pre_cell - real node before the current real node
+                node_type * current_node;   // Valois target - current real node
+                node_type * aux_pNode;      // Valois pre_aux - aux node before the real node
+                node_type * prev_node;      // Valois pre_cell - real node before the current real node
                 typename gc::Guard m_Guard;
 
                 bool next() {
-                    if (m_pNode->next == nullptr) {     // if tail
+                    //std::cout <<"hello from next "<<std::endl;
+                    if (current_node->next == nullptr) {     // if tail
                         return false;
                     }
 
-                    cell_pNode->next.store( m_pNode, memory_model::memory_order_seq_cst);
-                    aux_pNode->next.store( m_pNode->next, memory_model::memory_order_seq_cst);
-                    update_iterator();
+                    int * value;
+
+
+//                    if (prev_node->data.load() != nullptr){
+//                        value = prev_node->data.load().ptr();
+//                        std::cout <<"in next 1 "<< *value <<std::endl;
+//                    } else{
+//                        std::cout <<"in next 1 NULL" <<std::endl;
+//                    }
+
+//                    if (current_node->data.load() != nullptr){
+//                        value = current_node->data.load().ptr();
+//                        std::cout << "current node " << *value <<std::endl;
+//                        //std::cout << "next aux node " << current_node->next <<std::endl;
+//                    } else{
+//                        std::cout <<"current data is NULL" <<std::endl;
+//                    }
+
+                    node_type * new_current_node = new node_type();
+                    new_current_node->data.store(current_node->data.load());
+                    new_current_node->next.store(current_node->next.load());
+
+                    prev_node = new_current_node;
+
+                    new_current_node = new node_type();
+                    new_current_node->data.store(current_node->next.load()->data.load());
+                    new_current_node->next.store(current_node->next.load()->next.load());
+
+                    aux_pNode = new_current_node;
+
+                    current_node = aux_pNode->next.load();
+
+
+
+                    //update_iterator();
+
+//                    if (prev_node->data.load() != nullptr) {
+//                        value = prev_node->data.load().ptr();
+//                        std::cout << "in next 2 " << *value << std::endl;
+//                    } else{
+//                        std::cout <<"in next 2 NULL" <<std::endl;
+//                    }
+//
+//                    std::cout <<"bye from next" <<std::endl;
                     return true;
                 }
 
@@ -72,58 +114,71 @@ namespace cds {
                 typedef typename cds::details::make_const_type<value_type, false>::reference value_ref;
 
                 iterator()
-                        : m_pNode(nullptr), aux_pNode(nullptr), cell_pNode(nullptr) {}
+                        : current_node(nullptr), aux_pNode(nullptr), prev_node(nullptr) {}
 
                 // node - only m_Head
                 iterator( node_type * node) {
 
-                    m_pNode = new node_type();
+                    current_node = new node_type();
                     aux_pNode = new node_type();
-                    cell_pNode = new node_type();
+                    prev_node = new node_type();
 
                     aux_pNode->next.store(
                             node->next.load(memory_model::memory_order_seq_cst),
                             memory_model::memory_order_seq_cst
                     );
 
-                    cell_pNode->next.store(
+                    prev_node->next.store(
                             node,
                             memory_model::memory_order_seq_cst
                     );
 
                     node_type * tempNode = aux_pNode->next.load();
                      if ( tempNode->next.load() == nullptr ){
-                        m_pNode->next.store(NULL, memory_model::memory_order_seq_cst);
+                        current_node->next.store(NULL, memory_model::memory_order_seq_cst);
                     }
                     else{
-                        m_pNode->next.store( tempNode->next.load(), memory_model::memory_order_relaxed);
+                        current_node->next.store( tempNode->next.load(), memory_model::memory_order_relaxed);
                     }
 
                     update_iterator();
                 }
 
                 void update_iterator() {
-                    if (aux_pNode->next == m_pNode) {
+                    //std::cout << "\t in update iterator " << std::endl;
+                    if (aux_pNode->next == current_node) {
                         return;
                     }
+                    int * data;
 
-                    node_type *p = aux_pNode;
-                    node_type *n = p->next.load(atomics::memory_order_seq_cst);
+                    node_type * p = aux_pNode;
+                    node_type * n = p->next.load(atomics::memory_order_seq_cst);
 
-                    //std::cout << "DataLoad" << *n->data.load().ptr() << std::endl;
-                    while ( n->next != nullptr && n->data == NULL) {    //while not last and is aux node
-                        cell_pNode->next.compare_exchange_strong(
+                    data = n->next.load()->data.load().ptr();
+                    //std::cout << "\t data 1 is "<< (n->data.load().ptr()) << " -> " << data << std::endl;
+                    int tmp = 0;
+
+                    while ( n->next != nullptr && n->data == nullptr) {    //while not last and is aux node
+                        tmp++;
+
+                        prev_node->next.compare_exchange_strong(
                                 p,
                                 n,
-                                memory_model::memory_order_seq_cst,
+                                atomics::memory_order_seq_cst,
                                 atomics::memory_order_seq_cst
                         );
                         p = n;
                         n = p->next.load(atomics::memory_order_seq_cst);
                     }
 
+//                    std::cout << "\t count in while " <<tmp << std::endl;
+                    //std::exit(EXIT_FAILURE);
+                    data = n->data.load().ptr();
+//                    std::cout << "\t data 2 is " << data << std::endl;
+
                     aux_pNode = p;
-                    m_pNode = n;
+                    current_node = n;
+//                    std::cout << "\t bye update iterator " << std::endl;
                 }
 
                 iterator &operator++() {
@@ -133,19 +188,19 @@ namespace cds {
                 }
 
                 iterator &operator=(iterator &second) {
-                    m_pNode = second.m_pNode;
+                    current_node = second.current_node;
                     aux_pNode = second.aux_pNode;
-                    cell_pNode = second.cell_pNode;
+                    prev_node = second.prev_node;
                     m_Guard.copy(second.m_Guard);
                     return *this;
                 }
 
                 bool operator==(const iterator &second) const {
-                    return (m_pNode->data == second.m_pNode->data);
+                    return (current_node->data == second.current_node->data);
                 }
 
                 bool operator!=(const iterator &second) const {
-                    return (m_pNode->data != second.m_pNode->data);
+                    return (current_node->data != second.current_node->data);
                 }
             };
 
@@ -189,18 +244,22 @@ namespace cds {
              */
 
             template <typename Q, typename Compare >
-            bool search_insert(node_type * start_node, Q* val, Compare cmp) {
+            bool search_insert(node_type * start_node /*it not used*/, Q* val, Compare cmp) {
 
                 iterator * mIter = new iterator(m_pHead);
-                while (mIter->m_pNode->next.load() != nullptr ) {
-                    value_type *nVal = mIter->m_pNode->data.load( memory_model::memory_order_seq_cst ).ptr();
+                while (mIter->current_node->next.load() != nullptr ) {
+                    value_type *nVal = mIter->current_node->data.load( memory_model::memory_order_seq_cst ).ptr();
 
-                    int const nCmp = cmp(*nVal, *val);
-
+                    int const nCmp = cmp(*val, *nVal);
+                    /*std::cout << "search_insert : finded value "<< *nVal << std::endl;
+                    std::cout << "search_insert : inserted value "<< *val << std::endl;
+                    std::cout << "search_insert : compare index "<< nCmp << std::endl;*/
                     if (nCmp == 0) {
                         delete mIter;
                         return true;
                     } else if (nCmp > 0) {
+
+
                         bool k = try_insert(mIter, val);
                         delete mIter;
                         return k;
@@ -215,22 +274,23 @@ namespace cds {
             }
 
             bool try_insert(iterator *i, value_type * val) {
-                i->update_iterator();
+                //i->update_iterator();
+                //std::cout << "try insert "<< *val << std::endl;
 
                 node_type *real_node = new node_type(val);
                 node_type *aux_node = new node_type();
 
                 real_node->next = aux_node;
-                aux_node->next = i->m_pNode;
+                aux_node->next = i->current_node;
 
                 bool insert_status = i->aux_pNode->next.compare_exchange_strong(
-                        i->m_pNode,
+                        i->current_node,
                         real_node,
                         memory_model::memory_order_seq_cst,
                         memory_model::memory_order_seq_cst
                 );
 
-                i->update_iterator();
+                //i->update_iterator();
                 return insert_status;
             }
 
@@ -249,8 +309,8 @@ namespace cds {
                 iterator * i = new iterator(m_pHead);
 
                 std::cout << "----------start print by iterator---------------" << std::endl;
-                while(i->m_pNode->next.load() != nullptr){
-                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_seq_cst ).ptr();
+                while(i->current_node->next.load() != nullptr){
+                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
                     std::cout << *nVal << std::endl;
                     i->next();
                 }
@@ -283,51 +343,49 @@ namespace cds {
             }
 
             /**
-             *
-             * It's true delete algorithm
-             * @param i
-             * @return
-             */
-
-            bool erase(iterator &i) {
-                if (i.cell_pNode != nullptr) {      // if not Head
-                    while (true) {
-                        i.update_iterator();
-                        if (delete_node(i)) {
-                            return true;
-                        }
-                        i.update_iterator();
-                    }
-                }
-                return false;
-            }
-
-            /**
              * delete value from linked list;
              * @param value
              * @return
              */
+            template <typename Q, typename Compare >
+            bool erase(Q* val, Compare cmp) {
+                iterator * i = new iterator( m_pHead );
+                //search node
+                while (i->current_node->next.load() != nullptr ) {
+                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                    int const nCmp = cmp( *val , *nVal );
 
-            bool erase(value_type &value) {
-                while (true) {
-                    auto iter = begin();
-                    //skip if element not exists
-                    if (!find(iter, value))return true;
-                    if (erase(iter)) return true;
-                    // commented for start from begin position
-                    //iter.update_iterator();
+                    if ( nCmp == 0 ){
+                        // hard delete operation
+                        while (!try_erase(i)) {}
+                        delete i;
+                        return true;
+                    }
+                    else if ( nCmp > 0 ){
+                        delete i;
+                        return true;
+                    }
+                    else{
+                        i->next();
+                    }
                 }
+
+                delete i;
+                return true;
             }
+
+            bool erase(value_type val){
+                return erase(&val, key_comparator());
+            }
+
 
 
             template <typename Q, typename Compare >
             bool find( Q* val, Compare cmp) {
                 iterator * i = new iterator( m_pHead );
-                while (i->m_pNode->next.load() != nullptr ) {
-                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_seq_cst ).ptr();
-                    std::cout << *nVal << std::endl;
-                    //std::cout << *nVal << std::end;
-                    int const nCmp = cmp( *nVal, *val );
+                while (i->current_node->next.load() != nullptr ) {
+                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                    int const nCmp = cmp( *val , *nVal );
 
                     if ( nCmp == 0 ){
                         delete i;
@@ -349,8 +407,14 @@ namespace cds {
                 return find( &val, key_comparator() );
             }
 
+            bool contains(value_type &val) {
+                return find( &val, key_comparator() );
+            }
+
             bool empty() {
+                /*std::cout << "hello from empty" << std::endl;*/
                 iterator * i = new iterator(m_pHead);
+
                 if ( i->next() ) {
                     // if next is not exist() container is empty()
                     delete i;
@@ -360,6 +424,7 @@ namespace cds {
                     return true;
                 }
             }
+
 
         private:
 
@@ -386,14 +451,18 @@ namespace cds {
                 //}
             }
 
-            bool delete_node(iterator i) {
+            bool try_erase(iterator *i) {
 
-                node_type *for_delete = i.m_pNode;
-                node_type *adjacent = i.m_pNode->next;
+                node_type *for_delete = i->current_node;
+                node_type *adjacent = i->current_node->next;
 
-                bool delete_status = i.aux_pNode->next.compare_exchange_strong(for_delete, adjacent,
-                                                                               memory_model::memory_order_seq_cst,
-                                                                               memory_model::memory_order_seq_cst);
+                bool delete_status = i->aux_pNode->next
+                        .compare_exchange_strong(
+                                for_delete,
+                                adjacent,
+                                memory_model::memory_order_seq_cst,
+                                memory_model::memory_order_seq_cst);
+
                 return delete_status;
             }
 
@@ -406,32 +475,32 @@ namespace cds {
             void append(int * number){
                 node_type * next_node = m_pHead.load();
                 node_type * next_aux_node;
-                std::cout << "iter " << *number << std::endl;
+                //std::cout << "iter " << *number << std::endl;
                 do{
                     next_aux_node = next_node->next.load();
                     next_node = next_aux_node->next.load();
-                    std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
-                    std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
+                    //std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    //std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
+                    //std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
 
                 } while (next_node->next.load() != nullptr);
 
-                std::cout << number << " -> " << *number << std::endl;
+                //std::cout << number << " -> " << *number << std::endl;
 
 
                 int d = *number;
                 int * index = new int32_t(d);
-                std::cout<< "wtf wtf " <<number << " " << index << std::endl;
+                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
                 node_type * new_next_node = new node_type(index);
                 node_type * new_next_aux_node = new node_type();
 
                 new_next_aux_node->next.store(next_node);
-                std::cout << "append 5 " <<new_next_node << std::endl;
+                //std::cout << "append 5 " <<new_next_node << std::endl;
                 new_next_node->next.store(new_next_aux_node);
-                std::cout << "append 6 " <<next_node << std::endl;
+                //std::cout << "append 6 " <<next_node << std::endl;
                 next_aux_node->next.store(new_next_node);
 
-                std::cout << "finish" << std::endl << std::endl;
+                //std::cout << "finish" << std::endl << std::endl;
             }
         };
 

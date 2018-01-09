@@ -67,7 +67,21 @@ namespace {
     void test_simple_list(List& list)
     {
         std::cout << "simple test started " << std::endl;
-        list.print_all_by_link();
+        list.empty();
+        list.empty();
+        list.empty();
+        list.empty();
+        list.empty();
+        list.empty();
+        list.print_all_by_iterator();
+        list.print_all_by_iterator();
+
+        int value = 5;
+        std::cout << "find 5 "<<list.find(value) << std::endl;
+        value = 50000;
+        std::cout << "find 50000 "<< list.find(value) << std::endl;
+        std::cout << "insert status" << list.insert(value) << std::endl;
+        std::cout << "find 50000 after insert "<< list.find(value) << std::endl;
 
     }
 
@@ -91,9 +105,6 @@ namespace {
         // insert and contains method
         for ( int i = 0; i <= nSize; i++ ) {
             int * index = new int32_t(i);
-
-            std::cout << index << std::endl;
-
             ASSERT_FALSE(list.find(*index));
             list.insert(*index);
             ASSERT_TRUE( list.find(*index));
@@ -101,9 +112,8 @@ namespace {
 
         }
 
-
         // test adding in
-        for(int i = nSize; i >= 0; i--){
+        for ( int i = 0; i <= nSize; i++ ) {
             ASSERT_TRUE( list.find(i));
         }
 
@@ -113,11 +123,36 @@ namespace {
         // delete and contains method
         for(int i = nSize; i >= 0; i--){
             ASSERT_TRUE( list.find(i));
-            list.insert(i);
+            list.erase(i);
             ASSERT_FALSE(list.find(i));
         }
         // test empty method();
         ASSERT_TRUE( list.empty());
+
+    }
+
+    template <typename List>
+    void random_test_list(List& list){
+        std::cout << "random test started " << std::endl;
+        int items[10] = {4,7,6,8,2,9,10,1,0,5};
+
+        //insert
+        for(auto i : items){
+            int * index = new int32_t(i);
+            ASSERT_TRUE(list.insert(*index));
+        }
+
+        list.print_all_by_iterator();
+
+        //contains
+        for(auto i : items){
+            ASSERT_TRUE(list.contains(i));
+        }
+
+        //delete
+        for(auto i : items){
+            ASSERT_TRUE(list.erase(i));
+        }
 
     }
 
@@ -127,11 +162,15 @@ namespace {
         struct traits: public ci::valois_list::traits{};
 
         typedef ci::ValoisList< gc_type, int, traits > list_type;
-        list_type l(2);
+        list_type l(20);
         test_simple_list(l);
 
         list_type l2;
         test_list(l2);
+
+        list_type l3;
+        random_test_list(l3);
+
     }
 
 } // namespace
