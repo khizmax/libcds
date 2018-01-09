@@ -90,7 +90,7 @@ namespace {
         int size = 3;
 
         // insert and contains method
-        for ( int i = 0; i < size; i++ ) {
+        for ( int i = 0; i <= size; i++ ) {
             int * index = new int32_t(i);
 
             std::cout << index << std::endl;
@@ -102,16 +102,23 @@ namespace {
 
         }
 
-        list.print_all_by_link();
 
-        //// delete and contains method
-        //for(size_t i = nSize; i > 0; i--){
-        //    ASSERT_TRUE( list.find(i));
-        //    list.insert(i);
-        //    ASSERT_FALSE(list.find(i));
-        //}
-        //// test empty method();
-        //ASSERT_TRUE( list.empty());
+        // test adding in
+        for(int i = nSize; i >= 0; i--){
+            ASSERT_TRUE( list.find(i));
+        }
+
+
+        //list.print_all_by_link();
+
+        // delete and contains method
+        for(int i = nSize; i >= 0; i--){
+            ASSERT_TRUE( list.find(i));
+            list.insert(i);
+            ASSERT_FALSE(list.find(i));
+        }
+        // test empty method();
+        ASSERT_TRUE( list.empty());
 
     }
 
