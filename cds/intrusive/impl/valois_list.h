@@ -40,9 +40,6 @@ namespace cds {
             atomic_node_ptr m_pHead;        ///< Head pointer
             atomic_node_ptr m_pTail;        ///< Tail pointer
 
-            node_type m_Head;
-            node_type m_Tail;
-
         public:
             friend class iterator;
 
@@ -157,12 +154,34 @@ namespace cds {
                 init_list();
             }
 
+            /**
+             * DEBUG ONLY
+             * @param number
+             */
+
+            ValoisList(int number) {
+                node_type * aux_temp = new node_type();
+                std::cout << "hello from me" <<std::endl;
+                std::cout << m_pHead <<std::endl;
+                m_pHead.store(new node_type);
+                m_pHead.load()->next.store( aux_temp, memory_model::memory_order_seq_cst);  //link to aux node
+                std::cout << "hello from me 2" <<std::endl;
+                m_pTail.store(new node_type);
+                aux_temp->next.store( m_pTail, memory_model::memory_order_seq_cst );
+                m_pTail.load()->next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
+                std::cout << "hello from me 3" <<std::endl;
+
+                for(int i = 0 ; i<number ;i++){
+                    append(&i);
+                }
+            }
+
             ~ValoisList() {
                 destroy();
             }
 
             iterator begin() {
-                return iterator(&m_Head);
+                return iterator(m_pHead);
             }
 
             /**
@@ -175,7 +194,7 @@ namespace cds {
             template <typename Q, typename Compare >
             bool search_insert(node_type * start_node, Q* val, Compare cmp) {
 
-                iterator * mIter = new iterator(&m_Head);
+                iterator * mIter = new iterator(m_pHead);
                 while (mIter->m_pNode->next.load() != nullptr ) {
                     value_type *nVal = mIter->m_pNode->data.load( memory_model::memory_order_seq_cst ).ptr();
 
@@ -220,17 +239,50 @@ namespace cds {
 
 
             bool insert( value_type &val ){
-                return search_insert( &m_Head, &val, key_comparator() );
+                return search_insert( m_pHead, &val, key_comparator() );
             }
 
-            void print_all(){
-                iterator * i = new iterator(&m_Head);
+
+            /**
+             * Print all node in console
+             * this function for debug only
+             */
+
+            void print_all_by_iterator(){
+                iterator * i = new iterator(m_pHead);
+
+                std::cout << "----------start print by iterator---------------" << std::endl;
                 while(i->m_pNode->next.load() != nullptr){
-                    std::cout << "item: " << *i->m_pNode->data.load().ptr() << std::endl;
+                    value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_seq_cst ).ptr();
+                    std::cout << *nVal << std::endl;
                     i->next();
                 }
+                std::cout << "----------end---------------" << std::endl;
+
                 delete i;
             }
+
+            void print_all_by_link(){
+                std::cout << "----------start print by link---------------" << std::endl;
+
+                node_type * next_node = m_pHead.load();
+                node_type * next_aux_node;
+                int number = 0;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
+                    std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
+
+                    value_type * nVal = next_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+
+                    std::cout << number << " -> " << nVal <<  " -> "<< *nVal  << std::endl;
+                    number++;
+                } while (next_node->next.load() != nullptr);
+                std::cout << "----------finish print by link---------------" << std::endl;
+            }
+
             /**
              *
              * It's true delete algorithm
@@ -271,10 +323,11 @@ namespace cds {
 
             template <typename Q, typename Compare >
             bool find( Q* val, Compare cmp) {
-                iterator * i = new iterator( &m_Head );
+                iterator * i = new iterator( m_pHead );
                 while (i->m_pNode->next.load() != nullptr ) {
                     value_type * nVal = i->m_pNode->data.load(memory_model::memory_order_seq_cst ).ptr();
-
+                    std::cout << *nVal << std::endl;
+                    //std::cout << *nVal << std::end;
                     int const nCmp = cmp( *nVal, *val );
 
                     if ( nCmp == 0 ){
@@ -298,7 +351,7 @@ namespace cds {
             }
 
             bool empty() {
-                iterator * i = new iterator(&m_Head);
+                iterator * i = new iterator(m_pHead);
                 if ( i->next() ) {
                     // if next is not exist() container is empty()
                     delete i;
@@ -314,9 +367,9 @@ namespace cds {
             void init_list() {
                 node_type * aux_temp = new node_type();
 
-                m_Head.next.store( aux_temp, memory_model::memory_order_seq_cst);  //link to aux node
-                aux_temp->next.store( &m_Tail, memory_model::memory_order_seq_cst );
-                m_Tail.next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
+                m_pHead.load()->next.store( aux_temp, memory_model::memory_order_seq_cst);  //link to aux node
+                aux_temp->next.store( m_pTail, memory_model::memory_order_seq_cst );
+                m_pTail.load()->next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
             }
 
             void destroy() {
@@ -342,6 +395,37 @@ namespace cds {
                                                                                memory_model::memory_order_seq_cst);
 
                 return delete_status;
+            }
+
+
+            /**
+             * Debug only
+             * @param number
+             */
+
+            void append(int * number){
+                node_type * next_node = m_pHead.load();
+                node_type * next_aux_node;
+                std::cout << "iter " << *number << std::endl;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
+                    std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
+
+                } while (next_node->next.load() != nullptr);
+
+                node_type * new_next_node = new node_type(number);
+                node_type * new_next_aux_node = new node_type();
+
+                new_next_aux_node->next.store(next_node);
+                std::cout << "append 5 " <<new_next_node << std::endl;
+                new_next_node->next.store(new_next_aux_node);
+                std::cout << "append 6 " <<next_node << std::endl;
+                next_aux_node->next.store(new_next_node);
+
+                std::cout << "finish" << std::endl << std::endl;
             }
         };
 

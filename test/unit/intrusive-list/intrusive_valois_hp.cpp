@@ -63,11 +63,14 @@ namespace {
         }
     };
 
-    /**
-     *
-     * @tparam List
-     * @param list
-     */
+    template <typename List>
+    void test_simple_list(List& list)
+    {
+        std::cout << "simple test started " << std::endl;
+        list.print_all_by_link();
+
+    }
+
     template <typename List>
     void test_list(List& list)
     {
@@ -83,16 +86,22 @@ namespace {
 
         static const size_t nSize = 20;
         typedef typename List::value_type value_type;
-        int size = 10;
+        int size = 3;
 
         // insert and contains method
         for ( int i = 0; i < size; i++ ) {
 
             ASSERT_FALSE(list.find(i));
             list.insert(i);
+            if(i>1){
+                list.print_all_by_link();
+            }
             ASSERT_TRUE( list.find(i));
             ASSERT_FALSE( list.empty());
+
         }
+
+        list.print_all_by_link();
 
         //// delete and contains method
         //for(size_t i = nSize; i > 0; i--){
@@ -111,9 +120,11 @@ namespace {
         struct traits: public ci::valois_list::traits{};
 
         typedef ci::ValoisList< gc_type, int, traits > list_type;
-        list_type l;
-        test_list(l);
-
+        list_type l(20);
+        test_simple_list(l);
+/*
+        list_type l2;
+        test_list(l2);*/
     }
 
 } // namespace
