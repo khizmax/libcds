@@ -161,15 +161,12 @@ namespace cds {
 
             ValoisList(int number) {
                 node_type * aux_temp = new node_type();
-                std::cout << "hello from me" <<std::endl;
-                std::cout << m_pHead <<std::endl;
                 m_pHead.store(new node_type);
                 m_pHead.load()->next.store( aux_temp, memory_model::memory_order_seq_cst);  //link to aux node
-                std::cout << "hello from me 2" <<std::endl;
                 m_pTail.store(new node_type);
                 aux_temp->next.store( m_pTail, memory_model::memory_order_seq_cst );
                 m_pTail.load()->next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
-                std::cout << "hello from me 3" <<std::endl;
+
 
                 for(int i = 0 ; i<number ;i++){
                     append(&i);
@@ -274,12 +271,14 @@ namespace cds {
                     std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
                     std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
                     std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
-
-                    value_type * nVal = next_node->data.load(memory_model::memory_order_seq_cst ).ptr();
-
-                    std::cout << number << " -> " << nVal <<  " -> "<< *nVal  << std::endl;
+                    if (next_node->next){
+                        value_type * nVal = next_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                        value_type * nVala = next_aux_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                        std::cout << number << " aux -> " << nVala <<  " -> "<<  std::endl;
+                        std::cout << number << " -> " << nVal <<  " -> "<< *nVal  << std::endl;
+                    }
                     number++;
-                } while (next_node->next.load() != nullptr);
+                } while (next_node->next != nullptr);
                 std::cout << "----------finish print by link---------------" << std::endl;
             }
 
@@ -366,10 +365,12 @@ namespace cds {
 
             void init_list() {
                 node_type * aux_temp = new node_type();
-
+                m_pHead.store(new node_type);
                 m_pHead.load()->next.store( aux_temp, memory_model::memory_order_seq_cst);  //link to aux node
+                m_pTail.store(new node_type);
                 aux_temp->next.store( m_pTail, memory_model::memory_order_seq_cst );
                 m_pTail.load()->next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
+
             }
 
             void destroy() {
@@ -393,7 +394,6 @@ namespace cds {
                 bool delete_status = i.aux_pNode->next.compare_exchange_strong(for_delete, adjacent,
                                                                                memory_model::memory_order_seq_cst,
                                                                                memory_model::memory_order_seq_cst);
-
                 return delete_status;
             }
 
@@ -416,7 +416,13 @@ namespace cds {
 
                 } while (next_node->next.load() != nullptr);
 
-                node_type * new_next_node = new node_type(number);
+                std::cout << number << " -> " << *number << std::endl;
+
+
+                int d = *number;
+                int * index = new int32_t(d);
+                std::cout<< "wtf wtf " <<number << " " << index << std::endl;
+                node_type * new_next_node = new node_type(index);
                 node_type * new_next_aux_node = new node_type();
 
                 new_next_aux_node->next.store(next_node);

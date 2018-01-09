@@ -74,6 +74,7 @@ namespace {
     template <typename List>
     void test_list(List& list)
     {
+        std::cout << "simple middle  started " << std::endl;
         /**
          * 1) testing method is empty
          * 2) test adding 10 element in the container
@@ -90,13 +91,13 @@ namespace {
 
         // insert and contains method
         for ( int i = 0; i < size; i++ ) {
+            int * index = new int32_t(i);
 
-            ASSERT_FALSE(list.find(i));
-            list.insert(i);
-            if(i>1){
-                list.print_all_by_link();
-            }
-            ASSERT_TRUE( list.find(i));
+            std::cout << index << std::endl;
+
+            ASSERT_FALSE(list.find(*index));
+            list.insert(*index);
+            ASSERT_TRUE( list.find(*index));
             ASSERT_FALSE( list.empty());
 
         }
@@ -120,11 +121,11 @@ namespace {
         struct traits: public ci::valois_list::traits{};
 
         typedef ci::ValoisList< gc_type, int, traits > list_type;
-        list_type l(20);
+        list_type l(2);
         test_simple_list(l);
-/*
+
         list_type l2;
-        test_list(l2);*/
+        test_list(l2);
     }
 
 } // namespace
