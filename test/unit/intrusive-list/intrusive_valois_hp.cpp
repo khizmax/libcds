@@ -132,6 +132,42 @@ namespace {
     }
 
     template <typename List>
+    void revert_test_list(List& list){
+        std::cout << "revert test started " << std::endl;
+        ASSERT_TRUE( list.empty());
+
+        static const size_t nSize = 20;
+        typedef typename List::value_type value_type;
+
+        // insert and contains method
+        for ( int i = nSize; i >= 0 ; i-- ) {
+            int * index = new int32_t(i);
+            ASSERT_FALSE(list.find(*index));
+            list.insert(*index);
+            ASSERT_TRUE( list.find(*index));
+            ASSERT_FALSE( list.empty());
+        }
+
+        // test adding in
+        for ( int i = nSize; i >= 0 ; i-- ) {
+            ASSERT_TRUE( list.find(i));
+        }
+
+
+        //list.print_all_by_link();
+
+        // delete and contains method
+        for ( int i = nSize; i >= 0 ; i-- ) {
+            ASSERT_TRUE( list.find(i));
+            list.erase(i);
+            ASSERT_FALSE(list.find(i));
+        }
+        // test empty method();
+        ASSERT_TRUE( list.empty());
+    }
+
+
+    template <typename List>
     void random_test_list(List& list){
         std::cout << "random test started " << std::endl;
         int items[10] = {4,7,6,8,2,9,10,1,0,5};
@@ -169,7 +205,10 @@ namespace {
         test_list(l2);
 
         list_type l3;
-        random_test_list(l3);
+        revert_test_list(l3);
+
+        list_type l4;
+        random_test_list(l4);
 
     }
 
