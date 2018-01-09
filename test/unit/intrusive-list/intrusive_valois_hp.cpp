@@ -87,10 +87,9 @@ namespace {
 
         static const size_t nSize = 20;
         typedef typename List::value_type value_type;
-        int size = 3;
 
         // insert and contains method
-        for ( int i = 0; i <= size; i++ ) {
+        for ( int i = 0; i <= nSize; i++ ) {
             int * index = new int32_t(i);
 
             std::cout << index << std::endl;
