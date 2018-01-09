@@ -32,10 +32,10 @@
 #include <cds/algo/atomic.h>
 #include <cds/intrusive/details/sp_queue_base.h>
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <list>
+//#include <boost/random/mersenne_twister.hpp>
+//#include <boost/random/uniform_int.hpp>
+//#include <boost/random/variate_generator.hpp>
+//#include <list>
 
 namespace cds { namespace intrusive {
 
@@ -331,10 +331,10 @@ namespace cds { namespace intrusive {
 				*/
 				//EXPECT_TRUE(false) << "lol";
 				//retire queue
-				gc::template retire<disposer_thunk>(queue);
+				//gc::template retire<disposer_thunk>(queue);
             }
 			
-			void dispose_stale_nodes( Slot &slot){
+/*			void dispose_stale_nodes( Slot &slot){
 				boost::mt19937 gen;
 				boost::uniform_int<> dist(0,99);
 				boost::variate_generator<boost::mt19937&, boost::uniform_int<> > roll(gen, dist);
@@ -374,7 +374,7 @@ namespace cds { namespace intrusive {
 					
 				}
 			}
-			
+*/
 			
         public:
             /// Constructs empty speculative pairing queue
@@ -410,6 +410,7 @@ namespace cds { namespace intrusive {
 				typename gc::template Guard queue_guard;
                 typename gc::template GuardArray<3>  guards;
                 int tail = 0;
+
                 while (true){
                     pQueue = queue_guard.protect(m_Queue);
 
@@ -424,7 +425,8 @@ namespace cds { namespace intrusive {
                         m_Stat.onRepeatEnque();
                         continue;
                     }
-					
+
+
                     tail = pQueue->m_Tail.load(memory_model::memory_order_relaxed);
                     int idx = tail % C_SIZE;
 					

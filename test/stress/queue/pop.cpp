@@ -150,8 +150,11 @@ namespace {
 
             pool.add( new Consumer<Queue>( pool, q ), s_nThreadCount );
 
-            for ( size_t i = 0; i < s_nQueueSize; ++i )
+            for ( size_t i = 0; i < s_nQueueSize; ++i ) {
                 q.push( i );
+            }
+
+
 
             propout() << std::make_pair( "thread_count", s_nThreadCount )
                 << std::make_pair( "push_count", s_nQueueSize );

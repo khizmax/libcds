@@ -347,7 +347,7 @@ namespace {
 /*
     CDSSTRESS_MSQueue( simple_queue_push_pop )
 */
-    CDSSTRESS_SPQueue( simple_queue_push_pop )
+//    CDSSTRESS_SPQueue( simple_queue_push_pop )
 /*
     CDSSTRESS_MoirQueue( simple_queue_push_pop )
     CDSSTRESS_BasketQueue( simple_queue_push_pop )

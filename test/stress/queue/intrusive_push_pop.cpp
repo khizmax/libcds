@@ -339,7 +339,6 @@ namespace {
                 }
             }
             pool.add( new Consumer<Queue>( pool, q ), s_nReaderThreadCount );
-
             std::chrono::milliseconds duration = pool.run();
             propout() << std::make_pair( "duration", duration );
 
@@ -377,11 +376,11 @@ namespace {
 
 /* ===== SPECULATIVE QUEUE IDP CHANGES STARTS =========================== */
     CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+//    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+//    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+//    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+//    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+//    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
 /* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
 
 /* ===== DISABLE ANOTHER TESTS ======================================
