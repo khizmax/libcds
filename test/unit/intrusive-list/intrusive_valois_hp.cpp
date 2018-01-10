@@ -68,19 +68,14 @@ namespace {
     {
         std::cout << "simple test started " << std::endl;
 
-        /*list.print_all_by_iterator();*/
-
         list.append_in_first(3);
         list.append_in_position(10000,10);
 
         std::cout << "search " << list.search(10000) << std::endl;
 
-        list.deleted(10000);
+        list.deleted(50);
 
         list.print_all_by_iterator();
-
-
-
     }
 
     template <typename List>
@@ -110,24 +105,19 @@ namespace {
 
         }
 
-        //list.print_all_by_iterator();
-
         // test adding in
         for ( int i = 0; i <= nSize; i++ ) {
             ASSERT_TRUE( list.contains(i));
         }
 
-
-        //list.print_all_by_link();
-
         // delete and contains method
-        for(int i = nSize; i >= 0; i--){
+        for ( int i = 0; i <= nSize; i++ ) {
             ASSERT_TRUE( list.contains(i));
             list.erase(i);
-            //ASSERT_FALSE(list.contains(i));
+            ASSERT_FALSE(list.contains(i));
         }
         // test empty method();
-        //ASSERT_TRUE( list.empty());
+        ASSERT_TRUE( list.empty());
 
     }
 
@@ -148,24 +138,19 @@ namespace {
             ASSERT_FALSE( list.empty());
         }
 
-
         // test adding in
         for ( int i = 0; i <= nSize ; i++ ) {
-            //list.print_all_by_iterator();
             ASSERT_TRUE( list.contains(i));
         }
-
-
-        //list.print_all_by_link();
 
         // delete and contains method
-        for ( int i = nSize; i >= 0 ; i-- ) {
+        for ( int i = 0; i <= nSize ; i++ ) {
             ASSERT_TRUE( list.contains(i));
             list.erase(i);
-            //ASSERT_FALSE(list.contains(i));
+            ASSERT_FALSE(list.contains(i));
         }
         // test empty method();
-        //ASSERT_TRUE( list.empty());
+        ASSERT_TRUE( list.empty());
     }
 
 
@@ -177,7 +162,9 @@ namespace {
         //insert
         for(auto i : items){
             int * index = new int32_t(i);
+            ASSERT_FALSE( list.contains(i));
             ASSERT_TRUE(list.insert(*index));
+            ASSERT_TRUE( list.contains(i));
         }
 
         list.print_all_by_iterator();
@@ -188,10 +175,12 @@ namespace {
         }
 
         //delete
-        for(auto i : items){
-            ASSERT_TRUE(list.erase(i));
+        for ( int i = 0; i <= 9 ; i++ ) {
+            ASSERT_TRUE( list.contains(i));
+            list.erase(i);
+            ASSERT_FALSE( list.contains(i));
         }
-
+        list.print_all_by_iterator();
     }
 
 

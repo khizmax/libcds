@@ -57,7 +57,7 @@ namespace cds {
             typedef typename traits::node_allocator node_allocator; ///< Node allocator
             typedef typename traits::stat stat;           ///< Internal statistics
 
-            /*typedef typename gc::template guarded_ptr<value_type> guarded_ptr;  */  ///< Guarded pointer
+            typedef typename gc::template guarded_ptr<value_type> guarded_ptr;    ///< Guarded pointer
 
             static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4;    ///< Count of hazard pointer required for the algorithm
 
@@ -80,7 +80,7 @@ namespace cds {
                 node_type * current_node;   // Valois target - current real node
                 node_type * aux_pNode;      // Valois pre_aux - aux node before the real node
                 node_type * prev_node;      // Valois pre_cell - real node before the current real node
-                /*typename gc::Guard m_Guard;*/
+                typename gc::Guard m_Guard;
 
                 bool next() {
                     if (current_node->next == nullptr) {     // if tail
