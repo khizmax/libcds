@@ -1,4 +1,32 @@
-//TODO: maybe add DOXYGEN docs
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #ifndef CDS_VALOIS_LIST_H
 #define CDS_VALOIS_LIST_H
@@ -247,19 +275,31 @@ namespace cds {
             bool search_insert(node_type * start_node /*it not used*/, Q* val, Compare cmp) {
 
                 iterator * mIter = new iterator(m_pHead);
+                // for first node
+                std::cout << "search_insert : finded value "<< mIter->current_node->data.load().ptr() << std::endl;
+                value_type * nVal = mIter->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+
+                if(nVal != nullptr){
+                    int const nCmp = cmp( *nVal , *val );
+                    if (nCmp > 0){
+                        bool k = try_insert(mIter, val);
+                        delete mIter;
+                        return k;
+                    }
+                }
+
+
                 while (mIter->current_node->next.load() != nullptr ) {
-                    value_type *nVal = mIter->current_node->data.load( memory_model::memory_order_seq_cst ).ptr();
+                    nVal = mIter->current_node->data.load( memory_model::memory_order_seq_cst ).ptr();
 
                     int const nCmp = cmp(*val, *nVal);
-                    /*std::cout << "search_insert : finded value "<< *nVal << std::endl;
+                    std::cout << "search_insert : finded value "<< *nVal << std::endl;
                     std::cout << "search_insert : inserted value "<< *val << std::endl;
-                    std::cout << "search_insert : compare index "<< nCmp << std::endl;*/
+                    std::cout << "search_insert : compare index "<< nCmp << std::endl;
                     if (nCmp == 0) {
                         delete mIter;
                         return true;
                     } else if (nCmp > 0) {
-
-
                         bool k = try_insert(mIter, val);
                         delete mIter;
                         return k;
@@ -299,48 +339,6 @@ namespace cds {
                 return search_insert( m_pHead, &val, key_comparator() );
             }
 
-
-            /**
-             * Print all node in console
-             * this function for debug only
-             */
-
-            void print_all_by_iterator(){
-                iterator * i = new iterator(m_pHead);
-
-                std::cout << "----------start print by iterator---------------" << std::endl;
-                while(i->current_node->next.load() != nullptr){
-                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
-                    std::cout << *nVal << std::endl;
-                    i->next();
-                }
-                std::cout << "----------end---------------" << std::endl;
-
-                delete i;
-            }
-
-            void print_all_by_link(){
-                std::cout << "----------start print by link---------------" << std::endl;
-
-                node_type * next_node = m_pHead.load();
-                node_type * next_aux_node;
-                int number = 0;
-                do{
-                    next_aux_node = next_node->next.load();
-                    next_node = next_aux_node->next.load();
-                    std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
-                    std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
-                    if (next_node->next){
-                        value_type * nVal = next_node->data.load(memory_model::memory_order_seq_cst ).ptr();
-                        value_type * nVala = next_aux_node->data.load(memory_model::memory_order_seq_cst ).ptr();
-                        std::cout << number << " aux -> " << nVala <<  " -> "<<  std::endl;
-                        std::cout << number << " -> " << nVal <<  " -> "<< *nVal  << std::endl;
-                    }
-                    number++;
-                } while (next_node->next != nullptr);
-                std::cout << "----------finish print by link---------------" << std::endl;
-            }
 
             /**
              * delete value from linked list;
@@ -425,6 +423,50 @@ namespace cds {
                 }
             }
 
+
+
+
+            /**
+             * Print all node in console
+             * this function for debug only
+             */
+
+            void print_all_by_iterator(){
+                iterator * i = new iterator(m_pHead);
+
+                std::cout << "----------start print by iterator---------------" << std::endl;
+                while(i->current_node->next.load() != nullptr){
+                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                    std::cout << *nVal << std::endl;
+                    i->next();
+                }
+                std::cout << "----------end---------------" << std::endl;
+
+                delete i;
+            }
+
+            void print_all_by_link(){
+                std::cout << "----------start print by link---------------" << std::endl;
+
+                node_type * next_node = m_pHead.load();
+                node_type * next_aux_node;
+                int number = 0;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " <<next_aux_node->next.load() << std::endl;
+                    std::cout << "next_node.next -> " <<next_node->next.load() << std::endl << std::endl;
+                    if (next_node->next){
+                        value_type * nVal = next_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                        value_type * nVala = next_aux_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                        std::cout << number << " aux -> " << nVala <<  " -> "<<  std::endl;
+                        std::cout << number << " -> " << nVal <<  " -> "<< *nVal  << std::endl;
+                    }
+                    number++;
+                } while (next_node->next != nullptr);
+                std::cout << "----------finish print by link---------------" << std::endl;
+            }
 
         private:
 
