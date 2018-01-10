@@ -57,9 +57,7 @@ namespace cds {
             typedef typename traits::node_allocator node_allocator; ///< Node allocator
             typedef typename traits::stat stat;           ///< Internal statistics
 
-
-            /* not used */
-            typedef typename gc::template guarded_ptr<value_type> guarded_ptr;    ///< Guarded pointer
+            typename gc::Guard m_Guard;
 
             static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4;    ///< Count of hazard pointer required for the algorithm
 
@@ -155,6 +153,8 @@ namespace cds {
 
                     aux_pNode = p;
                     current_node = n;
+
+                    m_Guard.protect( current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
                 }
 
 /*
@@ -243,6 +243,9 @@ namespace cds {
                 iterator * mIter = new iterator(list_head_node);
 
                 while (true) {
+
+                    m_Guard.protect( mIter->current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
+
                     value_type * nVal = mIter->current_node
                             ->data.load(
                                     memory_model::memory_order_seq_cst
@@ -318,6 +321,8 @@ namespace cds {
 
                     if ( nCmp == 0 ){
 
+                        gc::template retire<disposer>( nVal );
+
                         bool result = try_erase(i);
                         delete i;
                         if (result){
@@ -352,6 +357,9 @@ namespace cds {
             bool contains( Q* val, Compare cmp) {
                 iterator * i = new iterator( list_head_node );
                 while (i->current_node->next.load() != nullptr ) {
+
+                    m_Guard.protect( i->current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
+
                     value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
@@ -557,6 +565,8 @@ namespace cds {
             }
 
             void destroy() {
+                m_Guard.clear();
+
                 node_type * tNode = list_head_node.load()->next.load(memory_model::memory_order_relaxed);
 
                 while (tNode->next.load(memory_model::memory_order_relaxed) != nullptr) {
