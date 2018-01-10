@@ -125,7 +125,8 @@ namespace cds {
 			template <typename K>
 			bool contains(K const& key)
 			{
-				return get(key, [=](K const& one, K const& two) { return one != two; }) != NULL;
+				DATA data = get(key);
+				return data != NULL;
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -161,21 +162,21 @@ namespace cds {
 			{
 				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
 				f(data);
-				return *data != NULL;
+				return data != NULL;
 			}
 
 			template <typename K, typename Predicate>
 			bool find(K const& key, Predicate pred)
 			{
 				DATA data = get(key, pred);
-				return *data != NULL;
+				return data != NULL;
 			}
 
 			template <typename K>
 			bool find(K const& key)
 			{
 				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
-				return *data != NULL;
+				return data != NULL;
 			}
 
 			template <typename K, typename Predicate, typename Func>
@@ -183,7 +184,7 @@ namespace cds {
 			{
 				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
 				f(data);
-				return *data != NULL;
+				return data != NULL;
 			}
 
 			/// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
