@@ -157,7 +157,7 @@ namespace cds {
                     current_node = n;
                 }
 
-
+/*
                 void print(){
                     std::cout << "iterator" << std::endl;
                     if (current_node->data.load() != nullptr){
@@ -173,7 +173,7 @@ namespace cds {
                     }
 
                     std::cout << "--------------------" << std::endl;
-                }
+                }*/
 
                 iterator &operator++() {
                     iterator temp = *this;
@@ -207,7 +207,7 @@ namespace cds {
              * DEBUG ONLY
              * @param number
              */
-
+/*
             ValoisList(int number) {
                 node_type * aux_temp = new node_type();
                 list_head_node.store(new node_type);
@@ -220,7 +220,7 @@ namespace cds {
                 for(int i = 0 ; i<number*5 ;i+=5){
                     append(i);
                 }
-            }
+            }*/
 
             ~ValoisList() {
                 destroy();
@@ -389,12 +389,9 @@ namespace cds {
             }
 
 
+/*
 
 
-            /**
-             * Print all node in console
-             * this function for debug only
-             */
 
             void print_all_by_iterator(){
                 iterator * i = new iterator(list_head_node);
@@ -455,29 +452,19 @@ namespace cds {
             void append(int& number){
                 node_type * next_node = list_head_node.load();
                 node_type * next_aux_node;
-                //std::cout << "iter " << *number << std::endl;
                 do{
                     next_aux_node = next_node->next.load();
                     next_node = next_aux_node->next.load();
-                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " << next_node << std::endl;*/
-
                 } while (next_aux_node->next != nullptr && next_node->next.load() != nullptr);
 
-                //std::cout << number << " -> " << *number << std::endl;
 
                 int * index = new int32_t(number);
-                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
                 node_type * new_next_node = new node_type(index);
                 node_type * new_next_aux_node = new node_type();
 
                 new_next_aux_node->next.store(next_node);
-                //std::cout << "append 5 " <<new_next_node << std::endl;
                 new_next_node->next.store(new_next_aux_node);
-                //std::cout << "append 6 " <<next_node << std::endl;
                 next_aux_node->next.store(new_next_node);
-
-                //std::cout << "finish" << std::endl << std::endl;
             }
 
             void append_in_first(const int& number){
@@ -507,35 +494,27 @@ namespace cds {
                 do{
                     next_aux_node = next_node->next.load();
                     next_node = next_aux_node->next.load();
-                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " << next_node << std::endl;*/
                     ind++;
                 } while (next_node->next.load() != nullptr && ind < position + 1);
                 std::cout << "value " <<ind << std::endl;
-                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
                 node_type * new_next_node = new node_type(new int32_t(number));
                 node_type * new_next_aux_node = new node_type();
 
                 new_next_aux_node->next.store(next_node);
-                //std::cout << "append 5 " <<new_next_node << std::endl;
                 new_next_node->next.store(new_next_aux_node);
-                //std::cout << "append 6 " <<next_node << std::endl;
                 next_aux_node->next.store(new_next_node);
 
-                //std::cout << "finish" << std::endl << std::endl;
+
 
             }
 
             int search(const int& number){
                 node_type * next_node = list_head_node.load();
                 node_type * next_aux_node;
-                //std::cout << "iter " << *number << std::endl;
                 int ind = 0;
                 do{
                     next_aux_node = next_node->next.load();
                     next_node = next_aux_node->next.load();
-                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " << next_node << std::endl;*/
                     if (number == *(next_node->data.load().ptr())){
                         return ind;
                     }
@@ -549,13 +528,10 @@ namespace cds {
             bool deleted (const int& number){
                 node_type * next_node = list_head_node.load();
                 node_type * next_aux_node;
-                //std::cout << "iter " << *number << std::endl;
                 int ind = 0;
                 do{
                     next_aux_node = next_node->next.load();
                     next_node = next_aux_node->next.load();
-                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " << next_node << std::endl;*/
                     if (number == *(next_node->data.load().ptr())){
                         next_aux_node->next.store(next_node->next.load()->next.load());
                         return true;
@@ -566,7 +542,7 @@ namespace cds {
 
 
                 return false;
-            }
+            }*/
 
         private:
 
@@ -581,16 +557,18 @@ namespace cds {
             }
 
             void destroy() {
-                //TODO: fix destroy()
-                //node_type *tNode = m_Head->next.load(memory_model::memory_order_relaxed);
-                //
-                //while (tNode != tNode->next.load(memory_model::memory_order_relaxed)) {
-                //    value_type *pVal = tNode->data.load(memory_model::memory_order_relaxed).ptr();
-                //    if (pVal)
-                //        erase(tNode);
-                //    node_type *pNext = tNode->next.load(memory_model::memory_order_relaxed);
-                //    tNode = pNext;
-                //}
+                node_type * tNode = list_head_node.load()->next.load(memory_model::memory_order_relaxed);
+
+                while (tNode->next.load(memory_model::memory_order_relaxed) != nullptr) {
+                    value_type * pVal = tNode->data.load(memory_model::memory_order_relaxed).ptr();
+                    if (pVal) {
+
+                        erase(*pVal);
+
+                        tNode = list_head_node.load()->next.load(memory_model::memory_order_relaxed);
+                    }
+                    tNode = tNode->next.load(memory_model::memory_order_relaxed);
+                }
             }
 
             bool try_erase(iterator *i) {

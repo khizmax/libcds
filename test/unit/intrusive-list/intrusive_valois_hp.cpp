@@ -81,7 +81,6 @@ namespace {
     template <typename List>
     void test_list(List& list)
     {
-        std::cout << "simple middle  started " << std::endl;
         /**
          * 1) testing method is empty
          * 2) test adding 10 element in the container
@@ -123,7 +122,6 @@ namespace {
 
     template <typename List>
     void revert_test_list(List& list){
-        std::cout << "revert test started " << std::endl;
         ASSERT_TRUE( list.empty());
 
         static const size_t nSize = 20;
@@ -156,7 +154,6 @@ namespace {
 
     template <typename List>
     void random_test_list(List& list){
-        std::cout << "random test started " << std::endl;
         int items[10] = {4,7,6,8,2,9,3,1,0,5};
 
         //insert
@@ -166,8 +163,6 @@ namespace {
             ASSERT_TRUE(list.insert(*index));
             ASSERT_TRUE( list.contains(i));
         }
-
-        list.print_all_by_iterator();
 
         //contains
         for(auto i : items){
@@ -180,7 +175,6 @@ namespace {
             list.erase(i);
             ASSERT_FALSE( list.contains(i));
         }
-        list.print_all_by_iterator();
     }
 
 
@@ -189,10 +183,10 @@ namespace {
         struct traits: public ci::valois_list::traits{};
 
         typedef ci::ValoisList< gc_type, int, traits > list_type;
-
+/*
         list_type l(20);
         test_simple_list(l);
-
+*/
         list_type l2;
         test_list(l2);
 
