@@ -57,6 +57,8 @@ namespace cds {
             typedef typename traits::node_allocator node_allocator; ///< Node allocator
             typedef typename traits::stat stat;           ///< Internal statistics
 
+
+            /* not used */
             typedef typename gc::template guarded_ptr<value_type> guarded_ptr;    ///< Guarded pointer
 
             static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4;    ///< Count of hazard pointer required for the algorithm
@@ -183,7 +185,7 @@ namespace cds {
                     current_node = second.current_node;
                     aux_pNode = second.aux_pNode;
                     prev_node = second.prev_node;
-                    /*m_Guard.copy(second.m_Guard);*/
+                    m_Guard.copy(second.m_Guard);
                     return *this;
                 }
 
