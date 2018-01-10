@@ -593,9 +593,21 @@ namespace cds {
 
             bool try_erase(iterator *i) {
 
+                node_type *d = i->current_node;
+
+                node_type *n = i->current_node->next.load();
+                bool r = i->aux_pNode->next.compare_exchange_strong(d, n);
+
+                if (!r){
+                    return false;
+                }
+
+                /*
+                node_type *d = i->current_node;
+
                 i->current_node = i->current_node->next.load()->next.load();
                 i->aux_pNode = i->current_node;
-
+                */
                 /* add delete */
 
 
