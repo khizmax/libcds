@@ -67,21 +67,20 @@ namespace {
     void test_simple_list(List& list)
     {
         std::cout << "simple test started " << std::endl;
-        list.empty();
-        list.empty();
-        list.empty();
-        list.empty();
-        list.empty();
-        list.empty();
-        list.print_all_by_iterator();
+
+
+        /*list.print_all_by_iterator();*/
+
+        list.append_in_first(3);
+        list.append_in_position(10000,10);
+
+        std::cout << "search " << list.search(10000) << std::endl;
+
+        list.deleted(10000);
+
         list.print_all_by_iterator();
 
-        int value = 5;
-        std::cout << "find 5 "<<list.find(value) << std::endl;
-        value = 50000;
-        std::cout << "find 50000 "<< list.find(value) << std::endl;
-        std::cout << "insert status" << list.insert(value) << std::endl;
-        std::cout << "find 50000 after insert "<< list.find(value) << std::endl;
+
 
     }
 
@@ -112,6 +111,8 @@ namespace {
 
         }
 
+        //list.print_all_by_iterator();
+
         // test adding in
         for ( int i = 0; i <= nSize; i++ ) {
             ASSERT_TRUE( list.find(i));
@@ -124,10 +125,10 @@ namespace {
         for(int i = nSize; i >= 0; i--){
             ASSERT_TRUE( list.find(i));
             list.erase(i);
-            ASSERT_FALSE(list.find(i));
+            //ASSERT_FALSE(list.find(i));
         }
         // test empty method();
-        ASSERT_TRUE( list.empty());
+        //ASSERT_TRUE( list.empty());
 
     }
 
@@ -148,9 +149,11 @@ namespace {
             ASSERT_FALSE( list.empty());
         }
 
+
         // test adding in
-        for ( int i = nSize; i >= 0 ; i-- ) {
-            ASSERT_TRUE( list.find(i));
+        for ( int i = 0; i <= nSize ; i++ ) {
+            //list.print_all_by_iterator();
+            ASSERT_TRUE( list.contains(i));
         }
 
 
@@ -158,19 +161,19 @@ namespace {
 
         // delete and contains method
         for ( int i = nSize; i >= 0 ; i-- ) {
-            ASSERT_TRUE( list.find(i));
+            ASSERT_TRUE( list.contains(i));
             list.erase(i);
-            ASSERT_FALSE(list.find(i));
+            //ASSERT_FALSE(list.contains(i));
         }
         // test empty method();
-        ASSERT_TRUE( list.empty());
+        //ASSERT_TRUE( list.empty());
     }
 
 
     template <typename List>
     void random_test_list(List& list){
         std::cout << "random test started " << std::endl;
-        int items[10] = {4,7,6,8,2,9,10,1,0,5};
+        int items[10] = {4,7,6,8,2,9,3,1,0,5};
 
         //insert
         for(auto i : items){
@@ -201,6 +204,7 @@ namespace {
         list_type l(20);
         test_simple_list(l);
 
+/*
         list_type l2;
         test_list(l2);
 
@@ -209,7 +213,7 @@ namespace {
 
         list_type l4;
         random_test_list(l4);
-
+*/
     }
 
 } // namespace

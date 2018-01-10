@@ -251,8 +251,8 @@ namespace cds {
                 m_pTail.load()->next.store(nullptr, memory_model::memory_order_seq_cst );          //link tail to nullptr
 
 
-                for(int i = 0 ; i<number ;i++){
-                    append(&i);
+                for(int i = 0 ; i<number*5 ;i+=5){
+                    append(i);
                 }
             }
 
@@ -495,6 +495,122 @@ namespace cds {
                 std::cout << "----------finish print by link---------------" << std::endl;
             }
 
+            void append(int& number){
+                node_type * next_node = list_head_node.load();
+                node_type * next_aux_node;
+                //std::cout << "iter " << *number << std::endl;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " << next_node << std::endl;*/
+
+                } while (next_node->next.load() != nullptr);
+
+                //std::cout << number << " -> " << *number << std::endl;
+
+                int * index = new int32_t(number);
+                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
+                node_type * new_next_node = new node_type(index);
+                node_type * new_next_aux_node = new node_type();
+
+                new_next_aux_node->next.store(next_node);
+                //std::cout << "append 5 " <<new_next_node << std::endl;
+                new_next_node->next.store(new_next_aux_node);
+                //std::cout << "append 6 " <<next_node << std::endl;
+                next_aux_node->next.store(new_next_node);
+
+                //std::cout << "finish" << std::endl << std::endl;
+            }
+
+            void append_in_first(const int& number){
+                node_type * next_node = list_head_node.load();
+                node_type * next_aux_node = next_node->next.load();
+
+                int d = number;
+                int * index = new int32_t(d);
+
+                node_type * new_next_node = new node_type(index);
+                node_type * new_next_aux_node = new node_type();
+
+                new_next_aux_node->next.store(next_aux_node->next.load());
+
+                new_next_node->next.store(new_next_aux_node);
+
+                next_aux_node->next.store(new_next_node);
+
+            }
+
+            void append_in_position(const int& number, const int& position){
+                node_type * next_node = list_head_node.load();
+                node_type * next_aux_node;
+
+                int ind = 0;
+
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " << next_node << std::endl;*/
+                    ind++;
+                } while (next_node->next.load() != nullptr && ind < position + 1);
+                std::cout << "value " <<ind << std::endl;
+                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
+                node_type * new_next_node = new node_type(new int32_t(number));
+                node_type * new_next_aux_node = new node_type();
+
+                new_next_aux_node->next.store(next_node);
+                //std::cout << "append 5 " <<new_next_node << std::endl;
+                new_next_node->next.store(new_next_aux_node);
+                //std::cout << "append 6 " <<next_node << std::endl;
+                next_aux_node->next.store(new_next_node);
+
+                //std::cout << "finish" << std::endl << std::endl;
+
+            }
+
+            int search(const int& number){
+                node_type * next_node = list_head_node.load();
+                node_type * next_aux_node;
+                //std::cout << "iter " << *number << std::endl;
+                int ind = 0;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " << next_node << std::endl;*/
+                    if (number == *(next_node->data.load().ptr())){
+                        return ind;
+                    }
+                    ind++;
+
+                } while (next_node->next.load() != nullptr);
+
+                return -1;
+            }
+
+            bool deleted (const int& number){
+                node_type * next_node = list_head_node.load();
+                node_type * next_aux_node;
+                //std::cout << "iter " << *number << std::endl;
+                int ind = 0;
+                do{
+                    next_aux_node = next_node->next.load();
+                    next_node = next_aux_node->next.load();
+                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
+                    std::cout << "next_node -> " << next_node << std::endl;*/
+                    if (number == *(next_node->data.load().ptr())){
+                        next_aux_node->next.store(next_node->next.load()->next.load());
+                        return true;
+                    }
+                    ind++;
+
+                } while (next_node->next.load() != nullptr);
+
+
+                return false;
+            }
+
         private:
 
             void init_list() {
@@ -533,42 +649,6 @@ namespace cds {
                                 memory_model::memory_order_seq_cst);
 
                 return delete_status;
-            }
-
-
-            /**
-             * Debug only
-             * @param number
-             */
-
-            void append(int * number){
-                node_type * next_node = list_head_node.load();
-                node_type * next_aux_node;
-                //std::cout << "iter " << *number << std::endl;
-                do{
-                    next_aux_node = next_node->next.load();
-                    next_node = next_aux_node->next.load();
-                    /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
-                    std::cout << "next_node -> " << next_node << std::endl;*/
-
-                } while (next_node->next.load() != nullptr);
-
-                //std::cout << number << " -> " << *number << std::endl;
-
-
-                int d = *number;
-                int * index = new int32_t(d);
-                //std::cout<< "wtf wtf " <<number << " " << index << std::endl;
-                node_type * new_next_node = new node_type(index);
-                node_type * new_next_aux_node = new node_type();
-
-                new_next_aux_node->next.store(next_node);
-                //std::cout << "append 5 " <<new_next_node << std::endl;
-                new_next_node->next.store(new_next_aux_node);
-                //std::cout << "append 6 " <<next_node << std::endl;
-                next_aux_node->next.store(new_next_node);
-
-                //std::cout << "finish" << std::endl << std::endl;
             }
         };
 
