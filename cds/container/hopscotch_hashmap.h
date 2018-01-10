@@ -76,8 +76,9 @@ namespace cds {
 
 			Bucket* segments_arys;
 
-			int calc_hash(KEY key) {
-				std::hash<KEY> hash_fn;
+			template <typename K>
+			unsigned int calc_hash(K const& key) {
+				std::hash<K> hash_fn;
 				return hash_fn(key) % MAX_SEGMENTS;
 			}
 
@@ -124,9 +125,8 @@ namespace cds {
 			*/
 			template <typename K>
 			bool contains(K const& key)
-			{
-				DATA data = get(key);
-				return data != NULL;
+			{		
+				return find_with(key, [=](K const& one, K const& two) { return one != two; }, [](mapped_type&) {});
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -138,7 +138,7 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool contains(K const& key, Predicate pred)
 			{
-				return get(key, pred) != NULL;
+				return find_with(key, pred, [](mapped_type&) {});
 			}
 
 			/// Find the key \p key
@@ -160,31 +160,59 @@ namespace cds {
 			template <typename K, typename Func>
 			bool find_with(K const& key, Func f)
 			{
-				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
-				f(data);
-				return data != NULL;
+				return find_with(key, [=](K const& one, K const& two) { return one != two; }, f);
 			}
 
 			template <typename K, typename Predicate>
 			bool find(K const& key, Predicate pred)
 			{
-				DATA data = get(key, pred);
-				return data != NULL;
+				return find_with(key, pred, [](mapped_type&) {});
 			}
 
 			template <typename K>
 			bool find(K const& key)
 			{
-				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
-				return data != NULL;
+				return find_with(key, [=](K const& one, K const& two) { return one != two; }, [](mapped_type&) {});
 			}
 
 			template <typename K, typename Predicate, typename Func>
 			bool find_with(K const& key, Predicate pred, Func f)
 			{
-				DATA data = get(key, [=](K const& one, K const& two) { return one != two; });
-				f(data);
-				return data != NULL;
+				unsigned int hash = calc_hash(key);
+				Bucket* start_bucket = segments_arys + hash;
+				unsigned int try_counter = 0;
+				unsigned int timestamp;
+				do {
+					timestamp = start_bucket->_timestamp;
+					unsigned int hop_info = start_bucket->_hop_info;
+					Bucket* check_bucket = start_bucket;
+					unsigned int temp;
+					for (int i = 0; i < HOP_RANGE; i++) {
+						temp = hop_info;
+						temp = temp >> i;
+
+						if (temp & 1) {
+							if (pred(key, *(check_bucket->_key)) == 0) {
+								f(*(check_bucket->_data));
+								return true;
+							}
+						}
+						++check_bucket;
+					}
+					++try_counter;
+				} while (timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES);
+
+				if (timestamp != start_bucket->_timestamp) {
+					Bucket* check_bucket = start_bucket;
+					for (int i = 0; i < HOP_RANGE; i++) {
+						if (pred(key, *(check_bucket->_key)) == 0) {
+							f(*(check_bucket->_data));
+							return true;
+						}
+						++check_bucket;
+					}
+				}
+				return false;
 			}
 
 			/// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
@@ -506,7 +534,7 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool erase_with(K const& key, Predicate pred)
 			{
-				return erase(key, pred, [](mapped_type&) {});
+				return erase_with(key, pred, [](mapped_type&) {});
 			}
 
 			/// Delete \p key from the map
