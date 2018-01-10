@@ -72,7 +72,7 @@ namespace cds {
             friend class iterator;
 
         protected:
-            //template <bool IsConst>
+
             class iterator {
                 friend class ValoisList;
 
@@ -83,55 +83,13 @@ namespace cds {
                 /*typename gc::Guard m_Guard;*/
 
                 bool next() {
-                    //std::cout <<"hello from next "<<std::endl;
                     if (current_node->next == nullptr) {     // if tail
                         return false;
                     }
-
-                    int * value;
-
-
-//                    if (prev_node->data.load() != nullptr){
-//                        value = prev_node->data.load().ptr();
-//                        std::cout <<"in next 1 "<< *value <<std::endl;
-//                    } else{
-//                        std::cout <<"in next 1 NULL" <<std::endl;
-//                    }
-
-//                    if (current_node->data.load() != nullptr){
-//                        value = current_node->data.load().ptr();
-//                        std::cout << "current node " << *value <<std::endl;
-//                        //std::cout << "next aux node " << current_node->next <<std::endl;
-//                    } else{
-//                        std::cout <<"current data is NULL" <<std::endl;
-//                    }
-
-                    node_type * new_current_node = new node_type();
-                    new_current_node->data.store(current_node->data.load());
-                    new_current_node->next.store(current_node->next.load());
-
-                    prev_node = new_current_node;
-
-                    new_current_node = new node_type();
-                    new_current_node->data.store(current_node->next.load()->data.load());
-                    new_current_node->next.store(current_node->next.load()->next.load());
-
-                    aux_pNode = new_current_node;
-
+                    prev_node = current_node;
+                    aux_pNode = current_node->next.load();
                     current_node = aux_pNode->next.load();
-
-
-
                     //update_iterator();
-
-//                    if (prev_node->data.load() != nullptr) {
-//                        value = prev_node->data.load().ptr();
-//                        std::cout << "in next 2 " << *value << std::endl;
-//                    } else{
-//                        std::cout <<"in next 2 NULL" <<std::endl;
-//                    }
-//
-//                    std::cout <<"bye from next" <<std::endl;
                     return true;
                 }
 
@@ -147,10 +105,10 @@ namespace cds {
                 // node - only m_Head
                 iterator( node_type * node) {
 
-                    current_node = new node_type();
-                    aux_pNode = new node_type();
-                    prev_node = new node_type();
-
+                    current_node = node->next.load()->next.load();
+                    aux_pNode    = node->next.load();
+                    prev_node    = node;
+/*
                     aux_pNode->next.store(
                             node->next.load(memory_model::memory_order_seq_cst),
                             memory_model::memory_order_seq_cst
@@ -169,7 +127,8 @@ namespace cds {
                         current_node->next.store( tempNode->next.load(), memory_model::memory_order_relaxed);
                     }
 
-                    update_iterator();
+                    current_node->next.store(aux_pNode->next.load());
+                    //update_iterator();*/
                 }
 
                 void update_iterator() {
@@ -207,6 +166,24 @@ namespace cds {
                     aux_pNode = p;
                     current_node = n;
 //                    std::cout << "\t bye update iterator " << std::endl;
+                }
+
+
+                void print(){
+                    std::cout << "iterator" << std::endl;
+                    if (current_node->data.load() != nullptr){
+                        std::cout << "current    " << current_node << " value " << *(current_node->data.load().ptr()) << std::endl;
+                    } else{
+                        std::cout << "current    " << current_node << " value " << "NULL" << std::endl;
+                    }
+                    std::cout << "aux     " << aux_pNode << std::endl;
+                    if (prev_node->data.load() != nullptr){
+                        std::cout << "prev    " << prev_node << " value " << *(prev_node->data.load().ptr()) << std::endl;
+                    } else{
+                        std::cout << "prev    " << prev_node << " value " << "NULL" << std::endl;
+                    }
+
+                    std::cout << "--------------------" << std::endl;
                 }
 
                 iterator &operator++() {
@@ -276,76 +253,47 @@ namespace cds {
 
                 iterator * mIter = new iterator(list_head_node);
 
-                /*if(nVal != nullptr){
-                    int const nCmp = cmp( *nVal , *val );
-                    if (nCmp > 0){
-                        bool k = try_insert(mIter, val);
-                        delete mIter;
-                        return k;
-                    }
-                }*/
-
-
                 while (true) {
                     value_type * nVal = mIter->current_node->data.load( memory_model::memory_order_seq_cst ).ptr();
 
                     if(nVal == nullptr){
-                        append(val);
+                        try_insert(mIter, val);
 
                         delete mIter;
                         return true;
                     }
-
-
                     int const nCmp = cmp(*val, *nVal);
-                    /*std::cout << "search_insert : finded value "<< *nVal << std::endl;
-                    std::cout << "search_insert : inserted value "<< *val << std::endl;
-                    std::cout << "search_insert : compare index "<< nCmp << std::endl;
-*/
+
                     if (nCmp == 0) {
                         delete mIter;
                         return true;
                     } else if (nCmp < 0) {
                         if (*val == 3 ){
                             std::cout << "here "<<*val<< " " << *nVal << std::endl;
-                            print_all_by_iterator();
+                            print_all_pointers();
                         }
                         bool k = try_insert(mIter, val);
                         if (*val == 3 ){
                             print_all_by_iterator();
                             std::cout  << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
                         }
-
                         delete mIter;
                         return k;
                     } else {
                         mIter->next();
                     }
                 }
-                std::cout << "here "<< std::endl;
-                bool k = try_insert(mIter, val);
-                delete mIter;
-                return k;
             }
 
             bool try_insert(iterator *i, value_type * val) {
                 //i->update_iterator();
-                //std::cout << "try insert "<< *val << std::endl;
 
                 node_type *real_node = new node_type(val);
                 node_type *aux_node = new node_type();
                 if(*val ==3){
-                    int * prev = i->prev_node->data.load().ptr();
-                    std::cout << "try insert inserted "<< *val << std::endl;
-                    std::cout << "try insert current "<< *(i->current_node->data.load().ptr()) << std::endl;
-                    //std::cout << "try insert prev "<< i->prev_node->data.load().ptr() << std::endl;
-                    if (i->aux_pNode == nullptr){
-                        std::cout << "aux is null" << std::endl;
-                    }
-                    if (prev != nullptr){
-                        std::cout << "prev data " <<*prev << std::endl;
-                    }
+                    i->print();
                 }
+
                 real_node->next = aux_node;
                 aux_node->next = i->current_node;
 
@@ -355,6 +303,12 @@ namespace cds {
                         memory_model::memory_order_seq_cst,
                         memory_model::memory_order_seq_cst
                 );
+
+                i->prev_node = real_node;
+
+                if(*val ==3){
+                    i->print();
+                }
 
                 //i->update_iterator();
                 return true;
@@ -495,6 +449,25 @@ namespace cds {
                 std::cout << "----------finish print by link---------------" << std::endl;
             }
 
+
+            void print_all_pointers(){
+                node_type * selected_node = list_head_node.load();
+                int number = 0;
+                std::string type;
+                do{
+
+                    if (selected_node->data.load() == nullptr)
+                        std::cout << number << "\t" << selected_node << "\t AUX"  << std::endl;
+                    else
+                        std::cout << number << "\t" << selected_node << "\t " << *(selected_node->data.load().ptr()) << std::endl;
+
+                    number++;
+
+                    selected_node = selected_node->next.load();
+                } while (selected_node != nullptr);
+
+            }
+
             void append(int& number){
                 node_type * next_node = list_head_node.load();
                 node_type * next_aux_node;
@@ -505,7 +478,7 @@ namespace cds {
                     /*std::cout << "next_aux_node -> " <<next_aux_node << std::endl;
                     std::cout << "next_node -> " << next_node << std::endl;*/
 
-                } while (next_node->next.load() != nullptr);
+                } while (next_aux_node->next != nullptr && next_node->next.load() != nullptr);
 
                 //std::cout << number << " -> " << *number << std::endl;
 
@@ -638,7 +611,13 @@ namespace cds {
 
             bool try_erase(iterator *i) {
 
-                node_type *for_delete = i->current_node;
+                i->current_node = i->current_node->next.load()->next.load();
+                i->aux_pNode = i->current_node;
+
+                /* add delete */
+
+
+                /*node_type *for_delete = i->current_node;
                 node_type *adjacent = i->current_node->next;
 
                 bool delete_status = i->aux_pNode->next
@@ -647,8 +626,8 @@ namespace cds {
                                 adjacent,
                                 memory_model::memory_order_seq_cst,
                                 memory_model::memory_order_seq_cst);
-
-                return delete_status;
+                */
+                return true;
             }
         };
 

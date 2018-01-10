@@ -68,7 +68,6 @@ namespace {
     {
         std::cout << "simple test started " << std::endl;
 
-
         /*list.print_all_by_iterator();*/
 
         list.append_in_first(3);
@@ -201,10 +200,10 @@ namespace {
         struct traits: public ci::valois_list::traits{};
 
         typedef ci::ValoisList< gc_type, int, traits > list_type;
+
         list_type l(20);
         test_simple_list(l);
 
-/*
         list_type l2;
         test_list(l2);
 
@@ -213,7 +212,7 @@ namespace {
 
         list_type l4;
         random_test_list(l4);
-*/
+
     }
 
 } // namespace
