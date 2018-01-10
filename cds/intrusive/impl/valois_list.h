@@ -102,12 +102,12 @@ namespace cds {
                 iterator()
                         : current_node(nullptr), aux_pNode(nullptr), prev_node(nullptr) {}
 
-                // node - only m_Head
+                // node - only Head
                 iterator( node_type * node) {
 
-                    //current_node = node->next.load()->next.load();
-                    aux_pNode    = node->next.load();
                     prev_node    = node;
+                    aux_pNode    = node->next.load();
+
 /*
                     aux_pNode->next.store(
                             node->next.load(memory_model::memory_order_seq_cst),
@@ -132,7 +132,6 @@ namespace cds {
                 }
 
                 void update_iterator() {
-                    //std::cout << "\t in update iterator " << std::endl;
                     if (aux_pNode->next == current_node) {
                         return;
                     }
@@ -237,36 +236,38 @@ namespace cds {
              */
 
             template <typename Q, typename Compare >
-            bool search_insert(node_type * start_node /*it not used*/, Q* val, Compare cmp) {
+            bool search_insert(Q* val, Compare cmp) {
 
                 iterator * mIter = new iterator(list_head_node);
 
                 while (true) {
-                    value_type * nVal = mIter->current_node->data.load( memory_model::memory_order_seq_cst ).ptr();
+                    value_type * nVal = mIter->current_node
+                            ->data.load(
+                                    memory_model::memory_order_seq_cst
+                            ).ptr();
 
                     if(nVal == nullptr){
+                        // for last node;
                         try_insert(mIter, val);
-
                         delete mIter;
                         return true;
                     }
+
                     int const nCmp = cmp(*val, *nVal);
 
                     if (nCmp == 0) {
                         delete mIter;
                         return true;
                     } else if (nCmp < 0) {
-                        if (*val == 3 ){
-                            std::cout << "here "<<*val<< " " << *nVal << std::endl;
-                            print_all_pointers();
-                        }
                         bool k = try_insert(mIter, val);
-                        if (*val == 3 ){
-                            print_all_by_iterator();
-                            std::cout  << std::endl<< std::endl<< std::endl<< std::endl<< std::endl;
-                        }
                         delete mIter;
-                        return k;
+                        if (k){
+                            return k;
+                        } else{
+                            // find again;
+                            mIter = new iterator(list_head_node);
+                        }
+
                     } else {
                         mIter->next();
                     }
@@ -274,13 +275,9 @@ namespace cds {
             }
 
             bool try_insert(iterator *i, value_type * val) {
-                i->update_iterator();
 
                 node_type *real_node = new node_type(val);
                 node_type *aux_node = new node_type();
-                if(*val ==3){
-                    i->print();
-                }
 
                 real_node->next = aux_node;
                 aux_node->next = i->current_node;
@@ -292,19 +289,15 @@ namespace cds {
                         memory_model::memory_order_seq_cst
                 );
 
-                i->prev_node = real_node;
+                /*i->prev_node = real_node;*/
 
-                if(*val ==3){
-                    i->print();
-                }
 
-                i->update_iterator();
-                return true;
+                return insert_status;
             }
 
 
             bool insert( value_type &val ){
-                return search_insert( list_head_node, &val, key_comparator() );
+                return search_insert(&val, key_comparator() );
             }
 
 
@@ -322,23 +315,29 @@ namespace cds {
                     int const nCmp = cmp( *val , *nVal );
 
                     if ( nCmp == 0 ){
-                        // hard delete operation
-                        //std::cout << "trying delete " << *val << std::endl;
-                        while (!try_erase(i)) {}
+
+                        bool result = try_erase(i);
                         delete i;
-                        return true;
+                        if (result){
+                            return true;
+                        }
+                        else{
+                            //run again
+                            i = new iterator( list_head_node );
+                        }
                     }
                     else if ( nCmp > 0 ){
+                        // not found
                         delete i;
-                        return true;
+                        return false;
                     }
                     else{
                         i->next();
                     }
                 }
-
+                // not found
                 delete i;
-                return true;
+                return false;
             }
 
             bool erase(value_type val){
@@ -375,7 +374,6 @@ namespace cds {
             }
 
             bool empty() {
-                /*std::cout << "hello from empty" << std::endl;*/
                 iterator * i = new iterator(list_head_node);
 
                 if ( i->next() ) {
