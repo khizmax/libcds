@@ -88,8 +88,8 @@ namespace cds {
                     }
                     prev_node = current_node;
                     aux_pNode = current_node->next.load();
-                    current_node = aux_pNode->next.load();
-                    //update_iterator();
+                    //current_node = aux_pNode->next.load();
+                    update_iterator();
                     return true;
                 }
 
@@ -105,7 +105,7 @@ namespace cds {
                 // node - only m_Head
                 iterator( node_type * node) {
 
-                    current_node = node->next.load()->next.load();
+                    //current_node = node->next.load()->next.load();
                     aux_pNode    = node->next.load();
                     prev_node    = node;
 /*
@@ -127,8 +127,8 @@ namespace cds {
                         current_node->next.store( tempNode->next.load(), memory_model::memory_order_relaxed);
                     }
 
-                    current_node->next.store(aux_pNode->next.load());
-                    //update_iterator();*/
+                    current_node->next.store(aux_pNode->next.load());*/
+                    update_iterator();
                 }
 
                 void update_iterator() {
@@ -136,17 +136,11 @@ namespace cds {
                     if (aux_pNode->next == current_node) {
                         return;
                     }
-                    int * data;
 
                     node_type * p = aux_pNode;
                     node_type * n = p->next.load(atomics::memory_order_seq_cst);
 
-                    data = n->next.load()->data.load().ptr();
-                    //std::cout << "\t data 1 is "<< (n->data.load().ptr()) << " -> " << data << std::endl;
-                    int tmp = 0;
-
                     while ( n->next != nullptr && n->data == nullptr) {    //while not last and is aux node
-                        tmp++;
 
                         prev_node->next.compare_exchange_strong(
                                 p,
@@ -158,14 +152,8 @@ namespace cds {
                         n = p->next.load(atomics::memory_order_seq_cst);
                     }
 
-//                    std::cout << "\t count in while " <<tmp << std::endl;
-                    //std::exit(EXIT_FAILURE);
-                    data = n->data.load().ptr();
-//                    std::cout << "\t data 2 is " << data << std::endl;
-
                     aux_pNode = p;
                     current_node = n;
-//                    std::cout << "\t bye update iterator " << std::endl;
                 }
 
 
@@ -286,7 +274,7 @@ namespace cds {
             }
 
             bool try_insert(iterator *i, value_type * val) {
-                //i->update_iterator();
+                i->update_iterator();
 
                 node_type *real_node = new node_type(val);
                 node_type *aux_node = new node_type();
@@ -310,7 +298,7 @@ namespace cds {
                     i->print();
                 }
 
-                //i->update_iterator();
+                i->update_iterator();
                 return true;
             }
 
@@ -360,7 +348,7 @@ namespace cds {
 
 
             template <typename Q, typename Compare >
-            bool find( Q* val, Compare cmp) {
+            bool contains( Q* val, Compare cmp) {
                 iterator * i = new iterator( list_head_node );
                 while (i->current_node->next.load() != nullptr ) {
                     value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
@@ -382,12 +370,8 @@ namespace cds {
                 return false;
             }
 
-            bool find(value_type &val) {
-                return find( &val, key_comparator() );
-            }
-
             bool contains(value_type &val) {
-                return find( &val, key_comparator() );
+                return contains( &val, key_comparator() );
             }
 
             bool empty() {

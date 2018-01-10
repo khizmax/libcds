@@ -103,9 +103,9 @@ namespace {
         // insert and contains method
         for ( int i = 0; i <= nSize; i++ ) {
             int * index = new int32_t(i);
-            ASSERT_FALSE(list.find(*index));
+            ASSERT_FALSE(list.contains(*index));
             list.insert(*index);
-            ASSERT_TRUE( list.find(*index));
+            ASSERT_TRUE( list.contains(*index));
             ASSERT_FALSE( list.empty());
 
         }
@@ -114,7 +114,7 @@ namespace {
 
         // test adding in
         for ( int i = 0; i <= nSize; i++ ) {
-            ASSERT_TRUE( list.find(i));
+            ASSERT_TRUE( list.contains(i));
         }
 
 
@@ -122,9 +122,9 @@ namespace {
 
         // delete and contains method
         for(int i = nSize; i >= 0; i--){
-            ASSERT_TRUE( list.find(i));
+            ASSERT_TRUE( list.contains(i));
             list.erase(i);
-            //ASSERT_FALSE(list.find(i));
+            //ASSERT_FALSE(list.contains(i));
         }
         // test empty method();
         //ASSERT_TRUE( list.empty());
@@ -142,9 +142,9 @@ namespace {
         // insert and contains method
         for ( int i = nSize; i >= 0 ; i-- ) {
             int * index = new int32_t(i);
-            ASSERT_FALSE(list.find(*index));
+            ASSERT_FALSE(list.contains(*index));
             list.insert(*index);
-            ASSERT_TRUE( list.find(*index));
+            ASSERT_TRUE( list.contains(*index));
             ASSERT_FALSE( list.empty());
         }
 
