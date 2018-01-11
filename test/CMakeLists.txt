@@ -1,6 +1,21 @@
 
 INCLUDE(CheckCXXSourceCompiles)
 
+if(TARGET boost::system AND TARGET boost::thread)
+    link_libraries(boost::system boost::thread)
+else()
+    find_package(Boost 1.50 COMPONENTS system thread)
+endif()
+
+if(Boost_FOUND)
+    message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
+else()
+    message("Boost: Using CMake-fied boost")
+endif()
+
+include_directories(${Boost_INCLUDE_DIRS})
+
+
 if (NOT GTEST_INCLUDE_DIRS)
    find_package(GTest REQUIRED)
 endif()
