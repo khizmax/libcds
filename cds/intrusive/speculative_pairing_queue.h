@@ -464,10 +464,10 @@ namespace cds { namespace intrusive {
 
                             if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, pNewNode, memory_model::memory_order_relaxed, memory_model::memory_order_relaxed)) {
                                 pQueue->m_pair[idx].m_pLast.store(pNewNode, memory_model::memory_order_seq_cst);
-                                std::string out =  "tail = "
+                                /*std::string out =  "tail = "
                                                    + std::to_string(tail)
                                                    + "\n";
-                                std::cerr << out;
+                                std::cerr << out;*/
                                 break;
                             }
                             else {
