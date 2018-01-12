@@ -82,8 +82,10 @@ namespace {
             virtual void test()
             {
                 for ( size_t nItem = m_nStartItem; nItem < m_nEndItem; ++nItem ) {
-                    if ( !m_Queue.push( nItem ))
+                    if ( !m_Queue.push( nItem )) {
                         ++m_nPushError;
+                    }
+                    //EXPECT_TRUE(false) << "nItem = " << nItem;
                 }
             }
 
@@ -114,6 +116,7 @@ namespace {
         template <class Queue>
         void test( Queue& q )
         {
+    try {
             cds_test::thread_pool& pool = get_pool();
 
             pool.add( new Producer<Queue>( pool, q ), s_nThreadCount );
@@ -138,6 +141,11 @@ namespace {
             analyze( q );
 
             propout() << q.statistics();
+    }
+    catch (std::exception& e)
+    {
+        EXPECT_TRUE(false) << "Exception catched : " << e.what();
+    }
         }
 
         template <class Queue>
@@ -157,9 +165,13 @@ namespace {
 
             size_t nPopped = 0;
             value_type val;
+
+            //EXPECT_TRUE(false) << "HELLO!";
+
             while ( q.pop( val )) {
                 nPopped++;
                 ++arr[ val.nNo ];
+                //EXPECT_TRUE(false) << "nNO = " << val.nNo;
             }
 
             size_t nTotalItems = nThreadItems * s_nThreadCount;

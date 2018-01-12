@@ -56,6 +56,7 @@ namespace cds { namespace intrusive {
             typedef Tag             tag ;   ///< tag
 
             typedef typename gc::template atomic_ref<node>    atomic_node_ptr; ///< atomic pointer
+            typedef typename gc::template atomic_type<int> atomic_int;
 
             /// Rebind node for other template parameters
             template <class GC2, typename Tag2 = tag>
@@ -65,18 +66,13 @@ namespace cds { namespace intrusive {
 
             atomic_node_ptr m_pNext ; ///< pointer to the next node in the container
 			
-            int			    m_nVer;
+            atomic_int			    m_nVer;
 			bool			m_removed = false;
 			
             node() noexcept
             {
                 m_pNext.store( nullptr, atomics::memory_order_release );
-            }
-			
-            node(int ver) 
-                : node()
-            {
-                m_nVer = ver;
+                m_nVer.store(0, atomics::memory_order_release);
             }
 
         };
