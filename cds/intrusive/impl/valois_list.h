@@ -34,9 +34,6 @@
 #include <cds/intrusive/details/valois_list_base.h>
 #include <cds/details/make_const_type.h>
 
-//CRITICAL: cheak all functions use safe read/write
-//CRITICAL: cheak nullptr/NULL values for aux, Head, Tail nodes
-
 namespace cds {
     namespace intrusive {
 
@@ -56,8 +53,6 @@ namespace cds {
             typedef typename traits::memory_model memory_model;   ///< Memory ordering. See \p cds::opt::memory_model option
             typedef typename traits::node_allocator node_allocator; ///< Node allocator
             typedef typename traits::stat stat;           ///< Internal statistics
-
-            typename gc::Guard m_Guard;
 
             static CDS_CONSTEXPR const size_t c_nHazardPtrCount = 4;    ///< Count of hazard pointer required for the algorithm
 
@@ -239,7 +234,7 @@ namespace cds {
 
             template <typename Q, typename Compare >
             bool search_insert(Q* val, Compare cmp) {
-
+                typename gc::Guard m_Guard;
                 iterator * mIter = new iterator(list_head_node);
 
                 while (true) {
@@ -355,6 +350,7 @@ namespace cds {
 
             template <typename Q, typename Compare >
             bool contains( Q* val, Compare cmp) {
+                typename gc::Guard m_Guard;
                 iterator * i = new iterator( list_head_node );
                 while (i->current_node->next.load() != nullptr ) {
 
@@ -565,6 +561,7 @@ namespace cds {
             }
 
             void destroy() {
+                typename gc::Guard m_Guard;
                 m_Guard.clear();
 
                 node_type * tNode = list_head_node.load()->next.load(memory_model::memory_order_relaxed);
