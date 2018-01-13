@@ -60,6 +60,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_ellentree.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_feldman_hashmap.cpp" />
+    <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_hopscotch.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_michael.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_skip.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_split.cpp">

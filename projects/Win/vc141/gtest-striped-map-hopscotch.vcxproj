@@ -52,10 +52,11 @@
     <ClInclude Include="..\..\..\test\unit\striped-map\test_striped_map.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{78FF8F0D-9394-41CF-B895-BDC8538CDB1D}</ProjectGuid>
+    <ProjectGuid>{BADD532E-7C37-4877-AAA9-34DB4298C200}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>striped-map</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <ProjectName>gtest-striped-map-hopscotch</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -220,7 +221,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDSUNIT_ENABLE_BOOST_CONTAINER;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)\include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..;$(GTEST_ROOT)/include;$(SolutionDir)..\..\..\test\include;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions) /Zc:inline /permissive- </AdditionalOptions>
     </ClCompile>
     <Link>

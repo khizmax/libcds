@@ -238,7 +238,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4512 /wd4127 /Zc:inline /permissive- %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(GTEST_ROOT);$(SolutionDir)..\..\..\;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\;$(BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENABLE_ATOMIC_ALIGNMENT_FIX;CDS_ENABLE_HPSTAT;WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0500;CDS_BUILD_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -251,7 +251,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(BOOST_PATH)/stage/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -659,7 +659,6 @@
     <ClInclude Include="..\..\..\cds\compiler\vc\x86\cxx11_atomic.h" />
     <ClInclude Include="..\..\..\cds\container\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\container\bronson_avltree_map_rcu.h" />
-    <ClInclude Include="..\..\..\cds\container\hopscotch_hashmap.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_map.h" />
     <ClInclude Include="..\..\..\cds\container\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\container\details\base.h" />
@@ -667,6 +666,8 @@
     <ClInclude Include="..\..\..\cds\container\details\cuckoo_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\ellen_bintree_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\guarded_ptr_cast.h" />
+    <ClInclude Include="..\..\..\cds\container\details\hopscotch_hashmap_base.h" />
+    <ClInclude Include="..\..\..\cds\container\details\hopscotch_hashset_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\iterable_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\lazy_list_base.h" />
     <ClInclude Include="..\..\..\cds\container\details\make_iterable_kvlist.h" />
@@ -690,6 +691,8 @@
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_hp.h" />
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_set_rcu.h" />
+    <ClInclude Include="..\..\..\cds\container\hopscotch_hashmap.h" />
+    <ClInclude Include="..\..\..\cds\container\hopscotch_hashset.h" />
     <ClInclude Include="..\..\..\cds\container\impl\bronson_avltree_map_rcu.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_map.h" />
     <ClInclude Include="..\..\..\cds\container\impl\ellen_bintree_set.h" />
@@ -787,6 +790,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\free_list_cached.h" />
     <ClInclude Include="..\..\..\cds\intrusive\free_list_selector.h" />
     <ClInclude Include="..\..\..\cds\intrusive\free_list_tagged.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\hopscotch_hashset.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\ellen_bintree.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\iterable_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\lazy_list.h" />
