@@ -120,8 +120,8 @@ namespace cds_test {
             ASSERT_TRUE( q.empty());
             ASSERT_CONTAINER_SIZE( q, 0 );
 			
-			//make invalid and dispose queue
-			q.pop();
+			//dispose queue and create new
+			q.clear();
             Queue::gc::scan();
             for ( size_t i = 0; i < nSize; ++i ) {
                 ASSERT_EQ( arr[i].nDisposeCount, 1 ) << "i=" << i;
