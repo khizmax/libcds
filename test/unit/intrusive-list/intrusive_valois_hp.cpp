@@ -30,6 +30,7 @@
 
 #include "test_intrusive_list_hp.h"
 #include <cds/intrusive/valois_list_hp.h>
+#include <thread>
 
 namespace {
     namespace ci = cds::intrusive;
@@ -177,16 +178,59 @@ namespace {
         }
     }
 
+    struct traits: public ci::valois_list::traits{};
+    /*typedef ci::ValoisList< gc_type, int, traits > list_stress_type;*/
+    typedef ci::ValoisList< gc_type, int, traits > list_type;
+
+    struct val_and_id{
+        std::thread::id thread_id;
+        int value;
+
+        val_and_id(const std::thread::id & thread__id, const int & number){
+            thread_id = thread__id;
+            value = number;
+        }
+    };
+
+    typedef ci::ValoisList< gc_type, val_and_id, traits > list_stress_type;
+
+
+
+    template <class List>
+    void test_thread(List& list){
+        list.empty();
+        for (int key=0; key < 20000000; ++key ) {
+            int input = key;//new val_and_id(std::this_thread::get_id(),key);
+
+            list.insert(input);
+            list.erase(input);
+        }
+        list.empty();
+    }
+
+    void stress_test_list(){
+        std::cout << "test started" << std::endl;
+        list_type lst;
+
+        std::thread::id this_id = std::this_thread::get_id();
+        std::cout << this_id << std::endl;
+        //std::thread thr(test_thread<list_type>,std::ref(lst));
+        //std::thread thr([&]{ lst.empty(); });
+        //thr.join();
+
+        /*auto aaa = std::thread( std::bind(test_thread,lst) );
+        aaa.join();*/
+        for (int i = 0;i<10;i++){
+            test_thread(lst);
+        }
+    }
 
     TEST_F( IntrusiveValoisList_HP, base_hook )
     {
-        struct traits: public ci::valois_list::traits{};
 
-        typedef ci::ValoisList< gc_type, int, traits > list_type;
-/*
-        list_type l(20);
-        test_simple_list(l);
-*/
+    struct traits: public ci::valois_list::traits{};
+
+
         list_type l2;
         test_list(l2);
 
@@ -195,6 +239,8 @@ namespace {
 
         list_type l4;
         random_test_list(l4);
+
+        stress_test_list();
 
     }
 

@@ -377,11 +377,13 @@ namespace cds {
                 node_type *d = i->current_node;
 
                 node_type *n = i->current_node->next.load(atomics::memory_order_release);
-                bool r = i->aux_pNode->next.compare_exchange_strong(d, n, atomics::memory_order_seq_cst);
+                bool r = i->aux_pNode->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
 
                 if (!r){
                     return false;
                 }
+                delete d;
+                delete n;
 
                 return true;
             }
