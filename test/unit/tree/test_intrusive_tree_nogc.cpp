@@ -23,8 +23,8 @@ namespace cds_test{
         void test( Tree& t )
         {
             std::cout<<t.empty();
-            //ASSERT_TRUE( t.empty());
-           /* ASSERT_CONTAINER_SIZE( t, 0 );
+            ASSERT_TRUE( t.empty());
+            ASSERT_CONTAINER_SIZE( t, 0 );
             size_t const nTreeSize = kSize;
 
             typedef typename Tree::value_type value_type;
@@ -129,8 +129,6 @@ namespace cds_test{
             ASSERT_CONTAINER_SIZE( t, nTreeSize );
 
             std::for_each( data.begin(), data.end(), []( value_type& v ) { v.clear_stat(); });
-*/
-
         }
 
 
