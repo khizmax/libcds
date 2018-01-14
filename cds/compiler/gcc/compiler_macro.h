@@ -138,6 +138,15 @@
 #    define CDS_BUILD_BITS        64
 #    define CDS_PROCESSOR__NAME   "ARM v8"
 #    define CDS_PROCESSOR__NICK   "arm8"
+#elif defined(__arm__)  || defined(__aarch64__)
+#   define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_ARM8
+#   define CDS_PROCESSOR__NAME   "ARM"
+#   define CDS_PROCESSOR__NICK   "arm"
+#   if __SIZEOF_POINTER__ == 8
+#       define CDS_BUILD_BITS        64
+#   else
+#       define CDS_BUILD_BITS        32
+#   endif
 #else
 #   if defined(CDS_USE_LIBCDS_ATOMIC)
 #       error "Libcds does not support atomic implementation for the processor architecture. Try to use C++11-compatible compiler and remove CDS_USE_LIBCDS_ATOMIC flag from compiler command line"
