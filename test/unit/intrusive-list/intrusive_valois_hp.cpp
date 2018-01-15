@@ -199,9 +199,11 @@ namespace {
     template <class List>
     void test_thread(List& list){
         list.empty();
-        for (int key=0; key < 20000000; ++key ) {
-            int input = key;//new val_and_id(std::this_thread::get_id(),key);
+        std::thread::id this_id = std::this_thread::get_id();
+        std::cout << this_id << std::endl;
 
+        for (int key=0; key < 2; ++key ) {
+            int input = key;
             list.insert(input);
             list.erase(input);
         }
@@ -214,15 +216,29 @@ namespace {
 
         std::thread::id this_id = std::this_thread::get_id();
         std::cout << this_id << std::endl;
-        //std::thread thr(test_thread<list_type>,std::ref(lst));
-        //std::thread thr([&]{ lst.empty(); });
-        //thr.join();
 
-        /*auto aaa = std::thread( std::bind(test_thread,lst) );
-        aaa.join();*/
-        for (int i = 0;i<10;i++){
-            test_thread(lst);
-        }
+        std::thread thr(test_thread<list_type>,std::ref(lst));
+        std::thread thr1(test_thread<list_type>,std::ref(lst));
+        std::thread thr2(test_thread<list_type>,std::ref(lst));
+        std::thread thr3(test_thread<list_type>,std::ref(lst));
+        std::thread thr4(test_thread<list_type>,std::ref(lst));
+        std::thread thr5(test_thread<list_type>,std::ref(lst));
+        std::thread thr6(test_thread<list_type>,std::ref(lst));
+        std::thread thr7(test_thread<list_type>,std::ref(lst));
+        std::thread thr8(test_thread<list_type>,std::ref(lst));
+        std::thread thr9(test_thread<list_type>,std::ref(lst));
+
+        thr.join();
+        thr1.join();
+        thr2.join();
+        thr3.join();
+        thr4.join();
+        thr5.join();
+        thr6.join();
+        thr7.join();
+        thr8.join();
+        thr9.join();
+
     }
 
     TEST_F( IntrusiveValoisList_HP, base_hook )
@@ -230,7 +246,7 @@ namespace {
 
     struct traits: public ci::valois_list::traits{};
 
-
+/*
         list_type l2;
         test_list(l2);
 
@@ -238,7 +254,7 @@ namespace {
         revert_test_list(l3);
 
         list_type l4;
-        random_test_list(l4);
+        random_test_list(l4);*/
 
         stress_test_list();
 
