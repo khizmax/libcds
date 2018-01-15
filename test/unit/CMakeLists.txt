@@ -4,7 +4,7 @@
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/map)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/misc)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pqueue)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/queue)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/intrusive-set)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/set)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-map)
@@ -20,7 +20,7 @@ add_custom_target(unit-all
  #       unit-map
  #       unit-misc
  #       unit-pqueue
-        unit-queue
+ #       unit-queue
  #       unit-iset
  #       unit-set
  #       unit-striped-set
