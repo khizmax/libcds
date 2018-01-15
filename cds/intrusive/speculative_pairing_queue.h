@@ -419,15 +419,14 @@ namespace cds { namespace intrusive {
                 while (true){
                     pQueue = queue_guard.protect(m_Queue);
                     if (pQueue->m_Invalid.load(memory_model::memory_order_acquire)) {
-                        Queue* pNewQueue = new Queue(1);
+                        Queue* pNewQueue = createNewQueue(val);
                         if (m_Queue.compare_exchange_strong(pQueue, pNewQueue, memory_model::memory_order_seq_cst,memory_model::memory_order_seq_cst)) {
-                            addFirstElem(pNewQueue, val);
 							dispose_queue(pQueue);
 						    m_Stat.onQueueCreate();
                             ++m_ItemCounter;
                             return true;
                         } else {
-                            dispose_queue(pNewQueue);
+                            delete pNewQueue;
                         }
 
                         m_Stat.onRepeatEnque();
@@ -449,7 +448,7 @@ namespace cds { namespace intrusive {
 							pNewNode->m_nVer.store(tail, memory_model::memory_order_release);
 
                             if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, pNewNode, memory_model::memory_order_seq_cst, memory_model::memory_order_acquire)) {
-                                pQueue->m_pair[idx].m_pLast.store(pNewNode, memory_model::memory_order_release);
+								pQueue->m_pair[idx].m_pLast.store(pNewNode, memory_model::memory_order_release);
                                 break;
                             }
                             else {
@@ -480,19 +479,24 @@ namespace cds { namespace intrusive {
                     }
 
                     if (pNode == nullptr)
+					{
+						//std::string out = "tail = " + std::to_string(node_traits::to_node_ptr( val )->m_nVer) + "\n";
+						//std::cerr << out;
+						
                         pNode = guards.protect(2, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
-
+						//if (pNode == nullptr)
+						//	continue;
+					}
                     if (pNode == PICKET) {
-                        Queue* pNewQueue = new Queue(1);
+                        Queue* pNewQueue = createNewQueue(val);
                         if (m_Queue.compare_exchange_strong(pQueue, pNewQueue,memory_model::memory_order_seq_cst,memory_model::memory_order_acquire))
                         {
-							addFirstElem(pNewQueue, val);
                             dispose_queue(pQueue);
                             m_Stat.onQueueCreate();
                             ++m_ItemCounter;
                             return true;
                         } else {
-                            dispose_queue(pNewQueue);
+                            delete pNewQueue;
                         }
 
                         m_Stat.onRepeatEnque();
@@ -545,8 +549,8 @@ namespace cds { namespace intrusive {
                  
                 int ticket = pQueue->m_Cntdeq.fetch_add(1, memory_model::memory_order_seq_cst);
                 int idx = ticket % C_SIZE;
-				//guards.protect(0, pQueue->m_pair[idx].m_pRemoved);
-				//guards.protect(1, pQueue->m_pair[idx].m_pHead);
+				guards.protect(0, pQueue->m_pair[idx].m_pRemoved);
+				guards.protect(1, pQueue->m_pair[idx].m_pHead);
 				
 				//dispose_stale_nodes(pQueue->m_pair[idx]);
 				
@@ -571,7 +575,7 @@ namespace cds { namespace intrusive {
                 }
 
                 if (pNode->m_nVer.load(memory_model::memory_order_acquire) > ticket)
-                    pNode = pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_acquire);
+                    pNode = guards.protect(2, pQueue->m_pair[idx].m_pHead, [](node_type * p) -> value_type * {return node_traits::to_value_ptr(p);});
 				
                 while (pNode->m_nVer.load(memory_model::memory_order_acquire) < ticket) {
                     if (pNode->m_pNext.load(memory_model::memory_order_acquire) == nullptr) {
@@ -636,12 +640,16 @@ namespace cds { namespace intrusive {
             }
 
         protected:
-            void addFirstElem(Queue* q, value_type& x) {
+            Queue* createNewQueue(value_type& x) {
+				Queue* queue = new Queue(1);
+				
                 node_type* pNewNode = node_traits::to_node_ptr(x);
 				pNewNode->m_nVer.store(0, memory_model::memory_order_release);
-                q->m_pair[0].m_pHead.store(pNewNode, memory_model::memory_order_release);
-                q->m_pair[0].m_pLast.store(pNewNode, memory_model::memory_order_release);
-            }
+                queue->m_pair[0].m_pHead.store(pNewNode, memory_model::memory_order_release);
+                queue->m_pair[0].m_pLast.store(pNewNode, memory_model::memory_order_release);
+				
+				return queue;
+			}
 
             void CloseQueue(Queue* q, int idx) {
                 q->m_Invalid.store(true, memory_model::memory_order_release);
