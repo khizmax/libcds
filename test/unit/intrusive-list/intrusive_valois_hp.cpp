@@ -182,6 +182,7 @@ namespace {
     /*typedef ci::ValoisList< gc_type, int, traits > list_stress_type;*/
     typedef ci::ValoisList< gc_type, int, traits > list_type;
 
+
     struct val_and_id{
         std::thread::id thread_id;
         int value;
@@ -190,43 +191,49 @@ namespace {
             thread_id = thread__id;
             value = number;
         }
-    };
 
+        bool operator == (const val_and_id & rhs)const {
+            return rhs.value == this->value && rhs.thread_id == this->thread_id;
+        }
+
+        bool operator < (const val_and_id & rhs)const {
+            return rhs.value < this->value;
+        }
+    };
     typedef ci::ValoisList< gc_type, val_and_id, traits > list_stress_type;
 
 
 
+
     template <class List>
-    void test_thread(List& list){
-        list.empty();
+    void complex_insdel_thread(List& list){
+        cds::threading::Manager::attachThread();
         std::thread::id this_id = std::this_thread::get_id();
         std::cout << this_id << std::endl;
-
-        for (int key=0; key < 2; ++key ) {
-            int input = key;
-            list.insert(input);
-            list.erase(input);
+        for (int key=0; key < 1000000; ++key ) {
+            val_and_id  * input = new val_and_id(this_id,key);
+            list.insert(* input);
+            list.erase(* input);
         }
-        list.empty();
+        cds::threading::Manager::detachThread();
     }
-
-    void stress_test_list(){
-        std::cout << "test started" << std::endl;
-        list_type lst;
+    void complex_insdel_test(){
+        std::cout << "complex test started" << std::endl;
+        list_stress_type lst;
 
         std::thread::id this_id = std::this_thread::get_id();
-        std::cout << this_id << std::endl;
+        std::cout << "main threads " << this_id << std::endl;
 
-        std::thread thr(test_thread<list_type>,std::ref(lst));
-        std::thread thr1(test_thread<list_type>,std::ref(lst));
-        std::thread thr2(test_thread<list_type>,std::ref(lst));
-        std::thread thr3(test_thread<list_type>,std::ref(lst));
-        std::thread thr4(test_thread<list_type>,std::ref(lst));
-        std::thread thr5(test_thread<list_type>,std::ref(lst));
-        std::thread thr6(test_thread<list_type>,std::ref(lst));
-        std::thread thr7(test_thread<list_type>,std::ref(lst));
-        std::thread thr8(test_thread<list_type>,std::ref(lst));
-        std::thread thr9(test_thread<list_type>,std::ref(lst));
+        std::thread thr(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr1(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr2(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr3(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr4(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr5(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr6(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr7(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr8(complex_insdel_thread<list_stress_type>,std::ref(lst));
+        std::thread thr9(complex_insdel_thread<list_stress_type>,std::ref(lst));
 
         thr.join();
         thr1.join();
@@ -238,7 +245,7 @@ namespace {
         thr7.join();
         thr8.join();
         thr9.join();
-
+        std::cout << "Complex test finished" << std::endl;
     }
 
     TEST_F( IntrusiveValoisList_HP, base_hook )
@@ -246,7 +253,7 @@ namespace {
 
     struct traits: public ci::valois_list::traits{};
 
-/*
+
         list_type l2;
         test_list(l2);
 
@@ -254,9 +261,9 @@ namespace {
         revert_test_list(l3);
 
         list_type l4;
-        random_test_list(l4);*/
+        random_test_list(l4);
 
-        stress_test_list();
+        complex_insdel_test();
 
     }
 
