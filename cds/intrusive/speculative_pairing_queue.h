@@ -473,9 +473,9 @@ namespace cds { namespace intrusive {
                                 if (pQueue->m_pair[idx].m_pHead.load(memory_model::memory_order_acquire) == PICKET) {
                                     pQueue->m_Invalid.store(true, memory_model::memory_order_release);
                                 } else {
-
-                                    pQueue->m_Tail.compare_exchange_strong(tail,
-                                                                           tail + 1,
+                                    size_t tmp_tail = tail;
+                                    pQueue->m_Tail.compare_exchange_strong(tmp_tail,
+                                                                           tmp_tail + 1,
                                                                            memory_model::memory_order_seq_cst,
                                                                            memory_model::memory_order_seq_cst);
                                 }
@@ -490,8 +490,9 @@ namespace cds { namespace intrusive {
                                 pQueue->m_Invalid.store(true, memory_model::memory_order_release);
                             } else {
                                 //node_type* DUMMY = nullptr;
-                                pQueue->m_Tail.compare_exchange_strong(tail,
-                                                                       tail + 1,
+                                size_t tmp_tail = tail;
+                                pQueue->m_Tail.compare_exchange_strong(tmp_tail,
+                                                                       tmp_tail + 1,
                                                                        memory_model::memory_order_seq_cst,
                                                                        memory_model::memory_order_seq_cst);
                             }
@@ -549,7 +550,8 @@ namespace cds { namespace intrusive {
                         pQueue->m_Invalid.store(true, memory_model::memory_order_release);
                     }
                 }
-                pQueue->m_Tail.compare_exchange_strong(tail, tail + 1,memory_model::memory_order_seq_cst,memory_model::memory_order_seq_cst);
+                size_t tmp_tail = tail;
+                pQueue->m_Tail.compare_exchange_strong(tmp_tail, tmp_tail + 1,memory_model::memory_order_seq_cst,memory_model::memory_order_seq_cst);
                 ++m_ItemCounter;
                 m_Stat.onEnqueSuccess();
                 return true;
@@ -581,6 +583,7 @@ namespace cds { namespace intrusive {
 				//guards.protect(1, pQueue->m_pair[idx].m_pHead);
 				
                 if (ticket >= pQueue->m_Tail.load(memory_model::memory_order_acquire) && ticket == idx) {//Error in article. may be must be >=
+                    node_type* DUMMY = nullptr;
 					if (pQueue->m_pair[idx].m_pHead.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_seq_cst,memory_model::memory_order_acquire)) {
 						CloseQueue(pQueue, idx);
                         m_Stat.onCloseQueue();
@@ -603,6 +606,7 @@ namespace cds { namespace intrusive {
 				
                 while (pNode->m_nVer.load(memory_model::memory_order_acquire) < ticket) {
                     if (pNode->m_pNext.load(memory_model::memory_order_acquire) == nullptr) {
+                        node_type* DUMMY = nullptr;
                         if (pNode->m_pNext.compare_exchange_strong(DUMMY, PICKET, memory_model::memory_order_seq_cst, memory_model::memory_order_acquire)) {
                             CloseQueue(pQueue, idx);
                             m_Stat.onCloseQueue();
