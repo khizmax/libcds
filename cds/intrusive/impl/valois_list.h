@@ -232,6 +232,10 @@ namespace cds {
                         memory_model::memory_order_seq_cst,
                         memory_model::memory_order_seq_cst
                 );
+                if(!insert_status){
+                    delete real_node;
+                    delete aux_node;
+                }
 
                 return insert_status;
             }
