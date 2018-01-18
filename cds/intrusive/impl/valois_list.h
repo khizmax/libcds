@@ -202,6 +202,7 @@ namespace cds {
                         } else{
                             // find again;
                             mIter.set(list_head_node);
+                            continue;
                         }
                     }
 
@@ -231,9 +232,9 @@ namespace cds {
                 node_type * aux_node = new node_type();
 
                 real_node->next = aux_node;
-                aux_node->next.store(i.current_node.load());
+                aux_node->next.store((i.current_guard.template get<node_type>()));
 
-                node_type * cur_node = i.current_node.load();
+                node_type * cur_node = (i.current_guard.template get<node_type>());
 
                 bool insert_status = i.aux_pNode.load()->next.compare_exchange_strong(
                         cur_node,
@@ -419,9 +420,9 @@ namespace cds {
 
             bool try_erase(iterator& i) {
 
-                node_type *d = i.current_node.load();
+                node_type *d = (i.current_guard.template get<node_type>());
 
-                node_type *n = i.current_node.load()->next.load(atomics::memory_order_release);
+                node_type *n = (i.current_guard.template get<node_type>())->next.load(atomics::memory_order_release);
                 bool r = i.aux_pNode.load()->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
 
                 if (!r){
