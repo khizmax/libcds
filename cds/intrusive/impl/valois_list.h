@@ -187,6 +187,7 @@ namespace cds {
                 typename gc::Guard m_Guard;
                 iterator mIter;
                 mIter.set(list_head_node);
+                bool k = false;
                 while (true) {
 
                     Q * nVal = (mIter.current_guard.template get<node_type >())->data.load(
@@ -195,8 +196,13 @@ namespace cds {
 
                     if(nVal == nullptr){
                         // for last node;
-                        try_insert(mIter, val);
-                        return true;
+                        k = try_insert(mIter, val);
+                        if (k){
+                            return k;
+                        } else{
+                            // find again;
+                            mIter.set(list_head_node);
+                        }
                     }
 
                     int const nCmp = cmp(*val, *nVal);
@@ -204,7 +210,7 @@ namespace cds {
                     if (nCmp == 0) {
                         return true;
                     } else if (nCmp < 0) {
-                        bool k = try_insert(mIter, val);
+                        k = try_insert(mIter, val);
 
                         if (k){
                             return k;
