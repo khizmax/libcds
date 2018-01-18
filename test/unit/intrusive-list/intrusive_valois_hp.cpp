@@ -202,15 +202,12 @@ namespace {
     };
     typedef ci::ValoisList< gc_type, val_and_id, traits > list_stress_type;
 
-
-
-
     template <class List>
     void complex_insdel_thread(List& list){
         cds::threading::Manager::attachThread();
         std::thread::id this_id = std::this_thread::get_id();
         std::cout << this_id << std::endl;
-        for (int key=0; key < 1000000; ++key ) {
+        for (int key=0; key < 10000; ++key ) {
             val_and_id  * input = new val_and_id(this_id,key);
             list.insert(* input);
             list.erase(* input);
