@@ -105,7 +105,10 @@ namespace cds {
 
                 // node - only Head
                 iterator( node_type * node) {
+                    set(node);
+                }
 
+                void set(node_type * node){
                     prev_node    = node;
                     aux_pNode    = node->next.load();
 
@@ -204,12 +207,11 @@ namespace cds {
             template <typename Q, typename Compare >
             bool search_insert(Q* val, Compare cmp) {
                 typename gc::Guard m_Guard;
-                iterator * mIter = new iterator(list_head_node);
+                iterator mIter;
+                mIter.set(list_head_node);
 
                 while (true) {
-
-
-                    Q * nVal = mIter->current_node
+                    Q * nVal = mIter.current_node
                             ->data.load(
                                     atomics::memory_order_acquire
                             ).ptr();
@@ -217,42 +219,39 @@ namespace cds {
                     if(nVal == nullptr){
                         // for last node;
                         try_insert(mIter, val);
-                        delete mIter;
                         return true;
                     }
 
                     int const nCmp = cmp(*val, *nVal);
 
                     if (nCmp == 0) {
-                        delete mIter;
                         return true;
                     } else if (nCmp < 0) {
                         bool k = try_insert(mIter, val);
 
-                        delete mIter;
                         if (k){
                             return k;
                         } else{
                             // find again;
-                            mIter = new iterator(list_head_node);
+                            mIter.set(list_head_node);
                         }
 
                     } else {
-                        mIter->next();
+                        mIter.next();
                     }
                 }
             }
 
-            bool try_insert(iterator *i, value_type * val) {
+            bool try_insert(iterator& i, value_type * val) {
 
                 node_type *real_node = new node_type(val);
                 node_type *aux_node = new node_type();
 
                 real_node->next = aux_node;
-                aux_node->next = i->current_node;
+                aux_node->next = i.current_node;
 
-                bool insert_status = i->aux_pNode->next.compare_exchange_strong(
-                        i->current_node,
+                bool insert_status = i.aux_pNode->next.compare_exchange_strong(
+                        i.current_node,
                         real_node,
                         memory_model::memory_order_seq_cst,
                         memory_model::memory_order_seq_cst
@@ -277,35 +276,33 @@ namespace cds {
              */
             template <typename Q, typename Compare >
             bool erase(Q* val, Compare cmp) {
-                iterator * i = new iterator( list_head_node );
+                iterator mIter;
+                mIter.set( list_head_node );
                 //search node
-                while (i->current_node->next.load() != nullptr ) {
-                    value_type * nVal = i->current_node->data.load(atomics::memory_order_acquire ).ptr();
+                while (mIter.current_node->next.load() != nullptr ) {
+                    value_type * nVal = mIter.current_node->data.load(atomics::memory_order_acquire ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
                     if ( nCmp == 0 ){
 
-                        bool result = try_erase(i);
-                        delete i;
+                        bool result = try_erase(mIter);
                         if (result){
                             return true;
                         }
                         else{
                             //run again
-                            i = new iterator( list_head_node );
+                            mIter.set( list_head_node );
                         }
                     }
                     else if ( nCmp > 0 ){
                         // not found
-                        delete i;
                         return false;
                     }
                     else{
-                        i->next();
+                        mIter.next();
                     }
                 }
                 // not found
-                delete i;
                 return false;
             }
 
@@ -321,27 +318,25 @@ namespace cds {
             template <typename Q, typename Compare >
             bool contains( Q* val, Compare cmp) {
                 typename gc::Guard m_Guard;
-                iterator * i = new iterator( list_head_node );
-                while (i->current_node->next.load() != nullptr ) {
+                iterator mIter;
+                mIter.set(list_head_node);
+                while (mIter.current_node->next.load() != nullptr ) {
 
                     //m_Guard.protect( i->current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
 
-                    value_type * nVal = i->current_node->data.load(atomics::memory_order_acquire ).ptr();
+                    value_type * nVal = mIter.current_node->data.load(atomics::memory_order_acquire ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
                     if ( nCmp == 0 ){
-                        delete i;
                         return true;
                     }
                     else if ( nCmp < 0 ){
-                        delete i;
                         return false;
                     }
                     else{
-                        i->next();
+                        mIter.next();
                     }
                 }
-                delete i;
                 return false;
             }
 
@@ -350,28 +345,27 @@ namespace cds {
             }
 
             bool empty() {
-                iterator * i = new iterator(list_head_node);
+                iterator mIter;
+                mIter.set(list_head_node);
 
-                if ( i->next() ) {
+                if ( mIter.next() ) {
                     // if next is not exist() container is empty()
-                    delete i;
                     return false;
                 } else {
-                    delete i;
                     return true;
                 }
             }
 
             void print_all_by_iterator(){
-                iterator * i = new iterator(list_head_node);
+                iterator mIter;
+                mIter.set(list_head_node);
                 std::cout << "----------start print by iterator---------------" << std::endl;
-                while(i->current_node->next.load() != nullptr){
-                    value_type * nVal = i->current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                while(mIter.current_node->next.load() != nullptr){
+                    value_type * nVal = mIter.current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
                     std::cout << *nVal << std::endl;
-                    i->next();
+                    mIter.next();
                 }
                 std::cout << "----------end---------------" << std::endl;
-                delete i;
             }
             void print_all_by_link(){
                 std::cout << "----------start print by link---------------" << std::endl;
@@ -439,12 +433,12 @@ namespace cds {
                 }
             }
 
-            bool try_erase(iterator *i) {
+            bool try_erase(iterator& i) {
 
-                node_type *d = i->current_node;
+                node_type *d = i.current_node;
 
-                node_type *n = i->current_node->next.load(atomics::memory_order_release);
-                bool r = i->aux_pNode->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
+                node_type *n = i.current_node->next.load(atomics::memory_order_release);
+                bool r = i.aux_pNode->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
 
                 if (!r){
                     return false;
