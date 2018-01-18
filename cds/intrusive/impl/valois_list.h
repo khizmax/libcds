@@ -135,8 +135,8 @@ namespace cds {
 
                     }
 
-                    aux_pNode = aux_guard.assign(p);
-                    current_node = current_guard.assign(n);
+                    aux_pNode.store(p);
+                    current_node.store(n);
 
                     //m_Guard.protect( current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
                 }
