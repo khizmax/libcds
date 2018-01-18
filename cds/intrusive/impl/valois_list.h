@@ -72,24 +72,23 @@ namespace cds {
                 friend class ValoisList;
 
             protected:
-                node_type * current_node;   // Valois target - current real node
-                node_type * aux_pNode;      // Valois pre_aux - aux node before the real node
-                node_type * prev_node;      // Valois pre_cell - real node before the current real node
+                atomic_node_ptr current_node;   // Valois target - current real node
+                atomic_node_ptr aux_pNode;      // Valois pre_aux - aux node before the real node
+                atomic_node_ptr prev_node;      // Valois pre_cell - real node before the current real node
                 typename gc::Guard current_guard;
                 typename gc::Guard prev_guard;
                 typename gc::Guard aux_guard;
 
                 bool next() {
-                    if (current_node->next.load() == nullptr) {     // if tail
+                    if (current_node.load()->next.load() == nullptr) {     // if tail
                         current_guard.clear();
                         prev_guard.clear();
                         aux_guard.clear();
                         return false;
                     }
-                    prev_node = current_guard.assign(current_node);
-                    aux_pNode = aux_guard.assign(current_node->next.load(atomics::memory_order_relaxed));
+                    prev_node = current_guard.protect(current_node);
+                    aux_pNode = aux_guard.protect(current_node.load()->next);
 
-                    //current_node = aux_pNode->next.load();
                     update_iterator();
                     return true;
                 }
@@ -116,7 +115,7 @@ namespace cds {
                 }
 
                 void update_iterator() {
-                    if (aux_pNode->next == current_node) {
+                    if (aux_pNode.load()->next == current_node) {
                         return;
                     }
 
@@ -125,7 +124,7 @@ namespace cds {
 
                     while ( n->next != nullptr && n->data == nullptr) {    //while not last and is aux node
 
-                        prev_node->next.compare_exchange_strong(
+                        prev_node.load()->next.compare_exchange_strong(
                                 p,
                                 n,
                                 atomics::memory_order_seq_cst,
@@ -143,20 +142,6 @@ namespace cds {
                 }
 
 
-                iterator &operator++() {
-                    iterator temp = *this;
-                    next();
-                    return temp;
-                }
-
-                iterator &operator=(iterator &second) {
-                    current_node = second.current_node;
-                    aux_pNode = second.aux_pNode;
-                    prev_node = second.prev_node;
-
-                    return *this;
-                }
-
 
                 void print(){
                     std::cout << "iterator" << std::endl;
@@ -172,14 +157,6 @@ namespace cds {
                         std::cout << "prev    " << prev_node << " value " << "NULL" << std::endl;
                     }
                     std::cout << "--------------------" << std::endl;
-                }
-
-                bool operator==(const iterator &second) const {
-                    return (current_node->data == second.current_node->data);
-                }
-
-                bool operator!=(const iterator &second) const {
-                    return (current_node->data != second.current_node->data);
                 }
             };
 
@@ -211,7 +188,7 @@ namespace cds {
                 mIter.set(list_head_node);
 
                 while (true) {
-                    Q * nVal = mIter.current_node
+                    Q * nVal = mIter.current_node.load()
                             ->data.load(
                                     atomics::memory_order_acquire
                             ).ptr();
@@ -248,16 +225,15 @@ namespace cds {
                 node_type *aux_node = new node_type();
 
                 real_node->next = aux_node;
-                aux_node->next = i.current_node;
+                aux_node->next.store(i.current_node.load());
 
-                bool insert_status = i.aux_pNode->next.compare_exchange_strong(
-                        i.current_node,
+                bool insert_status = i.aux_pNode.load()->next.compare_exchange_strong(
+                        i.current_node.load(),
                         real_node,
                         memory_model::memory_order_seq_cst,
                         memory_model::memory_order_seq_cst
                 );
 
-                /*i->prev_node = real_node;*/
 
 
                 return insert_status;
@@ -279,8 +255,8 @@ namespace cds {
                 iterator mIter;
                 mIter.set( list_head_node );
                 //search node
-                while (mIter.current_node->next.load() != nullptr ) {
-                    value_type * nVal = mIter.current_node->data.load(atomics::memory_order_acquire ).ptr();
+                while (mIter.current_node.load()->next.load() != nullptr ) {
+                    value_type * nVal = mIter.current_node.load()->data.load(atomics::memory_order_acquire ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
                     if ( nCmp == 0 ){
@@ -322,8 +298,6 @@ namespace cds {
                 mIter.set(list_head_node);
                 while (mIter.current_node->next.load() != nullptr ) {
 
-                    //m_Guard.protect( i->current_node->data, []( marked_data_ptr ptr ) { return ptr.ptr(); }).ptr();
-
                     value_type * nVal = mIter.current_node->data.load(atomics::memory_order_acquire ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
@@ -360,8 +334,8 @@ namespace cds {
                 iterator mIter;
                 mIter.set(list_head_node);
                 std::cout << "----------start print by iterator---------------" << std::endl;
-                while(mIter.current_node->next.load() != nullptr){
-                    value_type * nVal = mIter.current_node->data.load(memory_model::memory_order_seq_cst ).ptr();
+                while(mIter.current_node.load()->next.load() != nullptr){
+                    value_type * nVal = mIter.current_node.load()->data.load(memory_model::memory_order_seq_cst ).ptr();
                     std::cout << *nVal << std::endl;
                     mIter.next();
                 }
@@ -435,10 +409,10 @@ namespace cds {
 
             bool try_erase(iterator& i) {
 
-                node_type *d = i.current_node;
+                node_type *d = i.current_node.load();
 
-                node_type *n = i.current_node->next.load(atomics::memory_order_release);
-                bool r = i.aux_pNode->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
+                node_type *n = i.current_node.load()->next.load(atomics::memory_order_release);
+                bool r = i.aux_pNode.load()->next.compare_exchange_strong(d, n->next.load(), atomics::memory_order_seq_cst);
 
                 if (!r){
                     return false;
