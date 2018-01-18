@@ -186,7 +186,6 @@ namespace cds {
                 typename gc::Guard m_Guard;
                 iterator mIter;
                 mIter.set(list_head_node);
-
                 while (true) {
                     Q * nVal = mIter.current_node.load()
                             ->data.load(
@@ -297,7 +296,6 @@ namespace cds {
                 iterator mIter;
                 mIter.set(list_head_node);
                 while (mIter.current_node->next.load() != nullptr ) {
-
                     value_type * nVal = mIter.current_node->data.load(atomics::memory_order_acquire ).ptr();
                     int const nCmp = cmp( *val , *nVal );
 
