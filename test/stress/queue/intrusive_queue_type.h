@@ -180,7 +180,6 @@ namespace queue {
         typedef cds::intrusive::MSQueue< cds::gc::DHP, T, traits_MSQueue_DHP_stat > MSQueue_DHP_stat;
         typedef cds::intrusive::MoirQueue< cds::gc::DHP, T, traits_MSQueue_DHP_stat > MoirQueue_DHP_stat;
 
-/* ===== SPECULATIVE QUEUE IDP CHANGES STARTS =========================== */
 
         struct traits_SPQueue_HP : public cds::intrusive::speculative_pairing_queue::traits
         {
@@ -237,8 +236,6 @@ namespace queue {
             typedef cds::intrusive::speculative_pairing_queue::stat<> stat;
         };
         typedef cds::intrusive::SPQueue< cds::gc::DHP, T, traits_SPQueue_DHP_stat > SPQueue_DHP_stat;
-
-/* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
 
         // OptimisticQueue
         struct traits_OptimisticQueue_HP : public cds::intrusive::optimistic_queue::traits

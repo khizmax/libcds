@@ -76,7 +76,6 @@ namespace cds_test {
         return o;
     }
 
-/* ===== SPECULATIVE QUEUE IDP CHANGES STARTS =========================== */
     template <typename Counter>
     static inline property_stream& operator <<( property_stream& o, cds::intrusive::speculative_pairing_queue::stat<Counter> const& s )
     {
@@ -93,7 +92,6 @@ namespace cds_test {
     {
         return o;
     }
-/* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
 
     template <typename Counter>
     static inline property_stream& operator <<( property_stream& o, cds::intrusive::optimistic_queue::stat<Counter> const& s )

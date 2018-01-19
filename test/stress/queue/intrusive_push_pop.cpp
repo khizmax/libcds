@@ -355,9 +355,8 @@ namespace {
 
             analyze( q, nLeftOffset, nRightOffset );
 
-/* ============= STATISTICS COMPILE ERROR ?? ============= */
+
             propout() << q.statistics();
-/* ============= STATISTICS COMPILE ERROR ?? ============= */
         }
     };
 
@@ -374,16 +373,16 @@ namespace {
         queue_type::gc::force_dispose(); \
     }
 
-/* ===== SPECULATIVE QUEUE IDP CHANGES STARTS =========================== */
-    CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-//    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
-/* ===== SPECULATIVE QUEUE IDP CHANGES ENDS =========================== */
 
-/* ===== DISABLE ANOTHER TESTS ======================================
+    CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+
+
+
     CDSSTRESS_QUEUE_F( MSQueue_HP,       cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_ic,    cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_stat,  cds::intrusive::msqueue::node<cds::gc::HP> )
@@ -411,7 +410,7 @@ namespace {
     CDSSTRESS_QUEUE_F( BasketQueue_DHP,      cds::intrusive::basket_queue::node<cds::gc::DHP> )
     CDSSTRESS_QUEUE_F( BasketQueue_DHP_ic,   cds::intrusive::basket_queue::node<cds::gc::DHP> )
     CDSSTRESS_QUEUE_F( BasketQueue_DHP_stat, cds::intrusive::basket_queue::node<cds::gc::DHP> )
- */
+	
 #undef CDSSTRESS_QUEUE_F
 
 
@@ -425,7 +424,7 @@ namespace {
         test( q, arrValue, 0, 0 ); \
     }
 
-/*    CDSSTRESS_QUEUE_F(FCQueue_list_delay2,                      boost::intrusive::list_base_hook<> )
+    CDSSTRESS_QUEUE_F(FCQueue_list_delay2,                      boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_delay2_elimination,          boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_delay2_elimination_stat,     boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_expbackoff_elimination,      boost::intrusive::list_base_hook<> )
@@ -436,7 +435,7 @@ namespace {
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_sm_stat,                boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm,                     boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm_stat,                boost::intrusive::list_base_hook<> )
-*/
+
 #undef CDSSTRESS_QUEUE_F
 
 
@@ -448,10 +447,10 @@ namespace {
         queue_type q( s_nQueueSize ); \
         test( q, arrValue, 0, 0 ); \
     }
-/*
+
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn )
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn_ic )
-*/
+
 #undef CDSSTRESS_QUEUE_F
 
 
@@ -509,7 +508,7 @@ namespace {
         typedef typename queue::Types<value_type<>>::type_name queue_type; \
         test< queue_type >(); \
     }
-/*
+
     CDSSTRESS_QUEUE_F( SegmentedQueue_HP_spin )
     //CDSSTRESS_QUEUE_F( SegmentedQueue_HP_spin_padding )
     CDSSTRESS_QUEUE_F( SegmentedQueue_HP_spin_stat )
@@ -522,8 +521,8 @@ namespace {
     CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex )
     //CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_padding )
     CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_stat )
-*/
-/*
+
+
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
     {
@@ -538,6 +537,6 @@ namespace {
         intrusive_segmented_queue_push_pop,
         ::testing::ValuesIn( intrusive_segmented_queue_push_pop::get_test_parameters()));
 #endif
-*/
+
 
 } // namespace

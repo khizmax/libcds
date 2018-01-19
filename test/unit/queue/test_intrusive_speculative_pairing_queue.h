@@ -84,7 +84,7 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i )
                 arr[i].nVal = static_cast<int>(i);
 
-			q.changeProbStale(0);
+			//q.changeProbStale(0);
 			
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
