@@ -123,10 +123,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         endif()
     endif()
 
-    if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
-        #   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
-        list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wno-unused-local-typedefs")
-    endif()
+#    if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
+#        #   gcc 4.8 - 7: disable noise -Wunused-local-typedefs
+#        list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wno-unused-local-typedefs")
+#    endif()
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
+    list(APPEND LIBCDS_PRIVATE_SHARED_CXX_FLAGS "-Wl,-G")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS "-Wl,-brtl")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
@@ -141,10 +147,6 @@ else()
     message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${LIBCDS_PUBLIC_CXX_FLAGS} ${LIBCDS_PRIVATE_CXX_FLAGS}")
 endif()
 message("Exe flags: ${CMAKE_EXE_LINKER_FLAGS}")
-
-if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
-    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
-endif()
 
 # Component names for separate distribution in rpms, debs etc.
 set(LIBRARIES_COMPONENT lib)
@@ -174,7 +176,7 @@ target_include_directories(${CDS_STATIC_LIBRARY} INTERFACE "$<BUILD_INTERFACE:${
                                                             $<INSTALL_INTERFACE:include>)
 target_compile_options(${CDS_SHARED_LIBRARY} PUBLIC "${LIBCDS_PUBLIC_CXX_FLAGS}")
 target_compile_options(${CDS_STATIC_LIBRARY} PUBLIC "${LIBCDS_PUBLIC_CXX_FLAGS}")
-target_compile_options(${CDS_SHARED_LIBRARY} PRIVATE "${LIBCDS_PRIVATE_CXX_FLAGS}")
+target_compile_options(${CDS_SHARED_LIBRARY} PRIVATE "${LIBCDS_PRIVATE_CXX_FLAGS} ${LIBCDS_PRIVATE_SHARED_CXX_FLAGS}")
 target_compile_options(${CDS_STATIC_LIBRARY} PRIVATE "${LIBCDS_PRIVATE_CXX_FLAGS}")
 
 install(TARGETS ${CDS_SHARED_LIBRARY} EXPORT LibCDSConfig LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIBRARIES_COMPONENT} NAMELINK_SKIP)
