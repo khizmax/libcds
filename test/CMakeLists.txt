@@ -35,18 +35,13 @@ set(CDS_TEST_LIBRARIES
     ${EXTERNAL_SYSTEM_LIBS}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBCDS_PUBLIC_CXX_FLAGS} ${LIBCDS_PRIVATE_CXX_FLAGS} -DGTEST_LANG_CXX11") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_LANG_CXX11") 
 
 if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
-    #   gcc 4.8 - 7: disable noise -Wunused-local-typedefs
+    #   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
-endif()
 
 # Check if gtest INSTANTIATE_TEST_CASE_P macro supports 4th arg
 # The optional last argument to INSTANTIATE_TEST_CASE_P allows the user
