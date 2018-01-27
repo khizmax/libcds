@@ -67,12 +67,11 @@ namespace {
     template <typename List>
     void test_simple_list(List& list)
     {
-        std::cout << "simple test started " << std::endl;
 
         list.append_in_first(3);
         list.append_in_position(10000,10);
 
-        std::cout << "search " << list.search(10000) << std::endl;
+        list.search(10000);
 
         list.deleted(50);
 
@@ -206,7 +205,6 @@ namespace {
     void complex_insdel_thread(List& list){
         cds::threading::Manager::attachThread();
         std::thread::id this_id = std::this_thread::get_id();
-        std::cout << this_id << std::endl;
         for (int key=0; key < 10000; ++key ) {
             val_and_id  * input = new val_and_id(this_id,key);
             list.insert(* input);
@@ -215,34 +213,21 @@ namespace {
         cds::threading::Manager::detachThread();
     }
     void complex_insdel_test(){
-        std::cout << "complex test started" << std::endl;
         list_stress_type lst;
 
         std::thread::id this_id = std::this_thread::get_id();
-        std::cout << "main threads " << this_id << std::endl;
 
-        std::thread thr(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr1(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr2(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr3(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr4(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr5(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr6(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr7(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr8(complex_insdel_thread<list_stress_type>,std::ref(lst));
-        std::thread thr9(complex_insdel_thread<list_stress_type>,std::ref(lst));
 
-        thr.join();
-        thr1.join();
-        thr2.join();
-        thr3.join();
-        thr4.join();
-        thr5.join();
-        thr6.join();
-        thr7.join();
-        thr8.join();
-        thr9.join();
-        std::cout << "Complex test finished" << std::endl;
+        int numThreads = 10;
+        std::vector<std::thread> threads;
+
+
+        for(int i = 0; i < numThreads; i++)
+            threads.push_back(std::thread(complex_insdel_thread<list_stress_type>, std::ref(lst)));
+
+        for(int i = 0; i < numThreads; i++)
+            threads[i].join();
+
     }
 
     TEST_F( IntrusiveValoisList_HP, base_hook )
