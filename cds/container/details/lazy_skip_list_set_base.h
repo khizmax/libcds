@@ -33,6 +33,9 @@ namespace cds { namespace container {
             typedef cds::details::Allocator<node_ptr>           tower_allocator;
 
         protected:
+            static tower_allocator  towerAllocator;
+            static node_allocator   nodeAllocator;
+
             value_type value;
             key_type key;
             unsigned int m_nHeight;
@@ -84,20 +87,17 @@ namespace cds { namespace container {
             }
 
             void allocate_tower(int nHeight) {
-                tower_allocator ta;
-                m_arrNext = ta.NewArray(nHeight, nullptr);
+                m_arrNext = towerAllocator.NewArray(nHeight, nullptr);
             }
 
             static void dispose_node(node * pNode) {
-                node_allocator allocator;
-                allocator.Delete(pNode);
+                nodeAllocator.Delete(pNode);
             }
 
             static void dispose_tower(node * pNode) {
                 unsigned int topLayer = pNode->height();
-                tower_allocator ta;
                 if (topLayer > 0)
-                    ta.Delete(pNode->release_tower(), topLayer + 1);
+                    towerAllocator.Delete(pNode->release_tower(), topLayer + 1);
             }
 
             node_ptr * release_tower() {
@@ -109,8 +109,7 @@ namespace cds { namespace container {
             }
 
             static node_ptr allocate_node(key_type key) {
-                node_allocator alloc;
-                node_ptr new_node = alloc.New();
+                node_ptr new_node = nodeAllocator.New();
                 new_node->key = key;
                 new_node->m_nHeight = cds::container::lazy_skip_list_set::c_nMaxHeight;
                 new_node->allocate_tower(new_node->m_nHeight);
@@ -120,8 +119,7 @@ namespace cds { namespace container {
             }
 
             static node_ptr allocate_node(value_type v, unsigned int topLayer) {
-                node_allocator alloc;
-                node_ptr new_node = alloc.New();
+                node_ptr new_node = nodeAllocator.New();
 
                 new_node->value = v;
                 new_node->key = new_node->hash();
