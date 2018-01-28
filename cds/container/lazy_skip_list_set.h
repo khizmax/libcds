@@ -1,10 +1,9 @@
-#ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_DHP_H
-#define CDSLIB_CONTAINER_SKIP_LIST_SET_DHP_H
+#ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_H
+#define CDSLIB_CONTAINER_SKIP_LIST_SET_H
 
 #include <mutex>
 
 #include <cds/container/details/lazy_skip_list_set_base.h>
-#include <cds/gc/nogc.h>
 
 namespace cds { namespace container {
 
@@ -29,8 +28,6 @@ namespace cds { namespace container {
         typedef cds::container::lazy_skip_list_set::node<gc, value_type> node_type;
         typedef typename node_type::key_type key_type;
 
-        typedef cds::details::marked_ptr<node_type, 1> marked_ptr;
-
         node_type *m_Head;
         node_type *m_Tail;
 
@@ -52,8 +49,6 @@ namespace cds { namespace container {
             unsigned int topLayer = randomLevel();
             node_type * preds[c_nMaxHeight];
             node_type * succs[c_nMaxHeight];
-            //auto **preds = new node_type *[c_nMaxHeight];
-            //auto **succs = new node_type *[c_nMaxHeight];
 
             while (true) {
                 int lFound = find(key, preds, succs);
@@ -112,8 +107,6 @@ namespace cds { namespace container {
             unsigned int topLayer = 0;
             node_type *preds[c_nMaxHeight];
             node_type *succs[c_nMaxHeight];
-            /*auto **preds = new node_type *[c_nMaxHeight];
-            auto **succs = new node_type *[c_nMaxHeight];*/
 
             while (true) {
                 int lFound = find(key, preds, succs);
@@ -249,4 +242,4 @@ namespace cds { namespace container {
 
 }}  // namespace cds::container
 
-#endif 	// #ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_DHP_H
+#endif 	// #ifndef CDSLIB_CONTAINER_SKIP_LIST_SET_H
