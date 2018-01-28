@@ -4,6 +4,7 @@
 #include <mutex>
 
 #include <cds/container/details/lazy_skip_list_set_base.h>
+#include <cds/gc/nogc.h>
 
 namespace cds { namespace container {
 
@@ -15,12 +16,12 @@ namespace cds { namespace container {
     class LazySkipListSet
     {
     public:
-        typedef GC      gc;
-        typedef T       value_type;
-        typedef Traits  traits;
+        typedef cds::gc::nogc   gc;
+        typedef T               value_type;
+        typedef Traits          traits;
 
         static size_t const c_nMaxHeight = cds::container::lazy_skip_list_set::c_nMaxHeight;
-        // static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 3;
+        static size_t const c_nHazardPtrCount = 0;
 
         typedef typename traits::random_level_generator rand_height;
 
@@ -39,7 +40,7 @@ namespace cds { namespace container {
             m_Tail = node_type::max_key();
 
             for (unsigned int layer = 0; layer < c_nMaxHeight; layer++)
-                m_Head->next(layer).store(marked_ptr(m_Tail), traits::memory_model::memory_order_relaxed);
+                m_Head->next(layer) = m_Tail;
         }
 
         ~LazySkipListSet() {
@@ -90,8 +91,8 @@ namespace cds { namespace container {
 
                     node_type *new_node = node_type::allocate_node(v, topLayer);
                     for (unsigned int layer = 0; layer <= topLayer; layer++) {
-                        new_node->next(layer).store(marked_ptr(succs[layer]));
-                        preds[layer]->next(layer).store(marked_ptr(new_node));
+                        new_node->next(layer) = succs[layer];
+                        preds[layer]->next(layer) = new_node;
                     }
 
                     new_node->set_fully_linked(true);
@@ -154,10 +155,10 @@ namespace cds { namespace container {
                             continue;
 
                         for (unsigned int layer = topLayer; layer >= 0 && layer < c_nMaxHeight; layer--)
-                            preds[layer]->next(layer).store(nodeToDelete->next(layer), atomics::memory_order_relaxed);
+                            preds[layer]->next(layer) = nodeToDelete->next(layer);
 
                         nodeToDelete->lock.unlock();
-                        nodeToDelete->mark_hard();
+                        node_type::dispose_node(nodeToDelete);
                         unlock(preds, highestLocked);
                         return true;
                     } catch (int e) {
@@ -184,15 +185,14 @@ namespace cds { namespace container {
         }
 
         bool empty() {
-            // FIXME
-            node_type *succ = m_Head->next(0).load(traits::memory_model::memory_order_relaxed).ptr();
+            node_type *succ = m_Head->next(0);
 
             while (true) {
                 if (m_Head->next(0) == m_Tail)
                     return true;
 
                 if (succ->marked())
-                    succ = m_Head->next(0).load(traits::memory_model::memory_order_relaxed).ptr();
+                    succ = m_Head->next(0);
                 else
                     return false;
             }
@@ -200,9 +200,9 @@ namespace cds { namespace container {
 
     protected:
         void destroy() {
-            node_type *p = m_Head; //->next(0).load(atomics::memory_order_relaxed).ptr();
+            node_type *p = m_Head;
             while (p) {
-                node_type *pNext = p->next(0).load(atomics::memory_order_relaxed).ptr();
+                node_type *pNext = p->next(0);
                 node_type::dispose_node(p);
                 p = pNext;
             }
@@ -223,11 +223,11 @@ namespace cds { namespace container {
             node_type *pred = m_Head;
 
             for (unsigned int layer = c_nMaxHeight - 1; layer >= 0 && layer < c_nMaxHeight; layer--) {
-                node_type *curr = pred->next(layer).load(traits::memory_model::memory_order_relaxed).ptr();
+                node_type *curr = pred->next(layer);
 
                 while (key > curr->node_key()) {
                     pred = curr;
-                    curr = pred->next(layer).load(traits::memory_model::memory_order_relaxed).ptr();
+                    curr = pred->next(layer);
                 }
 
                 if (lFound == -1 && key == curr->node_key())

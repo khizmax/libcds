@@ -2,6 +2,7 @@
 #define CDSLIB_LAZY_SKIP_LIST_BASE_H
 
 #include <cds/intrusive/details/skip_list_base.h>
+#include <cds/gc/nogc.h>
 
 namespace cds { namespace container {
 
@@ -19,28 +20,25 @@ namespace cds { namespace container {
         class node
         {
         public:
-            typedef GC  gc;
-            typedef T   value_type;
-            typedef Lock lock_type;
+            typedef cds::gc::nogc   gc;
+            typedef T               value_type;
+            typedef Lock            lock_type;
 
             typedef std::size_t key_type;
 
             typedef node* node_ptr;
             typedef std::numeric_limits<key_type> limits;
-            typedef cds::details::Allocator<node> node_allocator;
 
-            typedef cds::details::marked_ptr<node, 1> marked_ptr;
-            typedef typename gc::template atomic_marked_ptr<marked_ptr> atomic_marked_ptr;
-
-            typedef cds::details::Allocator<atomic_marked_ptr> tower_allocator;
+            typedef cds::details::Allocator<node>               node_allocator;
+            typedef cds::details::Allocator<node_ptr>           tower_allocator;
 
         protected:
             value_type value;
             key_type key;
             unsigned int m_nHeight;
-            atomic_marked_ptr * m_arrNext;
+            node_ptr * m_arrNext;
             atomics::atomic<bool> _marked;
-            atomics::atomic<bool> fullyLinked;
+            atomics::atomic<bool> _fully_linked;
 
             key_type hash() {
                 return std::hash<value_type>{}(value);
@@ -49,7 +47,7 @@ namespace cds { namespace container {
         public:
             lock_type lock;
 
-            node() : _marked(false), fullyLinked(false) {
+            node() : _marked(false), _fully_linked(false) {
 
             }
 
@@ -58,31 +56,26 @@ namespace cds { namespace container {
             }
 
             bool marked() {
-                return _marked;
+                return _marked.load();
             }
 
             bool mark() {
-                _marked = true;
-            }
-
-            bool mark_hard() {
-                marked_ptr next_marked(next(0).load(atomics::memory_order_relaxed).ptr());
-                next(0).compare_exchange_strong(next_marked, next_marked | 1, atomics::memory_order_release, atomics::memory_order_acquire);
+                _marked.store(true);
             }
 
             bool fully_linked() {
-                return fullyLinked.load(atomics::memory_order_relaxed);
+                return _fully_linked.load();
             }
 
             void set_fully_linked(bool value) {
-                fullyLinked.store(value, atomics::memory_order_relaxed);
+                _fully_linked.store(value);
             }
 
             key_type node_key() {
                 return key;
             }
 
-            atomic_marked_ptr& next(unsigned int nLevel) {
+            node_ptr& next(unsigned int nLevel) {
                 return m_arrNext[nLevel];
             }
 
@@ -107,8 +100,8 @@ namespace cds { namespace container {
                     ta.Delete(pNode->release_tower(), topLayer + 1);
             }
 
-            atomic_marked_ptr * release_tower() {
-                atomic_marked_ptr * pTower = m_arrNext;
+            node_ptr * release_tower() {
+                node_ptr * pTower = m_arrNext;
                 m_arrNext = nullptr;
                 m_nHeight = 0;
 
@@ -121,7 +114,7 @@ namespace cds { namespace container {
                 new_node->key = key;
                 new_node->m_nHeight = cds::container::lazy_skip_list_set::c_nMaxHeight;
                 new_node->allocate_tower(new_node->m_nHeight);
-                new_node->fullyLinked = false;
+                new_node->_fully_linked = false;
 
                 return new_node;
             }
@@ -133,7 +126,7 @@ namespace cds { namespace container {
                 new_node->value = v;
                 new_node->key = new_node->hash();
                 new_node->m_nHeight = topLayer;
-                new_node->fullyLinked = false;
+                new_node->_fully_linked = false;
 
                 new_node->allocate_tower(topLayer + 1);
 
@@ -147,7 +140,7 @@ namespace cds { namespace container {
             }
 
             static node * max_key() {
-                node_ptr new_node = allocate_node(limits::max() / 1000);
+                node_ptr new_node = allocate_node(limits::max());
 
                 return new_node;
             }
