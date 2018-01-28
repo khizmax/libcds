@@ -1,7 +1,7 @@
 #include <cds_test/ext_gtest.h>
 
 #include <cds/gc/dhp.h>
-#include <cds/container/lazy_skip_list_set_dhp.h>
+#include <cds/container/lazy_skip_list_set.h>
 
 template<typename T>
 using Set = cds::container::LazySkipListSet<cds::gc::DHP, T>;
