@@ -638,7 +638,7 @@ namespace cds { namespace gc {
             CDS_EXPORT_API thread_record* alloc_thread_data();
 
             /// Free HP SMR thread-private data
-            CDS_EXPORT_API void free_thread_data( thread_record* pRec );
+            CDS_EXPORT_API void free_thread_data( thread_record* pRec, bool callHelpScan );
 
         private:
             static CDS_EXPORT_API smr* instance_;

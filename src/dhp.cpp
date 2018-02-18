@@ -250,7 +250,7 @@ namespace cds { namespace gc { namespace dhp {
         thread_data* rec = tls_;
         if ( rec ) {
             tls_ = nullptr;
-            instance().free_thread_data( static_cast<thread_record*>( rec ));
+            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
         }
     }
 
@@ -262,7 +262,7 @@ namespace cds { namespace gc { namespace dhp {
         for ( thread_record * hprec = thread_list_.load( atomics::memory_order_relaxed ); hprec; hprec = pNext ) {
             pNext = hprec->m_pNextNode.load( atomics::memory_order_relaxed );
             if ( hprec->m_idOwner.load( atomics::memory_order_relaxed ) != nullThreadId ) {
-                free_thread_data( hprec );
+                free_thread_data( hprec, false );
             }
         }
     }
@@ -333,14 +333,16 @@ namespace cds { namespace gc { namespace dhp {
         return hprec;
     }
 
-    CDS_EXPORT_API void smr::free_thread_data( thread_record* pRec )
+    CDS_EXPORT_API void smr::free_thread_data( thread_record* pRec, bool callHelpScan )
     {
         assert( pRec != nullptr );
         //CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec )
 
         pRec->hazards_.clear();
         scan( pRec );
-        help_scan( pRec );
+
+        if ( callHelpScan )
+            help_scan( pRec );
 
         if ( pRec->retired_.empty()) {
             pRec->retired_.fini();
