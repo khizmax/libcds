@@ -52,7 +52,7 @@
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2015"
 #   define  CDS_COMPILER__NICK  "vc14"
 #   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv140"
-#elif _MSC_VER < 2000 
+#elif _MSC_VER < 2000
 #   define  CDS_COMPILER__NAME  "MS Visual C++ 2017"
 #   define  CDS_COMPILER__NICK  "vc141"
 #   define  CDS_COMPILER_LIBCDS_SUFFIX "vcv141"

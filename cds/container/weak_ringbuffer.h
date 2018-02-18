@@ -852,7 +852,7 @@ namespace cds { namespace container {
 
                 if ( cback_ - front < sizeof( size_t )) {
                     cback_ = back_.load( memory_model::memory_order_acquire );
-                    if ( cback_ - front < sizeof( size_t ) )
+                    if ( cback_ - front < sizeof( size_t ))
                         return std::make_pair( nullptr, 0u );
                 }
 

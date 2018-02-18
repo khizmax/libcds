@@ -45,7 +45,7 @@ namespace {
 
             // push_front/pop_front
             for ( int i = 0; i < static_cast<int>( c_nSize ); ++i ) {
-                EXPECT_TRUE( dq.push_front( i ) );
+                EXPECT_TRUE( dq.push_front( i ));
                 total_sum += i;
             }
             EXPECT_EQ( dq.size(), c_nSize );

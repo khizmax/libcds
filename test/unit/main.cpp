@@ -35,7 +35,7 @@
 
 namespace cds_test {
     /*static*/ std::random_device fixture::random_dev_;
-    /*static*/ std::mt19937 fixture::random_gen_( random_dev_() );
+    /*static*/ std::mt19937 fixture::random_gen_( random_dev_());
 } // namespace cds_test
 
 int main( int argc, char **argv )

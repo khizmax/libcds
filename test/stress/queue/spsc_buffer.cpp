@@ -71,9 +71,9 @@ namespace {
             void operator()()
             {
                 std::random_device rd;
-                std::mt19937 gen( rd() );
+                std::mt19937 gen( rd());
                 std::uniform_int_distribution<unsigned> dis( 0, 64 * 1024* 1024 );
-                quad_sum += std::sqrt( static_cast<double>( dis(gen) ));
+                quad_sum += std::sqrt( static_cast<double>( dis(gen)));
             }
 
             double result()

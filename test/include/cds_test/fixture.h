@@ -43,7 +43,7 @@ namespace cds_test {
         template <typename RandomIt>
         static void shuffle( RandomIt first, RandomIt last )
         {
-            //std::shuffle( first, last, std::mt19937( std::random_device()() ) );
+            //std::shuffle( first, last, std::mt19937( std::random_device()()) );
             std::shuffle( first, last, random_gen_ );
         }
 
