@@ -17,6 +17,7 @@ set(CDSGTEST_QUEUE_SOURCES
     vyukov_mpmc_queue.cpp
     weak_ringbuffer.cpp
     williams_queue.cpp
+    williams_queue_spsc.cpp
     intrusive_basket_queue_hp.cpp
     intrusive_basket_queue_dhp.cpp
     intrusive_fcqueue.cpp

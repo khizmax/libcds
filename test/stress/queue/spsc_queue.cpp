@@ -208,7 +208,8 @@ namespace {
     //CDSSTRESS_FCDeque( spsc_queue )
     //CDSSTRESS_RWQueue( spsc_queue )
     //CDSSTRESS_StdQueue( spsc_queue )
-
+    CDSSTRESS_WilliamsQueueSPSC(spsc_queue)
+    
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_F( test_fixture, type_name ) \

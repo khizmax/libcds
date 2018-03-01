@@ -74,6 +74,7 @@
     <ClCompile Include="..\..\..\test\unit\queue\vyukov_mpmc_queue.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\weak_ringbuffer.cpp" />
     <ClCompile Include="..\..\..\test\unit\queue\williams_queue.cpp" />
+    <ClCompile Include="..\..\..\test\unit\queue\williams_queue_spsc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\queue\test_bounded_queue.h" />
