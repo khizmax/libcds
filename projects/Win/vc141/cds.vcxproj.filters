@@ -1261,5 +1261,17 @@
     <ClInclude Include="..\..\..\cds\details\size_t_cast.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\timestamped_deque.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\timestamp.h">
+      <Filter>Header Files\cds\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\x86\timestamp.h">
+      <Filter>Header Files\cds\compiler\gcc\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\compiler\gcc\amd64\timestamp.h">
+      <Filter>Header Files\cds\compiler\gcc\amd64</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
