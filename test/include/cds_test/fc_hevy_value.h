@@ -1,12 +1,10 @@
-/*
- * fc_hevy_value.h
- *
- *  Created on: 31 авг. 2016 г.
- *      Author: marsel
- */
+// Copyright (c) 2016 Marsel Galimullin
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEAVY_VALUE_H_
-#define SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEAVY_VALUE_H_
+#ifndef CDS_TEST_FC_HEAVY_VALUE_H_
+#define CDS_TEST_FC_HEAVY_VALUE_H_
 
 #include <cmath>
 #include <vector>
@@ -76,4 +74,4 @@ namespace fc_test {
     template<int DefaultSize>
     std::vector<int>::size_type heavy_value< DefaultSize >::buffer_size = DefaultSize;
 }
-#endif /* SOURCE_DIRECTORY__TEST_INCLUDE_CDS_TEST_FC_HEVY_VALUE_H_ */
+#endif // CDS_TEST_FC_HEAVY_VALUE_H_

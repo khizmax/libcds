@@ -1,32 +1,7 @@
-/*
-    This file is a part of libcds - Concurrent Data Structures library
-
-    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
-
-    Source code repo: http://github.com/khizmax/libcds/
-    Download: http://sourceforge.net/projects/libcds/files/
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+// Copyright (c) 2006-2018 Maxim Khizhinsky
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
 #include <vector>
@@ -250,7 +225,7 @@ namespace cds { namespace gc { namespace dhp {
         thread_data* rec = tls_;
         if ( rec ) {
             tls_ = nullptr;
-            instance().free_thread_data( static_cast<thread_record*>( rec ));
+            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
         }
     }
 
@@ -262,7 +237,7 @@ namespace cds { namespace gc { namespace dhp {
         for ( thread_record * hprec = thread_list_.load( atomics::memory_order_relaxed ); hprec; hprec = pNext ) {
             pNext = hprec->m_pNextNode.load( atomics::memory_order_relaxed );
             if ( hprec->m_idOwner.load( atomics::memory_order_relaxed ) != nullThreadId ) {
-                free_thread_data( hprec );
+                free_thread_data( hprec, false );
             }
         }
     }
@@ -333,14 +308,16 @@ namespace cds { namespace gc { namespace dhp {
         return hprec;
     }
 
-    CDS_EXPORT_API void smr::free_thread_data( thread_record* pRec )
+    CDS_EXPORT_API void smr::free_thread_data( thread_record* pRec, bool callHelpScan )
     {
         assert( pRec != nullptr );
         //CDS_HAZARDPTR_STATISTIC( ++m_Stat.m_RetireHPRec )
 
         pRec->hazards_.clear();
         scan( pRec );
-        help_scan( pRec );
+
+        if ( callHelpScan )
+            help_scan( pRec );
 
         if ( pRec->retired_.empty()) {
             pRec->retired_.fini();

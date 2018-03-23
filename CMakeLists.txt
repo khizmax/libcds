@@ -10,7 +10,7 @@ include(TargetArch)
 
 project(cds)
 
-set(PROJECT_VERSION 2.3.2)
+set(PROJECT_VERSION 2.4.0)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
@@ -24,14 +24,6 @@ set(CMAKE_TARGET_ARCHITECTURE "" CACHE string "Target build architecture")
 
 find_package(Threads)
 
-if(TARGET boost::system AND TARGET boost::thread)
-    link_libraries(boost::system boost::thread)
-else()
-    find_package(Boost 1.50 COMPONENTS system thread)
-endif()
-
-include_directories(${Boost_INCLUDE_DIRS})
-
 if(NOT CMAKE_TARGET_ARCHITECTURE)
     target_architecture(CMAKE_TARGET_ARCHITECTURE)
 endif()
@@ -42,14 +34,14 @@ if(APPLE)
 endif()
 
 if(WITH_BOOST_ATOMIC)
-    if(Boost_FOUND)
-        if(${Boost_MINOR_VERSION} GREATER 53)
+    if(TARGET boost::atomic)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDS_USE_BOOST_ATOMIC")
+        link_libraries(boost::atomic)
+    else()
+        find_package(Boost 1.53 COMPONENTS atomic)
+        if(Boost_FOUND)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDS_USE_BOOST_ATOMIC")
             message(STATUS "Boost version allows using of boost.atomic: activated")
-        endif()
-    else()
-        if(TARGET boost::atomic)
-            link_libraries(boost::atomic)
         endif()
     endif()
 endif(WITH_BOOST_ATOMIC)
@@ -130,11 +122,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -latomic")
         endif()
     endif()
+endif()
 
-    if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
-        #   gcc 4.8 - 6: disable noise -Wunused-local-typedefs
-        list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wno-unused-local-typedefs")
-    endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
+    list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wl,-G")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-brtl")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
@@ -149,16 +143,6 @@ else()
     message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${LIBCDS_PUBLIC_CXX_FLAGS} ${LIBCDS_PRIVATE_CXX_FLAGS}")
 endif()
 message("Exe flags: ${CMAKE_EXE_LINKER_FLAGS}")
-
-if(Boost_FOUND)
-    message("Boost: ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIRS}, lib ${Boost_LIBRARY_DIRS}")
-else()
-    message("Boost: Using CMake-fied boost")
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
-    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -q -c ${CMAKE_STATIC_LINKER_FLAGS} -o <TARGET> <OBJECTS>")
-endif()
 
 # Component names for separate distribution in rpms, debs etc.
 set(LIBRARIES_COMPONENT lib)

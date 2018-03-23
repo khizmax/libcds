@@ -4,7 +4,7 @@ boost/1.66.0@conan/stable
 
 [options]
 gtest:shared=True
-boost:shared=False
+boost:shared=True
 boost:without_atomic=False
 boost:without_system=False
 boost:without_thread=False
