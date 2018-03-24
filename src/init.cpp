@@ -48,6 +48,21 @@ namespace cds {
     namespace details {
         static atomics::atomic<size_t> s_nInitCallCount(0);
 
+        void CDS_EXPORT_API check_hpstat_enabled( bool enabled )
+        {
+#ifdef CDS_ENABLE_HPSTAT
+            if ( !enabled ) {
+                fprintf( stderr, "inconsistency: libcds has been built with CDS_ENABLE_HPSTAT flag set but the application is without that flag" );
+                abort();
+            }
+#else
+            if ( enabled ) {
+                fprintf( stderr, "inconsistency: libcds has been built without CDS_ENABLE_HPSTAT flag set but the application is with that flag" );
+                abort();
+            }
+#endif
+        }
+
         bool CDS_EXPORT_API init_first_call()
         {
             return s_nInitCallCount.fetch_add(1, atomics::memory_order_relaxed) == 0;

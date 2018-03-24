@@ -17,6 +17,8 @@ namespace cds {
     namespace details {
         bool CDS_EXPORT_API init_first_call();
         bool CDS_EXPORT_API fini_last_call();
+
+        void CDS_EXPORT_API check_hpstat_enabled( bool enabled );
     }   // namespace details
     //@endcond
 
@@ -39,6 +41,14 @@ namespace cds {
     )
     {
         CDS_UNUSED( nFeatureFlags );
+
+        details::check_hpstat_enabled(
+#ifdef CDS_ENABLE_HPSTAT
+            true
+#else
+            false
+#endif
+        );
 
         if ( cds::details::init_first_call())
         {
