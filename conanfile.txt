@@ -40,4 +40,5 @@ boost:without_wave=True
 [imports]
 include, * -> ./deps/include # Copies files
 lib, * -> ./deps/lib # Copies files
+bin, * -> ./deps/lib # Copies files
 
