@@ -1,0 +1,91 @@
+build: false
+
+shallow_clone: true              # (git clone --depth 1)
+
+image:
+  - Visual Studio 2017
+
+install:
+   - sed -i "/boost/d" conanfile.txt # delete boost from conanfile. Conan renamed name of boost libs so we'll use appveyour's boost
+   - cmd: echo "Downloading conan..."
+   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
+   - cmd: pip.exe install conan
+   - cmd: conan user # Create the conan data directory
+   - cmd: conan --version
+   - cmd: conan install --build=missing -s arch=x86 -s build_type=%configuration% .
+   #- cmd: conan install --build=missing -s arch=x86_64 -s build_type=%configuration% conanfileWin.txt
+   - cmd: echo =======================
+   - cmd: echo %configuration%
+   - cmd: echo %platform%
+   - cmd: echo =======================
+   - cmd: set GTEST_ROOT=C:/projects/libcds/deps
+   - cmd: set BOOST_PATH=C:\Libraries\boost_1_66_0
+   - cmd: set GTEST_LIB32=C:\projects\libcds\deps\lib;C:\Libraries\boost_1_66_0\lib32-msvc-14.1
+   - cmd: dir %GTEST_LIB32%
+   - cmd: echo =======================
+   # - cmd: set GTEST_LIB64=C:\projects\libcds\deps\lib
+   
+   
+environment:
+    matrix:
+    # require a library with name libboost_thread-vc141-mt-x32-1_66.lib,
+    - TARGET: gtest-stack
+    - TARGET: gtest-deque
+    - TARGET: gtest-pqueue
+    - TARGET: gtest-queue
+    
+    - TARGET: gtest-map-skip
+    - TARGET: gtest-map-split-michael
+    - TARGET: gtest-set-split-michael
+    - TARGET: gtest-misc
+    - TARGET: gtest-ilist-iterable
+    - TARGET: gtest-ilist-lazy
+    - TARGET: gtest-ilist-michael
+    - TARGET: gtest-iset-feldman
+    - TARGET: gtest-iset-michael
+    - TARGET: gtest-iset-michael-iterable
+    - TARGET: gtest-iset-michael-lazy
+    - TARGET: gtest-iset-skip
+    - TARGET: gtest-iset-split-iterable
+    - TARGET: gtest-iset-split-lazy
+    - TARGET: gtest-iset-split-michael
+    - TARGET: gtest-list-iterable
+    - TARGET: gtest-list-lazy
+    - TARGET: gtest-list-michael
+    - TARGET: gtest-map-feldman
+    - TARGET: gtest-map-michael
+    - TARGET: gtest-map-michael-iterable
+    - TARGET: gtest-map-michael-lazy
+    - TARGET: gtest-map-split-iterable
+    - TARGET: gtest-map-split-lazy
+    - TARGET: gtest-set-feldman
+    - TARGET: gtest-set-michael
+    - TARGET: gtest-set-michael-iterable
+    - TARGET: gtest-set-michael-lazy
+    - TARGET: gtest-set-skip
+    - TARGET: gtest-set-split-iterable
+    - TARGET: gtest-set-split-lazy
+    - TARGET: gtest-striped-map-boost
+    - TARGET: gtest-striped-map-cuckoo
+    - TARGET: gtest-striped-map-std
+    - TARGET: gtest-striped-set-boost
+    - TARGET: gtest-striped-set-cuckoo
+    - TARGET: gtest-striped-set-std
+    - TARGET: gtest-tree-bronson
+    - TARGET: gtest-tree-ellen
+configuration: 
+  - Release
+platform:
+  - Win32
+  
+build_script:
+     - msbuild projects/Win/vc141/cds.vcxproj /p:Configuration=%configuration% /p:PlatformTarget="Win32"
+     - msbuild projects/Win/vc141/%TARGET%.vcxproj /p:Configuration=%configuration% /p:PlatformTarget="Win32"
+     #- msbuild projects/Win/vc141/cds.vcxproj /p:Configuration=%configuration% /p:PlatformTarget=x64 
+     #- msbuild projects/Win/vc141/%TARGET%.vcxproj /p:Configuration=%configuration% /p:PlatformTarget=x64
+     
+test_script:
+     - cmd: set path=%path%;%GTEST_LIB32%;C:\projects\libcds\bin\vc.v141\%platform%-release\
+     - cmd: C:\projects\libcds\bin\vc.v141\%platform%-release\%TARGET%.exe
+      
+  
