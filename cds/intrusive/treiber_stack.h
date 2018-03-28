@@ -716,7 +716,7 @@ namespace cds { namespace intrusive {
             typename elimination_backoff::type bkoff = m_Backoff.init();
 
             operation_desc op;
-            if ( enable_elimination ) {
+            constexpr_if( enable_elimination ) {
                 op.idOp = treiber_stack::op_push;
                 op.pVal = &val;
             }
@@ -748,7 +748,7 @@ namespace cds { namespace intrusive {
             typename gc::Guard  guard;
 
             operation_desc op;
-            if ( enable_elimination ) {
+            constexpr_if( enable_elimination ) {
                 op.idOp = treiber_stack::op_pop;
             }
 
