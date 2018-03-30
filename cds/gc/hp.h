@@ -67,11 +67,11 @@ namespace cds { namespace gc {
         using namespace cds::gc::hp::common;
 
         /// Exception "Not enough Hazard Pointer"
-        class not_enought_hazard_ptr: public std::length_error
+        class not_enough_hazard_ptr: public std::length_error
         {
         //@cond
         public:
-            not_enought_hazard_ptr()
+            not_enough_hazard_ptr()
                 : std::length_error( "Not enough Hazard Pointer" )
             {}
         //@endcond
@@ -129,7 +129,7 @@ namespace cds { namespace gc {
                 assert( !full());
 #       else
                 if ( full())
-                    CDS_THROW_EXCEPTION( not_enought_hazard_ptr());
+                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
 #       endif
                 guard* g = free_head_;
                 free_head_ = g->next_;
@@ -163,7 +163,7 @@ namespace cds { namespace gc {
                 assert( i == Capacity );
 #       else
                 if ( i != Capacity )
-                    CDS_THROW_EXCEPTION( not_enought_hazard_ptr());
+                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
 #       endif
                 free_head_ = g;
                 CDS_HPSTAT( alloc_guard_count_ += Capacity );
@@ -488,7 +488,7 @@ namespace cds { namespace gc {
 
             /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
             /**
-                If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enought_hazard_ptr is thrown
+                If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
             */
             static void check_hazard_ptr_count( size_t nRequiredCount )
             {
@@ -496,7 +496,7 @@ namespace cds { namespace gc {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
                     assert( false );    // not enough hazard ptr
 #       else
-                    CDS_THROW_EXCEPTION( not_enought_hazard_ptr());
+                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
 #       endif
                 }
             }
@@ -644,7 +644,7 @@ namespace cds { namespace gc {
         template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Exception "Not enough Hazard Pointer"
-        typedef hp::not_enought_hazard_ptr not_enought_hazard_ptr_exception;
+        typedef hp::not_enough_hazard_ptr not_enough_hazard_ptr_exception;
 
         /// Internal statistics
         typedef hp::stat stat;
@@ -718,7 +718,7 @@ namespace cds { namespace gc {
 
             /// Links the guard with internal hazard pointer if the guard is in unlinked state
             /**
-                @warning Can throw \p not_enought_hazard_ptr_exception if internal hazard pointer array is exhausted.
+                @warning Can throw \p not_enough_hazard_ptr_exception if internal hazard pointer array is exhausted.
             */
             void link()
             {
@@ -1307,7 +1307,7 @@ namespace cds { namespace gc {
 
         /// Checks that required hazard pointer count \p nCountNeeded is less or equal then max hazard pointer count
         /**
-            If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enought_hazard_ptr is thrown
+            If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
         */
         static void check_available_guards( size_t nCountNeeded )
         {
