@@ -1261,5 +1261,11 @@
     <ClInclude Include="..\..\..\cds\details\size_t_cast.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\gc\hp_membar.h">
+      <Filter>Header Files\cds\gc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\details\tls_holder.h">
+      <Filter>Header Files\cds\details</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

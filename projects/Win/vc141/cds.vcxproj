@@ -763,8 +763,10 @@
     <ClInclude Include="..\..\..\cds\details\size_t_cast.h" />
     <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\details\throw_exception.h" />
+    <ClInclude Include="..\..\..\cds\details\tls_holder.h" />
     <ClInclude Include="..\..\..\cds\gc\details\hp_common.h" />
     <ClInclude Include="..\..\..\cds\gc\dhp.h" />
+    <ClInclude Include="..\..\..\cds\gc\hp_membar.h" />
     <ClInclude Include="..\..\..\cds\intrusive\basket_queue.h" />
     <ClInclude Include="..\..\..\cds\intrusive\cuckoo_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\base.h" />

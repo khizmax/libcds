@@ -661,7 +661,7 @@ namespace cds { namespace gc {
               In this state no operation except \p link() and move assignment is supported.
             - linked (default) - the guard allocates an internal hazard pointer and completely operable.
 
-            Due to performance reason the implementation does not check state of the guard in runtime.
+            Due to performance reason the implementation does not check state of the guard at runtime.
 
             @warning Move assignment transfers the guard in unlinked state, use with care.
         */
@@ -670,7 +670,7 @@ namespace cds { namespace gc {
         public:
             /// Default ctor allocates a guard (hazard pointer) from thread-private storage
             /**
-                @warning Can throw \p too_many_hazard_ptr_exception if internal hazard pointer objects are exhausted.
+                @warning Can throw \p not_enough_hazard_ptr if internal hazard pointer objects are exhausted.
             */
             Guard()
                 : guard_( hp::smr::tls()->hazards_.alloc())

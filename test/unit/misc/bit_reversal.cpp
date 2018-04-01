@@ -12,7 +12,11 @@ namespace {
     class bit_reversal: public ::testing::Test
     {
         typedef UInt uint_type;
+#ifdef CDS_DEBUG
+        static size_t const c_size = 1'000'000;
+#else
         static size_t const c_size = 50'000'000;
+#endif
 
     public:
         template <typename Algo>

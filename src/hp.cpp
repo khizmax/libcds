@@ -8,8 +8,64 @@
 
 #include <cds/gc/hp.h>
 #include <cds/os/thread.h>
+#include <cds/gc/hp_membar.h>
+
+#if CDS_OS_TYPE == CDS_OS_LINUX
+#   include <unistd.h>
+#   include <sys/syscall.h>
+
+    // membarrier() was added in Linux 4.3
+#   if !defined( __NR_membarrier )
+#       define __NR_membarrier 324
+#   endif
+
+#   ifdef CDS_HAVE_LINUX_MEMBARRIER_H
+#       include <linux/membarrier.h>
+#   else
+#       define MEMBARRIER_CMD_QUERY                         0
+#       define MEMBARRIER_CMD_SHARED                        (1<<0)
+#   endif
+    // linux 4.14+
+#   define CDS_MEMBARRIER_CMD_PRIVATE_EXPEDITED             (1<<3)
+#   define CDS_MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED    (1<<4)
+#endif
 
 namespace cds { namespace gc { namespace hp {
+
+    std::atomic<unsigned> shared_var_membar::shared_var_{ 0 };
+
+#if CDS_OS_TYPE == CDS_OS_LINUX
+
+    bool asymmetric_membar::membarrier_available_ = false;
+
+    void asymmetric_membar::check_membarrier_available()
+    {
+        int res = syscall( __NR_membarrier, MEMBARRIER_CMD_QUERY, 0 );
+        membarrier_available_ = !( res == -1 || ( res & CDS_MEMBARRIER_CMD_PRIVATE_EXPEDITED ) == 0 )
+            && syscall( __NR_membarrier, CDS_MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED, 0 ) == 0;
+    }
+
+    void asymmetric_membar::call_membarrier()
+    {
+        assert( membarrier_available_ );
+        syscall( __NR_membarrier, CDS_MEMBARRIER_CMD_PRIVATE_EXPEDITED, 0 );
+    }
+
+    bool asymmetric_global_membar::membarrier_available_ = false;
+
+    void asymmetric_global_membar::check_membarrier_available()
+    {
+        int res = syscall( __NR_membarrier, MEMBARRIER_CMD_QUERY, 0 );
+        membarrier_available_ = !( res == -1 || ( res & MEMBARRIER_CMD_SHARED ) == 0 );
+    }
+
+    void asymmetric_global_membar::call_membarrier()
+    {
+        assert( membarrier_available_ );
+        syscall( __NR_membarrier, MEMBARRIER_CMD_SHARED, 0 );
+    }
+
+#endif
 
     namespace {
         void * default_alloc_memory( size_t size )
