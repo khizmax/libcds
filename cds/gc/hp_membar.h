@@ -49,88 +49,70 @@ namespace cds { namespace gc { namespace hp {
 
     typedef seq_qst_membar default_membar;
 
-    class asymmetric_membar {
 #   if CDS_OS_TYPE == CDS_OS_LINUX
+    class asymmetric_membar {
         static bool membarrier_available_;
         static void call_membarrier();
         static void check_membarrier_available();
-#   endif
 
     public:
         static void sync_fast_path()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             if ( membarrier_available_ )
                 CDS_COMPILER_RW_BARRIER;
             else 
                 default_membar::sync_fast_path();
-#       else
-            default_membar::sync_fast_path();
-#       endif
         }
 
         static void sync_slow_path()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             if ( membarrier_available_ )
                 call_membarrier();
             else
                 default_membar::sync_fast_path();
-#       else
-            default_membar::sync_fast_path();
-#       endif
         }
 
         //@cond
         static void init()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             check_membarrier_available();
-#       endif
         }
         //@endcond
     };
 
     class asymmetric_global_membar {
-#   if CDS_OS_TYPE == CDS_OS_LINUX
         static bool membarrier_available_;
         static void call_membarrier();
         static void check_membarrier_available();
-#   endif
 
     public:
         static void sync_fast_path()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             if ( membarrier_available_ )
                 CDS_COMPILER_RW_BARRIER;
             else
                 default_membar::sync_fast_path();
-#       else
-            default_membar::sync_fast_path();
-#       endif
         }
 
         static void sync_slow_path()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             if ( membarrier_available_ )
                 call_membarrier();
             else
                 default_membar::sync_fast_path();
-#       else
-            default_membar::sync_fast_path();
-#       endif
         }
 
         //@cond
         static void init()
         {
-#       if CDS_OS_TYPE == CDS_OS_LINUX
             check_membarrier_available();
-#       endif
         }
         //@endcond
     };
+
+#else
+    typedef default_membar asymmetric_membar;
+    typedef default_membar asymmetric_global_membar;
+#endif
 
 }}} // namespace cds::gc::hp
