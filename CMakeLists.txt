@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 cmake_policy(SET CMP0016 NEW)
 if(POLICY CMP0042)
@@ -7,6 +7,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/cmake ${CMAKE_MODULE_PATH})
 include(TargetArch)
+include(CheckIncludeFileCXX)
 
 project(cds)
 
