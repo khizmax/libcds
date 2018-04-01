@@ -11,6 +11,15 @@
 //@cond
 namespace cds { namespace details {
 
+    //
+    // The class emulates the ollowing incorrect code:
+    //    template <typename T>
+    //    class Foo {
+    //       static thread_local T tls_;
+    //    };
+    // Each instantiation of tls_holder has its own TLS 
+    //
+
     template <typename T, typename Tag = void>
     class tls_holder
     {
