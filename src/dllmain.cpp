@@ -58,7 +58,7 @@ static inline void* get_proc_addr( char const* module, char const* func )
     HMODULE h = GetModuleHandle( module );
     if ( !h )
         return nullptr;
-    return GetProcAddress( h, func );
+    return (void*) GetProcAddress( h, func );
 }
 
 // Array of processor - cell relationship
