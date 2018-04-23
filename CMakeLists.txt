@@ -101,8 +101,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
 endif()
 
-set(LIBCDS_PRIVATE_CXX_FLAGS -DCDS_BUILD_LIB)
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     string(REGEX MATCHALL "-std=[^ ]+" cxx_std_found ${CMAKE_CXX_FLAGS} " dummy@rg")
     if(cxx_std_found)
@@ -167,8 +165,16 @@ set(SOURCES src/init.cpp
 add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES})
 set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
         DEBUG_POSTFIX "_d")
+if(MINGW)
+    set_target_properties(${CDS_SHARED_LIBRARY} DEFINE_SYMBOL CDS_BUILD_LIB)
+endif()
+
 add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
+if(MINGW)
+    set_target_properties(${CDS_SHARED_LIBRARY} DEFINE_SYMBOL CDS_BUILD_STATIC_LIB)
+endif()
+
 target_link_libraries(${CDS_SHARED_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(${CDS_STATIC_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 target_include_directories(${CDS_SHARED_LIBRARY} INTERFACE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
