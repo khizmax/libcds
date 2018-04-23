@@ -6,10 +6,11 @@
 #ifndef CDSLIB_CONTAINER_RWQUEUE_H
 #define CDSLIB_CONTAINER_RWQUEUE_H
 
-#include <mutex>        // unique_lock
 #include <cds/sync/spinlock.h>
 #include <cds/opt/options.h>
 #include <cds/details/allocator.h>
+#include <mutex>        // unique_lock
+#include <memory>
 
 namespace cds { namespace container {
     /// RWQueue related definitions
@@ -136,7 +137,10 @@ namespace cds { namespace container {
         //@endcond
 
     public:
-        typedef typename traits::allocator::template rebind<node_type>::other allocator_type; ///< Allocator type used for allocate/deallocate the queue nodes
+        /// Allocator type used for allocate/deallocate the queue nodes
+        typedef typename std::allocator_traits<
+            typename traits::allocator
+        >::template rebind_alloc<node_type> allocator_type; 
 
     protected:
         //@cond

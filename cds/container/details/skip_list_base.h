@@ -8,6 +8,7 @@
 
 #include <cds/intrusive/details/skip_list_base.h>
 #include <cds/container/details/base.h>
+#include <memory>
 
 namespace cds { namespace container {
 
@@ -163,8 +164,9 @@ namespace cds { namespace container {
                 typedef Traits traits;
 
                 typedef typename node_type::tower_item_type node_tower_item;
-                typedef typename traits::allocator::template rebind<unsigned char>::other  tower_allocator_type;
-                typedef typename traits::allocator::template rebind<node_type>::other      node_allocator_type;
+
+                typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<unsigned char> tower_allocator_type;
+                typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<node_type>     node_allocator_type;
 
                 static size_t const c_nTowerItemSize = sizeof(node_tower_item);
                 static size_t const c_nNodePadding = sizeof(node_type) % c_nTowerItemSize;
@@ -229,7 +231,8 @@ namespace cds { namespace container {
                     assert( p != nullptr );
 
                     unsigned int nHeight = p->height();
-                    node_allocator_type().destroy( p );
+                    node_allocator_type a;
+                    std::allocator_traits<node_allocator_type>::destroy( a, p );
                     free_space( reinterpret_cast<unsigned char *>(p), nHeight );
                 }
             };

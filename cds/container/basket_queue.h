@@ -6,10 +6,9 @@
 #ifndef CDSLIB_CONTAINER_BASKET_QUEUE_H
 #define CDSLIB_CONTAINER_BASKET_QUEUE_H
 
-#include <memory>
 #include <cds/intrusive/basket_queue.h>
 #include <cds/container/details/base.h>
-//#include <cds/details/trivial_assign.h>
+#include <memory>
 
 namespace cds { namespace container {
 
@@ -114,7 +113,8 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef typename traits::allocator::template rebind<node_type>::other allocator_type;
+            typedef typename std::allocator_traits< typename traits::allocator >::template rebind_alloc< node_type > allocator_type;
+            //typedef typename traits::allocator::template rebind<node_type>::other allocator_type;
             typedef cds::details::Allocator< node_type, allocator_type >           cxx_allocator;
 
             struct node_deallocator

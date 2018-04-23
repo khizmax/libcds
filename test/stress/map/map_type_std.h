@@ -10,6 +10,7 @@
 
 #include <map>
 #include <unordered_map>
+#include <memory>
 
 namespace map {
 
@@ -20,7 +21,9 @@ namespace map {
     };
 
     template <typename Key, typename Value, typename Lock,
-        class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<std::pair<Key const, Value> >::other
+        class Alloc = typename std::allocator_traits<
+                    CDS_DEFAULT_ALLOCATOR
+                >::template rebind_alloc<std::pair<Key const, Value> >
     >
         class StdMap: public std::map<Key, Value, std::less<Key>, Alloc>
     {
@@ -109,7 +112,9 @@ namespace map {
     };
 
     template <typename Key, typename Value, typename Lock,
-        class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<std::pair<Key const, Value> >::other
+        class Alloc = typename std::allocator_traits<
+                        CDS_DEFAULT_ALLOCATOR
+                      >::template rebind_alloc<std::pair<Key const, Value> >
     >
     class StdHashMap
         : public std::unordered_map<

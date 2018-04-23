@@ -15,6 +15,7 @@
 #include <cds/opt/hash.h>
 #include <cds/intrusive/free_list_selector.h>
 #include <cds/details/size_t_cast.h>
+#include <memory>
 
 namespace cds { namespace intrusive {
 
@@ -392,7 +393,7 @@ namespace cds { namespace intrusive {
             const size_t   m_nCapacity;   ///< Bucket table capacity
             table_entry *  m_Table;       ///< Bucket table
 
-            typedef typename allocator::template rebind< aux_node_type >::other aux_node_allocator;
+            typedef typename std::allocator_traits<allocator>::template rebind_alloc< aux_node_type > aux_node_allocator;
 
             aux_node_type*          m_auxNode;           ///< Array of pre-allocated auxiliary nodes
             atomics::atomic<size_t> m_nAuxNodeAllocated; ///< how many auxiliary node allocated
@@ -600,7 +601,7 @@ namespace cds { namespace intrusive {
             typedef cds::details::Allocator< table_entry, allocator > segment_allocator;
 
             // Aux node segment allocator
-            typedef typename allocator::template rebind<char>::other raw_allocator;
+            typedef typename std::allocator_traits< allocator >::template rebind_alloc<char> raw_allocator;
 
             //@endcond
 

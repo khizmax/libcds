@@ -10,6 +10,7 @@
 #include <cds/container/details/ellen_bintree_base.h>
 #include <cds/memory/vyukov_queue_pool.h>
 #include <cds/memory/pool_allocator.h>
+#include <memory>
 
 namespace ellen_bintree_pool {
     typedef cds::container::ellen_bintree::node_types< cds::urcu::gc< cds::urcu::general_instant<> >, int > node_types; // fake
@@ -77,10 +78,10 @@ namespace ellen_bintree_pool {
 
     template <typename T, typename Alloc = CDS_DEFAULT_ALLOCATOR>
     class internal_node_allocator
-        : public Alloc::template rebind< T >::other
+        : public std::allocator_traits<Alloc>::template rebind_alloc< T >
         , internal_node_counter
     {
-        typedef typename Alloc::template rebind< T >::other  base_class;
+        typedef typename std::allocator_traits<Alloc>::template rebind_alloc< T > base_class;
     public:
         template <typename Other>
         struct rebind {
@@ -90,14 +91,14 @@ namespace ellen_bintree_pool {
         T * allocate( size_t n, void const * pHint = nullptr )
         {
             internal_node_counter::onAlloc();
-            T * p = base_class::allocate( n, pHint );
+            T * p = std::allocator_traits<base_class>::allocate( *static_cast<base_class*>( this ), n, pHint );
             return p;
         }
 
         void deallocate( T * p, size_t n )
         {
             internal_node_counter::onFree();
-            return base_class::deallocate( p, n );
+            std::allocator_traits<base_class>::deallocate( *static_cast<base_class*>( this ), p, n );
         }
     };
 

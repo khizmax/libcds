@@ -11,6 +11,7 @@
 #include <cds/user_setup/allocator.h>
 #include <cds/details/allocator.h>
 #include <cds/algo/int_algo.h>
+#include <memory>
 
 namespace cds { namespace opt {
 
@@ -320,7 +321,7 @@ namespace cds { namespace opt {
             };
 
             //@cond
-            typedef typename allocator::template rebind<value_type>::other allocator_type;
+            typedef typename std::allocator_traits<allocator>::template rebind_alloc<value_type> allocator_type;
             //@endcond
 
         private:

@@ -8,6 +8,7 @@
 
 #include <cds/intrusive/details/iterable_list_base.h>
 #include <cds/details/binary_functor_wrapper.h>
+#include <memory>
 
 namespace cds { namespace container {
 
@@ -22,7 +23,9 @@ namespace cds { namespace container {
 
             typedef Traits original_traits;
 
-            typedef typename original_traits::allocator::template rebind<value_type>::other data_allocator_type;
+            typedef typename std::allocator_traits<
+                typename original_traits::allocator
+            >::template rebind_alloc< value_type > data_allocator_type;
             typedef cds::details::Allocator< value_type, data_allocator_type > cxx_data_allocator;
 
             typedef typename original_traits::memory_model memory_model;

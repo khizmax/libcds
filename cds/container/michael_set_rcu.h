@@ -161,7 +161,7 @@ namespace cds { namespace container {
     protected:
         //@cond
         /// Bucket table allocator
-        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        typedef typename std::allocator_traits< allocator >::template rebind_alloc< internal_bucket_type > bucket_table_allocator;
 
         const size_t            m_nHashBitmask;
         hash                    m_HashFunctor; ///< Hash functor

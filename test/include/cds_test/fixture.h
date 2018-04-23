@@ -18,16 +18,11 @@ namespace cds_test {
         template <typename RandomIt>
         static void shuffle( RandomIt first, RandomIt last )
         {
-            //std::shuffle( first, last, std::mt19937( std::random_device()()) );
             std::shuffle( first, last, random_gen_ );
         }
 
         static unsigned int rand( unsigned int nMax )
         {
-            /*
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            */
             std::uniform_int_distribution<unsigned> dis(0, nMax - 1);
             return dis( random_gen_ );
         }

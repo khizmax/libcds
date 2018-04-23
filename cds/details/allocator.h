@@ -24,7 +24,7 @@ namespace cds {
             : public std::conditional<
                         std::is_same< T, typename Alloc::value_type>::value
                         , Alloc
-                        , typename Alloc::template rebind<T>::other
+                        , typename std::allocator_traits<Alloc>::template rebind_alloc<T>
                      >::type
         {
         public:
@@ -32,8 +32,11 @@ namespace cds {
             typedef typename std::conditional<
                 std::is_same< T, typename Alloc::value_type>::value
                 , Alloc
-                , typename Alloc::template rebind<T>::other
+                , typename std::allocator_traits<Alloc>::template rebind_alloc<T>
             >::type allocator_type;
+
+            /// Allocator traits
+            typedef std::allocator_traits< allocator_type > allocator_traits;
 
             /// \p true if underlined allocator is \p std::allocator, \p false otherwise
             static constexpr bool const c_bStdAllocator = std::is_same< allocator_type, std::allocator<T>>::value;
@@ -45,20 +48,20 @@ namespace cds {
             template <typename... S>
             value_type *  New( S const&... src )
             {
-                return Construct( allocator_type::allocate( 1, nullptr ), src... );
+                return Construct( allocator_traits::allocate( *this, 1, nullptr ), src... );
             }
 
             /// Analogue of <tt>operator new T( std::forward<Args>(args)... )</tt> (move semantics)
             template <typename... Args>
             value_type * MoveNew( Args&&... args )
             {
-                return MoveConstruct( allocator_type::allocate( 1, nullptr ), std::forward<Args>(args)... );
+                return MoveConstruct( allocator_traits::allocate( *this, 1, nullptr ), std::forward<Args>(args)... );
             }
 
             /// Analogue of operator new T[\p nCount ]
             value_type * NewArray( size_t nCount )
             {
-                value_type * p = allocator_type::allocate( nCount, nullptr );
+                value_type * p = allocator_traits::allocate( *this, nCount, nullptr );
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i );
                 return p;
@@ -71,7 +74,7 @@ namespace cds {
             template <typename S>
             value_type * NewArray( size_t nCount, S const& src )
             {
-                value_type * p = allocator_type::allocate( nCount, nullptr );
+                value_type * p = allocator_traits::allocate( *this, nCount, nullptr );
                 for ( size_t i = 0; i < nCount; ++i )
                     Construct( p + i, src );
                 return p;
@@ -101,16 +104,16 @@ namespace cds {
             /// Analogue of operator delete
             void Delete( value_type * p )
             {
-                allocator_type::destroy( p );
-                allocator_type::deallocate( p, 1 );
+                allocator_traits::destroy( *this, p );
+                allocator_traits::deallocate( *this, p, 1 );
             }
 
             /// Analogue of operator delete []
             void Delete( value_type * p, size_t nCount )
             {
                  for ( size_t i = 0; i < nCount; ++i )
-                     allocator_type::destroy( p + i );
-                allocator_type::deallocate( p, nCount );
+                     allocator_traits::destroy( *this, p + i );
+                 allocator_traits::deallocate( *this, p, nCount );
             }
 
 #       if CDS_COMPILER == CDS_COMPILER_INTEL
@@ -140,7 +143,7 @@ namespace cds {
             /// Rebinds allocator to other type \p Q instead of \p T
             template <typename Q>
             struct rebind {
-                typedef Allocator< Q, typename Alloc::template rebind<Q>::other >    other ; ///< Rebinding result
+                typedef Allocator< Q, typename allocator_traits::template rebind_alloc<Q>> other ; ///< Rebinding result
             };
 
         private:
@@ -150,7 +153,7 @@ namespace cds {
                 assert( nByteSize >= sizeof(value_type));
 
                 size_t const nPtrSize = ( nByteSize + sizeof(void *) - 1 ) / sizeof(void *);
-                typedef typename allocator_type::template rebind< void * >::other void_allocator;
+                typedef typename std::allocator_traits<allocator_type>::template rebind_alloc< void * > void_allocator;
                 return void_allocator().allocate( nPtrSize );
             }
             //@endcond

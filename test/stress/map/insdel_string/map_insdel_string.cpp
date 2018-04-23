@@ -102,7 +102,7 @@ namespace map {
     void Map_InsDel_string::fill_string_array()
     {
         typedef Hash hasher;
-        typedef typename hasher::result_type hash_type;
+        typedef decltype( hasher()( std::string())) hash_type;
 
         std::map<hash_type, size_t> mapHash;
         s_arrKeys.clear();

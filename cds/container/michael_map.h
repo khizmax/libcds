@@ -157,7 +157,10 @@ namespace cds { namespace container {
         >::type internal_bucket_type;
 
         typedef typename internal_bucket_type::guarded_ptr guarded_ptr;
-        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+
+        typedef typename std::allocator_traits<
+            allocator
+        >::template rebind_alloc<internal_bucket_type> bucket_table_allocator;
         typedef typename bucket_stat::stat stat;
         //@endcond
 

@@ -64,7 +64,9 @@ namespace cds { namespace container {
         >::type internal_bucket_type;
 
         /// Bucket table allocator
-        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        typedef typename std::allocator_traits<
+            allocator
+        >::template rebind_alloc<internal_bucket_type> bucket_table_allocator;
 
         typedef typename internal_bucket_type::iterator        bucket_iterator;
         typedef typename internal_bucket_type::const_iterator  bucket_const_iterator;

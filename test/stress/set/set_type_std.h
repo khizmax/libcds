@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <set>
 #include <mutex>    //unique_lock
+#include <memory>
 
 #include "set_type.h"
 
@@ -17,7 +18,9 @@ namespace set {
     struct tag_StdSet;
 
     template <typename Value, typename Hash, typename Less, typename EqualTo, typename Lock,
-        class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<Value>::other
+        class Alloc = typename std::allocator_traits< 
+                        CDS_DEFAULT_ALLOCATOR 
+                      >::template rebind_alloc<Value>
     >
     class StdHashSet
         : public std::unordered_set<
@@ -117,7 +120,9 @@ namespace set {
     };
 
     template <typename Value, typename Less, typename Lock,
-        class Alloc = typename CDS_DEFAULT_ALLOCATOR::template rebind<Value>::other
+        class Alloc = typename std::allocator_traits<
+                        CDS_DEFAULT_ALLOCATOR
+                      >::template rebind_alloc<Value>
     >
     class StdSet: public std::set<Value, Less, Alloc>
     {

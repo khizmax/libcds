@@ -8,6 +8,7 @@
 
 #include <cds/details/binary_functor_wrapper.h>
 #include <cds/opt/compare.h>
+#include <memory>
 
 namespace cds { namespace container {
 
@@ -24,7 +25,9 @@ namespace cds { namespace container {
             typedef T        mapped_type;
             typedef std::pair<key_type const, mapped_type> value_type;
 
-            typedef typename original_type_traits::allocator::template rebind<value_type>::other data_allocator_type;
+            typedef typename std::allocator_traits<
+                typename original_type_traits::allocator
+            >::template rebind_alloc<value_type> data_allocator_type;
             typedef cds::details::Allocator< value_type, data_allocator_type > cxx_data_allocator;
 
             typedef typename original_type_traits::memory_model memory_model;

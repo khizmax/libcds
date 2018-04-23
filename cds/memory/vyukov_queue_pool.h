@@ -9,6 +9,7 @@
 #include <cds/details/allocator.h>
 #include <cds/intrusive/vyukov_mpmc_cycle_queue.h>
 #include <cds/details/throw_exception.h>
+#include <memory>
 
 namespace cds { namespace memory {
 
@@ -94,7 +95,7 @@ namespace cds { namespace memory {
     public:
         typedef T  value_type ; ///< Value type
         typedef Traits traits;  ///< Traits type
-        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<value_type> allocator_type;   ///< allocator type
         typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:
@@ -265,7 +266,7 @@ namespace cds { namespace memory {
     public:
         typedef T  value_type ; ///< Value type
         typedef Traits traits;  ///< Pool traits
-        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<value_type> allocator_type;   ///< allocator type
 
     protected:
         //@cond
@@ -410,7 +411,7 @@ namespace cds { namespace memory {
     public:
         typedef T  value_type;  ///< Value type
         typedef Traits traits;  ///< Pool traits
-        typedef typename traits::allocator::template rebind<value_type>::other allocator_type  ;   ///< allocator type
+        typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<value_type> allocator_type;   ///< allocator type
         typedef typename traits::back_off back_off; ///< back-off strategy
 
     protected:

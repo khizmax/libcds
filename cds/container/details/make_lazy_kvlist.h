@@ -7,6 +7,7 @@
 #define CDSLIB_CONTAINER_DETAILS_MAKE_LAZY_KVLIST_H
 
 #include <cds/details/binary_functor_wrapper.h>
+#include <memory>
 
 namespace cds { namespace container {
 
@@ -66,7 +67,9 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef typename original_type_traits::allocator::template rebind<node_type>::other allocator_type;
+            typedef typename std::allocator_traits<
+                typename original_type_traits::allocator
+            >::template rebind_alloc< node_type > allocator_type;
             typedef cds::details::Allocator< node_type, allocator_type > cxx_allocator;
 
             struct node_deallocator

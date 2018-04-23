@@ -120,7 +120,7 @@ namespace cds { namespace container {
         typedef typename base_class::back_off  back_off ;   ///< Back-off strategy
         typedef typename traits::stat          stat;        ///< internal statistics type, see \p intrusive::mspriority_queue::traits::stat
         typedef typename base_class::item_counter  item_counter;///< Item counter type
-        typedef typename traits::allocator::template rebind<value_type>::other allocator_type; ///< Value allocator
+        typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc<value_type> allocator_type; ///< Value allocator
         typedef typename traits::move_policy   move_policy; ///< Move policy for type \p T
 
     protected:

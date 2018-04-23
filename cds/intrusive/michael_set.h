@@ -8,6 +8,7 @@
 
 #include <cds/intrusive/details/michael_set_base.h>
 #include <cds/intrusive/details/iterable_list_base.h>
+#include <memory>
 
 namespace cds { namespace intrusive {
 
@@ -255,7 +256,7 @@ namespace cds { namespace intrusive {
             , cds::opt::stat< typename bucket_stat::wrapped_stat >
         >::type internal_bucket_type;
 
-        typedef typename allocator::template rebind< internal_bucket_type >::other bucket_table_allocator;
+        typedef typename std::allocator_traits<allocator>::template rebind_alloc< internal_bucket_type > bucket_table_allocator;
         //@endcond
 
     public:

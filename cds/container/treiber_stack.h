@@ -148,7 +148,7 @@ namespace cds { namespace container {
                 {}
             };
 
-            typedef typename traits::allocator::template rebind<node_type>::other  allocator_type;
+            typedef typename std::allocator_traits<typename traits::allocator>::template rebind_alloc< node_type > allocator_type;
             typedef cds::details::Allocator< node_type, allocator_type >           cxx_allocator;
 
             struct node_deallocator
