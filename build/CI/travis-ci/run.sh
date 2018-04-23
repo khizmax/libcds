@@ -16,7 +16,7 @@ fi
 #export CXX=$CXX_COMPILER
 #export CC=$C_COMPILER
 mkdir build-test && cd build-test
-conan install --build=missing $CONAN_INSTALL_FLAGS -s build_type=$BUILD_TYPE ..
+conan install --build $CONAN_INSTALL_FLAGS -s build_type=$BUILD_TYPE ..
 cmake -DCMAKE_PREFIX_PATH="$TRAVIS_BUILD_DIR/build-test/deps" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_EXE_LINKER_FLAGS=$LINKER_FLAGS -DWITH_TESTS=ON ..
 cmake --build . -- -j2 $TARGET
 
