@@ -172,7 +172,7 @@ endif()
 add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
 if(MINGW)
-    set_target_properties(${CDS_SHARED_LIBRARY} DEFINE_SYMBOL CDS_BUILD_STATIC_LIB)
+    set_target_properties(${CDS_STATIC_LIBRARY} DEFINE_SYMBOL CDS_BUILD_STATIC_LIB)
 endif()
 
 target_link_libraries(${CDS_SHARED_LIBRARY} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
