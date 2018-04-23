@@ -169,6 +169,9 @@
    - for 32bit: <tt>\$(BOOST_PATH)/stage/lib</tt>, <tt>\$(BOOST_PATH)/stage32/lib</tt>, and <tt>\$(BOOST_PATH)/bin</tt>.
    - for 64bit: <tt>\$(BOOST_PATH)/stage64/lib</tt> and <tt>\$(BOOST_PATH)/bin</tt>.
 
+   If you use static libcds, you should compile your projects with <tt>CDS_BUILD_STATIC_LIB</tt> preprocessor 
+   definition.
+
    All tests are based on googletest framework. The following environment variables specify
    where to find gtest include and library directories:
    - \p GTEST_ROOT - gtest root directory. <tt>\$(GTEST_ROOT)/include</tt> specifies full path to
