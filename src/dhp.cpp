@@ -375,6 +375,7 @@ namespace cds { namespace gc { namespace dhp {
     CDS_EXPORT_API void smr::scan( thread_data* pThreadRec )
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
+        pRec->sync();
 
         CDS_HPSTAT( ++pRec->scan_call_count_ );
 
@@ -466,6 +467,7 @@ namespace cds { namespace gc { namespace dhp {
 
             // We own the thread record successfully. Now, we can see whether it has retired pointers.
             // If it has ones then we move them to pThis that is private for current thread.
+            hprec->sync();
             retired_array& src = hprec->retired_;
             retired_array& dest = pThis->retired_;
 

@@ -524,6 +524,7 @@ namespace cds { namespace gc {
             */
             void scan( thread_data* pRec )
             {
+                pRec->sync();
                 ( this->*scan_func_ )( pRec );
             }
 

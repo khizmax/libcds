@@ -376,7 +376,6 @@ namespace cds { namespace gc { namespace hp {
                 if ( pNode->m_idOwner.load( atomics::memory_order_relaxed ) != cds::OS::c_NullThreadId ) {
                     thread_hp_storage& hpstg = pNode->hazards_;
                     for ( size_t i = 0; i < hazard_ptr_count_; ++i ) {
-                        pRec->sync();
                         void * hptr = hpstg[i].get();
                         if ( hptr ) {
                             dummy_retired.m_p = hptr;
@@ -431,7 +430,6 @@ namespace cds { namespace gc { namespace hp {
         while ( pNode ) {
             if ( pNode->m_idOwner.load( std::memory_order_relaxed ) != cds::OS::c_NullThreadId ) {
                 for ( size_t i = 0; i < get_hazard_ptr_count(); ++i ) {
-                    pRec->sync();
                     void * hptr = pNode->hazards_[i].get();
                     if ( hptr )
                         plist.push_back( hptr );
