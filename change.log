@@ -1,6 +1,7 @@
 2.4.0
     General release
     - Minimum CMake version is 3.0.2
+    - Changed software license from BSD to Boost
 
 2.3.2 31.12.2017
     Maintenance release
