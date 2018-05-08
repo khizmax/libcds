@@ -76,6 +76,21 @@ gcc-7-gtest:          $GTEST_ROOT
 gcc-7-64-gtest-lib:   $GTEST_ROOT/lib-gcc7/libgtest.a
 
 ########################################
+#GCC-8
+gcc-8-root:           $GCC8_ROOT/bin
+gcc-8-cxx:            g++-8
+gcc-8-cc:             gcc-8
+gcc-8-boost:          $BOOST_ROOT
+gcc-8-cxxflags:       -march=native  -std=c++17 -Wmultistatement-macros -Wcast-align=strict
+gcc-8-exe-ldflags:    -Wl,-rpath=$GCC8_ROOT/lib64
+gcc-8-extlib:         rt
+gcc-8-64-boost-lib:   stage64-gcc7/lib
+gcc-8-64-asan-boost-lib:   stage64-gcc7-asan/lib
+gcc-8-64-tsan-boost-lib:   stage64-gcc7-tsan/lib
+gcc-8-gtest:          $GTEST_ROOT
+gcc-8-64-gtest-lib:   $GTEST_ROOT/lib-gcc7/libgtest.a
+
+########################################
 # clang-3.6
 clang-3.6-root:           $CLANG36_ROOT/bin
 clang-3.6-ld-lib-path:    $GCC5_ROOT/lib64

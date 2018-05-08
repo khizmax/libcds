@@ -34,6 +34,11 @@ case "$TOOLSET" in
 	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-7-64 $*
 	EXIT_CODE=$?
 	;;
+    "x64-gcc-8")
+	echo "GCC-8 '$BUILD_TYPE', toolset root: $GCC8_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-gcc-8-64 $*
+	EXIT_CODE=$?
+	;;
     "x64-clang-3.6")
 	echo "clang-3.6 '$BUILD_TYPE', toolset root: $CLANG36_ROOT"
 	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-3.6-64 $*
