@@ -77,7 +77,7 @@ gcc-8-root:           $GCC8_ROOT/bin
 gcc-8-cxx:            g++-8
 gcc-8-cc:             gcc-8
 gcc-8-boost:          $BOOST_ROOT
-gcc-8-cxxflags:       -march=native  -std=c++17 -Wmultistatement-macros -Wcast-align=strict
+gcc-8-cxxflags:       -march=native  -std=c++17 -Wmultistatement-macros
 gcc-8-exe-ldflags:    -Wl,-rpath=$GCC8_ROOT/lib64
 gcc-8-extlib:         rt
 gcc-8-64-boost-lib:   stage64-gcc7/lib
