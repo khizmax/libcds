@@ -2,7 +2,7 @@ CMAKE_2_8_12=/home/libcds-ci/bin/cmake/cmake-2.8.12/bin
 CMAKE_3_6_2=/home/libcds-ci/bin/cmake/cmake-3.6.2/bin
 CMAKE3=$CMAKE_3_6_2
 
-PATH=$CMAKE_2_8_12:$PATH:$HOME/.local/bin:$HOME/bin
+PATH=$CMAKE3:$PATH:$HOME/.local/bin:$HOME/bin
 
 TOOLSET_ROOT=$HOME/bin
 
