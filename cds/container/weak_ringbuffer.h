@@ -686,7 +686,7 @@ namespace cds { namespace container {
             // Any data is rounded to 8-byte boundary
             size_t real_size = calc_real_size( size );
 
-            // check if we can reserve read_size bytes
+            // check if we can reserve real_size bytes
             assert( real_size < capacity());
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 

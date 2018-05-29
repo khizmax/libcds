@@ -81,7 +81,7 @@ namespace cds { namespace container {
             /// Item counter
             /**
                 The type for item counting feature,
-                 by defaulr disabled (\p atomicity::empty_item_counter)
+                by default disabled (\p atomicity::empty_item_counter)
             */
             typedef atomicity::empty_item_counter     item_counter;
 
