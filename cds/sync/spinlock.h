@@ -191,24 +191,24 @@ namespace cds {
         private:
             //@cond
             atomics::atomic<integral_type>  m_spin;    ///< spin-lock atomic
-            thread_id                       m_OwnerId; ///< Owner thread id. If spin-lock is not locked it usually equals to \p OS::c_NullThreadId
+            atomics::atomic<thread_id>      m_OwnerId; ///< Owner thread id. If spin-lock is not locked it usually equals to \p OS::c_NullThreadId
             //@endcond
 
         private:
             //@cond
             void take( thread_id tid ) noexcept
             {
-                m_OwnerId = tid;
+                m_OwnerId.store( tid, atomics::memory_order_relaxed );
             }
 
             void free() noexcept
             {
-                m_OwnerId = OS::c_NullThreadId;
+                m_OwnerId.store( OS::c_NullThreadId, atomics::memory_order_relaxed );
             }
 
             bool is_taken( thread_id tid ) const noexcept
             {
-                return m_OwnerId == tid;
+                return m_OwnerId.load( atomics::memory_order_relaxed ) == tid;
             }
 
             bool try_taken_lock( thread_id tid ) noexcept
@@ -292,7 +292,7 @@ namespace cds {
             ~reentrant_spin_lock()
             {
                 assert( m_spin.load( atomics::memory_order_acquire ) == 0 );
-                assert( m_OwnerId == OS::c_NullThreadId );
+                assert( m_OwnerId.load( atomics::memory_order_relaxed ) == OS::c_NullThreadId );
 
                 CDS_TSAN_ANNOTATE_MUTEX_DESTROY( this );
             }
@@ -364,7 +364,7 @@ namespace cds {
                 assert( is_taken( OS::get_current_thread_id()));
                 assert( newOwnerId != OS::c_NullThreadId );
 
-                m_OwnerId = newOwnerId;
+                m_OwnerId.store( newOwnerId, atomics::memory_order_relaxed );
             }
         };
 
