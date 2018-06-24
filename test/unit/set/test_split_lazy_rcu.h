@@ -206,21 +206,15 @@ TYPED_TEST_P( SplitListLazySet, mutex )
     this->test( s );
 }
 
-namespace {
-    struct set_static_traits: public cc::split_list::traits
-    {
-        static bool const dynamic_bucket_table = false;
-    };
-}
-
 TYPED_TEST_P( SplitListLazySet, static_bucket_table )
 {
     typedef typename TestFixture::rcu_type rcu_type;
     typedef typename TestFixture::int_item int_item;
     typedef typename TestFixture::hash_int hash_int;
 
-    struct set_traits: public set_static_traits
+    struct set_traits: public cc::split_list::traits
     {
+        enum: bool { dynamic_bucket_table = false };
         typedef cc::lazy_list_tag ordered_list;
         typedef hash_int hash;
         typedef cds::atomicity::item_counter item_counter;
@@ -266,8 +260,9 @@ TYPED_TEST_P( SplitListLazySet, static_bucket_table_free_list )
     typedef typename TestFixture::int_item int_item;
     typedef typename TestFixture::hash_int hash_int;
 
-    struct set_traits: public set_static_traits
+    struct set_traits: public cc::split_list::traits
     {
+        enum: bool { dynamic_bucket_table = false };
         typedef cc::lazy_list_tag ordered_list;
         typedef hash_int hash;
         typedef cds::atomicity::item_counter item_counter;
