@@ -10,7 +10,6 @@
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
 #include <cds/details/static_functor.h>
-#include <cds/details/lib.h>
 #include <cds/user_setup/cache_line.h>
 
 #include <signal.h>

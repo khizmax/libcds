@@ -8,7 +8,6 @@
 
 #include <cds/urcu/details/base.h>
 #include <cds/details/static_functor.h>
-#include <cds/details/lib.h>
 #include <cds/user_setup/cache_line.h>
 
 //@cond

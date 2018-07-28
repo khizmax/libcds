@@ -9,7 +9,6 @@
 #include <cds/details/defs.h>
 #include <cds/os/topology.h>
 #include <cds/threading/model.h>
-#include <cds/details/lib.h>
 
 namespace cds {
 

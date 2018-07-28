@@ -385,7 +385,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">
@@ -402,7 +402,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-c++17|Win32'">
@@ -420,7 +420,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc14-Debug|Win32'">
@@ -471,7 +471,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'">
@@ -488,7 +488,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-c++17|x64'">
@@ -506,7 +506,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc14-Debug|x64'">
@@ -561,7 +561,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'">
@@ -582,7 +582,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-c++17|Win32'">
@@ -604,7 +604,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc14-Release|Win32'">
@@ -646,7 +646,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'">
@@ -667,7 +667,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-c++17|x64'">
@@ -689,7 +689,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB64);$(GTEST_ROOT)/lib/x64;$(BOOST_PATH)/stage64/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc14-Release|x64'">

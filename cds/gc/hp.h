@@ -8,7 +8,6 @@
 
 #include <exception>
 #include <cds/gc/details/hp_common.h>
-#include <cds/details/lib.h>
 #include <cds/threading/model.h>
 #include <cds/details/throw_exception.h>
 #include <cds/details/static_functor.h>
