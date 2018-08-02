@@ -86,8 +86,7 @@ namespace cds { namespace threading {
                 {
                     ThreadData * p = get();
                     ::TlsSetValue( m_key, nullptr );
-                    if ( p )
-                        delete p;
+                    delete p;
                 }
             };
             //@endcond
