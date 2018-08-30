@@ -220,9 +220,6 @@
     <ClInclude Include="..\..\..\cds\details\marked_ptr.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\trivial_assign.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\details\type_padding.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>

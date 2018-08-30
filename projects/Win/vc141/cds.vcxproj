@@ -1248,7 +1248,6 @@
     <ClInclude Include="..\..\..\cds\details\is_aligned.h" />
     <ClInclude Include="..\..\..\cds\details\make_const_type.h" />
     <ClInclude Include="..\..\..\cds\details\marked_ptr.h" />
-    <ClInclude Include="..\..\..\cds\details\trivial_assign.h" />
     <ClInclude Include="..\..\..\cds\details\type_padding.h" />
     <ClInclude Include="..\..\..\cds\gc\default_gc.h" />
     <ClInclude Include="..\..\..\cds\gc\hp.h" />
