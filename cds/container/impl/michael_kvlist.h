@@ -514,7 +514,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, maker::template less_wrapper<Less>());
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>());
         }
 
         /// Deletes \p key from the list
@@ -550,7 +550,7 @@ namespace cds { namespace container {
         bool erase_with( K const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, maker::template less_wrapper<Less>(), f );
+            return erase_at( head(), key, typename maker::template less_wrapper<Less>(), f );
         }
 
         /// Extracts the item from the list with specified \p key
@@ -600,7 +600,7 @@ namespace cds { namespace container {
         guarded_ptr extract_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return extract_at( head(), key, maker::template less_wrapper<Less>());
+            return extract_at( head(), key, typename maker::template less_wrapper<Less>());
         }
 
         /// Checks whether the list contains \p key
@@ -632,7 +632,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, maker::template less_wrapper<Less>());
+            return find_at( head(), key, typename maker::template less_wrapper<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -679,7 +679,7 @@ namespace cds { namespace container {
         bool find_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, maker::template less_wrapper<Less>(), f );
+            return find_at( head(), key, typename maker::template less_wrapper<Less>(), f );
         }
 
         /// Finds the \p key and return the item found
@@ -727,7 +727,7 @@ namespace cds { namespace container {
         guarded_ptr get_with( K const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, maker::template less_wrapper<Less>());
+            return get_at( head(), key, typename maker::template less_wrapper<Less>());
         }
 
         /// Checks if the list is empty
