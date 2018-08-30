@@ -898,9 +898,6 @@
     <ClInclude Include="..\..\..\cds\compiler\icl\defs.h">
       <Filter>Header Files\cds\compiler\icl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\details\lib.h">
-      <Filter>Header Files\cds\details</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\container\ellen_bintree_map_hp.h">
       <Filter>Header Files\cds\container</Filter>
     </ClInclude>
