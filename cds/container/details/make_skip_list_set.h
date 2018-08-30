@@ -76,9 +76,7 @@ namespace cds { namespace container { namespace details {
         typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
 
         template <typename Less>
-        struct less_wrapper {
-            typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor >    type;
-        };
+        using less_wrapper = cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor >;
 
         class intrusive_traits: public cds::intrusive::skip_list::make_traits<
             cds::opt::type_traits< traits >

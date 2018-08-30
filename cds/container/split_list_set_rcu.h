@@ -297,7 +297,7 @@ namespace cds { namespace container {
         bool find_with_( Q& val, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return base_class::find_with( val, typename maker::template predicate_wrapper<Less>::type(),
+            return base_class::find_with( val, maker::template predicate_wrapper<Less>(),
                 [&f]( node_type& item, Q& v ) { f(item.m_Value, v) ; } );
         }
 
@@ -688,7 +688,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-             return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type());
+             return base_class::erase_with( key, maker::template predicate_wrapper<Less>());
         }
 
         /// Deletes \p key from the set
@@ -729,7 +729,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>::type(),
+            return base_class::erase_with( key, maker::template predicate_wrapper<Less>(),
                 [&f](node_type& node) { f( node.m_Value ); } );
         }
 
@@ -785,7 +785,7 @@ namespace cds { namespace container {
         exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( base_class::extract_with_( key, typename maker::template predicate_wrapper<Less>::type()));
+            return exempt_ptr( base_class::extract_with_( key, maker::template predicate_wrapper<Less>()));
         }
 
         /// Finds the key \p key
@@ -880,7 +880,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return base_class::contains( key, typename maker::template predicate_wrapper<Less>::type());
+            return base_class::contains( key, maker::template predicate_wrapper<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -938,7 +938,7 @@ namespace cds { namespace container {
         raw_ptr get_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return raw_ptr_maker::make( base_class::get_with( key, typename maker::template predicate_wrapper<Less>::type()));
+            return raw_ptr_maker::make( base_class::get_with( key, maker::template predicate_wrapper<Less>()));
         }
 
         /// Clears the set (not atomic)

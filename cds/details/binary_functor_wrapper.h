@@ -42,21 +42,6 @@ namespace cds { namespace details {
         }
     };
 
-    struct trivial_accessor
-    {
-        template <typename T>
-        T const& operator()( T const& p ) const
-        {
-            return p;
-        }
-
-        template <typename T>
-        T& operator()( T& p ) const
-        {
-            return p;
-        }
-    };
-
     template <typename ArgType, typename Predicate, typename Accessor>
     using predicate_wrapper = binary_functor_wrapper< bool, Predicate, ArgType, Accessor>;
 

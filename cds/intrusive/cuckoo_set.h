@@ -1903,9 +1903,7 @@ namespace cds { namespace intrusive {
         typedef cuckoo::details::contains< node_traits, c_isSorted > contains_action;
 
         template <typename Predicate>
-        struct predicate_wrapper {
-            typedef typename std::conditional< c_isSorted, cds::opt::details::make_comparator_from_less<Predicate>, Predicate>::type   type;
-        };
+        using predicate_wrapper = typename std::conditional< c_isSorted, cds::opt::details::make_comparator_from_less<Predicate>, Predicate>::type;
 
         typedef typename std::conditional< c_isSorted, key_comparator, key_equal_to >::type key_predicate;
         //@endcond
@@ -2575,7 +2573,7 @@ namespace cds { namespace intrusive {
         value_type * erase_with( Q const& val, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return erase_( val, typename predicate_wrapper<Predicate>::type(), [](value_type const&) {} );
+            return erase_( val, predicate_wrapper<Predicate>(), [](value_type const&) {} );
         }
 
         /// Delete the item from the set
@@ -2612,7 +2610,7 @@ namespace cds { namespace intrusive {
         value_type * erase_with( Q const& val, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_( val, typename predicate_wrapper<Predicate>::type(), f );
+            return erase_( val, predicate_wrapper<Predicate>(), f );
         }
 
         /// Find the key \p val
@@ -2661,14 +2659,14 @@ namespace cds { namespace intrusive {
         bool find_with( Q& val, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( val, typename predicate_wrapper<Predicate>::type(), f );
+            return find_( val, predicate_wrapper<Predicate>(), f );
         }
         //@cond
         template <typename Q, typename Predicate, typename Func>
         bool find_with( Q const& val, Predicate pred, Func f )
         {
             CDS_UNUSED( pred );
-            return find_( val, typename predicate_wrapper<Predicate>::type(), f );
+            return find_( val, predicate_wrapper<Predicate>(), f );
         }
         //@endcond
 
@@ -2702,7 +2700,7 @@ namespace cds { namespace intrusive {
         bool contains( Q const& key, Predicate pred )
         {
             CDS_UNUSED( pred );
-            return find_with( key, typename predicate_wrapper<Predicate>::type(), [](value_type& , Q const& ) {} );
+            return find_with( key, predicate_wrapper<Predicate>(), [](value_type& , Q const& ) {} );
         }
         //@cond
         template <typename Q, typename Predicate>

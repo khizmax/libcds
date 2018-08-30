@@ -39,9 +39,7 @@ namespace cds { namespace container {
             };
 
             template <typename Less>
-            struct less_wrapper {
-                typedef cds::opt::details::make_comparator_from_less<Less> type;
-            };
+            using less_wrapper = cds::opt::details::make_comparator_from_less<Less>;
 
             struct intrusive_traits: public original_traits
             {

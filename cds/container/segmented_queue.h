@@ -9,7 +9,6 @@
 #include <memory>
 #include <functional>   // ref
 #include <cds/intrusive/segmented_queue.h>
-#include <cds/details/trivial_assign.h>
 
 namespace cds { namespace container {
 

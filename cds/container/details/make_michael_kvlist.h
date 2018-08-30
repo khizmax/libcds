@@ -90,9 +90,7 @@ namespace cds { namespace container {
             typedef typename opt::details::make_comparator< key_type, original_type_traits >::type key_comparator;
 
             template <typename Less>
-            struct less_wrapper {
-                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor >    type;
-            };
+            using less_wrapper = cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, key_field_accessor >;
 
             struct intrusive_traits: public original_type_traits
             {

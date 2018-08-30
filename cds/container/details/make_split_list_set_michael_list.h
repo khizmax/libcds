@@ -71,9 +71,7 @@ namespace cds { namespace container { namespace details {
         };
 
         template <typename Predicate>
-        struct predicate_wrapper {
-            typedef cds::details::predicate_wrapper< node_type, Predicate, value_accessor > type;
-        };
+        using predicate_wrapper = cds::details::predicate_wrapper< node_type, Predicate, value_accessor >;
 
         struct ordered_list_traits: public original_ordered_list_traits
         {

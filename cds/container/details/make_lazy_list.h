@@ -64,14 +64,10 @@ namespace cds { namespace container {
             };
 
             template <typename Less>
-            struct less_wrapper {
-                typedef cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor > type;
-            };
+            using less_wrapper = cds::details::compare_wrapper< node_type, cds::opt::details::make_comparator_from_less<Less>, value_accessor >;
 
             template <typename Equal>
-            struct equal_to_wrapper {
-                typedef cds::details::predicate_wrapper< node_type, Equal, value_accessor > type;
-            };
+            using equal_to_wrapper = cds::details::predicate_wrapper< node_type, Equal, value_accessor >;
 
             struct intrusive_traits: public original_type_traits
             {
@@ -81,7 +77,7 @@ namespace cds { namespace container {
 
                 typedef typename std::conditional< std::is_same< typename original_type_traits::equal_to, cds::opt::none >::value,
                     cds::opt::none,
-                    typename equal_to_wrapper< typename original_type_traits::equal_to >::type
+                    equal_to_wrapper< typename original_type_traits::equal_to >
                 >::type equal_to;
 
                 typedef typename std::conditional<

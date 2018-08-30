@@ -382,7 +382,7 @@ namespace cds { namespace container {
         iterator contains( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>::type()));
+            return iterator( base_class::find_with_( key, maker::template predicate_wrapper<Less>()));
         }
         //@cond
         // eprecated, use contains()

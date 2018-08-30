@@ -67,8 +67,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_dhp.cpp" />
-    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_dhp.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\intrusive-list\intrusive_iterable_hp.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
   </ItemGroup>
   <ItemGroup>

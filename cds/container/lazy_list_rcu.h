@@ -438,7 +438,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), [](value_type const&){} );
+            return erase_at( head(), key, maker::template less_wrapper<Less>(), [](value_type const&){} );
         }
 
         /// Deletes \p key from the list
@@ -479,7 +479,7 @@ namespace cds { namespace container {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             CDS_UNUSED( pred );
-            return erase_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
+            return erase_at( head(), key, maker::template less_wrapper<Less>(), f );
         }
 
         /// Extracts an item from the list
@@ -540,7 +540,7 @@ namespace cds { namespace container {
         exempt_ptr extract_with( Q const& key, Less pred )
         {
             CDS_UNUSED( pred );
-            return exempt_ptr( extract_at( head(), key, typename maker::template less_wrapper<Less>::type()));
+            return exempt_ptr( extract_at( head(), key, maker::template less_wrapper<Less>()));
         }
 
         /// Checks whether the list contains \p key
@@ -574,7 +574,7 @@ namespace cds { namespace container {
         bool contains( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type());
+            return find_at( head(), key, maker::template less_wrapper<Less>());
         }
         //@cond
         template <typename Q, typename Less>
@@ -632,14 +632,14 @@ namespace cds { namespace container {
         bool find_with( Q& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, maker::template less_wrapper<Less>(), f );
         }
         //@cond
         template <typename Q, typename Less, typename Func>
         bool find_with( Q const& key, Less pred, Func f ) const
         {
             CDS_UNUSED( pred );
-            return find_at( head(), key, typename maker::template less_wrapper<Less>::type(), f );
+            return find_at( head(), key, maker::template less_wrapper<Less>(), f );
         }
         //@endcond
 
@@ -689,7 +689,7 @@ namespace cds { namespace container {
         value_type * get_with( Q const& key, Less pred ) const
         {
             CDS_UNUSED( pred );
-            return get_at( head(), key, typename maker::template less_wrapper<Less>::type());
+            return get_at( head(), key, maker::template less_wrapper<Less>());
         }
 
         /// Checks if the list is empty
