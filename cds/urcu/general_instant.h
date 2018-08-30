@@ -79,7 +79,7 @@ namespace cds { namespace urcu {
         template <typename Disposer, typename T>
         static void retire_ptr( T* p )
         {
-            retire_ptr( p, cds::details::static_functor<Disposer, T>::call );
+            retire_ptr( p, +[](void* p) { Disposer()( static_cast<T*>( p )); });
         }
 
         /// Frees the pointer \p after the end of grace period

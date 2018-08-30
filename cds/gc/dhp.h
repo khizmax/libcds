@@ -11,7 +11,6 @@
 #include <cds/threading/model.h>
 #include <cds/intrusive/free_list_selector.h>
 #include <cds/details/throw_exception.h>
-#include <cds/details/static_functor.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/user_setup/cache_line.h>
 
@@ -1423,7 +1422,7 @@ namespace cds { namespace gc {
         template <class Disposer, typename T>
         static void retire( T* p )
         {
-            if ( !dhp::smr::tls()->retired_.push( dhp::retired_ptr( p, cds::details::static_functor<Disposer, T>::call )))
+            if ( !dhp::smr::tls()->retired_.push( dhp::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
                 scan();
         }
 

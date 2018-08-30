@@ -10,7 +10,6 @@
 #include <cds/gc/details/hp_common.h>
 #include <cds/threading/model.h>
 #include <cds/details/throw_exception.h>
-#include <cds/details/static_functor.h>
 #include <cds/details/marked_ptr.h>
 #include <cds/user_setup/cache_line.h>
 
@@ -1415,7 +1414,7 @@ namespace cds { namespace gc {
         template <class Disposer, typename T>
         static void retire( T * p )
         {
-            if ( !hp::smr::tls()->retired_.push( hp::retired_ptr( p, cds::details::static_functor<Disposer, T>::call )))
+            if ( !hp::smr::tls()->retired_.push( hp::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
                 scan();
         }
 

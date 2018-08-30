@@ -9,7 +9,6 @@
 #include <cds/urcu/details/base.h>
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
-#include <cds/details/static_functor.h>
 #include <cds/user_setup/cache_line.h>
 
 #include <signal.h>
@@ -69,7 +68,7 @@ namespace cds { namespace urcu { namespace details {
         template <typename Disposer, typename T>
         static void retire( T * p )
         {
-            retire( p, cds::details::static_functor<Disposer, T>::call );
+            retire( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); });
         }
 
         /// Retire pointer \p by the disposer \p pFunc

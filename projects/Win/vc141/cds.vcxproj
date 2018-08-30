@@ -1146,7 +1146,6 @@
     <ClInclude Include="..\..\..\cds\details\bounded_container.h" />
     <ClInclude Include="..\..\..\cds\details\lib.h" />
     <ClInclude Include="..\..\..\cds\details\size_t_cast.h" />
-    <ClInclude Include="..\..\..\cds\details\static_functor.h" />
     <ClInclude Include="..\..\..\cds\details\throw_exception.h" />
     <ClInclude Include="..\..\..\cds\details\tls_holder.h" />
     <ClInclude Include="..\..\..\cds\gc\details\hp_common.h" />
