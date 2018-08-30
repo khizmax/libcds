@@ -54,13 +54,6 @@ namespace cds { namespace gc {
                 : m_p( reinterpret_cast<pointer>(p))
                 , m_funcFree( func )
             {}
-/*
-            template <typename T>
-            retired_ptr( T * p, void (* pFreeFunc)(T *)) noexcept
-                : m_p( reinterpret_cast<pointer>(p))
-                , m_funcFree( reinterpret_cast< free_retired_ptr_func >( pFreeFunc ))
-            {}
-*/
 
             /// Assignment operator
             retired_ptr& operator =( retired_ptr const& s) noexcept
