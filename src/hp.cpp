@@ -376,11 +376,12 @@ namespace cds { namespace gc { namespace hp {
             while ( pNode ) {
                 if ( pNode->thread_id_.load( atomics::memory_order_relaxed ) != cds::OS::c_NullThreadId ) {
                     thread_hp_storage& hpstg = pNode->hazards_;
-                    for ( size_t i = 0; i < hazard_ptr_count_; ++i ) {
-                        void * hptr = hpstg[i].get();
+                    
+                    for ( auto hp = hpstg.begin(), end = hpstg.end(); hp != end; ++hp ) {
+                        void * hptr = hp->get( atomics::memory_order_relaxed );
                         if ( hptr ) {
                             dummy_retired.m_p = hptr;
-                            retired_ptr* it = std::lower_bound( first_retired, last_retired, dummy_retired, retired_ptr::less );
+                            retired_ptr* it = std::lower_bound(first_retired, last_retired, dummy_retired, retired_ptr::less);
                             if ( it != last_retired && it->m_p == hptr ) {
                                 // Mark retired pointer as guarded
                                 it->m_n |= 1;

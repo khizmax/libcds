@@ -203,6 +203,16 @@ namespace cds { namespace gc {
                 return sizeof( guard ) * capacity;
             }
 
+            guard* begin() const
+            {
+                return array_;
+            }
+
+            guard* end() const
+            {
+                return &array_[capacity_];
+            }
+
         private:
             guard*          free_head_; ///< Head of free guard list
             guard* const    array_;     ///< HP array

@@ -346,7 +346,7 @@ namespace cds { namespace gc { namespace dhp {
         inline void copy_hazards( hp_vector& vect, guard const* arr, size_t size )
         {
             for ( guard const* end = arr + size; arr != end; ++arr ) {
-                void* hp = arr->get();
+                void* hp = arr->get( atomics::memory_order_relaxed );
                 if ( hp )
                     vect.push_back( hp );
             }
