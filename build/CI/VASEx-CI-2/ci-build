@@ -74,6 +74,11 @@ case "$TOOLSET" in
 	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-6-64 $*
 	EXIT_CODE=$?
 	;;
+    "x64-clang-7")
+	echo "clang-7 '$BUILD_TYPE', toolset root: $CLANG7_ROOT"
+	$CI_SCRIPT_PATH/ci-script/cds-$BUILD_TYPE-clang-7-64 $*
+	EXIT_CODE=$?
+	;;
     * )
 	echo "Undefined toolset '$TOOLSET'"
 	exit 1

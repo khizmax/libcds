@@ -84,6 +84,7 @@ gcc-8-boost:          $BOOST_ROOT
 gcc-8-cxxflags:       -march=native  -std=c++17 -Wmultistatement-macros
 gcc-8-exe-ldflags:    -Wl,-rpath=$GCC8_ROOT/lib64
 gcc-8-extlib:         rt
+gcc-8-path:           $DEVTOOLSET6_BIN
 gcc-8-64-boost-lib:   stage64-gcc7/lib
 gcc-8-64-asan-boost-lib:   stage64-gcc7-asan/lib
 gcc-8-64-tsan-boost-lib:   stage64-gcc7-tsan/lib
@@ -200,6 +201,28 @@ clang-6-64-asan-boost-lib:   stage64-clang6-asan/lib
 clang-6-64-tsan-boost-lib:   stage64-clang6-tsan/lib
 clang-6-gtest:          $GTEST_ROOT
 clang-6-64-gtest-lib:   $GTEST_ROOT/lib-clang6/libgtest.a
+
+
+########################################
+# clang-7
+clang-7-root:           $CLANG6_ROOT/bin
+clang-7-cxx:            clang++
+clang-7-cc:             clang
+clang-7-cxxflags:       -stdlib=libc++ -Wdocumentation -std=c++17
+clang-7-exe-ldflags:    -fuse-ld=lld -L$CLANG7_ROOT/lib -Wl,-rpath=$CLANG7_ROOT/lib
+clang-7-extlib:         rt
+clang-7-path:           $DEVTOOLSET6_BIN
+clang-7-boost:          $LIB_ROOT/boost_1_65_1
+clang-7-64-boost-lib:   stage64-clang7-std17/lib
+clang-7-64-asan-boost-lib:   stage64-clang7-asan/lib
+clang-7-64-tsan-boost-lib:   stage64-clang7-tsan/lib
+clang-7-gtest:          $GTEST_ROOT
+clang-7-64-gtest-lib:   $GTEST_ROOT/lib-clang6/libgtest.a
+
+
+
+
+
 
 
 
