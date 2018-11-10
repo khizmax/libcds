@@ -11,7 +11,7 @@ include(CheckIncludeFileCXX)
 
 project(cds)
 
-set(PROJECT_VERSION 2.4.0)
+set(PROJECT_VERSION 2.3.3)
 
 # Options
 option(WITH_TESTS "Build unit tests" OFF)
