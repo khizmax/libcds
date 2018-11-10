@@ -113,8 +113,8 @@ namespace cds { namespace urcu { namespace details {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
 
         // Send "need membar" signal to all RCU threads
-        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire);
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.next_ ) {
+            OS::ThreadId tid = pRec->m_list.thread_id_.load( atomics::memory_order_acquire);
             if ( tid != nullThreadId ) {
                 pRec->m_bNeedMemBar.store( true, atomics::memory_order_release );
                 raise_signal( tid );
@@ -122,11 +122,11 @@ namespace cds { namespace urcu { namespace details {
         }
 
         // Wait while all RCU threads process the signal
-        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            OS::ThreadId tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire);
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.next_ ) {
+            OS::ThreadId tid = pRec->m_list.thread_id_.load( atomics::memory_order_acquire);
             if ( tid != nullThreadId ) {
                 bkOff.reset();
-                while ( (tid = pRec->m_list.m_idOwner.load( atomics::memory_order_acquire )) != nullThreadId
+                while ( (tid = pRec->m_list.thread_id_.load( atomics::memory_order_acquire )) != nullThreadId
                      && pRec->m_bNeedMemBar.load( atomics::memory_order_acquire ))
                 {
                     // Some versions of OSes can lose signals
@@ -152,8 +152,8 @@ namespace cds { namespace urcu { namespace details {
     {
         OS::ThreadId const nullThreadId = OS::c_NullThreadId;
 
-        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.m_pNext ) {
-            while ( pRec->m_list.m_idOwner.load( atomics::memory_order_acquire) != nullThreadId && check_grace_period( pRec ))
+        for ( thread_record * pRec = m_ThreadList.head( atomics::memory_order_acquire); pRec; pRec = pRec->m_list.next_ ) {
+            while ( pRec->m_list.thread_id_.load( atomics::memory_order_acquire) != nullThreadId && check_grace_period( pRec ))
                 bkOff();
         }
     }
