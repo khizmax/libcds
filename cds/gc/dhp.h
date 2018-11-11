@@ -776,7 +776,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( atomics::atomic<T> const& toGuard )
             {
-                return protect(toGuard, [](T* p) { return p; });
+                return protect(toGuard, [](T p) { return p; });
             }
 
             /// Protects a converted pointer of type <tt> atomic<T*> </tt>
@@ -954,7 +954,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard )
             {
-                return protect(nIndex, toGuard, [](T* p) { return p; });
+                return protect(nIndex, toGuard, [](T p) { return p; });
             }
 
             /// Protects a pointer of type \p atomic<T*>
