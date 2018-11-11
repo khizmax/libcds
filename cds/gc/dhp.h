@@ -34,11 +34,7 @@ namespace cds { namespace gc {
         //@cond
         struct guard_block: public cds::intrusive::FreeListImpl::node
         {
-            atomics::atomic<guard_block*>  next_block_;  // next block in the thread list
-
-            guard_block()
-                : next_block_( nullptr )
-            {}
+            guard_block*  next_block_ = nullptr;  // next block in the thread list
 
             guard* first()
             {
@@ -169,7 +165,7 @@ namespace cds { namespace gc {
                 // free all extended blocks
                 hp_allocator& a = hp_allocator::instance();
                 for ( guard_block* p = extended_list_.load( atomics::memory_order_relaxed ); p; ) {
-                    guard_block* next = p->next_block_.load( atomics::memory_order_relaxed );
+                    guard_block* next = p->next_block_;
                     a.free( p );
                     p = next;
                 }
@@ -194,7 +190,7 @@ namespace cds { namespace gc {
                 assert( free_head_ == nullptr );
 
                 guard_block* block = hp_allocator::instance().alloc();
-                block->next_block_.store( extended_list_.load( atomics::memory_order_relaxed ), atomics::memory_order_release );
+                block->next_block_ = extended_list_.load( atomics::memory_order_relaxed );
                 extended_list_.store( block, atomics::memory_order_release );
                 free_head_ = block->first();
                 CDS_HPSTAT( ++extend_call_count_ );
@@ -780,15 +776,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( atomics::atomic<T> const& toGuard )
             {
-                assert( guard_ != nullptr );
-
-                T pCur = toGuard.load(atomics::memory_order_acquire);
-                T pRet;
-                do {
-                    pRet = assign( pCur );
-                    pCur = toGuard.load(atomics::memory_order_acquire);
-                } while ( pRet != pCur );
-                return pCur;
+                return protect(toGuard, [](T* p) { return p; });
             }
 
             /// Protects a converted pointer of type <tt> atomic<T*> </tt>
@@ -813,7 +801,7 @@ namespace cds { namespace gc {
             {
                 assert( guard_ != nullptr );
 
-                T pCur = toGuard.load(atomics::memory_order_acquire);
+                T pCur = toGuard.load(atomics::memory_order_relaxed);
                 T pRet;
                 do {
                     pRet = pCur;
@@ -966,14 +954,7 @@ namespace cds { namespace gc {
             template <typename T>
             T protect( size_t nIndex, atomics::atomic<T> const& toGuard )
             {
-                assert( nIndex < capacity());
-
-                T pRet;
-                do {
-                    pRet = assign( nIndex, toGuard.load(atomics::memory_order_acquire));
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
-
-                return pRet;
+                return protect(nIndex, toGuard, [](T* p) { return p; });
             }
 
             /// Protects a pointer of type \p atomic<T*>
@@ -1000,8 +981,8 @@ namespace cds { namespace gc {
 
                 T pRet;
                 do {
-                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_acquire)));
-                } while ( pRet != toGuard.load(atomics::memory_order_relaxed));
+                    assign( nIndex, f( pRet = toGuard.load(atomics::memory_order_relaxed)));
+                } while ( pRet != toGuard.load(atomics::memory_order_acquire));
 
                 return pRet;
             }

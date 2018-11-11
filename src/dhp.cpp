@@ -391,7 +391,7 @@ namespace cds { namespace gc { namespace dhp {
 
                 for ( guard_block* block = pNode->hazards_.extended_list_.load( atomics::memory_order_acquire );
                     block;
-                    block = block->next_block_.load( atomics::memory_order_acquire ))
+                    block = block->next_block_ )
                 {
                     copy_hazards( plist, block->first(), defaults::c_extended_guard_block_size );
                 }
