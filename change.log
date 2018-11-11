@@ -1,8 +1,9 @@
 2.3.3
-    General release
+    Maintenance release
     - Minimum CMake version is 3.0.2
     - Changed software license from BSD to Boost
     - Removed '#pragma lib' for Windows build
+    - Bugfix and minor improvements
 
 2.3.2 31.12.2017
     Maintenance release
