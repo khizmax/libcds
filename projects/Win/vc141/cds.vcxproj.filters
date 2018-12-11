@@ -1258,5 +1258,20 @@
     <ClInclude Include="..\..\..\cds\details\tls_holder.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\hopscotch_hashmap_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\details\hopscotch_hashset_base.h">
+      <Filter>Header Files\cds\container\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\hopscotch_hashmap.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\container\hopscotch_hashset.h">
+      <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\hopscotch_hashset.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
