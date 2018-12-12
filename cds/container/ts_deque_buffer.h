@@ -85,8 +85,47 @@ class TSDequeBuffer
 	{
 	}
 
+	/////////////////////////////////////////////////////////////////
+	// insert_right
+	/////////////////////////////////////////////////////////////////
 	inline std::atomic<uint64_t> *insert_right(T element)
 	{
+		uint64_t thread_id = scal::ThreadContext::get().thread_id();
+
+		// Create a new item.
+		Item *new_item = new Item();
+		timestamping_->init_top_atomic(new_item->timestamp);
+		new_item->data.store(element);
+		new_item->taken.store(0);
+		new_item->right.store(new_item);
+		new_item->index = (*next_index_[thread_id])++;
+
+		// Determine the rightmost not-taken item in the list. The new item is
+		// inserted to the right of that item.
+		Item *old_right = right_[thread_id]->load();
+
+		Item *right = old_right;
+		while (right->left.load() != right && right->taken.load())
+		{
+			right = right->left.load();
+		}
+
+		if (right->taken.load() && right->left.load() == right)
+		{
+			right = old_right;
+			right->left.store(right);
+			Item *old_left = left_[thread_id]->load();
+			left_[thread_id]->store(right);
+		}
+
+		// Add the new item to the list.
+		new_item->left.store(right);
+		right->right.store(new_item);
+		right_[thread_id]->store(new_item);
+
+		// Return a pointer to the timestamp location of the item so that a
+		// timestamp can be added.
+		return new_item->timestamp;
 	}
 
 	bool try_remove_left(T *element, uint64_t *invocation_time)
