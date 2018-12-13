@@ -81,9 +81,50 @@ class TSDequeBuffer
 		}
 	}
 
-	inline std::atomic<uint64_t> *insert_left(T element)
-	{
-	}
+	/////////////////////////////////////////////////////////////////
+	// insert_right
+	/////////////////////////////////////////////////////////////////
+	inline std::atomic<uint64_t> *insert_left(T element) {
+      uint64_t thread_id = ThreadContext::get().thread_id();
+
+      // Create a new item.
+      Item *new_item = new Item();
+      timestamping_->init_top_atomic(new_item->timestamp);
+      new_item->data.store(element);
+      new_item->taken.store(0);
+      new_item->left.store(new_item);
+      // Items inserted at the left get negative indices. Thereby the
+      // order of items in the thread-local lists correspond with the
+      // order of indices, and we can use the sign of the index to
+      // determine on which side an item has been inserted.
+      new_item->index = -((*next_index_[thread_id])++);
+
+      // Determine leftmost not-taken item in the list. The new item is
+      // inserted to the left of that item.
+      Item* old_left = left_[thread_id]->load();
+
+      Item* left = old_left;
+      while (left->right.load() != left
+          && left->taken.load()) {
+        left = left->right.load();
+      }
+
+      if (left->taken.load() && left->right.load() == left) {
+        left = old_left;
+        left->right.store(left);
+        Item* old_right = right_[thread_id]->load();
+        right_[thread_id]->store(left);
+      }
+
+      // Add the new item to the list.
+      new_item->right.store(left);
+      left->left.store(new_item);
+      left_[thread_id]->store(new_item);
+
+      // Return a pointer to the timestamp location of the item so that a
+      // timestamp can be added.
+      return new_item->timestamp;
+    }
 
 	/////////////////////////////////////////////////////////////////
 	// insert_right
