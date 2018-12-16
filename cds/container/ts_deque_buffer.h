@@ -1,3 +1,8 @@
+#include <atomic>
+#include <stdio.h>
+#include <string.h>
+#include "threadcontext.h"
+
 template <typename T, typename TimeStamp>
 class TSDequeBuffer
 {
@@ -24,6 +29,26 @@ class TSDequeBuffer
 	Item ***emptiness_check_left_;
 	Item ***emptiness_check_right_;
 	TimeStamp *timestamping_;
+
+	// Helper function to remove the ABA counter from a pointer.
+	void *get_aba_free_pointer(void *pointer)
+	{
+		uint64_t result = (uint64_t)pointer;
+		result &= 0xfffffffffffffff8;
+		return (void *)result;
+	}
+
+	// Helper function which retrieves the ABA counter of a pointer old
+	// and sets this ABA counter + increment to the pointer pointer.
+	void *add_next_aba(void *pointer, void *old, uint64_t increment)
+	{
+		uint64_t aba = (uint64_t)old;
+		aba += increment;
+		aba &= 0x7;
+		uint64_t result = (uint64_t)pointer;
+		result = (result & 0xfffffffffffffff8) | aba;
+		return (void *)((result & 0xffffffffffffff8) | aba);
+	}
 
 	// Returns the leftmost not-taken item from the thread-local list
 	// indicated by thread_id.
