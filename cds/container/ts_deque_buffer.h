@@ -3,6 +3,16 @@
 #include <string.h>
 #include "threadcontext.h"
 
+inline uint64_t rdtsc() {
+  unsigned int hi, lo;
+  __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
+  return ((uint64_t) lo) | (((uint64_t) hi) << 32);
+}
+
+inline uint64_t hwrand() {
+  return (rdtsc() >> 6);
+}
+
 template <typename T, typename TimeStamp>
 class TSDequeBuffer
 {
@@ -259,229 +269,243 @@ class TSDequeBuffer
 	bool try_remove_left(T *element, uint64_t *invocation_time)
 	{
 		// Initialize the data needed for the emptiness check.
-		uint64_t thread_id = ThreadContext::get().thread_id();
-		Item **emptiness_check_left =
-			emptiness_check_left_[thread_id];
-		Item **emptiness_check_right =
-			emptiness_check_right_[thread_id];
-		bool empty = true;
-		// Initialize the result pointer to NULL, which means that no
-		// element has been removed.
-		Item *result = NULL;
-		// Indicates the index which contains the youngest item.
-		uint64_t buffer_index = -1;
-		// Memory on the stack frame where timestamps of items can be stored
-		// temporarily.
-		uint64_t tmp_timestamp[2][2];
-		// Index in the tmp_timestamp array which is not used at the moment.
-		uint64_t tmp_index = 1;
-		timestamping_->init_sentinel(tmp_timestamp[0]);
-		uint64_t *timestamp = tmp_timestamp[0];
-		// Stores the value of the remove pointer of a thead-local buffer
-		// before the buffer is actually accessed.
-		Item *old_left = NULL;
+      uint64_t thread_id = scal::ThreadContext::get().thread_id();
+      Item* *emptiness_check_left =
+        emptiness_check_left_[thread_id];
+      Item* *emptiness_check_right =
+        emptiness_check_right_[thread_id];
+      bool empty = true;
+      // Initialize the result pointer to NULL, which means that no
+      // element has been removed.
+      Item *result = NULL;
+      // Indicates the index which contains the youngest item.
+      uint64_t buffer_index = -1;
+      // Memory on the stack frame where timestamps of items can be stored
+      // temporarily.
+      uint64_t tmp_timestamp[2][2];
+      // Index in the tmp_timestamp array which is not used at the moment.
+      uint64_t tmp_index = 1;
+      timestamping_->init_sentinel(tmp_timestamp[0]);
+      uint64_t *timestamp = tmp_timestamp[0];
+      // Stores the value of the remove pointer of a thead-local buffer
+      // before the buffer is actually accessed.
+      Item* old_left = NULL;
 
-		// Read the start time of the iteration. Items which were timestamped
-		// after the start time and inserted at the right are not removed.
-		uint64_t start_time[2];
-		timestamping_->read_time(start_time);
-		// We start iterating over the thread-local lists at a random index.
-		uint64_t start = hwrand();
-		// We iterate over all thead-local buffers
-		for (uint64_t i = 0; i < num_threads_; i++)
-		{
-			uint64_t tmp_buffer_index = (start + i) % num_threads_;
-			// We get the remove/insert pointer of the current thread-local buffer.
-			Item *tmp_left = left_[tmp_buffer_index]->load();
-			// We get the youngest element from that thread-local buffer.
-			Item *item = get_left_item(tmp_buffer_index);
-			// If we found an element, we compare it to the youngest element
-			// we have found until now.
-			if (item != NULL)
-			{
-				empty = false;
-				uint64_t *item_timestamp;
-				timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
-				item_timestamp = tmp_timestamp[tmp_index];
+      // Read the start time of the iteration. Items which were timestamped
+      // after the start time and inserted at the right are not removed.
+      uint64_t start_time[2];
+      timestamping_->read_time(start_time);
+      // We start iterating over the thread-local lists at a random index.
+      uint64_t start = hwrand();
+      // We iterate over all thead-local buffers
+      for (uint64_t i = 0; i < num_threads_; i++) {
 
-				if (inserted_left(item) && !timestamping_->is_later(invocation_time, item_timestamp))
-				{
-					uint64_t expected = 0;
-					if (item->taken.load() == 0 && item->taken.compare_exchange_weak(expected, 1))
-					{
-						// Try to adjust the remove pointer. It does not matter if
-						// this CAS fails.
-						left_[tmp_buffer_index]->compare_exchange_weak(
-							tmp_left, item);
-						*element = item->data.load();
-						return true;
-					}
-					else
-					{
-						item = get_left_item(tmp_buffer_index);
-						if (item != NULL)
-						{
-							timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
-							item_timestamp = tmp_timestamp[tmp_index];
-						}
-					}
-				}
+        uint64_t tmp_buffer_index = (start + i) % num_threads_;
+        // We get the remove/insert pointer of the current thread-local buffer.
+        Item* tmp_left = left_[tmp_buffer_index]->load();
+        // We get the youngest element from that thread-local buffer.
+        Item* item = get_left_item(tmp_buffer_index);
+        // If we found an element, we compare it to the youngest element
+        // we have found until now.
+        if (item != NULL) {
+          empty = false;
+          uint64_t *item_timestamp;
+          timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
+          item_timestamp = tmp_timestamp[tmp_index];
 
-				if (item != NULL && (result == NULL || is_more_left(item, item_timestamp, result, timestamp)))
-				{
-					// We found a new leftmost item, so we remember it.
-					result = item;
-					buffer_index = tmp_buffer_index;
-					timestamp = item_timestamp;
-					tmp_index ^= 1;
-					old_left = tmp_left;
+          if (inserted_left(item) && !timestamping_->is_later(invocation_time, item_timestamp)) {
+            uint64_t expected = 0;
+            if (item->taken.load() == 0 && item->taken.compare_exchange_weak(expected, 1)) {
+              // Try to adjust the remove pointer. It does not matter if
+              // this CAS fails.
+              left_[tmp_buffer_index]->compare_exchange_weak(
+                  tmp_left, (Item*)add_next_aba(item, tmp_left, 0));
+              *element = item->data.load();
+              return true;
+            } else {
+              item = get_left_item(tmp_buffer_index);
+              if (item != NULL) {
+                timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
+                item_timestamp = tmp_timestamp[tmp_index];
+              }
+            }
+          }
 
-					// Check if we can remove the element immediately.
-					if (inserted_left(result) && !timestamping_->is_later(invocation_time, timestamp))
-					{
-						uint64_t expected = 0;
-						if (result->taken.load() == 0)
-						{
-							if (result->taken.compare_exchange_weak(
-									expected, 1))
-							{
-								// Try to adjust the remove pointer. It does not matter if
-								// this CAS fails.
-								left_[buffer_index]->compare_exchange_weak(
-									old_left, item);
+          if (item != NULL && (result == NULL || is_more_left(item, item_timestamp, result, timestamp))) {
+            // We found a new leftmost item, so we remember it.
+            result = item;
+            buffer_index = tmp_buffer_index;
+            timestamp = item_timestamp;
+            tmp_index ^=1;
+            old_left = tmp_left;
 
-								*element = result->data.load();
-								return true;
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				// No element was found, work on the emptiness check.
-				if (emptiness_check_left[tmp_buffer_index] != tmp_left)
-				{
-					empty = false;
-					emptiness_check_left[tmp_buffer_index] =
-						tmp_left;
-				}
-				Item *tmp_right = right_[tmp_buffer_index]->load();
-				if (emptiness_check_right[tmp_buffer_index] != tmp_right)
-				{
-					empty = false;
-					emptiness_check_right[tmp_buffer_index] =
-						tmp_right;
-				}
-			}
-		}
+            // Check if we can remove the element immediately.
+            if (inserted_left(result) && !timestamping_->is_later(invocation_time, timestamp)) {
+              uint64_t expected = 0;
+              if (result->taken.load() == 0) {
+                if (result->taken.compare_exchange_weak(
+                    expected, 1)) {
+                  // Try to adjust the remove pointer. It does not matter if
+                  // this CAS fails.
+                  left_[buffer_index]->compare_exchange_weak(
+                      old_left, (Item*)add_next_aba(result, old_left, 0));
 
-		*element = (T)NULL;
-		return !empty;
+                  *element = result->data.load();
+                  return true;
+                }
+              }
+            }
+          }
+        } else {
+          // No element was found, work on the emptiness check.
+          if (emptiness_check_left[tmp_buffer_index]
+              != tmp_left) {
+            empty = false;
+            emptiness_check_left[tmp_buffer_index] =
+              tmp_left;
+          }
+          Item* tmp_right = right_[tmp_buffer_index]->load();
+          if (emptiness_check_right[tmp_buffer_index]
+              != tmp_right) {
+            empty = false;
+            emptiness_check_right[tmp_buffer_index] =
+              tmp_right;
+          }
+        }
+      }
+      if (result != NULL) {
+        if (!timestamping_->is_later(timestamp, start_time)) {
+          // The found item was timestamped after the start of the iteration,
+          // so it is save to remove it.
+          uint64_t expected = 0;
+          if (result->taken.load() == 0) {
+            if (result->taken.compare_exchange_weak(
+                    expected, 1)) {
+              // Try to adjust the remove pointer. It does not matter if this
+              // CAS fails.
+              left_[buffer_index]->compare_exchange_weak(
+                  old_left, (Item*)add_next_aba(result, old_left, 0));
+              *element = result->data.load();
+              return true;
+            }
+          }
+        }
+      }
+
+      *element = (T)NULL;
+      return !empty;
 	}
 
 	bool try_remove_right(T *element, uint64_t *invocation_time)
 	{
 		// Initialize the data needed for the emptiness check.
-		uint64_t thread_id = ThreadContext::get().thread_id();
-		Item **emptiness_check_left =
-			emptiness_check_left_[thread_id];
-		Item **emptiness_check_right =
-			emptiness_check_right_[thread_id];
-		bool empty = true;
-		// Initialize the result pointer to NULL, which means that no
-		// element has been removed.
-		Item *result = NULL;
-		// Indicates the index which contains the youngest item.
-		uint64_t buffer_index = -1;
-		// Memory on the stack frame where timestamps of items can be stored
-		// temporarily.
-		uint64_t tmp_timestamp[2][2];
-		// Index in the tmp_timestamp array whihc is not used at the moment.
-		uint64_t tmp_index = 1;
-		timestamping_->init_sentinel(tmp_timestamp[0]);
-		uint64_t *timestamp = tmp_timestamp[0];
-		// Stores the value of the remove pointer of a thead-local buffer
-		// before the buffer is actually accessed.
-		Item *old_right = NULL;
+      uint64_t thread_id = scal::ThreadContext::get().thread_id();
+      Item* *emptiness_check_left =
+        emptiness_check_left_[thread_id];
+      Item* *emptiness_check_right =
+        emptiness_check_right_[thread_id];
+      bool empty = true;
+      // Initialize the result pointer to NULL, which means that no
+      // element has been removed.
+      Item *result = NULL;
+      // Indicates the index which contains the youngest item.
+      uint64_t buffer_index = -1;
+      // Memory on the stack frame where timestamps of items can be stored
+      // temporarily.
+      uint64_t tmp_timestamp[2][2];
+      // Index in the tmp_timestamp array whihc is not used at the moment.
+      uint64_t tmp_index = 1;
+      timestamping_->init_sentinel(tmp_timestamp[0]);
+      uint64_t *timestamp = tmp_timestamp[0];
+      // Stores the value of the remove pointer of a thead-local buffer
+      // before the buffer is actually accessed.
+      Item* old_right = NULL;
 
-		// Read the start time of the iteration. Items which were timestamped
-		// after the start time and inserted at the left are not removed.
-		uint64_t start_time[2];
-		timestamping_->read_time(start_time);
-		// We start iterating over the thread-local lists at a random index.
-		uint64_t start = hwrand();
-		// We iterate over all thead-local buffers
-		for (uint64_t i = 0; i < num_threads_; i++)
-		{
+      // Read the start time of the iteration. Items which were timestamped
+      // after the start time and inserted at the left are not removed.
+      uint64_t start_time[2];
+      timestamping_->read_time(start_time);
+      // We start iterating over the thread-local lists at a random index.
+      uint64_t start = hwrand();
+      // We iterate over all thead-local buffers
+      for (uint64_t i = 0; i < num_threads_; i++) {
 
-			uint64_t tmp_buffer_index = (start + i) % num_threads_;
-			// We get the remove/insert pointer of the current thread-local buffer.
-			Item *tmp_right = right_[tmp_buffer_index]->load();
-			// We get the youngest element from that thread-local buffer.
-			Item *item = get_right_item(tmp_buffer_index);
-			// If we found an element, we compare it to the youngest element
-			// we have found until now.
-			if (item != NULL)
-			{
-				empty = false;
-				uint64_t *item_timestamp;
-				timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
-				item_timestamp = tmp_timestamp[tmp_index];
+        uint64_t tmp_buffer_index = (start + i) % num_threads_;
+        // We get the remove/insert pointer of the current thread-local buffer.
+        Item* tmp_right = right_[tmp_buffer_index]->load();
+        // We get the youngest element from that thread-local buffer.
+        Item* item = get_right_item(tmp_buffer_index);
+        // If we found an element, we compare it to the youngest element
+        // we have found until now.
+        if (item != NULL) {
+          empty = false;
+          uint64_t *item_timestamp;
+          timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
+          item_timestamp = tmp_timestamp[tmp_index];
 
-				if (inserted_right(item) && !timestamping_->is_later(invocation_time, item_timestamp))
-				{
-					uint64_t expected = 0;
-					if (item->taken.load() == 0 && item->taken.compare_exchange_weak(expected, 1))
-					{
-						// Try to adjust the remove pointer. It does not matter if
-						// this CAS fails.
-						right_[tmp_buffer_index]->compare_exchange_weak(
-							tmp_right, item);
-						*element = item->data.load();
-						return true;
-					}
-					else
-					{
-						item = get_right_item(tmp_buffer_index);
-						if (item != NULL)
-						{
-							timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
-							item_timestamp = tmp_timestamp[tmp_index];
-						}
-					}
-				}
+          if (inserted_right(item) && !timestamping_->is_later(invocation_time, item_timestamp)) {
+            uint64_t expected = 0;
+            if (item->taken.load() == 0 && item->taken.compare_exchange_weak(expected, 1)) {
+              // Try to adjust the remove pointer. It does not matter if
+              // this CAS fails.
+              right_[tmp_buffer_index]->compare_exchange_weak(
+                  tmp_right, (Item*)add_next_aba(item, tmp_right, 0));
+              *element = item->data.load();
+              return true;
+            } else {
+              item = get_right_item(tmp_buffer_index);
+              if (item != NULL) {
+                timestamping_->load_timestamp(tmp_timestamp[tmp_index], item->timestamp);
+                item_timestamp = tmp_timestamp[tmp_index];
+              }
+            }
+          }
 
-				if (item != NULL && (result == NULL || is_more_right(item, item_timestamp, result, timestamp)))
-				{
-					// We found a new youngest element, so we remember it.
-					result = item;
-					buffer_index = tmp_buffer_index;
-					timestamp = item_timestamp;
-					tmp_index ^= 1;
-					old_right = tmp_right;
-				}
-			}
-			else
-			{
-				// No element was found, work on the emptiness check.
-				if (emptiness_check_right[tmp_buffer_index] != tmp_right)
-				{
-					empty = false;
-					emptiness_check_right[tmp_buffer_index] =
-						tmp_right;
-				}
-				Item *tmp_left = left_[tmp_buffer_index]->load();
-				if (emptiness_check_left[tmp_buffer_index] != tmp_left)
-				{
-					empty = false;
-					emptiness_check_left[tmp_buffer_index] =
-						tmp_left;
-				}
-			}
-		}
+          if (item != NULL && (result == NULL || is_more_right(item, item_timestamp, result, timestamp))) {
+            // We found a new youngest element, so we remember it.
+            result = item;
+            buffer_index = tmp_buffer_index;
+            timestamp = item_timestamp;
+            tmp_index ^=1;
+            old_right = tmp_right;
+          }
+        } else {
+          // No element was found, work on the emptiness check.
+          if (emptiness_check_right[tmp_buffer_index]
+              != tmp_right) {
+            empty = false;
+            emptiness_check_right[tmp_buffer_index] =
+              tmp_right;
+          }
+          Item* tmp_left = left_[tmp_buffer_index]->load();
+          if (emptiness_check_left[tmp_buffer_index]
+              != tmp_left) {
+            empty = false;
+            emptiness_check_left[tmp_buffer_index] =
+              tmp_left;
+          }
+        }
+      }
+      if (result != NULL) {
+        if (!timestamping_->is_later(timestamp, start_time)) {
+          // The found item was timestamped after the start of the iteration,
+          // so it is save to remove it.
+          uint64_t expected = 0;
+          if (result->taken.load() == 0) {
+            if (result->taken.compare_exchange_weak(
+                    expected, 1)) {
+              // Try to adjust the remove pointer. It does not matter if
+              // this CAS fails.
+              right_[buffer_index]->compare_exchange_weak(
+                  old_right, (Item*)add_next_aba(result, old_right, 0));
+              *element = result->data.load();
+              return true;
+            }
+          }
+        }
+      }
 
-		*element = (T)NULL;
-		return !empty;
+      *element = (T)NULL;
+      return !empty;
 	}
 };
