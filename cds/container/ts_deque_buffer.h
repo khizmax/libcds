@@ -60,17 +60,74 @@ class TSDequeBuffer
 		return (void *)((result & 0xffffffffffffff8) | aba);
 	}
 
-	// Returns the leftmost not-taken item from the thread-local list
-	// indicated by thread_id.
-	Item *get_left_item(uint64_t thread_id)
-	{
-	}
+    // Returns the leftmost not-taken item from the thread-local list
+    // indicated by thread_id.
+    Item* get_left_item(uint64_t thread_id) {
 
-	// Returns the rightmost not-taken item from the thread-local list
-	// indicated by thread_id.
-	Item *get_right_item(uint64_t thread_id)
-	{
-	}
+      // Read the item pointed to by the right pointer. The iteration through
+      // the linked list can stop at that item.
+      Item* old_right = right_[thread_id]->load();
+      Item* right = (Item*)get_aba_free_pointer(old_right);
+      int64_t threshold = right->index.load();
+
+      // Read the leftmost item.
+      Item* result = (Item*)get_aba_free_pointer(left_[thread_id]->load());
+
+      // We start at the left pointer and iterate to the right until we
+      // find the first item which has not been taken yet.
+      while (true) {
+        // We reached a node further right than the original right-most
+        // node. We do not have to search any further to the right, we
+        // will not take the element anyways.
+        if (result->index.load() > threshold) {
+          return NULL;
+        }
+        // We found a good node, return it.
+        if (result->taken.load() == 0) {
+          return result;
+        }
+        // We have reached the end of the list and found nothing, so we
+        // return NULL.
+        if (result->right.load() == result) {
+          return NULL;
+        }
+        result = result->right.load();
+      }
+    }
+
+    // Returns the rightmost not-taken item from the thread-local list
+    // indicated by thread_id.
+    Item* get_right_item(uint64_t thread_id) {
+
+      // Read the item pointed to by the left pointer. The iteration through
+      // the linked list can stop at that item.
+      Item* old_left = left_[thread_id]->load();
+      Item* left = (Item*)get_aba_free_pointer(old_left);
+      int64_t threshold = left->index.load();
+
+      Item* result = (Item*)get_aba_free_pointer(right_[thread_id]->load());
+
+      // We start at the right pointer and iterate to the left until we
+      // find the first item which has not been taken yet.
+      while (true) {
+        // We reached a node further left than the original left-most
+        // node. We do not have to search any further to the left, we
+        // will not take the element anyways.
+        if (result->index.load() < threshold) {
+          return NULL;
+        }
+        // We found a good node, return it.
+        if (result->taken.load() == 0) {
+          return result;
+        }
+        // We have reached the end of the list and found nothing, so we
+        // return NULL.
+        if (result->left.load() == result) {
+          return NULL;
+        }
+        result = result->left.load();
+      }
+    }
 
   public:
 	void initialize(uint64_t num_threads, TimeStamp *timestamping)
@@ -116,89 +173,94 @@ class TSDequeBuffer
 		}
 	}
 
-	inline std::atomic<uint64_t> *insert_left(T element)
-	{
-		uint64_t thread_id = ThreadContext::get().thread_id();
+    inline std::atomic<uint64_t> *insert_left(T element) {
+      uint64_t thread_id = scal::ThreadContext::get().thread_id();
 
-		// Create a new item.
-		Item *new_item = new Item();
-		timestamping_->init_top_atomic(new_item->timestamp);
-		new_item->data.store(element);
-		new_item->taken.store(0);
-		new_item->left.store(new_item);
-		// Items inserted at the left get negative indices. Thereby the
-		// order of items in the thread-local lists correspond with the
-		// order of indices, and we can use the sign of the index to
-		// determine on which side an item has been inserted.
-		new_item->index = -((*next_index_[thread_id])++);
+      // Create a new item.
+      Item *new_item = new Item();
+      timestamping_->init_top_atomic(new_item->timestamp);
+      new_item->data.store(element);
+      new_item->taken.store(0);
+      new_item->left.store(new_item);
+      // Items inserted at the left get negative indices. Thereby the
+      // order of items in the thread-local lists correspond with the
+      // order of indices, and we can use the sign of the index to
+      // determine on which side an item has been inserted.
+      new_item->index = -((*next_index_[thread_id])++);
 
-		// Determine leftmost not-taken item in the list. The new item is
-		// inserted to the left of that item.
-		Item *old_left = left_[thread_id]->load();
+      // Determine leftmost not-taken item in the list. The new item is
+      // inserted to the left of that item.
+      Item* old_left = left_[thread_id]->load();
 
-		Item *left = old_left;
-		while (left->right.load() != left && left->taken.load())
-		{
-			left = left->right.load();
-		}
+      Item* left = (Item*)get_aba_free_pointer(old_left);
+      while (left->right.load() != left
+          && left->taken.load()) {
+        left = left->right.load();
+      }
 
-		if (left->taken.load() && left->right.load() == left)
-		{
-			left = old_left;
-			left->right.store(left);
-			Item *old_right = right_[thread_id]->load();
-			right_[thread_id]->store(left);
-		}
+      if (left->taken.load() && left->right.load() == left) {
+        // The buffer is empty. We have to increase the aba counter of the
+        // right pointer too to guarantee that a pending right-pointer
+        // update of a remove operation does not make the left and the
+        // right pointer point to different lists.
 
-		// Add the new item to the list.
-		new_item->right.store(left);
-		left->left.store(new_item);
-		left_[thread_id]->store(new_item);
+        left = (Item*)get_aba_free_pointer(old_left);
+        left->right.store(left);
+        Item* old_right = right_[thread_id]->load();
+        right_[thread_id]->store((Item*) add_next_aba(left, old_right, 1));
+      }
 
-		// Return a pointer to the timestamp location of the item so that a
-		// timestamp can be added.
-		return new_item->timestamp;
-	}
+      // Add the new item to the list.
+      new_item->right.store(left);
+      left->left.store(new_item);
+      left_[thread_id]->store(
+        (Item*) add_next_aba(new_item, old_left, 1));
 
-	inline std::atomic<uint64_t> *insert_right(T element)
-	{
-		uint64_t thread_id = ThreadContext::get().thread_id();
+      // Return a pointer to the timestamp location of the item so that a
+      // timestamp can be added.
+      return new_item->timestamp;
+    }
 
-		// Create a new item.
-		Item *new_item = new Item();
-		timestamping_->init_top_atomic(new_item->timestamp);
-		new_item->data.store(element);
-		new_item->taken.store(0);
-		new_item->right.store(new_item);
-		new_item->index = (*next_index_[thread_id])++;
+    inline std::atomic<uint64_t> *insert_right(T element) {
+      uint64_t thread_id = scal::ThreadContext::get().thread_id();
 
-		// Determine the rightmost not-taken item in the list. The new item is
-		// inserted to the right of that item.
-		Item *old_right = right_[thread_id]->load();
+      // Create a new item.
+      Item *new_item = new Item();
+      timestamping_->init_top_atomic(new_item->timestamp);
+      new_item->data.store(element);
+      new_item->taken.store(0);
+      new_item->right.store(new_item);
+      new_item->index = (*next_index_[thread_id])++;
 
-		Item *right = old_right;
-		while (right->left.load() != right && right->taken.load())
-		{
-			right = right->left.load();
-		}
+      // Determine the rightmost not-taken item in the list. The new item is
+      // inserted to the right of that item.
+      Item* old_right = right_[thread_id]->load();
 
-		if (right->taken.load() && right->left.load() == right)
-		{
-			right = old_right;
-			right->left.store(right);
-			Item *old_left = left_[thread_id]->load();
-			left_[thread_id]->store(right);
-		}
+      Item* right = (Item*)get_aba_free_pointer(old_right);
+      while (right->left.load() != right
+          && right->taken.load()) {
+        right = right->left.load();
+      }
 
-		// Add the new item to the list.
-		new_item->left.store(right);
-		right->right.store(new_item);
-		right_[thread_id]->store(new_item);
+      if (right->taken.load() && right->left.load() == right) {
+        // The buffer is empty. We have to increase the aba counter of the
+        // left pointer too to guarantee that a pending left-pointer
+        // update of a remove operation does not make the left and the
+        // right pointer point to different lists.
+        right = (Item*)get_aba_free_pointer(old_right);
+        right->left.store(right);
+        Item* old_left = left_[thread_id]->load();
+        left_[thread_id]->store( (Item*) add_next_aba(right, old_left, 1)); }
 
-		// Return a pointer to the timestamp location of the item so that a
-		// timestamp can be added.
-		return new_item->timestamp;
-	}
+      // Add the new item to the list.
+      new_item->left.store(right);
+      right->right.store(new_item);
+      right_[thread_id]->store((Item*) add_next_aba(new_item, old_right, 1));
+
+      // Return a pointer to the timestamp location of the item so that a
+      // timestamp can be added.
+      return new_item->timestamp;
+    }
 
 	// Helper function which returns true if the item was inserted at the left.
 	inline bool inserted_left(Item *item)
