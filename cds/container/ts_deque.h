@@ -1,18 +1,21 @@
 #include <atomic>
 #include "ts_deque_buffer.h"
+#include "threadcontext.h"
 
 template<typename T, typename Timestamp>
 class TSDeque {
   private:
-
     TSDequeBuffer<T, Timestamp> *buffer_;
     Timestamp *timestamping_;
 
   public:
-    TSDeque (uint64_t num_threads)
+    TSDeque (uint64_t num_threads, uint64_t delay)
     {
+      ThreadContext::prepare(num_threads);
+      ThreadContext::assign_context();
 
       timestamping_ = new Timestamp();
+      timestamping_->initialize(delay, num_threads);
 
       buffer_ = new TSDequeBuffer<T, Timestamp>();
       buffer_->initialize(num_threads, timestamping_);

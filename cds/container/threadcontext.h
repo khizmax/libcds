@@ -5,6 +5,7 @@ class ThreadContext {
  public:
   static ThreadContext& get();
   static void prepare(uint64_t num_threads);
+  static void assign_context();
 
   inline uint64_t thread_id() {
     return thread_id_;
@@ -26,9 +27,20 @@ pthread_key_t ThreadContext::threadcontext_key;
 ThreadContext *ThreadContext::contexts[kMaxThreads];
 
 ThreadContext& ThreadContext::get() {
+  if (pthread_getspecific(threadcontext_key) == NULL) {
+    assign_context();
+  }
   ThreadContext *context = static_cast<ThreadContext*>(
       pthread_getspecific(threadcontext_key));
   return *context;
+}
+
+void ThreadContext::assign_context() {
+  uint64_t thread_id = __sync_fetch_and_add(&global_thread_id_cnt, 1);
+  if (pthread_setspecific(threadcontext_key, contexts[thread_id])) {
+    fprintf(stderr, "%s: pthread_setspecific failed\n", __func__);
+    exit(EXIT_FAILURE);
+  }
 }
 
 void ThreadContext::prepare(uint64_t num_threads) {
