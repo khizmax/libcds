@@ -187,7 +187,7 @@ public:
 
     inline std::atomic<uint64_t> *insert_left(T element)
     {
-        uint64_t thread_id = scal::ThreadContext::get().thread_id();
+        uint64_t thread_id = ThreadContext::get().thread_id();
 
         // Create a new item.
         Item *new_item = new Item();
@@ -237,7 +237,7 @@ public:
 
     inline std::atomic<uint64_t> *insert_right(T element)
     {
-        uint64_t thread_id = scal::ThreadContext::get().thread_id();
+        uint64_t thread_id = ThreadContext::get().thread_id();
 
         // Create a new item.
         Item *new_item = new Item();
@@ -348,7 +348,7 @@ public:
     bool try_remove_left(T *element, uint64_t *invocation_time)
     {
         // Initialize the data needed for the emptiness check.
-        uint64_t thread_id = scal::ThreadContext::get().thread_id();
+        uint64_t thread_id = ThreadContext::get().thread_id();
         Item **emptiness_check_left =
             emptiness_check_left_[thread_id];
         Item **emptiness_check_right =
@@ -495,7 +495,7 @@ public:
     bool try_remove_right(T *element, uint64_t *invocation_time)
     {
         // Initialize the data needed for the emptiness check.
-        uint64_t thread_id = scal::ThreadContext::get().thread_id();
+        uint64_t thread_id = ThreadContext::get().thread_id();
         Item **emptiness_check_left =
             emptiness_check_left_[thread_id];
         Item **emptiness_check_right =

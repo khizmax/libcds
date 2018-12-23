@@ -8,6 +8,7 @@ class TSDeque
 private:
     TSDequeBuffer<T, Timestamp> *buffer_;
     Timestamp *timestamping_;
+    item_counter item_counter_;
 
 public:
     TSDeque(uint64_t num_threads, uint64_t delay)
@@ -22,6 +23,12 @@ public:
         buffer_->initialize(num_threads, timestamping_);
     }
 
+    ~TSDeque()
+    {
+        delete timestamping_;
+        delete buffer_;
+    }
+
     bool insert_left(T element)
     {
         std::atomic<uint64_t> *item = buffer_->insert_left(element);
@@ -29,6 +36,7 @@ public:
         // and then assigned to the item. The operation may not be executed
         // atomically.
         timestamping_->set_timestamp(item);
+        item_counter_++;
         return true;
     }
 
@@ -39,6 +47,7 @@ public:
         // and then assigned to the item. The operation may not be executed
         // atomically.
         timestamping_->set_timestamp(item);
+        item_counter_++;
         return true;
     }
 
@@ -50,9 +59,9 @@ public:
         timestamping_->read_time(invocation_time);
         while (buffer_->try_remove_left(element, invocation_time))
         {
-
             if (*element != (T)NULL)
             {
+                item_counter_--;
                 return true;
             }
         }
@@ -68,13 +77,29 @@ public:
         timestamping_->read_time(invocation_time);
         while (buffer_->try_remove_right(element, invocation_time))
         {
-
             if (*element != (T)NULL)
             {
+                item_counter_--;
                 return true;
             }
         }
         // The deque was empty, return false.
         return false;
+    }
+
+    void clear()
+    {
+        T item;
+        while (remove_right(&item)) {}
+    }
+
+    bool empty() const
+    {
+        return item_counter_ == 0;
+    }
+
+    size_t size() const
+    {
+        return item_counter_;
     }
 };
