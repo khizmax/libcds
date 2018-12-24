@@ -161,7 +161,7 @@ namespace cds { namespace container {
         }
 
     public:
-        void initialize(uint64_t num_threads, TimeStamp *timestamping)
+        TSDequeBuffer(uint64_t num_threads, TimeStamp *timestamping)
         {
             thread_id_counter_.store(0);
 
@@ -198,6 +198,24 @@ namespace cds { namespace container {
                 emptiness_check_left_[i] = new Item *[num_threads_];
                 emptiness_check_right_[i] = new Item *[num_threads_];
             }
+        }
+
+        ~TSDequeBuffer()
+        {
+            for (uint64_t i = 0; i < num_threads_; i++)
+            {
+                delete left_[i];
+                delete right_[i];
+                delete next_index_[i];
+                delete[] emptiness_check_left_[i];
+                delete[] emptiness_check_right_[i];
+            }
+            delete[] left_;
+            delete[] right_;
+            delete[] next_index_;
+            delete[] emptiness_check_left_;
+            delete[] emptiness_check_right_;
+
         }
 
         inline std::atomic<uint64_t> *insert_left(T element)

@@ -100,8 +100,7 @@ namespace cds { namespace container {
             timestamping_ = new timestamp();
             timestamping_->initialize(delay, num_threads);
 
-            buffer_ = new TSDequeBuffer<value_type, timestamp, random_engine>();
-            buffer_->initialize(num_threads, timestamping_);
+            buffer_ = new TSDequeBuffer<value_type, timestamp, random_engine>(num_threads, timestamping_);
         }
 
         ~TSDeque()
