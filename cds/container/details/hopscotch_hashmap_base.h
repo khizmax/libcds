@@ -38,7 +38,7 @@ namespace cds { namespace container {
     /// Hopscotch hashmap related definitions
     /** @ingroup cds_nonintrusive_helper
     */
-    namespace hopscotch_hashmap {
+    namespace hopscotch_hashmap_ns {
 #ifdef CDS_DOXYGEN_INVOKED
         /// Lock striping concurrent access policy. This is typedef for intrusive::hopscotch_hashset::striping template
         class striping
@@ -170,7 +170,7 @@ namespace cds { namespace container {
 
                 Default is hopscotch_hashmap::striping.
             */
-            typedef hopscotch_hashmap::striping<>               mutex_policy;
+            typedef hopscotch_hashmap_ns::striping<>               mutex_policy;
 
             /// Key equality functor
             /**
@@ -216,7 +216,7 @@ namespace cds { namespace container {
             static bool const store_hash = false;
 
             /// Probe-set type. See \ref probeset_type option for explanation
-            typedef hopscotch_hashmap::list                probeset_type;
+            typedef hopscotch_hashmap_ns::list                probeset_type;
 
             /// Internal statistics
             typedef empty_stat                  stat;
@@ -259,7 +259,7 @@ namespace cds { namespace container {
         template <typename... Options>
         struct make_traits {
             typedef typename cds::opt::make_options<
-                typename cds::opt::find_type_traits< hopscotch_hashmap::traits, Options... >::type
+                typename cds::opt::find_type_traits< hopscotch_hashmap_ns::traits, Options... >::type
                 ,Options...
             >::type   type ;    ///< Result of metafunction
         };

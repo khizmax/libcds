@@ -30,6 +30,7 @@
 
 #include "test_map.h"
 
+#include <cds/container/details/hopscotch_hashmap_base.h>
 #include <cds/container/hopscotch_hashmap.h>
 
 namespace {
@@ -56,7 +57,7 @@ namespace {
         //{}
     };
 
-    struct store_hash_traits: public cc::hopscotch_hashmap::traits
+    struct store_hash_traits: public cc::hopscotch_hashmap_ns::traits
     {
         static bool const store_hash = true;
     };
@@ -67,13 +68,13 @@ namespace {
 
     TEST_F( HopscotchHashmap, striped_list_unordered )
     {
-        struct map_traits: public cc::hopscotch_hashmap::traits
+        struct map_traits: public cc::hopscotch_hashmap_ns::traits
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::list probeset_type;
+            typedef cc::hopscotch_hashmap_ns::list probeset_type;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -81,120 +82,68 @@ namespace {
 
     TEST_F( HopscotchHashmap, striped_vector_unordered )
     {
-        struct map_traits: public cc::hopscotch_hashmap::traits
+        struct map_traits: public cc::hopscotch_hashmap_ns::traits
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::vector<4> probeset_type;
+            typedef cc::hopscotch_hashmap_ns::vector<4> probeset_type;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        map_type m( 32, 4 );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_list_ordered_cmp )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
-
-        map_type m( 32, 6, 4 );
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_cmp )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<8>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( ht );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_list_ordered_less )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 4, ht );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_less )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_list_ordered_cmpmix )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_cmpmix )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_list_ordered_stat )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cds::opt::stat< cc::hopscotch_hashmap::stat >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -202,15 +151,7 @@ namespace {
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_stat )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cds::opt::stat< cc::hopscotch_hashmap::stat >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<8>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -222,10 +163,10 @@ namespace {
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::list     probeset_type;
-            typedef cc::hopscotch_hashmap::stat     stat;
+            typedef cc::hopscotch_hashmap_ns::list     probeset_type;
+            typedef cc::hopscotch_hashmap_ns::stat     stat;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -237,46 +178,28 @@ namespace {
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to    equal_to;
-            typedef cc::hopscotch_hashmap::stat        stat;
-            typedef cc::hopscotch_hashmap::vector<4>   probeset_type;
+            typedef cc::hopscotch_hashmap_ns::stat        stat;
+            typedef cc::hopscotch_hashmap_ns::vector<4>   probeset_type;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        map_type m( 32, 4 );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_list_ordered_storehash )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            ,cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-                ,cc::hopscotch_hashmap::store_hash< true >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_storehash )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            ,cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-                ,cc::hopscotch_hashmap::store_hash< true >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 
@@ -286,14 +209,14 @@ namespace {
 
     TEST_F( HopscotchHashmap, refinable_list_unordered )
     {
-        struct map_traits: public cc::hopscotch_hashmap::traits
+        struct map_traits: public cc::hopscotch_hashmap_ns::traits
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::list probeset_type;
-            typedef cc::hopscotch_hashmap::refinable<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::list probeset_type;
+            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -301,128 +224,70 @@ namespace {
 
     TEST_F( HopscotchHashmap, refinable_vector_unordered )
     {
-        struct map_traits: public cc::hopscotch_hashmap::traits
+        struct map_traits: public cc::hopscotch_hashmap_ns::traits
         {
-            typedef cc::hopscotch_hashmap::refinable<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::vector<4> probeset_type;
+            typedef cc::hopscotch_hashmap_ns::vector<4> probeset_type;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        map_type m( 32, 4 );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_cmp )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        map_type m( 32, 6, 4 );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_cmp )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 >>
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<8>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( ht );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_less )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 4, ht );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_less )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_cmpmix )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_cmpmix )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_stat )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cds::opt::stat< cc::hopscotch_hashmap::stat >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -430,16 +295,7 @@ namespace {
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_stat )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            , cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cds::opt::stat< cc::hopscotch_hashmap::stat >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<8>>
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -449,13 +305,13 @@ namespace {
     {
         struct map_traits: public store_hash_traits
         {
-            typedef cc::hopscotch_hashmap::refinable<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
             typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap::list     probeset_type;
-            typedef cc::hopscotch_hashmap::stat     stat;
+            typedef cc::hopscotch_hashmap_ns::list     probeset_type;
+            typedef cc::hopscotch_hashmap_ns::stat     stat;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
         test( m );
@@ -466,50 +322,30 @@ namespace {
         struct map_traits: public store_hash_traits
         {
             typedef cds::opt::hash_tuple< hash1, hash2 > hash;
-            typedef cc::hopscotch_hashmap::refinable<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
             typedef base_class::equal_to    equal_to;
-            typedef cc::hopscotch_hashmap::stat        stat;
-            typedef cc::hopscotch_hashmap::vector<4>   probeset_type;
+            typedef cc::hopscotch_hashmap_ns::stat        stat;
+            typedef cc::hopscotch_hashmap_ns::vector<4>   probeset_type;
         };
-        typedef cc::HopscotchHashmap< key_type, value_type, map_traits > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        map_type m( 32, 4 );
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_storehash )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            ,cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
-                ,cc::hopscotch_hashmap::store_hash< true >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( 32, 6, 0, std::move( ht ));
+        map_type m();
         test( m );
     }
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_storehash )
     {
-        typedef cc::HopscotchHashmap< key_type, value_type
-            ,cc::hopscotch_hashmap::make_traits<
-                cds::opt::hash< std::tuple< hash1, hash2 > >
-                ,cds::opt::mutex_policy< cc::hopscotch_hashmap::refinable<>>
-                ,cds::opt::less< less >
-                ,cds::opt::compare< cmp >
-                ,cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<6>>
-                ,cc::hopscotch_hashmap::store_hash< true >
-            >::type
-        > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
-        typename map_type::hash_tuple_type ht;
-        map_type m( std::move( ht ));
+        map_type m();
         test( m );
     }
 

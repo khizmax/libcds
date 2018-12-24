@@ -304,11 +304,11 @@ namespace cds {
 							inserted = true;
 						}
 						else {
-							return make_pair(false, false);
+							return std::make_pair(false, false);
 						}
 					}
 					else {
-						return make_pair(false, false);
+						return std::make_pair(false, false);
 					}
 				}
 
@@ -333,7 +333,6 @@ namespace cds {
 						}
 						++check_bucket;
 					}
-					++try_counter;
 				} while (timestamp != start_bucket->_timestamp);
 
 				return make_pair(false, inserted);
