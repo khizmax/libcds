@@ -40,6 +40,7 @@ namespace cds { namespace container {
         std::atomic<int> thread_id_counter_;
         boost::thread_specific_ptr<int> thread_id_;
 
+        // Helper function to get index of thread
         int get_thread_id()
         {
             int* temp = thread_id_.get();

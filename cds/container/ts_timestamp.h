@@ -2,23 +2,11 @@
 #define CDSLIB_CONTAINER_TS_TIMESTAMP_H
 
 #include <atomic>
+#include <cds/compiler/ts_hardwaretimestamp.h>
 
 namespace cds { namespace container {
 
-    inline uint64_t get_hwptime(void)
-    {
-        uint64_t aux;
-        uint64_t rax, rdx;
-        asm volatile ("rdtscp\n" : "=a" (rax), "=d" (rdx), "=c" (aux) : : );
-        return (rdx << 32) + rax;
-    }
-
-    inline uint64_t get_hwtime(void)
-    {
-        unsigned int hi, lo;
-        __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
-        return ((uint64_t)lo) | (((uint64_t)hi) << 32);
-    }
+    using namespace cds::tshardwaretimestamp;
 
     class HardwareTimestamp
     {
@@ -54,12 +42,12 @@ namespace cds { namespace container {
 
         inline void set_timestamp(std::atomic<uint64_t> *result)
         {
-            result[0].store(get_hwptime());
+            result[0].store(platform::get_hwptime());
         }
 
         inline void read_time(uint64_t *result)
         {
-            result[0] = get_hwptime();
+            result[0] = platform::get_hwptime();
         }
 
         inline bool is_later(uint64_t *timestamp1, uint64_t *timestamp2)
@@ -111,17 +99,17 @@ namespace cds { namespace container {
 
         inline void set_timestamp(std::atomic<uint64_t> *result)
         {
-            result[0].store(get_hwptime());
-            uint64_t wait = get_hwtime() + delay_;
-            while (get_hwtime() < wait)
+            result[0].store(platform::get_hwptime());
+            uint64_t wait = platform::get_hwtime() + delay_;
+            while (platform::get_hwtime() < wait)
             {
             }
-            result[1].store(get_hwptime());
+            result[1].store(platform::get_hwptime());
         }
 
         inline void read_time(uint64_t *result)
         {
-            result[0] = get_hwptime();
+            result[0] = platform::get_hwptime();
             result[1] = result[0];
         }
 
