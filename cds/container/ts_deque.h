@@ -118,9 +118,6 @@ namespace cds { namespace container {
         bool insert_left(value_type element)
         {
             std::atomic<uint64_t> *item = buffer_->insert_left(element);
-            // In the set_timestamp operation first a new timestamp is acquired
-            // and then assigned to the item. The operation may not be executed
-            // atomically.
             timestamping_->set_timestamp(item);
             ++item_counter_;
             return true;
@@ -133,9 +130,6 @@ namespace cds { namespace container {
         bool insert_right(value_type element)
         {
             std::atomic<uint64_t> *item = buffer_->insert_right(element);
-            // In the set_timestamp operation first a new timestamp is acquired
-            // and then assigned to the item. The operation may not be executed
-            // atomically.
             timestamping_->set_timestamp(item);
             ++item_counter_;
             return true;
@@ -147,8 +141,6 @@ namespace cds { namespace container {
         */
         bool remove_left(value_type *element)
         {
-            // Read the invocation time of this operation, needed for the
-            // elimination optimization.
             uint64_t invocation_time[2];
             timestamping_->read_time(invocation_time);
             while (buffer_->try_remove_left(element, invocation_time))
@@ -159,7 +151,6 @@ namespace cds { namespace container {
                     return true;
                 }
             }
-            // The deque was empty, return false.
             return false;
         }
 
@@ -169,8 +160,6 @@ namespace cds { namespace container {
         */
         bool remove_right(value_type *element)
         {
-            // Read the invocation time of this operation, needed for the
-            // elimination optimization.
             uint64_t invocation_time[2];
             timestamping_->read_time(invocation_time);
             while (buffer_->try_remove_right(element, invocation_time))
@@ -181,7 +170,6 @@ namespace cds { namespace container {
                     return true;
                 }
             }
-            // The deque was empty, return false.
             return false;
         }
 
