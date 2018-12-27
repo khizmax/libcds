@@ -183,10 +183,10 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (pred(key, *(check_bucket->_key)) == 0) {
+							if (pred(key, (*(check_bucket->_key)).nKey) == 0) {
 								check_bucket->lock();
-								if (pred(key, *(check_bucket->_key)) == 0) {
-									f(std::make_pair(*(check_bucket->_key), *(check_bucket->_data)));
+								if (pred(key, (*(check_bucket->_key)).nKey) == 0) {
+									f(*(check_bucket->_data));
 									check_bucket->unlock();
 									return true;
 								}
