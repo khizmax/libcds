@@ -116,7 +116,7 @@ namespace cds {
 			bool contains(K const& key)
 			{	
 				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, [&](K const& one, K const& two) { return cmp(one, two); }, [](mapped_type&) {});
+				return find_with(key, [&](K const& one, KEY two) { return cmp(one, two); }, [](mapped_type&) {});
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -170,7 +170,7 @@ namespace cds {
 			template <typename K, typename Predicate, typename Func>
 			bool find_with(K const& key, Predicate pred, Func f)
 			{
-				std::size_t hash = calc_hash(key);
+				std::size_t hash = calc_hash((int)key);
 				Bucket* start_bucket = segments_arys + hash;
 				std::size_t timestamp;
 				do {
@@ -183,9 +183,9 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (pred(key, (*(check_bucket->_key)).nKey) == 0) {
+							if (pred(key, *(check_bucket->_key)) == 0) {
 								check_bucket->lock();
-								if (pred(key, (*(check_bucket->_key)).nKey) == 0) {
+								if (pred(key, *(check_bucket->_key)) == 0) {
 									f(*(check_bucket->_data));
 									check_bucket->unlock();
 									return true;

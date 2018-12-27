@@ -19,6 +19,11 @@ namespace cds_test {
         struct key_type {
             int nKey;
 
+			operator int() const
+			{
+				return nKey;
+			}
+
             explicit key_type( int n )
                 : nKey( n )
             {}
