@@ -19,15 +19,7 @@
 namespace cds {
 	namespace container {
 		template<class KEY, class DATA>
-		struct hopscotch_hashmap {
-
-			typedef KEY key_type;    ///< key type
-			typedef DATA mapped_type; ///< type of value stored in the map
-			typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
-
-			typedef cds::atomicity::item_counter item_counter;
-			item_counter m_item_counter;
-
+		class hopscotch_hashmap {
 		private:
 			static const int HOP_RANGE = 32;
 			static const int ADD_RANGE = 256;
@@ -89,6 +81,11 @@ namespace cds {
 
 		public:
 			static bool const c_isSorted = false; ///< whether the probe set should be ordered
+			typedef cds::atomicity::item_counter item_counter;
+			item_counter m_item_counter;
+			typedef KEY key_type;    ///< key type
+			typedef DATA mapped_type; ///< type of value stored in the map
+			typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
 
 			hopscotch_hashmap() {
 				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
@@ -105,18 +102,9 @@ namespace cds {
 				return size() == 0;
 			}
 
-			int size() {
+			size_t size() const 
+			{
 				return m_item_counter;
-				/*
-				unsigned int counter = 0;
-				const unsigned int num_elm(MAX_SEGMENTS + ADD_RANGE);
-				for (unsigned int iElm = 0; iElm < num_elm; ++iElm) {
-					if (Bucket::_empty_hop_info != (segments_arys + iElm)->_hop_info) {
-						counter += __popcnt((segments_arys + iElm)->_hop_info);
-					}
-				}
-				return counter;
-				*/
 			}
 
 			/// Checks whether the map contains \p key
@@ -128,7 +116,7 @@ namespace cds {
 			bool contains(K const& key)
 			{	
 				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, [&](K const& one, K const& two) { return cmp(one,two); }, [](mapped_type&) {});
+				return find_with(key, [&](K const& one, K const& two) { return cmp(one, two); }, [](mapped_type&) {});
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
