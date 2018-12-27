@@ -848,8 +848,8 @@ namespace cds_test {
     CDSSTRESS_RWQueue_1( test_fixture )
 
 #define CDSSTRESS_WilliamsQueue( test_fixture ) \
-     CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_default,      0 ) \
-     CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_ic,   1 )
+     CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_default) \
+     CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_ic)
 
 #define CDSSTRESS_SegmentedQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin         ) \
