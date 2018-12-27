@@ -80,7 +80,7 @@ namespace {
         test( m );
     }
 
-   TEST_F( HopscotchHashmap, striped_list_ordered_stat )
+    TEST_F( HopscotchHashmap, striped_list_ordered_stat )
     {
         typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
