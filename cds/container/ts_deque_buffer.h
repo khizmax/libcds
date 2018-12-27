@@ -36,7 +36,7 @@ namespace cds { namespace container {
             std::atomic<Item *> left;
             std::atomic<Item *> right;
             std::atomic<uint64_t> taken;
-            std::atomic<T> data;
+            std::atomic<T> data = {T()};
             std::atomic<uint64_t> timestamp[2];
             // Insertion index, needed for the termination condition in
             // get_left_item. Items inserted at the left get negative
@@ -56,7 +56,7 @@ namespace cds { namespace container {
 
         RandomEngine random_engine_;
 
-        std::atomic<int> thread_id_counter_;
+        uint64_t global_thread_id_counter_;
         boost::thread_specific_ptr<int> thread_id_;
 
         // Helper function to get index of thread
@@ -65,17 +65,7 @@ namespace cds { namespace container {
             int* temp = thread_id_.get();
             if (temp == NULL)
             {
-                int index = thread_id_counter_.load();
-                if(index >= num_threads_)
-                {
-                    return -1;
-                }
-
-                while(!thread_id_counter_.compare_exchange_strong(index, index + 1))
-                {
-                    index = thread_id_counter_.load();
-                }
-
+                int index = __sync_fetch_and_add(&global_thread_id_counter_, 1);
                 thread_id_.reset(new int (index));
                 return index;
             }
@@ -182,7 +172,7 @@ namespace cds { namespace container {
     public:
         TSDequeBuffer(uint64_t num_threads, TimeStamp *timestamping)
         {
-            thread_id_counter_.store(0);
+            global_thread_id_counter_ = 0;
 
             num_threads_ = num_threads;
             timestamping_ = timestamping;
@@ -205,7 +195,6 @@ namespace cds { namespace container {
                 // Add a sentinal node.
                 Item *new_item = new Item();
                 timestamping_->init_sentinel_atomic(new_item->timestamp);
-                new_item->data.store(0);
                 new_item->taken.store(1);
                 new_item->left.store(new_item);
                 new_item->right.store(new_item);
@@ -397,8 +386,10 @@ namespace cds { namespace container {
             }
         }
 
-        bool try_remove_left(T *element, uint64_t *invocation_time)
+        bool try_remove_left(T *element, uint64_t *invocation_time, bool *empty_check)
         {
+            *empty_check = false;
+
             // Initialize the data needed for the emptiness check.
             uint64_t thread_id = get_thread_id();
             Item **emptiness_check_left =
@@ -539,12 +530,14 @@ namespace cds { namespace container {
                 }
             }
 
-            element = NULL;
+            *empty_check = true;
             return !empty;
         }
 
-        bool try_remove_right(T *element, uint64_t *invocation_time)
+        bool try_remove_right(T *element, uint64_t *invocation_time, bool *empty_check)
         {
+            *empty_check = false;
+
             // Initialize the data needed for the emptiness check.
             uint64_t thread_id = get_thread_id();
             Item **emptiness_check_left =
@@ -665,7 +658,7 @@ namespace cds { namespace container {
                 }
             }
 
-            element = NULL;
+            *empty_check = true;
             return !empty;
         }
     };

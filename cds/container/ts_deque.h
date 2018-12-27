@@ -143,9 +143,10 @@ namespace cds { namespace container {
         {
             uint64_t invocation_time[2];
             timestamping_->read_time(invocation_time);
-            while (buffer_->try_remove_left(element, invocation_time))
+            bool empty;
+            while (buffer_->try_remove_left(element, invocation_time, &empty))
             {
-                if (element != NULL)
+                if (!empty)
                 {
                     --item_counter_;
                     return true;
@@ -162,9 +163,10 @@ namespace cds { namespace container {
         {
             uint64_t invocation_time[2];
             timestamping_->read_time(invocation_time);
-            while (buffer_->try_remove_right(element, invocation_time))
+            bool empty;
+            while (buffer_->try_remove_right(element, invocation_time, &empty))
             {
-                if (element != NULL)
+                if (!empty)
                 {
                     --item_counter_;
                     return true;
@@ -208,6 +210,14 @@ namespace cds { namespace container {
         {
             return item_counter_;
         }
+
+        //@cond
+        /// The class has no internal statistics. For test consistency only
+        std::nullptr_t statistics() const
+        {
+            return nullptr;
+        }
+        //@endcond
     };
 
 }}  // namespace cds::container
