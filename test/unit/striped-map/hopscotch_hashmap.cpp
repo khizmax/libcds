@@ -41,13 +41,13 @@ namespace {
     protected:
         typedef cds_test::container_map base_class;
 
-        template <typename Set>
-        void test( Set& m )
+        template <typename Map>
+        void test( Map& m )
         {
             // Precondition: set is empty
             // Postcondition: set is empty
 
-            base_class::test_< Set::c_isSorted>( m );
+            base_class::test_< Map::c_isSorted>( m );
         }
 
         //void SetUp()
@@ -77,67 +77,6 @@ namespace {
         typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_vector_unordered )
-    {
-        struct map_traits: public cc::hopscotch_hashmap_ns::traits
-        {
-            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
-            typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap_ns::vector<4> probeset_type;
-        };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_list_ordered_cmp )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_vector_ordered_cmp )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_list_ordered_less )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_vector_ordered_less )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_list_ordered_cmpmix )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_vector_ordered_cmpmix )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
         test( m );
     }
 
@@ -172,38 +111,6 @@ namespace {
         test( m );
     }
 
-    TEST_F( HopscotchHashmap, striped_vector_unordered_storehash )
-    {
-        struct map_traits: public store_hash_traits
-        {
-            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
-            typedef base_class::equal_to    equal_to;
-            typedef cc::hopscotch_hashmap_ns::stat        stat;
-            typedef cc::hopscotch_hashmap_ns::vector<4>   probeset_type;
-        };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_list_ordered_storehash )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, striped_vector_ordered_storehash )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-
 //************************************************************
 // refinable set
 
@@ -219,69 +126,6 @@ namespace {
         typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
 
         map_type m;
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_vector_unordered )
-    {
-        struct map_traits: public cc::hopscotch_hashmap_ns::traits
-        {
-            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
-            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
-            typedef base_class::equal_to equal_to;
-            typedef cc::hopscotch_hashmap_ns::vector<4> probeset_type;
-        };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_list_ordered_cmp )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_vector_ordered_cmp )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_list_ordered_less )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_vector_ordered_less )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_list_ordered_cmpmix )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_vector_ordered_cmpmix )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
         test( m );
     }
 
@@ -316,38 +160,5 @@ namespace {
         map_type m;
         test( m );
     }
-
-    TEST_F( HopscotchHashmap, refinable_vector_unordered_storehash )
-    {
-        struct map_traits: public store_hash_traits
-        {
-            typedef cds::opt::hash_tuple< hash1, hash2 > hash;
-            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
-            typedef base_class::equal_to    equal_to;
-            typedef cc::hopscotch_hashmap_ns::stat        stat;
-            typedef cc::hopscotch_hashmap_ns::vector<4>   probeset_type;
-        };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_list_ordered_storehash )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
-    TEST_F( HopscotchHashmap, refinable_vector_ordered_storehash )
-    {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
-
-        map_type m();
-        test( m );
-    }
-
 
 } // namespace

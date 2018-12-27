@@ -98,7 +98,7 @@ namespace cds {
 
 			~hopscotch_hashmap() {
 				std::free(BUSY);
-				std::free(segments_arys);
+				//std::free(segments_arys);
 			}
 
 			bool empty() {
