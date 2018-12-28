@@ -409,7 +409,7 @@ namespace cds {
 			bool insert_with(const K& key, Func func)
 			{
 				mapped_type def_val;
-				return insert_with(key, def_val, func);
+				return insert_with(key, def_val, [](mapped_type&) {});
 			}
 
 			/// Inserts new node
