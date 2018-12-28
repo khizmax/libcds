@@ -69,9 +69,13 @@ namespace cds {
 
 			Bucket* segments_arys;
 
-			template <typename K>
-			std::size_t calc_hash(K const& key) {
-				std::hash<K> hash_fn;
+			std::size_t calc_hash(std::string key) {
+				std::hash<std::string> hash_fn;
+				return hash_fn(key) % MAX_SEGMENTS;
+			}
+
+			std::size_t calc_hash(int key) {
+				std::hash<int> hash_fn;
 				return hash_fn(key) % MAX_SEGMENTS;
 			}
 
@@ -177,7 +181,7 @@ namespace cds {
 			template <typename K, typename Predicate, typename Func>
 			bool find_with(K const& key, Predicate pred, Func f)
 			{
-				std::size_t hash = calc_hash((int)key);
+				std::size_t hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				std::size_t timestamp;
 				do {
@@ -423,7 +427,7 @@ namespace cds {
 			bool insert_with(K const& key, V const& val, Func func)
 			{
 				int tmp_val = 1;
-				std::size_t hash = calc_hash((int)key);
+				std::size_t hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				start_bucket->lock();
 				if (contains(key)) {
