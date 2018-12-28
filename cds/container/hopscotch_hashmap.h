@@ -262,7 +262,7 @@ namespace cds {
 			std::pair<bool, bool> update(K const& key, Func func, bool bAllowInsert = true)
 			{
 				mapped_type def_val;
-				return update(key, def_val, func, bAllowInsert);
+				return update(key, def_val, [](DATA const&) {}, bAllowInsert);
 			}
 
 			template <typename K, typename V, typename Func>
@@ -324,17 +324,17 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (key == *(check_bucket->_key)) {
+							if ((check_bucket->_key)&&(key == *((K *)(check_bucket->_key)))) {
 								*(check_bucket->_data) = val;
 								func(*(check_bucket->_data));
-								return make_pair(true, inserted);
+								return std::make_pair(true, inserted);
 							}
 						}
 						++check_bucket;
 					}
 				} while (timestamp != start_bucket->_timestamp);
 
-				return make_pair(false, inserted);
+				return std::make_pair(false, inserted);
 			}
 
 			template<typename K, typename V>
