@@ -34,7 +34,7 @@ namespace cds {
 				DATA* _empty_data = NULL;
 
 				std::atomic<unsigned int> _hop_info;
-				KEY* _key;
+				void* _key;
 				DATA* _data;
 				std::atomic<unsigned int> _lock;
 				std::atomic<std::size_t> _timestamp;
@@ -190,10 +190,10 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if ((check_bucket->_key)&&(pred(key, *(check_bucket->_key)) == 0)) {
+							if (((KEY *)(check_bucket->_key))&&(pred(key, *((KEY *)(check_bucket->_key))) == 0)) {
 								check_bucket->lock();
-								if (pred(key, *(check_bucket->_key)) == 0) {
-									f(std::pair<key_type const, mapped_type>(*(check_bucket->_key), *(check_bucket->_data)));
+								if (pred(key, *((KEY *)(check_bucket->_key))) == 0) {
+									f(std::pair<key_type const, mapped_type>(*((KEY *)(check_bucket->_key)), *(check_bucket->_data)));
 									check_bucket->unlock();
 									return true;
 								}
@@ -434,8 +434,8 @@ namespace cds {
 				Bucket* free_bucket = start_bucket;
 				int free_distance = 0;
 				for (; free_distance < ADD_RANGE; ++free_distance) {
-					std::atomic<K *> _atomic = free_bucket->_key;
-					K* _null_key = free_bucket->_empty_key;
+					std::atomic<KEY *> _atomic = (KEY *)(free_bucket->_key);
+					KEY* _null_key = free_bucket->_empty_key;
 					if (_null_key == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
 						break;
 					}
@@ -449,7 +449,7 @@ namespace cds {
 							if(free_bucket->_data)
 								*(free_bucket->_data) = val;
 							if (free_bucket->_key)
-								*(free_bucket->_key) = key;
+								*((K *)(free_bucket->_key)) = key;
 							++m_item_counter;
 							start_bucket->unlock();
 							func(*(free_bucket->_data));
