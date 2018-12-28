@@ -97,7 +97,7 @@ namespace {
             >::type
         > deque_type;
 
-        deque_type dq(1, 1000);
+        deque_type dq(1, 100000);
         test( dq );
     }
 

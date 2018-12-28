@@ -9,6 +9,8 @@
 #include <cds/container/treiber_stack.h>
 #include <cds/container/fcstack.h>
 #include <cds/container/fcdeque.h>
+#include <cds/container/ts_deque.h>
+#include <cds/container/ts_timestamp.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -75,6 +77,44 @@ namespace stack {
             bool pop( T& v )
             {
                 return base_class::pop_back( v );
+            }
+        };
+
+        template <typename T, typename Timestamp, typename Traits=cds::container::tsdeque::traits>
+        class TSDequeL: public cds::container::TSDeque<T, Timestamp, Traits >
+        {
+            typedef cds::container::TSDeque<T, Timestamp, Traits > base_class;
+        public:
+            TSDequeL() : base_class( 9, 0 )
+            {}
+
+            bool push( T const& v )
+            {
+                return base_class::insert_left( v );
+            }
+
+            bool pop( T& v )
+            {
+                return base_class::remove_left( &v );
+            }
+        };
+
+        template <typename T, typename Timestamp, typename Traits=cds::container::tsdeque::traits>
+        class TSDequeR: public cds::container::TSDeque<T, Timestamp, Traits >
+        {
+            typedef cds::container::TSDeque<T, Timestamp, Traits > base_class;
+        public:
+            TSDequeR() : base_class( 9, 0 )
+            {}
+
+            bool push( T const& v )
+            {
+                return base_class::insert_right( v );
+            }
+
+            bool pop( T& v )
+            {
+                return base_class::remove_right( &v );
             }
         };
 
@@ -344,7 +384,7 @@ namespace stack {
         typedef cds::container::FCStack< T, std::stack<T, std::list<T> >, traits_FCStack_elimination > FCStack_list_elimination;
         typedef cds::container::FCStack< T, std::stack<T, std::list<T> >, traits_FCStack_elimination_stat > FCStack_list_elimination_stat;
 
-   // FCDeque
+    // FCDeque
         struct traits_FCDeque_stat:
             public cds::container::fcdeque::make_traits<
                 cds::opt::stat< cds::container::fcdeque::stat<> >
@@ -380,6 +420,19 @@ namespace stack {
         typedef details::FCDequeR< T, traits_FCDeque_elimination > FCDequeR_elimination;
         typedef details::FCDequeR< T, traits_FCDeque_elimination_stat > FCDequeR_elimination_stat;
 
+    // TSDeque
+        struct traits_TSDeque_item_counter:
+            public cds::container::tsdeque::make_traits<
+                cds::opt::item_counter< cds::atomicity::cache_friendly_item_counter >
+            >::type
+        {};
+
+        typedef details::TSDequeL< T, cds::container::HardwareTimestamp, traits_TSDeque_item_counter > TSDequeL_hardware_timestamp;
+        typedef details::TSDequeL< T, cds::container::HardwareIntervalTimestamp, traits_TSDeque_item_counter > TSDequeL_hardware_interval_timestamp;
+        typedef details::TSDequeL< T, cds::container::AtomicCounterTimestamp, traits_TSDeque_item_counter > TSDequeL_atomic_counter_timestamp;
+        typedef details::TSDequeR< T, cds::container::HardwareTimestamp, traits_TSDeque_item_counter > TSDequeR_hardware_timestamp;
+        typedef details::TSDequeR< T, cds::container::HardwareIntervalTimestamp, traits_TSDeque_item_counter > TSDequeR_hardware_interval_timestamp;
+        typedef details::TSDequeR< T, cds::container::AtomicCounterTimestamp, traits_TSDeque_item_counter > TSDequeR_atomic_counter_timestamp;
 
         // std::stack
         typedef details::StdStack< T, std::stack< T >, std::mutex >  StdStack_Deque_Mutex;
@@ -531,6 +584,10 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, FCDequeR_stat ) \
     CDSSTRESS_Stack_F( test_fixture, FCDequeR_elimination ) \
     CDSSTRESS_Stack_F( test_fixture, FCDequeR_elimination_stat )
+
+#define CDSSTRESS_TSDeque( test_fixture ) \
+    CDSSTRESS_Stack_F( test_fixture, TSDequeL_hardware_timestamp ) \
+    CDSSTRESS_Stack_F( test_fixture, TSDequeR_hardware_timestamp )
 
 #define CDSSTRESS_StdStack( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, StdStack_Deque_Mutex  ) \
