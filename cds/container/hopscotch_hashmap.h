@@ -525,7 +525,7 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool erase_with(K const& key, Predicate pred)
 			{
-				return erase_with(key, pred, [](value_type&) {});
+				return erase_with(key, pred, [](value_type) {});
 			}
 
 			/// Delete \p key from the map
@@ -548,8 +548,8 @@ namespace cds {
 			template <typename K, typename Func>
 			bool erase(K const& key, Func f)
 			{
-				cds_test::striped_map_fixture::equal_to cmp = cds_test::striped_map_fixture::equal_to();
-				return erase_with(key, [&](K const& one, K const& two) { return cmp(one, two); }, [](value_type&) {});
+				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
+				return erase_with(key, [&](K const& one, key_type two) { return cmp(one, two); }, [](value_type) {});
 			}
 
 			/// Deletes the item from the list using \p pred predicate for searching
@@ -572,8 +572,8 @@ namespace cds {
 				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
 					if (mask & hop_info) {
 						Bucket* check_bucket = start_bucket + i;
-						if (pred(key, *(check_bucket->_key)) == 0) {
-							f(value_type(*(check_bucket->_key), *(check_bucket->_data)));
+						if (pred(key, *((key_type *)(check_bucket->_key))) == 0) {
+							f(value_type(*((K *)(check_bucket->_key)), *(check_bucket->_data)));
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
 							start_bucket->_hop_info &= ~(1 << i);

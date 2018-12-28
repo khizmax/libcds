@@ -323,11 +323,11 @@ namespace cds_test {
                     }));
                     break;
                 case 7:
-                    ASSERT_TRUE( m.erase_with( other_item( i.nKey ), other_predicate(), []( map_pair& v ) {
+                    ASSERT_TRUE( m.erase_with( other_item( i.nKey ), other_predicate(), []( map_pair const& v ) {
                         EXPECT_EQ( v.first.nKey, v.second.nVal );
                         EXPECT_EQ( std::to_string( v.first.nKey ), v.second.strVal );
                     }));
-                    ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_predicate(), []( map_pair& ) {
+                    ASSERT_FALSE( m.erase_with( other_item( i.nKey ), other_predicate(), []( map_pair const& ) {
                         EXPECT_TRUE( false );
                     }));
                     break;
