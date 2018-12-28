@@ -49,12 +49,6 @@ namespace {
 
             base_class::test_< Map::c_isSorted>( m );
         }
-
-        //void SetUp()
-        //{}
-
-        //void TearDown()
-        //{}
     };
 
     struct store_hash_traits: public cc::hopscotch_hashmap_ns::traits

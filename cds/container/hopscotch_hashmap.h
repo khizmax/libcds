@@ -116,7 +116,9 @@ namespace cds {
 			bool contains(K const& key)
 			{	
 				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, [&](K const& one, KEY two) { return cmp(one, two); }, [](mapped_type&) {});
+				return find_with(key, 
+								 [&](K const& one, KEY two) { return cmp(one, two); }, 
+								 [](std::pair<key_type const, mapped_type> const&) {});
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -128,7 +130,7 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool contains(K const& key, Predicate pred)
 			{
-				return find_with(key, pred, [](mapped_type&) {});
+				return find_with(key, pred, [](std::pair<key_type const, mapped_type> const&) {});
 			}
 
 			/// Find the key \p key
@@ -151,13 +153,18 @@ namespace cds {
 			bool find_with(K const& key, Func f)
 			{
 				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, [&](K const& one, K const& two) { return cmp(one, two); }, f);
+				return find_with(key, 
+								 [&](K const& one, K const& two) { return cmp(one, two); }, 
+								 [](std::pair<key_type const, mapped_type> const&) {});
 			}
 
 			template <typename K, typename Predicate>
 			bool find(K const& key, Predicate pred)
 			{
-				return find_with(key, pred, [](mapped_type&) {});
+				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
+				return find_with(key, 
+								 [&](K const& one, KEY two) { return cmp(one, two); }, 
+								 [](std::pair<key_type const, mapped_type> const&) {});
 			}
 
 			template <typename K>
@@ -183,10 +190,10 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (pred(key, *(check_bucket->_key)) == 0) {
+							if ((check_bucket->_key)&&(pred(key, *(check_bucket->_key)) == 0)) {
 								check_bucket->lock();
 								if (pred(key, *(check_bucket->_key)) == 0) {
-									f(*(check_bucket->_data));
+									f(std::pair<key_type const, mapped_type>(*(check_bucket->_key), *(check_bucket->_data)));
 									check_bucket->unlock();
 									return true;
 								}
@@ -416,7 +423,7 @@ namespace cds {
 			bool insert_with(K const& key, V const& val, Func func)
 			{
 				int tmp_val = 1;
-				std::size_t hash = calc_hash(key);
+				std::size_t hash = calc_hash((int)key);
 				Bucket* start_bucket = segments_arys + hash;
 				start_bucket->lock();
 				if (contains(key)) {
@@ -428,7 +435,7 @@ namespace cds {
 				int free_distance = 0;
 				for (; free_distance < ADD_RANGE; ++free_distance) {
 					std::atomic<K *> _atomic = free_bucket->_key;
-					K* _null_key = Bucket::_empty_key;
+					K* _null_key = free_bucket->_empty_key;
 					if (_null_key == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
 						break;
 					}
@@ -439,8 +446,10 @@ namespace cds {
 					do {
 						if (free_distance < HOP_RANGE) {
 							start_bucket->_hop_info |= (1 << free_distance);
-							*(free_bucket->_data) = val;
-							*(free_bucket->_key) = key;
+							if(free_bucket->_data)
+								*(free_bucket->_data) = val;
+							if (free_bucket->_key)
+								*(free_bucket->_key) = key;
 							++m_item_counter;
 							start_bucket->unlock();
 							func(*(free_bucket->_data));
