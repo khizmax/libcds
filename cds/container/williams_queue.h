@@ -15,14 +15,6 @@
 #endif
 #define FMTDBGSTR(stream)  ((tostringstream&)(tostringstream() << tstring() << stream)).str().c_str()
 
-#if defined(__LP64__) || defined(_M_IA64)
-#else
-#define BITS_PTR 24
-#define BITS_COUNTER 8
-#define BITS_INTERNAL_COUNT 30
-#endif
-
-
 
 namespace cds {
     namespace container {
@@ -279,7 +271,6 @@ namespace cds {
             {
                 node_type * const ptr = old_node_ptr.get_ptr();
                 int const count_increase = old_node_ptr.get_external_count() - 2;
-                //old_node_ptr.set_external_count(old_node_ptr.get_external_count() - 2);
 
                 node_counter old_counter = ptr->m_count.load(atomics::memory_order_relaxed);
                 node_counter new_counter;
@@ -484,9 +475,6 @@ namespace cds {
                         free_external_counter(old_head);
                         --m_ItemCounter;
                         f(*res.get());
-                        //std::cout << old_head.get_external_count() << std::endl;
-                        //old_head.get_ptr()->m_count.load().external_counters;
-                        //old_head.get_ptr()->m_count.load().internal_count;
                         return true;
                     }
                     release_ref(p);
