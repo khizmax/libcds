@@ -194,7 +194,9 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if (((KEY *)(check_bucket->_key))&&(pred(key, *((KEY *)(check_bucket->_key))) == 0)) {
+							if (((KEY *)(check_bucket->_key))==NULL)
+								return true;
+							if (pred(key, *((KEY *)(check_bucket->_key))) == 0) {
 								check_bucket->lock();
 								if (pred(key, *((KEY *)(check_bucket->_key))) == 0) {
 									f(std::pair<key_type const, mapped_type>(*((KEY *)(check_bucket->_key)), *(check_bucket->_data)));
