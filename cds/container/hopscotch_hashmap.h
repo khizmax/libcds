@@ -326,7 +326,9 @@ namespace cds {
 						temp = temp >> i;
 
 						if (temp & 1) {
-							if ((check_bucket->_key)&&(key == *((K *)(check_bucket->_key)))) {
+							if (!check_bucket->_key)
+								return std::make_pair(true, inserted);
+							if (key == *((K *)(check_bucket->_key))) {
 								*(check_bucket->_data) = val;
 								func(*(check_bucket->_data));
 								return std::make_pair(true, inserted);
@@ -574,7 +576,7 @@ namespace cds {
 				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
 					if (mask & hop_info) {
 						Bucket* check_bucket = start_bucket + i;
-						if (pred(key, *((key_type *)(check_bucket->_key))) == 0) {
+						if ((check_bucket->_key)&&(pred(key, *((key_type *)(check_bucket->_key))) == 0)) {
 							f(value_type(*((K *)(check_bucket->_key)), *(check_bucket->_data)));
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
