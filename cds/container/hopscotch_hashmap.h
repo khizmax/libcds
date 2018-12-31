@@ -570,13 +570,26 @@ namespace cds {
 				size_t hash = calc_hash(key);
 				Bucket* start_bucket = segments_arys + hash;
 				start_bucket->lock();
+				if (!contains(key)) {
+					start_bucket->unlock();
+					return false;
+				}
 
 				unsigned int hop_info = start_bucket->_hop_info;
 				unsigned int mask = 1;
 				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
 					if (mask & hop_info) {
 						Bucket* check_bucket = start_bucket + i;
-						if ((check_bucket->_key)&&(pred(key, *((key_type *)(check_bucket->_key))) == 0)) {
+						if (!check_bucket->_key)
+						{
+							check_bucket->_key = NULL;
+							check_bucket->_data = NULL;
+							start_bucket->_hop_info &= ~(1 << i);
+							start_bucket->unlock();
+							--m_item_counter;
+							return true;
+						}
+						if (pred(key, *((key_type *)(check_bucket->_key))) == 0) {
 							f(value_type(*((K *)(check_bucket->_key)), *(check_bucket->_data)));
 							check_bucket->_key = NULL;
 							check_bucket->_data = NULL;
