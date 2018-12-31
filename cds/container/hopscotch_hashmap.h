@@ -70,8 +70,8 @@ namespace cds {
 			Bucket* segments_arys;
 
 			std::size_t calc_hash(std::string key) {
-				std::hash<std::string> hash_fn;
-				return hash_fn(key) % MAX_SEGMENTS;
+				std::hash<int> hash_fn;
+				return hash_fn(std::stoi(key)) % MAX_SEGMENTS;
 			}
 
 			std::size_t calc_hash(int key) {
