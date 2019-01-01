@@ -49,11 +49,7 @@ namespace map {
     public:
         template <typename Config>
         HopscotchHashmap( Config const& cfg )
-            : base_class(
-                cfg.s_nHopscotchInitialSize,
-                static_cast<unsigned int>( cfg.s_nHopscotchProbesetSize ),
-                static_cast<unsigned int>( cfg.s_nHopscotchProbesetThreshold )
-            )
+            : base_class()
         {}
 
         template <typename Q, typename Pred>
