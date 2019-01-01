@@ -32,17 +32,19 @@
 #define CDSUNIT_MAP_TYPE_HOPSCOTCH_H
 
 #include "map_type.h"
+#include <test/unit/striped-map/test_map.h>
+#include <cds/container/details/hopscotch_hashmap_base.h>
 #include <cds/container/hopscotch_hashmap.h>
 #include <cds_test/stat_hopscotch_out.h>
 #include <cds_test/hash_func.h>
 
 namespace map {
 
-    template <typename K, typename V, typename Traits>
-    class HopscotchHashmap: public cc::HopscotchHashmap< K, V, Traits >
+    template <typename K, typename V>
+    class HopscotchHashmap: public cc::hopscotch_hashmap< K, V >
     {
     public:
-        typedef cc::HopscotchHashmap< K, V, Traits > base_class;
+        typedef cc::hopscotch_hashmap< K, V > base_class;
 
     public:
         template <typename Config>
@@ -55,7 +57,7 @@ namespace map {
         {}
 
         template <typename Q, typename Pred>
-        bool erase_with( Q const& key, Pred /*pred*/ )
+        bool erase_with( Q const& key, Pred  )
         {
             return base_class::erase_with( key, typename std::conditional< base_class::c_isSorted, Pred, typename Pred::equal_to>::type());
         }
@@ -81,109 +83,109 @@ namespace map {
         template <typename Traits>
         struct traits_HopscotchStripedMap: public Traits
         {
-            typedef cc::hopscotch_hashmap::striping<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::striping<> mutex_policy;
         };
         template <typename Traits>
         struct traits_HopscotchRefinableMap : public Traits
         {
-            typedef cc::hopscotch_hashmap::refinable<> mutex_policy;
+            typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
         };
 
         struct traits_HopscotchHashmap_list_unord :
-            public cc::hopscotch_hashmap::make_traits <
-                cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
+            public cc::hopscotch_hashmap_ns::make_traits <
+                cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
                 , co::equal_to< equal_to >
                 , co::hash< std::tuple< hash, hash2 > >
             > ::type
         {};
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_unord>> HopscotchStripedMap_list_unord;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_unord>> HopscotchRefinableMap_list_unord;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_unord;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_unord;
 
         struct traits_HopscotchHashmap_list_unord_stat : public traits_HopscotchHashmap_list_unord
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_unord_stat>> HopscotchStripedMap_list_unord_stat;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_unord_stat>> HopscotchRefinableMap_list_unord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_unord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_unord_stat;
 
         struct traits_HopscotchHashmap_list_unord_storehash : public traits_HopscotchHashmap_list_unord
         {
             static constexpr const bool store_hash = true;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_unord_storehash>> HopscotchStripedMap_list_unord_storehash;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_unord_storehash>> HopscotchRefinableMap_list_unord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_unord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_unord_storehash;
 
         struct traits_HopscotchHashmap_list_ord :
-            public cc::hopscotch_hashmap::make_traits <
-                cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
+            public cc::hopscotch_hashmap_ns::make_traits <
+                cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
                 , co::compare< compare >
                 , co::hash< std::tuple< hash, hash2 > >
             >::type
         {};
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_ord>> HopscotchStripedMap_list_ord;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_ord>> HopscotchRefinableMap_list_ord;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_ord;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_ord;
 
         struct traits_HopscotchHashmap_list_ord_stat : public traits_HopscotchHashmap_list_ord
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_ord_stat>> HopscotchStripedMap_list_ord_stat;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_ord_stat>> HopscotchRefinableMap_list_ord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_ord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_ord_stat;
 
         struct traits_HopscotchHashmap_list_ord_storehash : public traits_HopscotchHashmap_list_ord
         {
             static constexpr const bool store_hash = true;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_ord_storehash>> HopscotchStripedMap_list_ord_storehash;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_ord_storehash>> HopscotchRefinableMap_list_ord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_list_ord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_list_ord_storehash;
 
         struct traits_HopscotchHashmap_vector_unord :
-            public cc::hopscotch_hashmap::make_traits <
-                cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<4> >
+            public cc::hopscotch_hashmap_ns::make_traits <
+                cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<4> >
                 , co::equal_to< equal_to >
                 , co::hash< std::tuple< hash, hash2 > >
             >::type
         {};
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_unord>> HopscotchStripedMap_vector_unord;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_unord>> HopscotchRefinableMap_vector_unord;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_unord;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_unord;
 
         struct traits_HopscotchHashmap_vector_unord_stat : public traits_HopscotchHashmap_vector_unord
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_unord_stat>> HopscotchStripedMap_vector_unord_stat;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_unord_stat>> HopscotchRefinableMap_vector_unord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_unord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_unord_stat;
 
         struct traits_HopscotchHashmap_vector_unord_storehash : public traits_HopscotchHashmap_vector_unord
         {
             static constexpr const bool store_hash = true;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_unord_storehash>> HopscotchStripedMap_vector_unord_storehash;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_unord_storehash>> HopscotchRefinableMap_vector_unord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_unord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_unord_storehash;
 
         struct traits_HopscotchHashmap_vector_ord :
-            public cc::hopscotch_hashmap::make_traits <
-                cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<4> >
+            public cc::hopscotch_hashmap_ns::make_traits <
+                cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<4> >
                 , co::compare< compare >
                 , co::hash< std::tuple< hash, hash2 > >
             >::type
         {};
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_ord>> HopscotchStripedMap_vector_ord;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_ord>> HopscotchRefinableMap_vector_ord;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_ord;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_ord;
 
         struct traits_HopscotchHashmap_vector_ord_stat : public traits_HopscotchHashmap_vector_ord
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_ord_stat>> HopscotchStripedMap_vector_ord_stat;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_ord_stat>> HopscotchRefinableMap_vector_ord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_ord_stat;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_ord_stat;
 
         struct traits_HopscotchHashmap_vector_ord_storehash : public traits_HopscotchHashmap_vector_ord
         {
             static constexpr const bool store_hash = true;
         };
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_ord_storehash>> HopscotchStripedMap_vector_ord_storehash;
-        typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_ord_storehash>> HopscotchRefinableMap_vector_ord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchStripedMap_vector_ord_storehash;
+        typedef HopscotchHashmap< Key, Value > HopscotchRefinableMap_vector_ord_storehash;
 
 #if CDS_BUILD_BITS == 64
 
@@ -286,13 +288,13 @@ namespace map {
     };
 
     template <typename Key, typename T, typename Traits >
-    static inline void print_stat( cds_test::property_stream& o, cc::HopscotchHashmap< Key, T, Traits > const& s )
+    static inline void print_stat( cds_test::property_stream& o, cc::hopscotch_hashmap< Key, T > const& s )
     {
         o << s.statistics() << s.mutex_policy_statistics();
     }
 
     template <typename Key, typename V, typename Traits>
-    static inline void print_stat( cds_test::property_stream& o, HopscotchHashmap< Key, V, Traits > const& s )
+    static inline void print_stat( cds_test::property_stream& o, HopscotchHashmap< Key, V > const& s )
     {
         typedef HopscotchHashmap< Key, V, Traits > map_type;
         print_stat( o, static_cast<typename map_type::base_class const&>(s));

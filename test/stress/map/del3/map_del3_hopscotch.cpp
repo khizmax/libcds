@@ -32,7 +32,6 @@
 #include "map_type_hopscotch.h"
 
 namespace map {
-
     CDSSTRESS_HopscotchHashmap( Map_Del3, run_test, key_thread, size_t )
 
 } // namespace map
