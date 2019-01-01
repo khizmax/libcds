@@ -304,7 +304,7 @@ namespace map {
 
 
 #define CDSSTRESS_HopscotchHashmap_case( fixture, test_case, hopscotch_hashmap_type, key_type, value_type ) \
-    TEST_F( fixture, hopscotch_map_type ) \
+    TEST_F( fixture, hopscotch_hashmap_type ) \
     { \
         typedef map::map_type< tag_HopscotchHashmap, key_type, value_type >::hopscotch_hashmap_type map_type; \
         test_case<map_type>(); \
