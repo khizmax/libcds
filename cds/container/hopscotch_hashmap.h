@@ -152,6 +152,7 @@ namespace cds {
 			};
 			typedef intrusive::HopscotchHashset< node_type, intrusive_traits > base_class;
 			typedef typename base_class::stat stat; ///< internal statistics type
+			typedef typename base_class::mutex_policy mutex_policy; ///< Concurrent access policy, see hopscotch_hashmap_ns::traits::mutex_policy
 
 			hopscotch_hashmap() {
 				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
@@ -168,6 +169,12 @@ namespace cds {
 			stat const& statistics() const
 			{
 				return base_class::statistics();
+			}
+
+			/// Returns const reference to mutex policy internal statistics
+			typename mutex_policy::statistics_type const& mutex_policy_statistics() const
+			{
+				return base_class::mutex_policy_statistics();
 			}
 
 			bool empty() {
