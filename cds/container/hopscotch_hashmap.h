@@ -18,7 +18,7 @@
 
 namespace cds {
 	namespace container {
-		template<class KEY, class DATA>
+		template<class KEY, class DATA, typename Traits = hopscotch_hashmap_ns::traits>
 		class hopscotch_hashmap {
 		private:
 			static const int HOP_RANGE = 32;
