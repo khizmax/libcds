@@ -15,6 +15,7 @@
 #include <mutex>
 #include <cstdlib>
 #include <cds/opt/compare.h>
+#include <cds/details/binary_functor_wrapper.h>
 
 namespace cds {
 	namespace container {
@@ -87,9 +88,70 @@ namespace cds {
 			static bool const c_isSorted = false; ///< whether the probe set should be ordered
 			typedef cds::atomicity::item_counter item_counter;
 			item_counter m_item_counter;
-			typedef KEY key_type;    ///< key type
+			typedef KEY key_type; ///< key type
 			typedef DATA mapped_type; ///< type of value stored in the map
-			typedef std::pair<key_type const, mapped_type>   value_type;   ///< Pair type
+			typedef std::pair<key_type const, mapped_type> value_type; ///< Pair type
+			typedef Traits original_traits;
+			typedef typename original_traits::probeset_type probeset_type;
+			static bool const store_hash = original_traits::store_hash;
+			static unsigned int const store_hash_count = store_hash ? ((unsigned int)std::tuple_size< typename original_traits::hash::hash_tuple_type >::value) : 0;
+			struct node_type : public intrusive::hopscotch_hashset::node<probeset_type, store_hash_count>
+			{
+				value_type  m_val;
+
+				template <typename K>
+				node_type(K const& key)
+					: m_val(std::make_pair(key_type(key), mapped_type()))
+				{}
+
+				template <typename K, typename Q>
+				node_type(K const& key, Q const& v)
+					: m_val(std::make_pair(key_type(key), mapped_type(v)))
+				{}
+
+				template <typename K, typename... Args>
+				node_type(K&& key, Args&&... args)
+					: m_val(std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)))
+				{}
+			};
+			struct key_accessor 
+			{
+				key_type const& operator()(node_type const& node) const
+				{
+					return node.m_val.first;
+				}
+			};
+			struct intrusive_traits : public original_traits
+			{
+				typedef intrusive::hopscotch_hashset::base_hook<
+					cds::intrusive::hopscotch_hashset::probeset_type< probeset_type >
+					, cds::intrusive::hopscotch_hashset::store_hash< store_hash_count >
+				>  hook;
+
+				typedef cds::intrusive::hopscotch_hashset::traits::disposer   disposer;
+
+				typedef typename std::conditional<
+					std::is_same< typename original_traits::equal_to, opt::none >::value
+					, opt::none
+					, cds::details::predicate_wrapper< node_type, typename original_traits::equal_to, key_accessor >
+				>::type equal_to;
+
+				typedef typename std::conditional<
+					std::is_same< typename original_traits::compare, opt::none >::value
+					, opt::none
+					, cds::details::compare_wrapper< node_type, typename original_traits::compare, key_accessor >
+				>::type compare;
+
+				typedef typename std::conditional<
+					std::is_same< typename original_traits::less, opt::none >::value
+					, opt::none
+					, cds::details::predicate_wrapper< node_type, typename original_traits::less, key_accessor >
+				>::type less;
+
+				typedef opt::details::hash_list_wrapper< typename original_traits::hash, node_type, key_accessor > hash;
+			};
+			typedef intrusive::HopscotchHashset< node_type, intrusive_traits > base_class;
+			typedef typename base_class::stat stat; ///< internal statistics type
 
 			hopscotch_hashmap() {
 				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
@@ -100,6 +162,12 @@ namespace cds {
 			~hopscotch_hashmap() {
 				std::free(BUSY);
 				//std::free(segments_arys);
+			}
+
+			/// Returns const reference to internal statistics
+			stat const& statistics() const
+			{
+				return base_class::statistics();
 			}
 
 			bool empty() {

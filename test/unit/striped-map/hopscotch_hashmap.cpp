@@ -68,7 +68,7 @@ namespace {
             typedef base_class::equal_to equal_to;
             typedef cc::hopscotch_hashmap_ns::list probeset_type;
         };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type, map_traits > map_type;
 
         map_type m;
         test( m );
@@ -76,7 +76,15 @@ namespace {
 
     TEST_F( HopscotchHashmap, striped_list_ordered_stat )
     {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+		typedef cc::hopscotch_hashmap< key_type, value_type
+			, cc::hopscotch_hashmap_ns::make_traits<
+			cds::opt::hash< std::tuple< hash1, hash2 > >
+			, cds::opt::less< less >
+			, cds::opt::compare< cmp >
+			, cds::opt::stat< cc::hopscotch_hashmap_ns::stat >
+			, cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
+			>::type
+		> map_type;
 
         map_type m;
         test( m );
@@ -84,7 +92,15 @@ namespace {
 
     TEST_F( HopscotchHashmap, striped_vector_ordered_stat )
     {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+		typedef cc::hopscotch_hashmap< key_type, value_type
+			, cc::hopscotch_hashmap_ns::make_traits<
+			cds::opt::hash< std::tuple< hash1, hash2 > >
+			, cds::opt::less< less >
+			, cds::opt::compare< cmp >
+			, cds::opt::stat< cc::hopscotch_hashmap_ns::stat >
+			, cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<8>>
+			>::type
+		> map_type;
 
         map_type m;
         test( m );
@@ -99,7 +115,7 @@ namespace {
             typedef cc::hopscotch_hashmap_ns::list     probeset_type;
             typedef cc::hopscotch_hashmap_ns::stat     stat;
         };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type, map_traits > map_type;
 
         map_type m;
         test( m );
@@ -117,7 +133,7 @@ namespace {
             typedef cc::hopscotch_hashmap_ns::list probeset_type;
             typedef cc::hopscotch_hashmap_ns::refinable<> mutex_policy;
         };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type, map_traits > map_type;
 
         map_type m;
         test( m );
@@ -125,7 +141,16 @@ namespace {
 
     TEST_F( HopscotchHashmap, refinable_list_ordered_stat )
     {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+		typedef cc::hopscotch_hashmap< key_type, value_type
+			, cc::hopscotch_hashmap_ns::make_traits<
+			cds::opt::hash< std::tuple< hash1, hash2 > >
+			, cds::opt::mutex_policy< cc::hopscotch_hashmap_ns::refinable<>>
+			, cds::opt::less< less >
+			, cds::opt::compare< cmp >
+			, cds::opt::stat< cc::hopscotch_hashmap_ns::stat >
+			, cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
+			>::type
+		> map_type;
 
         map_type m;
         test( m );
@@ -133,7 +158,16 @@ namespace {
 
     TEST_F( HopscotchHashmap, refinable_vector_ordered_stat )
     {
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+		typedef cc::hopscotch_hashmap< key_type, value_type
+			, cc::hopscotch_hashmap_ns::make_traits<
+			cds::opt::hash< std::tuple< hash1, hash2 > >
+			, cds::opt::mutex_policy< cc::hopscotch_hashmap_ns::refinable<>>
+			, cds::opt::less< less >
+			, cds::opt::compare< cmp >
+			, cds::opt::stat< cc::hopscotch_hashmap_ns::stat >
+			, cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<8>>
+			>::type
+		> map_type;
 
         map_type m;
         test( m );
@@ -149,7 +183,7 @@ namespace {
             typedef cc::hopscotch_hashmap_ns::list     probeset_type;
             typedef cc::hopscotch_hashmap_ns::stat     stat;
         };
-        typedef cc::hopscotch_hashmap< key_type, value_type > map_type;
+        typedef cc::hopscotch_hashmap< key_type, value_type, map_traits > map_type;
 
         map_type m;
         test( m );

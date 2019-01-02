@@ -284,16 +284,16 @@ namespace map {
     };
 
     template <typename Key, typename T, typename Traits >
-    static inline void print_stat( cds_test::property_stream& o, cc::hopscotch_hashmap< Key, T, Traits > const& s )
+    static inline void print_stat( cds_test::property_stream& o, cc::hopscotch_hashmap< Key, T, Traits > const& m )
     {
-        o << s.statistics() << s.mutex_policy_statistics();
+        o << m.statistics() << m.mutex_policy_statistics();
     }
 
     template <typename Key, typename V, typename Traits>
-    static inline void print_stat( cds_test::property_stream& o, HopscotchHashmap< Key, V, Traits > const& s )
+    static inline void print_stat( cds_test::property_stream& o, HopscotchHashmap< Key, V, Traits > const& m )
     {
         typedef HopscotchHashmap< Key, V, Traits > map_type;
-        print_stat( o, static_cast<typename map_type::base_class const&>(s));
+        print_stat( o, static_cast<typename map_type::base_class const&>(m));
     }
 
 }   // namespace map
