@@ -19,13 +19,90 @@
 
 namespace cds {
 	namespace container {
+
+		//@cond
+		namespace details {
+			template <typename KEY, typename DATA, typename Traits>
+			struct make_hopscotch_map
+			{
+				typedef KEY key_type; ///< key type
+				typedef DATA   mapped_type; ///< type of value stored in the map
+				typedef std::pair<key_type const, mapped_type> value_type; ///< Pair type
+
+				typedef Traits original_traits;
+				typedef typename original_traits::probeset_type probeset_type;
+				static bool const store_hash = original_traits::store_hash;
+				static unsigned int const store_hash_count = store_hash ? ((unsigned int)std::tuple_size< typename original_traits::hash::hash_tuple_type >::value) : 0;
+
+				struct node_type : public intrusive::hopscotch_hashset::node<probeset_type, store_hash_count>
+				{
+					value_type  m_val;
+
+					template <typename K>
+					node_type(K const& key)
+						: m_val(std::make_pair(key_type(key), mapped_type()))
+					{}
+
+					template <typename K, typename Q>
+					node_type(K const& key, Q const& v)
+						: m_val(std::make_pair(key_type(key), mapped_type(v)))
+					{}
+
+					template <typename K, typename... Args>
+					node_type(K&& key, Args&&... args)
+						: m_val(std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)))
+					{}
+				};
+
+				struct key_accessor {
+					key_type const& operator()(node_type const& node) const
+					{
+						return node.m_val.first;
+					}
+				};
+
+				struct intrusive_traits : public original_traits
+				{
+					typedef intrusive::hopscotch_hashset::base_hook<
+						cds::intrusive::hopscotch_hashset::probeset_type< probeset_type >
+						, cds::intrusive::hopscotch_hashset::store_hash< store_hash_count >
+					>  hook;
+
+					typedef cds::intrusive::hopscotch_hashset::traits::disposer   disposer;
+
+					typedef typename std::conditional<
+						std::is_same< typename original_traits::equal_to, opt::none >::value
+						, opt::none
+						, cds::details::predicate_wrapper< node_type, typename original_traits::equal_to, key_accessor >
+					>::type equal_to;
+
+					typedef typename std::conditional<
+						std::is_same< typename original_traits::compare, opt::none >::value
+						, opt::none
+						, cds::details::compare_wrapper< node_type, typename original_traits::compare, key_accessor >
+					>::type compare;
+
+					typedef typename std::conditional<
+						std::is_same< typename original_traits::less, opt::none >::value
+						, opt::none
+						, cds::details::predicate_wrapper< node_type, typename original_traits::less, key_accessor >
+					>::type less;
+
+					typedef opt::details::hash_list_wrapper< typename original_traits::hash, node_type, key_accessor >    hash;
+				};
+
+				typedef intrusive::HopscotchHashset< node_type, intrusive_traits > type;
+			};
+		}   // namespace details
+		//@endcond
+
 		template<class KEY, class DATA, typename Traits = hopscotch_hashmap_ns::traits>
-		class hopscotch_hashmap {
+		class hopscotch_hashmap : protected details::make_hopscotch_map<KEY, DATA, Traits>::type
+		{
 		private:
 			static const int HOP_RANGE = 32;
 			static const int ADD_RANGE = 256;
 			static const int MAX_SEGMENTS = 1048576;
-			//static const int MAX_TRIES = 2;
 			KEY* BUSY;
 			DATA* BUSYD;
 			struct Bucket {
@@ -91,78 +168,23 @@ namespace cds {
 			typedef KEY key_type; ///< key type
 			typedef DATA mapped_type; ///< type of value stored in the map
 			typedef std::pair<key_type const, mapped_type> value_type; ///< Pair type
-			typedef Traits original_traits;
-			typedef typename original_traits::probeset_type probeset_type;
-			static bool const store_hash = original_traits::store_hash;
-			static unsigned int const store_hash_count = store_hash ? ((unsigned int)std::tuple_size< typename original_traits::hash::hash_tuple_type >::value) : 0;
-			struct node_type : public intrusive::hopscotch_hashset::node<probeset_type, store_hash_count>
-			{
-				value_type  m_val;
-
-				template <typename K>
-				node_type(K const& key)
-					: m_val(std::make_pair(key_type(key), mapped_type()))
-				{}
-
-				template <typename K, typename Q>
-				node_type(K const& key, Q const& v)
-					: m_val(std::make_pair(key_type(key), mapped_type(v)))
-				{}
-
-				template <typename K, typename... Args>
-				node_type(K&& key, Args&&... args)
-					: m_val(std::forward<K>(key), std::move(mapped_type(std::forward<Args>(args)...)))
-				{}
-			};
-			struct key_accessor 
-			{
-				key_type const& operator()(node_type const& node) const
-				{
-					return node.m_val.first;
-				}
-			};
-			struct intrusive_traits : public original_traits
-			{
-				typedef intrusive::hopscotch_hashset::base_hook<
-					cds::intrusive::hopscotch_hashset::probeset_type< probeset_type >
-					, cds::intrusive::hopscotch_hashset::store_hash< store_hash_count >
-				>  hook;
-
-				typedef cds::intrusive::hopscotch_hashset::traits::disposer   disposer;
-
-				typedef typename std::conditional<
-					std::is_same< typename original_traits::equal_to, opt::none >::value
-					, opt::none
-					, cds::details::predicate_wrapper< node_type, typename original_traits::equal_to, key_accessor >
-				>::type equal_to;
-
-				typedef typename std::conditional<
-					std::is_same< typename original_traits::compare, opt::none >::value
-					, opt::none
-					, cds::details::compare_wrapper< node_type, typename original_traits::compare, key_accessor >
-				>::type compare;
-
-				typedef typename std::conditional<
-					std::is_same< typename original_traits::less, opt::none >::value
-					, opt::none
-					, cds::details::predicate_wrapper< node_type, typename original_traits::less, key_accessor >
-				>::type less;
-
-				typedef opt::details::hash_list_wrapper< typename original_traits::hash, node_type, key_accessor > hash;
-			};
-			typedef intrusive::HopscotchHashset< node_type, intrusive_traits > base_class;
+			//@cond
+			typedef details::make_hopscotch_map<KEY, DATA, Traits> maker;
+			typedef typename maker::type base_class;
+			//@endcond
 			typedef typename base_class::stat stat; ///< internal statistics type
 			typedef typename base_class::mutex_policy mutex_policy; ///< Concurrent access policy, see hopscotch_hashmap_ns::traits::mutex_policy
 
-			hopscotch_hashmap() {
+			hopscotch_hashmap() 
+			{
 				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
 				m_item_counter.reset();
 				BUSY = (KEY*)std::malloc(sizeof(KEY));
 			}
 
-			~hopscotch_hashmap() {
+			~hopscotch_hashmap() 
+			{
 				std::free(BUSY);
-				//std::free(segments_arys);
 			}
 
 			/// Returns const reference to internal statistics
