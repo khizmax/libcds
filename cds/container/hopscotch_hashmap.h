@@ -256,10 +256,7 @@ namespace cds {
 			template <typename K>
 			bool contains(K const& key)
 			{	
-				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, 
-								 [&](K const& one, KEY two) { return cmp(one, two); }, 
-								 [](std::pair<key_type const, mapped_type> const&) {});
+				return base_class::contains(key);
 			}
 
 			/// Checks whether the map contains \p key using \p pred predicate for searching
@@ -400,8 +397,14 @@ namespace cds {
 			template <typename K, typename Func>
 			std::pair<bool, bool> update(K const& key, Func func, bool bAllowInsert = true)
 			{
-				mapped_type def_val;
-				return update(key, def_val, [](DATA const&) {}, bAllowInsert);
+				scoped_node_ptr pNode(alloc_node(key));
+				std::pair<bool, bool> res = base_class::update(*pNode,
+					[&func](bool bNew, node_type& item, node_type const&) { func(bNew, item.m_val); },
+					bAllowInsert
+				);
+				if (res.first && res.second)
+					pNode.release();
+				return res;
 			}
 
 			template <typename K, typename V, typename Func>
