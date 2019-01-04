@@ -217,14 +217,11 @@ namespace cds {
 
 			hopscotch_hashmap() 
 			{
-				segments_arys = new Bucket[MAX_SEGMENTS + ADD_RANGE];
-				m_item_counter.reset();
-				BUSY = (KEY*)std::malloc(sizeof(KEY));
 			}
 
 			~hopscotch_hashmap() 
 			{
-				std::free(BUSY);
+				clear();
 			}
 
 			/// Returns const reference to internal statistics
@@ -239,13 +236,14 @@ namespace cds {
 				return base_class::mutex_policy_statistics();
 			}
 
-			bool empty() {
-				return size() == 0;
+			bool empty() 
+			{
+				return base_class::empty();
 			}
 
 			size_t size() const 
 			{
-				return m_item_counter;
+				return base_class::size();
 			}
 
 			/// Checks whether the map contains \p key
@@ -268,7 +266,8 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool contains(K const& key, Predicate pred)
 			{
-				return find_with(key, pred, [](std::pair<key_type const, mapped_type> const&) {});
+				CDS_UNUSED(pred);
+				return base_class::contains(key);
 			}
 
 			/// Find the key \p key
@@ -290,66 +289,26 @@ namespace cds {
 			template <typename K, typename Func>
 			bool find_with(K const& key, Func f)
 			{
-				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, 
-								 [&](K const& one, K const& two) { return cmp(one, two); }, 
-								 [](std::pair<key_type const, mapped_type> const&) {});
+				return contains(key, f);
 			}
 
 			template <typename K, typename Predicate>
 			bool find(K const& key, Predicate pred)
 			{
-				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, 
-								 [&](K const& one, KEY two) { return cmp(one, two); }, 
-								 [](std::pair<key_type const, mapped_type> const&) {});
+				return base_class::find(key, [&pred](node_type& item, K const&) { pred(item.m_val); });
 			}
 
 			template <typename K>
 			bool find(K const& key)
 			{
-				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return find_with(key, [&](K const& one, K const& two) { return cmp(one, two); }, [](mapped_type&) {});
+				return contains(key);
 			}
 
 			template <typename K, typename Predicate, typename Func>
 			bool find_with(K const& key, Predicate pred, Func f)
 			{
-				std::size_t hash = calc_hash(key);
-				Bucket* start_bucket = segments_arys + hash;
-				std::size_t timestamp;
-				do {
-					timestamp = start_bucket->_timestamp;
-					unsigned int hop_info = start_bucket->_hop_info;
-					Bucket* check_bucket = start_bucket;
-					unsigned int temp;
-					for (int i = 0; i < HOP_RANGE; i++) {
-						temp = hop_info;
-						temp = temp >> i;
-
-						if (temp & 1) {
-							if (((KEY *)(check_bucket->_key))==NULL)
-								return true;
-							if (pred(key, *((KEY *)(check_bucket->_key))) == 0) {
-								check_bucket->lock();
-								if (pred(key, *((KEY *)(check_bucket->_key))) == 0) {
-									f(std::pair<key_type const, mapped_type>(*((KEY *)(check_bucket->_key)), *(check_bucket->_data)));
-									check_bucket->unlock();
-									return true;
-								}
-								else {
-									check_bucket->unlock();
-									++check_bucket;
-									continue;
-								}
-								
-							}
-						}
-						++check_bucket;
-					}
-				} while (timestamp != start_bucket->_timestamp);
-
-				return false;
+				CDS_UNUSED(pred);
+				return base_class::find(key, [&f](node_type& item, K const&) { f(item.m_val); });
 			}
 
 			/// For key \p key inserts data of type \ref value_type constructed with <tt>std::forward<Args>(args)...</tt>
@@ -365,13 +324,7 @@ namespace cds {
 			/// Clears the map
 			void clear()
 			{
-				const unsigned int num_elm(MAX_SEGMENTS + ADD_RANGE);
-				Bucket *start = segments_arys;
-				for (unsigned int iElm = 0; iElm < num_elm; ++iElm, ++start) {
-					start->lock();
-				}
-				m_item_counter.reset();
-				segments_arys = (Bucket *)memset(segments_arys, 0, (MAX_SEGMENTS + ADD_RANGE) * sizeof(Bucket));
+				base_class::clear_and_dispose(node_disposer());
 			}
 			/// Updates the node
 			/**
@@ -621,7 +574,7 @@ namespace cds {
 			bool erase_with(K const& key, Predicate pred)
 			{
 				CDS_UNUSED(pred);
-				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				node_type * pNode = base_class::erase(key);
 				if (pNode) {
 					free_node(pNode);
 					return true;
@@ -670,7 +623,7 @@ namespace cds {
 			bool erase_with(K const& key, Predicate pred, Func f)
 			{
 				CDS_UNUSED(pred);
-				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				node_type * pNode = base_class::erase(key);
 				if (pNode) {
 					f(pNode->m_val);
 					free_node(pNode);
