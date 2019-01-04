@@ -161,6 +161,38 @@ namespace cds {
 				// TODO need to find out if we need one
 			}
 
+			//@cond
+			typedef details::make_hopscotch_map<KEY, DATA, Traits> maker;
+			typedef typename maker::type base_class;
+			//@endcond
+			typedef typename base_class::value_type node_type;
+			typedef typename base_class::allocator allocator; ///< allocator type used for internal bucket table allocations
+			/// Node allocator type
+			typedef typename std::conditional<
+				std::is_same< typename Traits::node_allocator, opt::none >::value,
+				allocator,
+				typename Traits::node_allocator
+			>::type node_allocator;
+			typedef cds::details::Allocator< node_type, node_allocator > cxx_node_allocator;
+			//@cond
+			template <typename K>
+			static node_type * alloc_node(K const& key)
+			{
+				return cxx_node_allocator().New(key);
+			}
+			template <typename K, typename... Args>
+			static node_type * alloc_node(K&& key, Args&&... args)
+			{
+				return cxx_node_allocator().MoveNew(std::forward<K>(key), std::forward<Args>(args)...);
+			}
+
+			static void free_node(node_type * pNode)
+			{
+				cxx_node_allocator().Delete(pNode);
+			}
+			//@endcond
+			typedef typename maker::key_accessor key_accessor;
+
 		public:
 			static bool const c_isSorted = false; ///< whether the probe set should be ordered
 			typedef cds::atomicity::item_counter item_counter;
@@ -169,8 +201,16 @@ namespace cds {
 			typedef DATA mapped_type; ///< type of value stored in the map
 			typedef std::pair<key_type const, mapped_type> value_type; ///< Pair type
 			//@cond
-			typedef details::make_hopscotch_map<KEY, DATA, Traits> maker;
-			typedef typename maker::type base_class;
+			struct node_disposer 
+			{
+				void operator()(node_type *pNode)
+				{
+					free_node(pNode);
+				}
+			};
+
+			typedef std::unique_ptr< node_type, node_disposer > scoped_node_ptr;
+
 			//@endcond
 			typedef typename base_class::stat stat; ///< internal statistics type
 			typedef typename base_class::mutex_policy mutex_policy; ///< Concurrent access policy, see hopscotch_hashmap_ns::traits::mutex_policy
@@ -509,64 +549,11 @@ namespace cds {
 			template <typename K, typename Func>
 			bool insert_with(const K& key, Func func)
 			{
-				mapped_type def_val;
-				return insert_with(key, def_val, [](mapped_type&) {});
-			}
-
-			/// Inserts new node
-			/**
-			The function creates a node with copy of \p val value
-			and then inserts the node created into the map.
-
-			Preconditions:
-			- The \ref key_type should be constructible from \p key of type \p K.
-			- The \ref value_type should be constructible from \p val of type \p V.
-
-			Returns \p true if \p val is inserted into the set, \p false otherwise.
-			*/
-			template <typename K, typename V, typename Func>
-			bool insert_with(K const& key, V const& val, Func func)
-			{
-				int tmp_val = 1;
-				std::size_t hash = calc_hash(key);
-				Bucket* start_bucket = segments_arys + hash;
-				start_bucket->lock();
-				if (contains(key)) {
-					start_bucket->unlock();
-					return false;
+				scoped_node_ptr pNode(alloc_node(key));
+				if (base_class::insert(*pNode, [&func](node_type& item) { func(item.m_val); })) {
+					pNode.release();
+					return true;
 				}
-
-				Bucket* free_bucket = start_bucket;
-				int free_distance = 0;
-				for (; free_distance < ADD_RANGE; ++free_distance) {
-					std::atomic<KEY *> _atomic = (KEY *)(free_bucket->_key);
-					KEY* _null_key = free_bucket->_empty_key;
-					if (_null_key == free_bucket->_key && _atomic.compare_exchange_strong(_null_key, BUSY)) {
-						break;
-					}
-					++free_bucket;
-				}
-
-				if (free_distance < ADD_RANGE) {
-					do {
-						if (free_distance < HOP_RANGE) {
-							start_bucket->_hop_info |= (1 << free_distance);
-							if(free_bucket->_data)
-								*(free_bucket->_data) = val;
-							if (free_bucket->_key)
-								*((K *)(free_bucket->_key)) = key;
-							++m_item_counter;
-							start_bucket->unlock();
-							func(*(free_bucket->_data));
-							return true;
-						}
-						find_closer_bucket(&free_bucket, &free_distance, tmp_val);
-					} while (0 != tmp_val);
-				}
-				start_bucket->unlock();
-
-				this->resize();
-
 				return false;
 			}
 
@@ -584,8 +571,7 @@ namespace cds {
 			template <typename K>
 			bool insert(K const& key)
 			{
-				mapped_type def_data;
-				return insert_with(key, def_data, [](mapped_type&) {});
+				return insert_with(key, [](value_type&) {});
 			}
 
 			/// Inserts new node with key and default value
@@ -601,7 +587,7 @@ namespace cds {
 			template <typename K, typename V>
 			bool insert(K const& key, V const& val)
 			{
-				return insert_with(key, val, [](mapped_type&) {});
+				return insert_with(key, [&val](value_type& item) { item.second = val; });
 			}
 
 			/// Delete \p key from the map
@@ -612,7 +598,12 @@ namespace cds {
 			template <typename K>
 			bool erase(K const& key)
 			{
-				return erase(key, [](value_type&) {});
+				node_type * pNode = base_class::erase(key);
+				if (pNode) {
+					free_node(pNode);
+					return true;
+				}
+				return false;
 			}
 
 			/// Deletes the item from the list using \p pred predicate for searching
@@ -626,7 +617,13 @@ namespace cds {
 			template <typename K, typename Predicate>
 			bool erase_with(K const& key, Predicate pred)
 			{
-				return erase_with(key, pred, [](value_type) {});
+				CDS_UNUSED(pred);
+				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				if (pNode) {
+					free_node(pNode);
+					return true;
+				}
+				return false;
 			}
 
 			/// Delete \p key from the map
@@ -649,8 +646,13 @@ namespace cds {
 			template <typename K, typename Func>
 			bool erase(K const& key, Func f)
 			{
-				cds_test::striped_map_fixture::cmp cmp = cds_test::striped_map_fixture::cmp();
-				return erase_with(key, [&](K const& one, key_type two) { return cmp(one, two); }, [](value_type) {});
+				node_type * pNode = base_class::erase(key);
+				if (pNode) {
+					f(pNode->m_val);
+					free_node(pNode);
+					return true;
+				}
+				return false;
 			}
 
 			/// Deletes the item from the list using \p pred predicate for searching
@@ -664,40 +666,13 @@ namespace cds {
 			template <typename K, typename Predicate, typename Func>
 			bool erase_with(K const& key, Predicate pred, Func f)
 			{
-				size_t hash = calc_hash(key);
-				Bucket* start_bucket = segments_arys + hash;
-				start_bucket->lock();
-				if (!contains(key)) {
-					start_bucket->unlock();
-					return false;
+				CDS_UNUSED(pred);
+				node_type * pNode = base_class::erase_with(key, cds::details::predicate_wrapper<node_type, Predicate, key_accessor>());
+				if (pNode) {
+					f(pNode->m_val);
+					free_node(pNode);
+					return true;
 				}
-
-				unsigned int hop_info = start_bucket->_hop_info;
-				unsigned int mask = 1;
-				for (int i = 0; i < HOP_RANGE; ++i, mask <<= 1) {
-					if (mask & hop_info) {
-						Bucket* check_bucket = start_bucket + i;
-						if (!check_bucket->_key)
-						{
-							check_bucket->_key = NULL;
-							check_bucket->_data = NULL;
-							start_bucket->_hop_info &= ~(1 << i);
-							start_bucket->unlock();
-							--m_item_counter;
-							return true;
-						}
-						if (pred(key, *((key_type *)(check_bucket->_key))) == 0) {
-							f(value_type(*((K *)(check_bucket->_key)), *(check_bucket->_data)));
-							check_bucket->_key = NULL;
-							check_bucket->_data = NULL;
-							start_bucket->_hop_info &= ~(1 << i);
-							start_bucket->unlock();
-							--m_item_counter;
-							return true;
-						}
-					}
-				}
-				start_bucket->unlock();
 				return false;
 			}
 
