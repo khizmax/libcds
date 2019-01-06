@@ -91,6 +91,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Header Files", "Header File
 		..\..\..\test\stress\set\set_type_cuckoo.h = ..\..\..\test\stress\set\set_type_cuckoo.h
 		..\..\..\test\stress\set\set_type_ellen_bintree.h = ..\..\..\test\stress\set\set_type_ellen_bintree.h
 		..\..\..\test\stress\set\set_type_feldman_hashset.h = ..\..\..\test\stress\set\set_type_feldman_hashset.h
+		..\..\..\test\stress\set\set_type_hopscotch.h = ..\..\..\test\stress\set\set_type_hopscotch.h
 		..\..\..\test\stress\set\set_type_iterable_list.h = ..\..\..\test\stress\set\set_type_iterable_list.h
 		..\..\..\test\stress\set\set_type_lazy_list.h = ..\..\..\test\stress\set\set_type_lazy_list.h
 		..\..\..\test\stress\set\set_type_michael.h = ..\..\..\test\stress\set\set_type_michael.h

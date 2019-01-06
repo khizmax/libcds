@@ -186,8 +186,8 @@ namespace map {
 #if CDS_BUILD_BITS == 64
 
         struct traits_HopscotchHashmap_list_unord_city64:
-            public cc::hopscotch_hashmap::make_traits <
-                cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
+            public cc::hopscotch_hashmap_ns::make_traits <
+                cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
                 , co::equal_to< equal_to >
                 , co::hash< std::tuple< cds_test::city64, hash2 > >
             > ::type
@@ -197,7 +197,7 @@ namespace map {
 
         struct traits_HopscotchHashmap_list_unord_city64_stat: public traits_HopscotchHashmap_list_unord_city64
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
         typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_unord_city64_stat>> HopscotchStripedMap_list_unord_city64_stat;
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_unord_city64_stat>> HopscotchRefinableMap_list_unord_city64_stat;
@@ -210,8 +210,8 @@ namespace map {
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_unord_city64_storehash>> HopscotchRefinableMap_list_unord_city64_storehash;
 
         struct traits_HopscotchHashmap_list_ord_city64:
-            public cc::hopscotch_hashmap::make_traits <
-            cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::list >
+            public cc::hopscotch_hashmap_ns::make_traits <
+            cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::list >
             , co::compare< compare >
             , co::hash< std::tuple< cds_test::city64, hash2 > >
             >::type
@@ -221,7 +221,7 @@ namespace map {
 
         struct traits_HopscotchHashmap_list_ord_city64_stat: public traits_HopscotchHashmap_list_ord_city64
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
         typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_list_ord_city64_stat>> HopscotchStripedMap_list_ord_city64_stat;
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_ord_city64_stat>> HopscotchRefinableMap_list_ord_city64_stat;
@@ -234,8 +234,8 @@ namespace map {
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_list_ord_city64_storehash>> HopscotchRefinableMap_list_ord_city64_storehash;
 
         struct traits_HopscotchHashmap_vector_unord_city64:
-            public cc::hopscotch_hashmap::make_traits <
-            cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<4> >
+            public cc::hopscotch_hashmap_ns::make_traits <
+            cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<4> >
             , co::equal_to< equal_to >
             , co::hash< std::tuple< cds_test::city64, hash2 > >
             >::type
@@ -245,7 +245,7 @@ namespace map {
 
         struct traits_HopscotchHashmap_vector_unord_city64_stat: public traits_HopscotchHashmap_vector_unord_city64
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
         typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_unord_city64_stat>> HopscotchStripedMap_vector_unord_city64_stat;
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_unord_city64_stat>> HopscotchRefinableMap_vector_unord_city64_stat;
@@ -258,8 +258,8 @@ namespace map {
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_unord_city64_storehash>> HopscotchRefinableMap_vector_unord_city64_storehash;
 
         struct traits_HopscotchHashmap_vector_ord_city64:
-            public cc::hopscotch_hashmap::make_traits <
-            cc::hopscotch_hashmap::probeset_type< cc::hopscotch_hashmap::vector<4> >
+            public cc::hopscotch_hashmap_ns::make_traits <
+            cc::hopscotch_hashmap_ns::probeset_type< cc::hopscotch_hashmap_ns::vector<4> >
             , co::compare< compare >
             , co::hash< std::tuple< cds_test::city64, hash2 > >
             >::type
@@ -269,7 +269,7 @@ namespace map {
 
         struct traits_HopscotchHashmap_vector_ord_city64_stat: public traits_HopscotchHashmap_vector_ord_city64
         {
-            typedef cc::hopscotch_hashmap::stat stat;
+            typedef cc::hopscotch_hashmap_ns::stat stat;
         };
         typedef HopscotchHashmap< Key, Value, traits_HopscotchStripedMap<traits_HopscotchHashmap_vector_ord_city64_stat>> HopscotchStripedMap_vector_ord_city64_stat;
         typedef HopscotchHashmap< Key, Value, traits_HopscotchRefinableMap<traits_HopscotchHashmap_vector_ord_city64_stat>> HopscotchRefinableMap_vector_ord_city64_stat;
