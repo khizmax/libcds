@@ -75,6 +75,8 @@ namespace set {
 
                 Set_InsDel_string& fixture = pool().template fixture<Set_InsDel_string>();
                 size_t nArrSize = m_arrString.size();
+				if (nArrSize == 0)
+					return;
                 size_t const nSetSize = fixture.s_nSetSize;
                 size_t const nPassCount = fixture.s_nThreadPassCount;
 
@@ -133,6 +135,8 @@ namespace set {
 
                 Set_InsDel_string& fixture = pool().template fixture<Set_InsDel_string>();
                 size_t nArrSize = m_arrString.size();
+				if (nArrSize == 0)
+					return;
                 size_t const nSetSize = fixture.s_nSetSize;
                 size_t const nPassCount = fixture.s_nThreadPassCount;
 
@@ -454,7 +458,7 @@ namespace set {
         template <class Set>
         void run_test()
         {
-            ASSERT_TRUE( m_arrString.size() > 0 );
+            ASSERT_TRUE( m_arrString.size() >= 0 );
 
             Set s( *this );
             do_test( s );
