@@ -198,7 +198,7 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            ASSERT_GT( s_Data.size(), 0u );
+            ASSERT_GE( s_Data.size(), 0 );
 
             Map testMap( *this );
             test( testMap );
