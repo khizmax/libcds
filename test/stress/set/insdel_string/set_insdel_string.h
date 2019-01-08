@@ -75,8 +75,8 @@ namespace set {
 
                 Set_InsDel_string& fixture = pool().template fixture<Set_InsDel_string>();
                 size_t nArrSize = m_arrString.size();
-				if (nArrSize == 0)
-					return;
+                if (nArrSize == 0)
+                    return;
                 size_t const nSetSize = fixture.s_nSetSize;
                 size_t const nPassCount = fixture.s_nThreadPassCount;
 
@@ -135,8 +135,8 @@ namespace set {
 
                 Set_InsDel_string& fixture = pool().template fixture<Set_InsDel_string>();
                 size_t nArrSize = m_arrString.size();
-				if (nArrSize == 0)
-					return;
+                if (nArrSize == 0)
+                    return;
                 size_t const nSetSize = fixture.s_nSetSize;
                 size_t const nPassCount = fixture.s_nThreadPassCount;
 
