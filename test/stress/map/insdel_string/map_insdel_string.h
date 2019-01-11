@@ -223,7 +223,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             Map testMap( *this );
             do_test( testMap );
         }
@@ -237,7 +236,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             Map_InsDel_string::run_test<Map>();
         }
     };
@@ -251,7 +249,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             Map_InsDel_string::run_test<Map>();
         }
     };
@@ -264,7 +261,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             Map_InsDel_string::run_test<Map>();
         }
     };
@@ -277,7 +273,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             Map_InsDel_string::run_test<Map>();
         }
     };
@@ -291,7 +286,6 @@ namespace map {
         template <class Map>
         void run_test()
         {
-            s_arrKeys.push_back("test");
             s_nLoadFactor = GetParam();
             propout() << std::make_pair( "load_factor", s_nLoadFactor );
             Map_InsDel_string::run_test<Map>();
