@@ -255,10 +255,10 @@ namespace cds_test {
         struct other_item {
             int nKey;
 
-			operator int() const
-			{
-				return nKey;
-			}
+            operator int() const
+            {
+                return nKey;
+            }
 
             other_item( int key )
                 : nKey( key )
