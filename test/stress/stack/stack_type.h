@@ -586,8 +586,8 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, FCDequeR_elimination_stat )
 
 #define CDSSTRESS_TSDeque( test_fixture ) \
-    CDSSTRESS_Stack_F( test_fixture, TSDequeL_hardware_timestamp ) \
-    CDSSTRESS_Stack_F( test_fixture, TSDequeR_hardware_timestamp )
+    CDSSTRESS_Stack_F( test_fixture, TSDequeL_atomic_counter_timestamp ) \
+    CDSSTRESS_Stack_F( test_fixture, TSDequeR_atomic_counter_timestamp )
 
 #define CDSSTRESS_StdStack( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, StdStack_Deque_Mutex  ) \

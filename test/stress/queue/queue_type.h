@@ -902,8 +902,8 @@ namespace cds_test {
     CDSSTRESS_FCDeque_HeavyValue_1( test_fixture )
 
 #define CDSSTRESS_TSDeque( test_fixture ) \
-    CDSSTRESS_Queue_F( test_fixture, TSDequeL_hardware_timestamp ) \
-    CDSSTRESS_Queue_F( test_fixture, TSDequeR_hardware_timestamp )
+    CDSSTRESS_Queue_F( test_fixture, TSDequeL_atomic_counter_timestamp ) \
+    CDSSTRESS_Queue_F( test_fixture, TSDequeR_atomic_counter_timestamp )
 
 #define CDSSTRESS_RWQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin   ) \

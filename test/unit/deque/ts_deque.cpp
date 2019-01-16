@@ -77,6 +77,8 @@ namespace {
         }
     };
 
+    #if defined(CDS_ts_hardwaretimestamp_hwptime_defined) && defined(CDS_ts_hardwaretimestamp_hwtime_defined)
+
     TEST_F( TSDeque, hardware_timestamping )
     {
         typedef cds::container::TSDeque<int, cds::container::HardwareTimestamp,
@@ -100,6 +102,8 @@ namespace {
         deque_type dq(1, 100000);
         test( dq );
     }
+
+    #endif
 
     TEST_F( TSDeque, atomic_counter_timestamping )
     {
