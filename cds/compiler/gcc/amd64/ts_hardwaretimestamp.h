@@ -11,16 +11,16 @@ namespace cds { namespace tshardwaretimestamp {
         {
             uint64_t aux;
             uint64_t rax, rdx;
-            asm volatile ("rdtscp\n" : "=a" (rax), "=d" (rdx), "=c" (aux) : : );
+            __asm__ volatile ("rdtscp\n" : "=a" (rax), "=d" (rdx), "=c" (aux) : : );
             return (rdx << 32) + rax;
         }
 
 #       define CDS_ts_hardwaretimestamp_hwtime_defined
         static inline uint64_t get_hwtime()
         {
-            unsigned int hi, lo;
-            __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
-            return ((uint64_t)lo) | (((uint64_t)hi) << 32);
+            uint64_t high, low;
+            __asm__ volatile("rdtsc" : "=a"(low), "=d"(high));
+            return ((uint64_t)low) | (((uint64_t)high) << 32);
         }
 
     }} // namespace gcc::amd64
