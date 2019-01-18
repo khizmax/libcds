@@ -1,6 +1,7 @@
 #include <cds_test/ext_gtest.h>
 #include <cds/container/ts_deque.h>
 #include <cds/container/ts_timestamp.h>
+#include <cds/compiler/ts_hardwaretimestamp.h>
 
 namespace {
 
@@ -81,26 +82,32 @@ namespace {
 
     TEST_F( TSDeque, hardware_timestamping )
     {
-        typedef cds::container::TSDeque<int, cds::container::HardwareTimestamp,
-            cds::container::tsdeque::make_traits<
-                cds::opt::item_counter< cds::atomicity::item_counter >
-            >::type
-        > deque_type;
+        if (cds::tshardwaretimestamp::platform::has_rdtscp() == 1)
+        {
+            typedef cds::container::TSDeque<int, cds::container::HardwareTimestamp,
+                cds::container::tsdeque::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > deque_type;
 
-        deque_type dq(1, 0);
-        test( dq );
+            deque_type dq(1, 0);
+            test( dq );
+        }
     }
 
     TEST_F( TSDeque, hardware_interval_timestamping )
     {
-        typedef cds::container::TSDeque<int, cds::container::HardwareIntervalTimestamp,
-            cds::container::tsdeque::make_traits<
-                cds::opt::item_counter< cds::atomicity::item_counter >
-            >::type
-        > deque_type;
+        if (cds::tshardwaretimestamp::platform::has_rdtscp() == 1)
+        {
+            typedef cds::container::TSDeque<int, cds::container::HardwareIntervalTimestamp,
+                cds::container::tsdeque::make_traits<
+                    cds::opt::item_counter< cds::atomicity::item_counter >
+                >::type
+            > deque_type;
 
-        deque_type dq(1, 100000);
-        test( dq );
+            deque_type dq(1, 100000);
+            test( dq );
+        }
     }
 
     #endif
