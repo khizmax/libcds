@@ -7,6 +7,7 @@ set(CDSSTRESS_MAP_INSDEL_FUNC_SOURCES
     map_insdel_func_cuckoo.cpp
     map_insdel_func_ellentree.cpp
     map_insdel_func_feldman_hashset.cpp
+    map_insdel_func_hopscotch.cpp
     map_insdel_func_michael.cpp
     map_insdel_func_skip.cpp
     map_insdel_func_split.cpp

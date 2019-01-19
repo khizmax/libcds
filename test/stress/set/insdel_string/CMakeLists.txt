@@ -6,6 +6,7 @@ set(CDSSTRESS_SET_INSDEL_STRING_SOURCES
     set_insdel_string_cuckoo.cpp
     set_insdel_string_ellentree.cpp
     set_insdel_string_feldman_hashset.cpp
+    set_insdel_string_hopscotch.cpp
     set_insdel_string_michael.cpp
     set_insdel_string_skip.cpp
     set_insdel_string_split.cpp
