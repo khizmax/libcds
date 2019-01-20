@@ -247,7 +247,7 @@ namespace set {
             typedef cc::hopscotch_hashset::stat stat;
         };
         typedef HopscotchHashset< key_val, traits_HopscotchStripedSet<traits_HopscotchHashset_vector_unord_city64_stat>> HopscotchStripedSet_vector_unord_city64_stat;
-        typedef HopscotchHashset< Key, Value, traits_HopscotchRefinableSet<traits_HopscotchHashset_vector_unord_city64_stat>> HopscotchRefinableSet_vector_unord_city64_stat;
+        typedef HopscotchHashset< key_val, traits_HopscotchRefinableSet<traits_HopscotchHashset_vector_unord_city64_stat>> HopscotchRefinableSet_vector_unord_city64_stat;
 
         struct traits_HopscotchHashset_vector_unord_city64_storehash: public traits_HopscotchHashset_vector_unord_city64
         {
