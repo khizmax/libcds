@@ -19,3 +19,4 @@
 /.cproject
 /.settings/
 /tools/change_license.pl
+.DS_Store
