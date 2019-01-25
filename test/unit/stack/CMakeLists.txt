@@ -8,6 +8,10 @@ set(CDSGTEST_STACK_SOURCES
     intrusive_treiber_stack_hp.cpp
     treiber_stack_dhp.cpp
     treiber_stack_hp.cpp
+    segmented_stack_hp.cpp
+    segmented_stack_dhp.cpp
+    intrusive_segmented_stack_hp.cpp
+    intrusive_segmented_stack_dhp.cpp
 )
 
 include_directories(

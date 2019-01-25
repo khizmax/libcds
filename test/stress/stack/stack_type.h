@@ -9,6 +9,7 @@
 #include <cds/container/treiber_stack.h>
 #include <cds/container/fcstack.h>
 #include <cds/container/fcdeque.h>
+#include <cds/container/segmented_stack.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -304,6 +305,50 @@ namespace stack {
         typedef cds::container::TreiberStack< cds::gc::DHP, T, traits_Elimination_exp > Elimination_DHP_exp;
 
 
+	// SegmentedStack
+		class traits_SegmentedStack_spin_stat :
+			public cds::container::segmented_stack::make_traits<
+			cds::opt::stat< cds::intrusive::segmented_stack::stat<> >
+			>::type
+		{};
+		class traits_SegmentedStack_spin_padding :
+			public cds::container::segmented_stack::make_traits<
+			cds::opt::padding< cds::opt::cache_line_padding >
+			>::type
+		{};
+		class traits_SegmentedStack_mutex_stat :
+			public cds::container::segmented_stack::make_traits<
+			cds::opt::stat< cds::intrusive::segmented_stack::stat<> >
+			, cds::opt::lock_type< std::mutex >
+			>::type
+		{};
+		class traits_SegmentedStack_mutex :
+			public cds::container::segmented_stack::make_traits<
+			cds::opt::lock_type< std::mutex >
+			>::type
+		{};
+		class traits_SegmentedStack_mutex_padding :
+			public cds::container::segmented_stack::make_traits<
+			cds::opt::lock_type< std::mutex >
+			, cds::opt::padding< cds::opt::cache_line_padding >
+			>::type
+		{};
+
+		typedef cds::container::SegmentedStack< cds::gc::HP, T >  SegmentedStack_HP_spin;
+		typedef cds::container::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_spin_padding >  SegmentedStack_HP_spin_padding;
+		typedef cds::container::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_spin_stat >  SegmentedStack_HP_spin_stat;
+		typedef cds::container::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex >  SegmentedStack_HP_mutex;
+		typedef cds::container::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex_padding >  SegmentedStack_HP_mutex_padding;
+		typedef cds::container::SegmentedStack< cds::gc::HP, T, traits_SegmentedStack_mutex_stat >  SegmentedStack_HP_mutex_stat;
+
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T >  SegmentedStack_DHP_spin;
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_spin_padding >  SegmentedStack_DHP_spin_padding;
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_spin_stat >  SegmentedStack_DHP_spin_stat;
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex >  SegmentedStack_DHP_mutex;
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_padding >  SegmentedStack_DHP_mutex_padding;
+		typedef cds::container::SegmentedStack< cds::gc::DHP, T, traits_SegmentedStack_mutex_stat >  SegmentedStack_DHP_mutex_stat;
+
+
     // FCStack
         typedef cds::container::FCStack< T > FCStack_deque;
 
@@ -447,6 +492,27 @@ namespace cds_test {
             << CDSSTRESS_STAT_OUT( s, m_nCollided )
             << static_cast<cds::algo::flat_combining::stat<> const&>(s);
     }
+    
+    static inline property_stream& operator <<(property_stream& o, cds::container::segmented_stack::empty_stat const&)
+	{
+		return o;
+	}
+
+	static inline property_stream& operator <<(property_stream& o, cds::container::segmented_stack::stat<> const& s)
+	{
+		return o
+			<< CDSSTRESS_STAT_OUT(s, m_nPush)
+			<< CDSSTRESS_STAT_OUT(s, m_nPushPopulated)
+			<< CDSSTRESS_STAT_OUT(s, m_nPushContended)
+			<< CDSSTRESS_STAT_OUT(s, m_nPop)
+			<< CDSSTRESS_STAT_OUT(s, m_nPopEmpty)
+			<< CDSSTRESS_STAT_OUT(s, m_nPopContended)
+			<< CDSSTRESS_STAT_OUT(s, m_nCreateSegmentReq)
+			<< CDSSTRESS_STAT_OUT(s, m_nDeleteSegmentReq)
+			<< CDSSTRESS_STAT_OUT(s, m_nSegmentCreated)
+			<< CDSSTRESS_STAT_OUT(s, m_nSegmentDeleted);
+	}
+
 } // namespace cds_test
 
 #define CDSSTRESS_Stack_F( test_fixture, type_name ) \
@@ -463,6 +529,14 @@ namespace cds_test {
         typedef stack::Types< value_type >::type_name stack_type; \
         stack_type stack( s_nEliminationSize ); \
         test_elimination( stack ); \
+    }
+
+#define CDSSTRESS_SegmentedStack_F( test_fixture, type_name ) \
+    TEST_F( test_fixture, type_name ) \
+    { \
+        typedef stack::Types< value_type >::type_name stack_type; \
+        stack_type stack( s_nQuasiFactor ); \
+        test( stack ); \
     }
 
 #define CDSSTRESS_TreiberStack( test_fixture ) \
@@ -502,6 +576,17 @@ namespace cds_test {
     CDSSTRESS_EliminationStack_F( test_fixture, Elimination_DHP_stat  ) \
     CDSSTRESS_EliminationStack_F( test_fixture, Elimination_DHP_dyn   ) \
     CDSSTRESS_EliminationStack_F( test_fixture, Elimination_DHP_dyn_stat)
+
+#define CDSSTRESS_SegmentedStack( test_fixture ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_HP_spin         ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_HP_spin_padding ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_HP_spin_stat    ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_HP_mutex        ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_HP_mutex_stat   ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_DHP_spin        ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_DHP_spin_stat   ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_DHP_mutex       ) \
+    CDSSTRESS_SegmentedStack_F( test_fixture, SegmentedStack_DHP_mutex_stat  ) 
 
 #define CDSSTRESS_FCStack( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, FCStack_deque ) \

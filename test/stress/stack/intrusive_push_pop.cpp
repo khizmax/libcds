@@ -10,6 +10,7 @@ namespace cds_test {
     /*static*/ size_t intrusive_stack_push_pop::s_nPopThreadCount = 4;
     /*static*/ size_t intrusive_stack_push_pop::s_nStackSize = 10000000;
     /*static*/ size_t intrusive_stack_push_pop::s_nEliminationSize = 4;
+    /*static*/ size_t intrusive_stack_push_pop::s_nQuasiFactor = 15;
     /*static*/ bool intrusive_stack_push_pop::s_bFCIterative = false;
     /*static*/ unsigned int intrusive_stack_push_pop::s_nFCCombinePassCount = 64;
     /*static*/ unsigned int intrusive_stack_push_pop::s_nFCCompactFactor = 1024;
@@ -34,6 +35,8 @@ namespace cds_test {
             s_nPopThreadCount = 1;
         if ( s_nEliminationSize == 0 )
             s_nEliminationSize = 1;
+        if ( s_nQuasiFactor == 0 )
+			s_nQuasiFactor = 15;
     }
 } // namespace cds_test
 
@@ -88,6 +91,17 @@ namespace {
             Stack stack;
             do_test( stack, arrValue );
         }
+        
+        template <typename Stack>
+		void test_segmented()
+		{
+			value_array<typename Stack::value_type> arrValue(s_nStackSize);
+			{
+				Stack stack( s_nQuasiFactor );
+				do_test( stack, arrValue );
+			}
+			Stack::gc::force_dispose();
+		}
     };
 
     // TreiberStack<cds::gc::HP>
@@ -149,6 +163,18 @@ namespace {
     }
 
     CDSSTRESS_StdStack( intrusive_stack_push_pop )
+
+#undef CDSSTRESS_Stack_F
+
+	// SegmentedStack
+#define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
+    TEST_F( test_fixture, stack_impl ) \
+    { \
+        typedef typename istack::Types<value_type>::stack_impl stack_type; \
+        test_segmented< stack_type >(); \
+    }
+
+	CDSSTRESS_SegmentedStack( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
 

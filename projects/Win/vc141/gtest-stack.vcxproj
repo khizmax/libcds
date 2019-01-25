@@ -78,13 +78,19 @@
     <ClCompile Include="..\..\..\test\unit\main.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\fcstack.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_fcstack.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\intrusive_segmented_stack_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\intrusive_segmented_stack_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\intrusive_treiber_stack_hp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\segmented_stack_dhp.cpp" />
+    <ClCompile Include="..\..\..\test\unit\stack\segmented_stack_hp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_dhp.cpp" />
     <ClCompile Include="..\..\..\test\unit\stack\treiber_stack_hp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\unit\stack\test_intrusive_segmented_stack.h" />
     <ClInclude Include="..\..\..\test\unit\stack\test_intrusive_treiber_stack.h" />
+    <ClInclude Include="..\..\..\test\unit\stack\test_segmented_stack.h" />
     <ClInclude Include="..\..\..\test\unit\stack\test_treiber_stack.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

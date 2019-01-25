@@ -10,6 +10,7 @@ namespace {
     static size_t s_nThreadCount = 8;
     static size_t s_nStackSize = 10000000;
     static size_t s_nEliminationSize = 4;
+	static size_t s_nQuasiFactor = 15;
 
     class stack_push : public cds_test::stress_fixture
     {
@@ -81,6 +82,7 @@ namespace {
             s_nThreadCount     = cfg.get_size_t( "ThreadCount",     s_nThreadCount );
             s_nStackSize       = cfg.get_size_t( "StackSize",       s_nStackSize );
             s_nEliminationSize = cfg.get_size_t( "EliminationSize", s_nEliminationSize );
+			s_nQuasiFactor     = cfg.get_size_t( "s_nQuasiFactor", s_nQuasiFactor );
 
             if ( s_nThreadCount == 0 )
                 s_nThreadCount = 1;
@@ -180,5 +182,6 @@ namespace {
     CDSSTRESS_FCStack( stack_push )
     CDSSTRESS_FCDeque( stack_push )
     CDSSTRESS_StdStack( stack_push )
+	CDSSTRESS_SegmentedStack( stack_push )
 
 } // namespace

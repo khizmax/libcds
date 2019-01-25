@@ -14,6 +14,7 @@ namespace cds_test {
         static size_t s_nPopThreadCount;
         static size_t s_nStackSize;
         static size_t s_nEliminationSize;
+        static size_t s_nQuasiFactor;
         static bool s_bFCIterative;
         static unsigned int s_nFCCombinePassCount;
         static unsigned int s_nFCCompactFactor;
