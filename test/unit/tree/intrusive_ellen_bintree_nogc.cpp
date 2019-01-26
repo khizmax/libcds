@@ -34,5 +34,4 @@ TEST_F(IntrusiveEllenBinTreeNogc, base_cmp)
 
 } // namespace
 
-#endif
 
