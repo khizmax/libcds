@@ -1108,6 +1108,7 @@
     <ClInclude Include="..\..\..\cds\container\feldman_hashset_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\feldman_hashset_hp.h" />
     <ClInclude Include="..\..\..\cds\container\feldman_hashset_rcu.h" />
+    <ClInclude Include="..\..\..\cds\container\segmented_stack.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_dhp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_hp.h" />
     <ClInclude Include="..\..\..\cds\container\skip_list_map_nogc.h" />
@@ -1189,6 +1190,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\feldman_hashset_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\feldman_hashset_rcu.h" />
     <ClInclude Include="..\..\..\cds\intrusive\options.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\segmented_stack.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\skip_list_nogc.h" />

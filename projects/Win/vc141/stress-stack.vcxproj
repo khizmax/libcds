@@ -549,7 +549,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;stress-framework.lib;libcds-$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtest.lib;stress-framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'">
