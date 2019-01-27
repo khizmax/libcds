@@ -6,6 +6,7 @@ set(CDSSTRESS_SET_INSDEL_FUNC_SOURCES
     set_insdel_func_cuckoo.cpp
     set_insdel_func_ellentree.cpp
     set_insdel_func_feldman_hashset.cpp
+    set_insdel_func_lazy_skip.cpp
     set_insdel_func_michael.cpp
     set_insdel_func_skip.cpp
     set_insdel_func_split.cpp

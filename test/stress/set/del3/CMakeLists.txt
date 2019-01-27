@@ -6,6 +6,7 @@ set(CDSSTRESS_SET_DEL3_SOURCES
     set_del3_cuckoo.cpp
     set_del3_ellentree.cpp
     set_del3_feldman_hashset.cpp
+    set_del3_lazy_skip.cpp
     set_del3_michael.cpp
     set_del3_skip.cpp
     set_del3_split.cpp

@@ -7,6 +7,7 @@ set(CDSSTRESS_SET_INSDELFIND_HP_SOURCES
     set_insdelfind.cpp
     set_insdelfind_ellentree_hp.cpp
     set_insdelfind_feldman_hashset_hp.cpp
+    set_insdelfind_lazy_skip_hp.cpp
     set_insdelfind_michael_hp.cpp
     set_insdelfind_skip_hp.cpp
     set_insdelfind_split_hp.cpp

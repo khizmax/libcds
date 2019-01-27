@@ -77,6 +77,17 @@ add_executable(${UNIT_SET_SKIP} ${UNIT_SET_SKIP_SOURCES})
 target_link_libraries(${UNIT_SET_SKIP} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_SET_SKIP} COMMAND ${UNIT_SET_SKIP} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
+# LazySkipListSet
+set(UNIT_SET_LAZY_SKIP unit-set-lazy-skip)
+set(UNIT_SET_LAZY_SKIP_SOURCES
+    ../main.cpp
+    lazy_skiplist_hp.cpp
+    lazy_skiplist_dhp.cpp
+)
+add_executable(${UNIT_SET_LAZY_SKIP} ${UNIT_SET_LAZY_SKIP_SOURCES})
+target_link_libraries(${UNIT_SET_LAZY_SKIP} ${CDS_TEST_LIBRARIES})
+add_test(NAME ${UNIT_SET_LAZY_SKIP} COMMAND ${UNIT_SET_LAZY_SKIP} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
 # SplitListSet<MichaelList>
 set(UNIT_SET_SPLIT_MICHAEL unit-set-split-michael)
 set(UNIT_SET_SPLIT_MICHAEL_SOURCES
@@ -128,6 +139,7 @@ add_custom_target( unit-set
         ${UNIT_SET_MICHAEL_ITERABLE}
         ${UNIT_SET_MICHAEL_LAZY}
         ${UNIT_SET_SKIP}
+        ${UNIT_SET_LAZY_SKIP}
         ${UNIT_SET_SPLIT_MICHAEL}
         ${UNIT_SET_SPLIT_ITERABLE}
         ${UNIT_SET_SPLIT_LAZY}
