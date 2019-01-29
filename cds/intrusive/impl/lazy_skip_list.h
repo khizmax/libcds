@@ -32,9 +32,9 @@ namespace cds { namespace intrusive {
             node_type *             m_pNode;
 
         protected:
-            static value_type * gc_protect( marked_ptr p )
+            static value_type* gc_protect(marked_ptr p)
             {
-                return node_traits::to_value_ptr( p.ptr());
+                return node_traits::to_value_ptr(p.ptr());
             }
 
             void next()
@@ -169,11 +169,11 @@ namespace cds { namespace intrusive {
 #   ifdef CDS_DOXYGEN_INVOKED
         typedef implementation_defined key_comparator;
 #   else
-        typedef typename opt::details::make_comparator< value_type, traits >::type key_comparator;
+        typedef typename opt::details::make_comparator<value_type, traits>::type key_comparator;
 #   endif
 
         typedef typename traits::disposer  disposer;
-        typedef typename get_node_traits< value_type, node_type, hook>::type node_traits;
+        typedef typename get_node_traits<value_type, node_type, hook>::type node_traits;
 
         typedef typename traits::item_counter  item_counter;
         typedef typename traits::memory_model  memory_model;
@@ -183,7 +183,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat          stat;
 
     public:
-        typedef typename gc::template guarded_ptr< value_type > guarded_ptr;
+        typedef typename gc::template guarded_ptr<value_type> guarded_ptr;
 
         static unsigned int const c_nMaxHeight = std::conditional<
             (random_level_generator::c_nUpperBound <= lazy_skip_list::c_nHeightLimit),
@@ -191,7 +191,11 @@ namespace cds { namespace intrusive {
             std::integral_constant< unsigned int, lazy_skip_list::c_nHeightLimit >
         >::type::value;
 
-        static unsigned int const c_nMinHeight = 5;
+        static unsigned int const c_nMinHeight = std::conditional<
+                (5 <= c_nMaxHeight),
+                std::integral_constant<unsigned int, 5>,
+                std::integral_constant<unsigned int, c_nMaxHeight>
+            >::type::value;
 
         // c_nMaxHeight * 2 - pPred/pSucc guards
         // + 1 - for erase, unlink
@@ -215,24 +219,73 @@ namespace cds { namespace intrusive {
         typedef std::unique_ptr< node_type, typename node_builder::node_disposer > scoped_node_ptr;
 
         struct position {
-            node_type *   pPrev[ c_nMaxHeight ];
-            node_type *   pSucc[ c_nMaxHeight ];
+        public:
+            position()
+                : m_LockedCounter(0)
+            {
+                for (auto& pCurr : m_LockedArray) {
+                    pCurr = nullptr;
+                }
+            }
 
-            typename gc::template GuardArray< c_nMaxHeight * 2 > guards;
-            node_type *   pCur;   // guarded by one of guards
+            ~position()
+            {
+                unlockAll();
+            }
+
+            void addLockPtr(node_type* pNode)
+            {
+                assert(pNode != nullptr);
+                assert(m_LockedCounter >= 2 * c_nMaxHeight + 1);
+
+                if (contains(pNode))
+                    return;
+
+                m_LockedArray[m_LockedCounter++] = pNode;
+            }
+
+            bool contains(node_type* pNode)
+            {
+                for (auto pCurr : m_LockedArray) {
+                    if (pNode == pCurr)
+                        return true;
+                }
+                return false;
+            }
+
+            void unlockAll()
+            {
+                for (auto& pNode : m_LockedArray) {
+                    if (!pNode)
+                        return;
+
+                    pNode->unlock();
+                    pNode = nullptr;
+                }
+
+                m_LockedCounter = 0;
+            }
+
+        public:
+            node_type*   pPrev[c_nMaxHeight];
+            node_type*   pCur;
+
+        private:
+            node_type*      m_LockedArray[2 * c_nMaxHeight + 1];
+            unsigned int    m_LockedCounter;
         };
 
     public:
         LazySkipListSet()
-            : m_Head( c_nMaxHeight )
-            , m_nHeight( c_nMinHeight )
+            : m_Head(c_nMaxHeight)
+            , m_nHeight(c_nMinHeight)
         {
             static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
 
-            gc::check_available_guards( c_nHazardPtrCount );
+            gc::check_available_guards(c_nHazardPtrCount);
 
             // Barrier for head node
-            atomics::atomic_thread_fence( memory_model::memory_order_release );
+            atomics::atomic_thread_fence(memory_model::memory_order_release);
         }
 
         ~LazySkipListSet()
@@ -276,106 +329,82 @@ namespace cds { namespace intrusive {
 
     public:
         
-        bool insert( value_type& val )
+        bool insert(value_type& val)
         {
             return insert( val, []( value_type& ) {} );
         }
 
         template <typename Func>
-        bool insert( value_type& val, Func f )
+        bool insert(value_type& val, Func f)
         {
             typename gc::Guard gNew;
-            gNew.assign( &val );
+            gNew.assign(&val);
 
-            node_type * pNode = node_traits::to_node_ptr( val );
-            scoped_node_ptr scp( pNode );
+            node_type* pNode = node_traits::to_node_ptr(val);
+            scoped_node_ptr scp(pNode);
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = pNode->has_tower(); // nHeight > 1 && pNode->get_tower() != nullptr;
-            bool bTowerMade = false;
 
             position pos;
-            while ( true )
-            {
-                if ( find_position( val, pos, key_comparator(), true )) {
-                    // scoped_node_ptr deletes the node tower if we create it
-                    if ( !bTowerMade )
-                        scp.release();
 
-                    m_Stat.onInsertFailed();
-                    return false;
-                }
-
-                if ( !bTowerOk ) {
-                    build_node( pNode );
-                    nHeight = pNode->height();
-                    bTowerMade = pNode->has_tower();
-                    bTowerOk = true;
-                }
-
-                if ( !insert_at_position( val, pNode, pos, f )) {
-                    m_Stat.onInsertRetry();
-                    continue;
-                }
-
-                increase_height( nHeight );
-                ++m_ItemCounter;
-                m_Stat.onAddNode( nHeight );
-                m_Stat.onInsertSuccess();
+            if (find_position(val, pos, key_comparator())) {
                 scp.release();
-                return true;
+                m_Stat.onInsertFailed();
+                return false;
             }
+
+            if (!pNode->has_tower()) {
+                build_node(pNode);
+                nHeight = pNode->height();
+            }
+
+            insert_at_position(val, pNode, pos, f);
+
+            increase_height(nHeight);
+            ++m_ItemCounter;
+            m_Stat.onAddNode(nHeight);
+            m_Stat.onInsertSuccess();
+            scp.release();
+            pos.unlockAll();
+            return true;
         }
 
         template <typename Func>
         std::pair<bool, bool> update( value_type& val, Func func, bool bInsert = true )
         {
             typename gc::Guard gNew;
-            gNew.assign( &val );
+            gNew.assign(&val);
 
-            node_type * pNode = node_traits::to_node_ptr( val );
-            scoped_node_ptr scp( pNode );
+            node_type* pNode = node_traits::to_node_ptr(val);
+            scoped_node_ptr scp(pNode);
             unsigned int nHeight = pNode->height();
-            bool bTowerOk = pNode->has_tower();
-            bool bTowerMade = false;
 
             position pos;
-            while ( true )
-            {
-                bool bFound = find_position( val, pos, key_comparator(), true );
-                if ( bFound ) {
-                    // scoped_node_ptr deletes the node tower if we create it before
-                    if ( !bTowerMade )
-                        scp.release();
 
-                    func( false, *node_traits::to_value_ptr(pos.pCur), val );
-                    m_Stat.onUpdateExist();
-                    return std::make_pair( true, false );
-                }
-
-                if ( !bInsert ) {
-                    scp.release();
-                    return std::make_pair( false, false );
-                }
-
-                if ( !bTowerOk ) {
-                    build_node( pNode );
-                    nHeight = pNode->height();
-                    bTowerMade = pNode->has_tower();
-                    bTowerOk = true;
-                }
-
-                if ( !insert_at_position( val, pNode, pos, [&func]( value_type& item ) { func( true, item, item ); })) {
-                    m_Stat.onInsertRetry();
-                    continue;
-                }
-
-                increase_height( nHeight );
-                ++m_ItemCounter;
+            if (find_position(val, pos, key_comparator())) {
                 scp.release();
-                m_Stat.onAddNode( nHeight );
-                m_Stat.onUpdateNew();
-                return std::make_pair( true, true );
+                func(false, *node_traits::to_value_ptr(pos.pCur), val);
+                m_Stat.onUpdateExist();
+                return std::make_pair(true, false);
             }
+
+            if (!bInsert) {
+                scp.release();
+                return std::make_pair(false, false);
+            }
+
+            if (!pNode->has_tower()) {
+                build_node(pNode);
+                nHeight = pNode->height();
+            }
+
+            insert_at_position(val, pNode, pos, [&func](value_type& item) { func(true, item, item); });
+
+            increase_height(nHeight);
+            ++m_ItemCounter;
+            scp.release();
+            m_Stat.onAddNode(nHeight);
+            m_Stat.onUpdateNew();
+            return std::make_pair(true, true);
         }
         
         template <typename Func>
@@ -385,25 +414,23 @@ namespace cds { namespace intrusive {
             return update( val, func, true );
         }
 
-        bool unlink( value_type& val )
+        bool unlink(value_type& val)
         {
             position pos;
 
-            if ( !find_position( val, pos, key_comparator(), false )) {
+            if (!find_position(val, pos, key_comparator())) {
                 m_Stat.onUnlinkFailed();
                 return false;
             }
 
-            node_type * pDel = pos.pCur;
-            assert( key_comparator()( *node_traits::to_value_ptr( pDel ), val ) == 0 );
+            node_type* pDel = pos.pCur;
 
             unsigned int nHeight = pDel->height();
-            typename gc::Guard gDel;
-            gDel.assign( node_traits::to_value_ptr(pDel));
 
-            if ( node_traits::to_value_ptr( pDel ) == &val && try_remove_at( pDel, pos, [](value_type const&) {} )) {
+            if (node_traits::to_value_ptr(pDel) == &val) {
+                remove_at(pDel, pos, [](value_type const&) {});
                 --m_ItemCounter;
-                m_Stat.onRemoveNode( nHeight );
+                m_Stat.onRemoveNode(nHeight);
                 m_Stat.onUnlinkSuccess();
                 return true;
             }
@@ -413,16 +440,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        guarded_ptr extract( Q const& key )
+        guarded_ptr extract(const Q& key)
         {
-            return extract_( key, key_comparator());
+            return extract_(key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        guarded_ptr extract_with( Q const& key, Less pred )
+        guarded_ptr extract_with(const Q& key, Less pred)
         {
-            CDS_UNUSED( pred );
-            return extract_( key, cds::opt::details::make_comparator_from_less<Less>());
+            CDS_UNUSED(pred);
+            return extract_(key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         guarded_ptr extract_min()
@@ -436,16 +463,16 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        bool erase( Q const& key )
+        bool erase(const Q& key)
         {
-            return erase_( key, key_comparator(), [](value_type const&) {} );
+            return erase_(key, key_comparator(), [](const value_type&) {} );
         }
 
         template <typename Q, typename Less>
-        bool erase_with( Q const& key, Less pred )
+        bool erase_with(const Q& key, Less pred)
         {
-            CDS_UNUSED( pred );
-            return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type const&) {} );
+            CDS_UNUSED(pred);
+            return erase_(key, cds::opt::details::make_comparator_from_less<Less>(), [](const value_type&) {} );
         }
 
         template <typename Q, typename Func>
@@ -455,76 +482,76 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Less, typename Func>
-        bool erase_with( Q const& key, Less pred, Func f )
+        bool erase_with(const Q& key, Less pred, Func f)
         {
-            CDS_UNUSED( pred );
-            return erase_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            CDS_UNUSED(pred);
+            return erase_(key, cds::opt::details::make_comparator_from_less<Less>(), f);
         }
 
         template <typename Q, typename Func>
-        bool find( Q& key, Func f )
+        bool find(Q& key, Func f)
         {
-            return find_with_( key, key_comparator(), f );
+            return find_with_(key, key_comparator(), f);
         }
         
         template <typename Q, typename Func>
-        bool find( Q const& key, Func f )
+        bool find(const Q& key, Func f)
         {
-            return find_with_( key, key_comparator(), f );
+            return find_with_(key, key_comparator(), f);
         }
 
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q& key, Less pred, Func f )
+        bool find_with(Q& key, Less pred, Func f)
         {
-            CDS_UNUSED( pred );
-            return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            CDS_UNUSED(pred);
+            return find_with_(key, cds::opt::details::make_comparator_from_less<Less>(), f);
         }
         
         template <typename Q, typename Less, typename Func>
-        bool find_with( Q const& key, Less pred, Func f )
+        bool find_with(const Q& key, Less pred, Func f)
         {
-            CDS_UNUSED( pred );
-            return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), f );
+            CDS_UNUSED(pred);
+            return find_with_(key, cds::opt::details::make_comparator_from_less<Less>(), f);
         }
 
         template <typename Q>
-        bool contains( Q const& key )
+        bool contains(const Q& key )
         {
-            return find_with_( key, key_comparator(), [](value_type& , Q const& ) {} );
+            return find_with_(key, key_comparator(), [](value_type& , const Q&) {} );
         }
         
         template <typename Q>
         CDS_DEPRECATED("deprecated, use contains()")
-        bool find( Q const& key )
+        bool find(const Q& key)
         {
-            return contains( key );
+            return contains(key);
         }
 
         template <typename Q, typename Less>
-        bool contains( Q const& key, Less pred )
+        bool contains(const Q& key, Less pred)
         {
-            CDS_UNUSED( pred );
-            return find_with_( key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , Q const& ) {} );
+            CDS_UNUSED(pred);
+            return find_with_(key, cds::opt::details::make_comparator_from_less<Less>(), [](value_type& , const Q&) {} );
         }
         
         template <typename Q, typename Less>
         CDS_DEPRECATED("deprecated, use contains()")
-        bool find_with( Q const& key, Less pred )
+        bool find_with(const Q& key, Less pred)
         {
-            return contains( key, pred );
+            return contains(key, pred);
         }
 
         template <typename Q>
-        guarded_ptr get( Q const& key )
+        guarded_ptr get(const Q& key)
         {
-            return get_with_( key, key_comparator());
+            return get_with_(key, key_comparator());
         }
 
         template <typename Q, typename Less>
-        guarded_ptr get_with( Q const& key, Less pred )
+        guarded_ptr get_with(const Q& key, Less pred)
         {
-            CDS_UNUSED( pred );
-            return get_with_( key, cds::opt::details::make_comparator_from_less<Less>());
+            CDS_UNUSED(pred);
+            return get_with_(key, cds::opt::details::make_comparator_from_less<Less>());
         }
 
         size_t size() const
@@ -534,12 +561,12 @@ namespace cds { namespace intrusive {
 
         bool empty() const
         {
-            return m_Head.head()->next( 0 ).load( memory_model::memory_order_relaxed ) == nullptr;
+            return m_Head.head()->next(0).load(memory_model::memory_order_relaxed) == nullptr;
         }
 
         void clear()
         {
-            while ( extract_min_());
+            while (extract_min_());
         }
 
         static constexpr unsigned int max_height() noexcept
@@ -547,7 +574,7 @@ namespace cds { namespace intrusive {
             return c_nMaxHeight;
         }
 
-        stat const& statistics() const
+        const stat& statistics() const
         {
             return m_Stat;
         }
@@ -562,414 +589,201 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q>
-        node_type * build_node( Q v )
+        node_type* build_node(Q v)
         {
-            return node_builder::make_tower( v, m_RandomLevelGen );
+            return node_builder::make_tower(v, m_RandomLevelGen);
         }
 
-        static value_type * gc_protect( marked_node_ptr p )
+        static value_type* gc_protect(marked_node_ptr p)
         {
-            return node_traits::to_value_ptr( p.ptr());
+            return node_traits::to_value_ptr(p.ptr());
         }
 
-        static void dispose_node( void* p )
+        static void dispose_node(void* p)
         {
-            assert( p != nullptr );
-            value_type* pVal = reinterpret_cast<value_type*>( p );
-            typename node_builder::node_disposer()( node_traits::to_node_ptr( pVal ));
-            disposer()( pVal );
+            assert(p != nullptr);
+            value_type* pVal = reinterpret_cast<value_type*>(p);
+            typename node_builder::node_disposer()(node_traits::to_node_ptr(pVal));
+            disposer()(pVal);
         }
 
-        void help_remove( int nLevel, node_type* pPred, marked_node_ptr pCur )
+        template <typename Q, typename Compare>
+        bool find_position(const Q& val, position& pos, Compare cmp)
         {
-            if ( pCur->is_upper_level( nLevel )) {
-                marked_node_ptr p( pCur.ptr());
-                typename gc::Guard hp;
-                marked_node_ptr pSucc = hp.protect( pCur->next( nLevel ), gc_protect );
+            typename gc::template GuardArray<2> guards;
 
-                if ( pSucc.bits() &&
-                     pPred->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
-                        memory_model::memory_order_acquire, atomics::memory_order_relaxed ))
-                {
-                    if ( pCur->level_unlinked()) {
-                        gc::retire( node_traits::to_value_ptr( pCur.ptr()), dispose_node );
-                        m_Stat.onEraseWhileFind();
-                    }
-                }
-            }
-        }
+            node_type* pPrev;
+            marked_node_ptr pCurr;
+            node_type* pPrevAtThisLevel = m_Head.head();
 
-        template <typename Q, typename Compare >
-        bool find_position( Q const& val, position& pos, Compare cmp, bool bStopIfFound )
-        {
-            node_type * pPred;
-            marked_node_ptr pSucc;
-            marked_node_ptr pCur;
+            int cmpResult = 1;
 
-            // Hazard pointer array:
-            //  pPred: [nLevel * 2]
-            //  pSucc: [nLevel * 2 + 1]
+            for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
+            retryAtLevel:
+                pPrev = pPrevAtThisLevel;
+                guards.assign(0, pPrev);
 
-        retry:
-            pPred = m_Head.head();
-            int nCmp = 1;
+                while (true) {
+                    pCurr = guards.protect(1, pPrev->next(nLevel), gc_protect);
 
-            for ( int nLevel = static_cast<int>( c_nMaxHeight - 1 ); nLevel >= 0; --nLevel ) {
-                pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
-                while ( true ) {
-                    pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-                    if ( pCur.bits()) {
-                        // pCur.bits() means that pPred is logically deleted
-                        goto retry;
-                    }
-
-                    if ( pCur.ptr() == nullptr ) {
+                    if (nullptr == pCurr.ptr()) {
                         // end of list at level nLevel - goto next level
                         break;
                     }
 
-                    // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
-
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
-                        goto retry;
-
-                    if ( pSucc.bits()) {
-                        // pCur is marked, i.e. logically deleted
-                        // try to help deleting pCur
-                        help_remove( nLevel, pPred, pCur );
-                        goto retry;
-                    }
-                    else {
-                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
-                        if ( nCmp < 0 ) {
-                            pPred = pCur.ptr();
-                            pos.guards.copy( nLevel * 2, nLevel * 2 + 1 );   // pPrev guard := cur guard
+                    cmpResult = cmp(*node_traits::to_value_ptr(pCurr.ptr()), val);
+                    if (cmpResult < 0) {
+                        pPrev = pCurr.ptr();
+                        guards.copy(0, 1);   // pPrev guard := pCurr guard
+                    } else {
+                        if (!pos.contains(pPrev)) {
+                            pPrev->lock();
                         }
-                        else if ( nCmp == 0 && bStopIfFound )
-                            goto found;
-                        else
-                            break;
+
+                        if (pPrev->next(nLevel).load(memory_model::memory_order_relaxed) != pCurr.ptr()) {
+                            if (!pos.contains(pPrev)) {
+                                pPrev->unlock();
+                            }
+
+                            goto retryAtLevel;
+                        }
+                        break;
                     }
                 }
 
-                // Next level
-                pos.pPrev[nLevel] = pPred;
-                pos.pSucc[nLevel] = pCur.ptr();
+                pos.addLockPtr(pPrev);
+                pos.pPrev[nLevel] = pPrev;
             }
 
-            if ( nCmp != 0 )
-                return false;
+            if (cmpResult == 0) {
+                pos.pCur = pCurr.ptr();
+                pos.pCur->lock();
+                pos.addLockPtr(pos.pCur);
 
-        found:
-            pos.pCur = pCur.ptr();
-            return pCur.ptr() && nCmp == 0;
-        }
-
-        bool find_min_position( position& pos )
-        {
-            node_type * pPred;
-            marked_node_ptr pSucc;
-            marked_node_ptr pCur;
-
-            // Hazard pointer array:
-            //  pPred: [nLevel * 2]
-            //  pSucc: [nLevel * 2 + 1]
-
-        retry:
-            pPred = m_Head.head();
-
-            for ( int nLevel = static_cast<int>( c_nMaxHeight - 1 ); nLevel >= 0; --nLevel ) {
-                pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
-                pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-
-                // pCur.bits() means that pPred is logically deleted
-                // head cannot be deleted
-                assert( pCur.bits() == 0 );
-
-                if ( pCur.ptr()) {
-
-                    // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
-
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
-                        goto retry;
-
-                    if ( pSucc.bits()) {
-                        // pCur is marked, i.e. logically deleted.
-                        // try to help deleting pCur
-                        help_remove( nLevel, pPred, pCur );
-                        goto retry;
-                    }
-                }
-
-                // Next level
-                pos.pPrev[nLevel] = pPred;
-                pos.pSucc[nLevel] = pCur.ptr();
             }
 
-            return ( pos.pCur = pCur.ptr()) != nullptr;
+            return cmpResult == 0;
         }
 
-        bool find_max_position( position& pos )
+        bool find_min_position(position& pos)
         {
-            node_type * pPred;
-            marked_node_ptr pSucc;
-            marked_node_ptr pCur;
+            typename gc::template GuardArray<2> guards;
 
-            // Hazard pointer array:
-            //  pPred: [nLevel * 2]
-            //  pSucc: [nLevel * 2 + 1]
+            node_type* pPrev = m_Head.head();
+            marked_node_ptr pCurr;
 
-        retry:
-            pPred = m_Head.head();
+            pPrev->lock();
+            pos.addLockPtr(pPrev);
 
-            for ( int nLevel = static_cast<int>( c_nMaxHeight - 1 ); nLevel >= 0; --nLevel ) {
-                pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
-                while ( true ) {
-                    pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-                    if ( pCur.bits()) {
+            for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
+                pCurr = pPrev->next(nLevel);
+                pos.pPrev[nLevel] = pPrev;
+            }
+
+            if (nullptr != (pos.pCur = pCurr.ptr())) {
+                pos.pCur->lock();
+                pos.addLockPtr(pos.pCur);
+            }
+
+            return pos.pCur != nullptr;
+        }
+
+        bool find_max_position(position& pos)
+        {
+            typename gc::template GuardArray<2> guards;
+
+            node_type* pPrev;
+            marked_node_ptr pCurr;
+            node_type* pPrevAtThisLevel = m_Head.head();
+
+            for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
+            retryAtLevel:
+                pPrev = pPrevAtThisLevel;
+                guards.assign(0, pPrev);
+
+                while (true) {
+                    pCurr = guards.protect(1, pPrev->next(nLevel), gc_protect);
+                    if (pCurr.bits()) {
                         // pCur.bits() means that pPred is logically deleted
-                        goto retry;
+                        goto retryAtLevel;
                     }
 
-                    if ( pCur.ptr() == nullptr ) {
-                        // end of the list at level nLevel - goto next level
+                    if (nullptr == pCurr || nullptr == pCurr->next(nLevel).load(memory_model::memory_order_relaxed)) {
+                        bool lockThisNode = !pos.contains(pPrev);
+                        if (lockThisNode) {
+                            pPrev->lock();
+                        }
+
+                        if (pPrev->next(nLevel).load(memory_model::memory_order_relaxed) != pCurr.ptr()) {
+                            if (lockThisNode) {
+                                pPrev->unlock();
+                            }
+                            goto retryAtLevel;
+                        }
+
                         break;
                     }
 
-                    // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
-
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
-                        goto retry;
-
-                    if ( pSucc.bits()) {
-                        // pCur is marked, i.e. logically deleted.
-                        // try to help deleting pCur
-                        help_remove( nLevel, pPred, pCur );
-                        goto retry;
-                    }
-                    else {
-                        if ( !pSucc.ptr())
-                            break;
-
-                        pPred = pCur.ptr();
-                        pos.guards.copy( nLevel * 2, nLevel * 2 + 1 );
-                    }
+                    pPrev = pCurr.ptr();
+                    guards.copy(0, 1);   // pPrev guard := pCurr guard
                 }
 
-                // Next level
-                pos.pPrev[nLevel] = pPred;
-                pos.pSucc[nLevel] = pCur.ptr();
+                pos.addLockPtr(pPrev);
+                pos.pPrev[nLevel] = pPrev;
             }
 
-            return ( pos.pCur = pCur.ptr()) != nullptr;
-        }
-
-        bool renew_insert_position( value_type& val, node_type * pNode, position& pos )
-        {
-            node_type * pPred;
-            marked_node_ptr pSucc;
-            marked_node_ptr pCur;
-            key_comparator cmp;
-
-            // Hazard pointer array:
-            //  pPred: [nLevel * 2]
-            //  pSucc: [nLevel * 2 + 1]
-
-        retry:
-            pPred = m_Head.head();
-            int nCmp = 1;
-
-            for ( int nLevel = static_cast<int>( c_nMaxHeight - 1 ); nLevel >= 0; --nLevel ) {
-                pos.guards.assign( nLevel * 2, node_traits::to_value_ptr( pPred ));
-                while ( true ) {
-                    pCur = pos.guards.protect( nLevel * 2 + 1, pPred->next( nLevel ), gc_protect );
-                    if ( pCur.bits()) {
-                        // pCur.bits() means that pPred is logically deleted
-                        goto retry;
-                    }
-
-                    if ( pCur.ptr() == nullptr ) {
-                        // end of list at level nLevel - goto next level
-                        break;
-                    }
-
-                    // pSucc contains deletion mark for pCur
-                    pSucc = pCur->next( nLevel ).load( memory_model::memory_order_acquire );
-
-                    if ( pPred->next( nLevel ).load( memory_model::memory_order_acquire ).all() != pCur.ptr())
-                        goto retry;
-
-                    if ( pSucc.bits()) {
-                        // pCur is marked, i.e. logically deleted
-                        if ( pCur.ptr() == pNode ) {
-                            // Node is removing while we are inserting it
-                            return false;
-                        }
-                        // try to help deleting pCur
-                        help_remove( nLevel, pPred, pCur );
-                        goto retry;
-                    }
-                    else {
-                        nCmp = cmp( *node_traits::to_value_ptr( pCur.ptr()), val );
-                        if ( nCmp < 0 ) {
-                            pPred = pCur.ptr();
-                            pos.guards.copy( nLevel * 2, nLevel * 2 + 1 );   // pPrev guard := cur guard
-                        }
-                        else
-                            break;
-                    }
-                }
-
-                // Next level
-                pos.pPrev[nLevel] = pPred;
-                pos.pSucc[nLevel] = pCur.ptr();
+            if (nullptr != (pos.pCur = pCurr.ptr())) {
+                pos.pCur->lock();
+                pos.addLockPtr(pos.pCur);
             }
 
-            return nCmp == 0;
+            return pos.pCur != nullptr;
         }
 
         template <typename Func>
-        bool insert_at_position( value_type& val, node_type * pNode, position& pos, Func f )
+        void insert_at_position(value_type& val, node_type* pNode, position& pos, Func f)
         {
             unsigned int const nHeight = pNode->height();
 
-            for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel )
-                pNode->next( nLevel ).store( marked_node_ptr(), memory_model::memory_order_relaxed );
+            //for each level item set next to nullptr
+            for (unsigned int nLevel = 1; nLevel < nHeight; ++nLevel)
+                pNode->next( nLevel ).store(marked_node_ptr(), memory_model::memory_order_relaxed );
 
             // Insert at level 0
-            {
-                marked_node_ptr p( pos.pSucc[0] );
-                pNode->next( 0 ).store( p, memory_model::memory_order_release );
-                if ( !pos.pPrev[0]->next( 0 ).compare_exchange_strong( p, marked_node_ptr( pNode ), memory_model::memory_order_release, atomics::memory_order_relaxed ))
-                    return false;
-
-                f( val );
-            }
+            marked_node_ptr pNodePtr(pNode);
+            pNode->lock();
+            pNode->next(0).store(marked_node_ptr(pos.pPrev[0]->next(0)), memory_model::memory_order_relaxed);
+            pos.pPrev[0]->next(0).store(pNodePtr, memory_model::memory_order_relaxed);
+            f(val);
 
             // Insert at level 1..max
-            for ( unsigned int nLevel = 1; nLevel < nHeight; ++nLevel ) {
-                marked_node_ptr p;
-                while ( true ) {
-                    marked_node_ptr pSucc( pos.pSucc[nLevel] );
-
-                    // Set pNode->next
-                    // pNode->next can have "logical deleted" flag if another thread is removing pNode right now
-                    if ( !pNode->next( nLevel ).compare_exchange_strong( p, pSucc,
-                        memory_model::memory_order_release, atomics::memory_order_acquire ))
-                    {
-                        // pNode has been marked as removed while we are inserting it
-                        // Stop inserting
-                        assert( p.bits() != 0 );
-
-                        // Here pNode is linked at least level 0 so level_unlinked() cannot returns true
-                        CDS_VERIFY_FALSE( pNode->level_unlinked( nHeight - nLevel ));
-
-                        // pNode is linked up to nLevel - 1
-                        // Remove it via find_position()
-                        find_position( val, pos, key_comparator(), false );
-
-                        m_Stat.onLogicDeleteWhileInsert();
-                        return true;
-                    }
-                    p = pSucc;
-
-                    // Link pNode into the list at nLevel
-                    if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( pSucc, marked_node_ptr( pNode ),
-                        memory_model::memory_order_release, atomics::memory_order_relaxed ))
-                    {
-                        // go to next level
-                        break;
-                    }
-
-                    // Renew insert position
-                    m_Stat.onRenewInsertPosition();
-
-                    if ( !renew_insert_position( val, pNode, pos )) {
-                        // The node has been deleted while we are inserting it
-                        // Update current height for concurent removing
-                        CDS_VERIFY_FALSE( pNode->level_unlinked( nHeight - nLevel ));
-
-                        m_Stat.onRemoveWhileInsert();
-
-                        // help to removing val
-                        find_position( val, pos, key_comparator(), false );
-                        return true;
-                    }
-                }
+            for (unsigned int nLevel = 1; nLevel < nHeight; ++nLevel) {
+                pNode->next(nLevel).store(marked_node_ptr(pos.pPrev[nLevel]->next(nLevel)), memory_model::memory_order_relaxed);
+                pos.pPrev[nLevel]->next(nLevel).store(pNodePtr, memory_model::memory_order_relaxed);
             }
-            return true;
+
+            pNode->unlock();
         }
 
         template <typename Func>
-        bool try_remove_at( node_type * pDel, position& pos, Func f )
+        void remove_at(node_type* pDel, position& pos, Func f)
         {
-            assert( pDel != nullptr );
+            assert(pDel != nullptr);
 
             marked_node_ptr pSucc;
             back_off bkoff;
 
-            // logical deletion (marking)
-            for ( unsigned int nLevel = pDel->height() - 1; nLevel > 0; --nLevel ) {
-                pSucc = pDel->next( nLevel ).load( memory_model::memory_order_relaxed );
-                if ( pSucc.bits() == 0 ) {
-                    bkoff.reset();
-                    while ( !( pDel->next( nLevel ).compare_exchange_weak( pSucc, pSucc | 1,
-                        memory_model::memory_order_release, atomics::memory_order_acquire )
-                        || pSucc.bits() != 0 ))
-                    {
-                        bkoff();
-                        m_Stat.onMarkFailed();
-                    }
-                }
+            f(*node_traits::to_value_ptr(pDel));
+
+            marked_node_ptr pNext(pDel->next(0).load(memory_model::memory_order_relaxed).ptr());
+
+            for (int nLevel = static_cast<int>(pDel->height() - 1); nLevel >= 0; --nLevel) {
+                pSucc = pDel->next(nLevel).load(memory_model::memory_order_relaxed);
+                pos.pPrev[nLevel]->next(nLevel).store(pSucc);
             }
 
-            marked_node_ptr p( pDel->next( 0 ).load( memory_model::memory_order_relaxed ).ptr());
-            while ( true ) {
-                if ( pDel->next( 0 ).compare_exchange_strong( p, p | 1, memory_model::memory_order_release, atomics::memory_order_acquire ))
-                {
-                    f( *node_traits::to_value_ptr( pDel ));
-
-                    // Physical deletion
-                    // try fast erase
-                    p = pDel;
-
-                    for ( int nLevel = static_cast<int>( pDel->height() - 1 ); nLevel >= 0; --nLevel ) {
-
-                        pSucc = pDel->next( nLevel ).load( memory_model::memory_order_acquire );
-                        if ( pos.pPrev[nLevel]->next( nLevel ).compare_exchange_strong( p, marked_node_ptr( pSucc.ptr()),
-                            memory_model::memory_order_acq_rel, atomics::memory_order_relaxed ))
-                        {
-                            pDel->level_unlinked();
-                        }
-                        else {
-                            // Make slow erase
-#       ifdef CDS_DEBUG
-                            if ( find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false ))
-                                assert( pDel != pos.pCur );
-#       else
-                            find_position( *node_traits::to_value_ptr( pDel ), pos, key_comparator(), false );
-#       endif
-                            m_Stat.onSlowErase();
-                            return true;
-                        }
-                    }
-
-                    // Fast erasing success
-                    gc::retire( node_traits::to_value_ptr( pDel ), dispose_node );
-                    m_Stat.onFastErase();
-                    return true;
-                }
-                else if ( p.bits()) {
-                    // Another thread is deleting pDel right now
-                    m_Stat.onEraseContention();
-                    return false;
-                }
-                m_Stat.onEraseRetry();
-                bkoff();
-            }
+            gc::retire(node_traits::to_value_ptr(pDel), dispose_node);
+            m_Stat.onFastErase();
         }
 
         enum finsd_fastpath_result {
@@ -977,8 +791,9 @@ namespace cds { namespace intrusive {
             find_fastpath_not_found,
             find_fastpath_abort
         };
+
         template <typename Q, typename Compare, typename Func>
-        finsd_fastpath_result find_fastpath( Q& val, Compare cmp, Func f )
+        finsd_fastpath_result find_fastpath(Q& val, Compare cmp, Func f)
         {
             node_type * pPred;
             marked_node_ptr pCur;
@@ -1034,10 +849,8 @@ namespace cds { namespace intrusive {
         bool find_slowpath( Q& val, Compare cmp, Func f )
         {
             position pos;
-            if ( find_position( val, pos, cmp, true )) {
-                assert( cmp( *node_traits::to_value_ptr( pos.pCur ), val ) == 0 );
-
-                f( *node_traits::to_value_ptr( pos.pCur ), val );
+            if (find_position(val, pos, cmp)) {
+                f(*node_traits::to_value_ptr(pos.pCur), val);
                 return true;
             }
             else
@@ -1045,9 +858,9 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool find_with_( Q& val, Compare cmp, Func f )
+        bool find_with_(Q& val, Compare cmp, Func f)
         {
-            switch ( find_fastpath( val, cmp, f )) {
+            switch (find_fastpath(val, cmp, f)) {
             case find_fastpath_found:
                 m_Stat.onFindFastSuccess();
                 return true;
@@ -1058,7 +871,7 @@ namespace cds { namespace intrusive {
                 break;
             }
 
-            if ( find_slowpath( val, cmp, f )) {
+            if (find_slowpath(val, cmp, f)) {
                 m_Stat.onFindSlowSuccess();
                 return true;
             }
@@ -1071,63 +884,55 @@ namespace cds { namespace intrusive {
         guarded_ptr get_with_( Q const& val, Compare cmp )
         {
             guarded_ptr gp;
-            if ( find_with_( val, cmp, [&gp]( value_type& found, Q const& ) { gp.reset( &found ); } ))
+            if (find_with_(val, cmp, [&gp](value_type& found, const Q&) { gp.reset(&found); } ))
                 return gp;
             return guarded_ptr();
         }
 
         template <typename Q, typename Compare, typename Func>
-        bool erase_( Q const& val, Compare cmp, Func f )
+        bool erase_(const Q& val, Compare cmp, Func f)
         {
             position pos;
 
-            if ( !find_position( val, pos, cmp, false )) {
+            if (!find_position(val, pos, cmp)) {
                 m_Stat.onEraseFailed();
                 return false;
             }
 
-            node_type * pDel = pos.pCur;
+            node_type* pDel = pos.pCur;
             typename gc::Guard gDel;
-            gDel.assign( node_traits::to_value_ptr( pDel ));
-            assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
+            gDel.assign(node_traits::to_value_ptr(pDel));
+            assert(cmp(*node_traits::to_value_ptr(pDel), val) == 0);
 
             unsigned int nHeight = pDel->height();
-            if ( try_remove_at( pDel, pos, f )) {
-                --m_ItemCounter;
-                m_Stat.onRemoveNode( nHeight );
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-
-            m_Stat.onEraseFailed();
-            return false;
+            remove_at(pDel, pos, f);
+            --m_ItemCounter;
+            m_Stat.onRemoveNode(nHeight);
+            m_Stat.onEraseSuccess();
+            return true;
         }
 
         template <typename Q, typename Compare>
-        guarded_ptr extract_( Q const& val, Compare cmp )
+        guarded_ptr extract_(const Q& val, Compare cmp)
         {
             position pos;
 
-            guarded_ptr gp;
-            for (;;) {
-                if ( !find_position( val, pos, cmp, false )) {
-                    m_Stat.onExtractFailed();
-                    return guarded_ptr();
-                }
-
-                node_type * pDel = pos.pCur;
-                gp.reset( node_traits::to_value_ptr( pDel ));
-                assert( cmp( *node_traits::to_value_ptr( pDel ), val ) == 0 );
-
-                unsigned int nHeight = pDel->height();
-                if ( try_remove_at( pDel, pos, []( value_type const& ) {} )) {
-                    --m_ItemCounter;
-                    m_Stat.onRemoveNode( nHeight );
-                    m_Stat.onExtractSuccess();
-                    return gp;
-                }
-                m_Stat.onExtractRetry();
+            if (!find_position(val, pos, cmp)) {
+                m_Stat.onExtractFailed();
+                return guarded_ptr();
             }
+
+            node_type* pDel = pos.pCur;
+            guarded_ptr gp;
+            gp.reset(node_traits::to_value_ptr(pDel));
+            assert(cmp(*node_traits::to_value_ptr(pDel), val) == 0);
+
+            unsigned int nHeight = pDel->height();
+            remove_at(pDel, pos, [](const value_type&) {});
+            --m_ItemCounter;
+            m_Stat.onRemoveNode(nHeight);
+            m_Stat.onExtractSuccess();
+            return gp;
         }
 
         guarded_ptr extract_min_()
@@ -1135,27 +940,22 @@ namespace cds { namespace intrusive {
             position pos;
 
             guarded_ptr gp;
-            for ( ;;) {
-                if ( !find_min_position( pos )) {
-                    // The list is empty
-                    m_Stat.onExtractMinFailed();
-                    return guarded_ptr();
-                }
-
-                node_type * pDel = pos.pCur;
-
-                unsigned int nHeight = pDel->height();
-                gp.reset( node_traits::to_value_ptr( pDel ));
-
-                if ( try_remove_at( pDel, pos, []( value_type const& ) {} )) {
-                    --m_ItemCounter;
-                    m_Stat.onRemoveNode( nHeight );
-                    m_Stat.onExtractMinSuccess();
-                    return gp;
-                }
-
-                m_Stat.onExtractMinRetry();
+            if (!find_min_position(pos)) {
+                // The list is empty
+                m_Stat.onExtractMinFailed();
+                return guarded_ptr();
             }
+
+            node_type* pDel = pos.pCur;
+
+            unsigned int nHeight = pDel->height();
+            gp.reset(node_traits::to_value_ptr(pDel));
+
+            remove_at(pDel, pos, [](const value_type&) {} );
+            --m_ItemCounter;
+            m_Stat.onRemoveNode(nHeight);
+            m_Stat.onExtractMinSuccess();
+            return gp;
         }
 
         guarded_ptr extract_max_()
@@ -1163,49 +963,41 @@ namespace cds { namespace intrusive {
             position pos;
 
             guarded_ptr gp;
-            for ( ;;) {
-                if ( !find_max_position( pos )) {
-                    // The list is empty
-                    m_Stat.onExtractMaxFailed();
-                    return guarded_ptr();
-                }
-
-                node_type * pDel = pos.pCur;
-
-                unsigned int nHeight = pDel->height();
-                gp.reset( node_traits::to_value_ptr( pDel ));
-
-                if ( try_remove_at( pDel, pos, []( value_type const& ) {} )) {
-                    --m_ItemCounter;
-                    m_Stat.onRemoveNode( nHeight );
-                    m_Stat.onExtractMaxSuccess();
-                    return gp;
-                }
-
-                m_Stat.onExtractMaxRetry();
+            if (!find_max_position(pos)) {
+                // The list is empty
+                m_Stat.onExtractMaxFailed();
+                return guarded_ptr();
             }
+
+            node_type* pDel = pos.pCur;
+
+            unsigned int nHeight = pDel->height();
+            gp.reset(node_traits::to_value_ptr(pDel));
+
+            remove_at(pDel, pos, [](const value_type&) {} );
+            --m_ItemCounter;
+            m_Stat.onRemoveNode(nHeight);
+            m_Stat.onExtractMaxSuccess();
+            return gp;
         }
 
-        void increase_height( unsigned int nHeight )
+        void increase_height(unsigned int nHeight)
         {
-            unsigned int nCur = m_nHeight.load( memory_model::memory_order_relaxed );
-            if ( nCur < nHeight )
-                m_nHeight.compare_exchange_strong( nCur, nHeight, memory_model::memory_order_relaxed, atomics::memory_order_relaxed );
+            unsigned int nCurr = m_nHeight.load(memory_model::memory_order_relaxed);
+            if (nCurr < nHeight)
+                m_nHeight.compare_exchange_strong(nCurr, nHeight, memory_model::memory_order_relaxed, atomics::memory_order_relaxed);
         }
 
         void destroy()
         {
-            node_type* p = m_Head.head()->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
-            while ( p ) {
-                node_type* pNext = p->next( 0 ).load( atomics::memory_order_relaxed ).ptr();
-                dispose_node( node_traits::to_value_ptr( p ));
-                p = pNext;
+            node_type* pNext = nullptr;
+            for (node_type* p = m_Head.head()->next(0).load(atomics::memory_order_relaxed).ptr(); p != nullptr; p = pNext) {
+                node_type* pNext = p->next(0).load(atomics::memory_order_relaxed).ptr();
+                dispose_node(node_traits::to_value_ptr(p));
             }
         }
 
-
     private:
-        
         lazy_skip_list::details::head_node< node_type > m_Head;
 
         random_level_generator      m_RandomLevelGen;
