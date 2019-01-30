@@ -1140,6 +1140,7 @@
     <ClInclude Include="..\..\..\cds\container\striped_set\std_list.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_set.h" />
     <ClInclude Include="..\..\..\cds\container\striped_set\std_vector.h" />
+	<ClInclude Include="..\..\..\cds\container\williams_lock_free_stack.h" />
     <ClInclude Include="..\..\..\cds\container\weak_ringbuffer.h" />
     <ClInclude Include="..\..\..\cds\details\binary_functor_wrapper.h" />
     <ClInclude Include="..\..\..\cds\details\bit_reverse_counter.h" />

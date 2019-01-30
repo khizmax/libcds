@@ -1258,5 +1258,8 @@
     <ClInclude Include="..\..\..\cds\details\tls_holder.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+	<ClInclude Include="..\..\..\cds\container\williams_lock_free_stack.h">
+       <Filter>Header Files\cds\container</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
