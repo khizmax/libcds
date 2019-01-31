@@ -1,7 +1,32 @@
-// Copyright (c) 2006-2018 Maxim Khizhinsky
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+/*
+    This file is a part of libcds - Concurrent Data Structures library
+
+    (C) Copyright Maxim Khizhinsky (libcds.dev@gmail.com) 2006-2017
+
+    Source code repo: http://github.com/khizmax/libcds/
+    Download: http://sourceforge.net/projects/libcds/files/
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #ifndef CDSSTRESS_QUEUE_TYPES_H
 #define CDSSTRESS_QUEUE_TYPES_H
@@ -16,6 +41,7 @@
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
 #include <cds/container/weak_ringbuffer.h>
+#include <cds/container/speculative_pairing_queue.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -195,6 +221,35 @@ namespace fc_details{
         typedef cds::container::MoirQueue< cds::gc::HP, Value, traits_MSQueue_stat > MoirQueue_HP_stat;
         typedef cds::container::MoirQueue< cds::gc::DHP, Value, traits_MSQueue_stat > MoirQueue_DHP_stat;
 
+        // SPQueue
+        typedef cds::container::SPQueue<cds::gc::HP,  Value > SPQueue_HP;
+        typedef cds::container::SPQueue<cds::gc::DHP, Value > SPQueue_DHP;
+
+        struct traits_SPQueue_seqcst : public
+           cds::container::speculative_pairing_queue::make_traits <
+                   cds::opt::memory_model < cds::opt::v::sequential_consistent >
+           > ::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_seqcst > SPQueue_HP_seqcst;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_seqcst > SPQueue_DHP_seqcst;
+
+        // SPQueue + item counter
+        struct traits_SPQueue_ic : public
+           cds::container::speculative_pairing_queue::make_traits <
+                   cds::opt::item_counter < cds::atomicity::item_counter >
+           >::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_ic > SPQueue_HP_ic;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_ic > SPQueue_DHP_ic;
+
+        // SPQueue + stat
+        struct traits_SPQueue_stat: public
+            cds::container::speculative_pairing_queue::make_traits <
+                    cds::opt::stat< cds::container::speculative_pairing_queue::stat<> >
+            >::type
+        {};
+        typedef cds::container::SPQueue< cds::gc::HP,  Value, traits_SPQueue_stat > SPQueue_HP_stat;
+        typedef cds::container::SPQueue< cds::gc::DHP, Value, traits_SPQueue_stat > SPQueue_DHP_stat;
 
         // OptimisticQueue
         typedef cds::container::OptimisticQueue< cds::gc::HP, Value > OptimisticQueue_HP;
@@ -753,6 +808,7 @@ namespace cds_test {
 
 #else
 #   define CDSSTRESS_MSQueue_1( test_fixture )
+#   define CDSSTRESS_SPQueue_1( test_fixture )
 #   define CDSSTRESS_MoirQueue_1( test_fixture )
 #   define CDSSTRESS_OptimsticQueue_1( test_fixture )
 #   define CDSSTRESS_BasketQueue_1( test_fixture )
@@ -770,6 +826,13 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP        ) \
     CDSSTRESS_Queue_F( test_fixture, MSQueue_DHP_stat   ) \
     CDSSTRESS_MSQueue_1( test_fixture )
+
+#define CDSSTRESS_SPQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_HP         ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_HP_stat    ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_DHP        ) \
+    CDSSTRESS_Queue_F( test_fixture, SPQueue_DHP_stat   ) \
+    CDSSTRESS_SPQueue_1( test_fixture )
 
 #define CDSSTRESS_MoirQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, MoirQueue_HP       ) \
