@@ -103,7 +103,7 @@ namespace {
 			Stack::gc::force_dispose();
 		}
     };
-
+	/*
     // TreiberStack<cds::gc::HP>
 #define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
     TEST_F( test_fixture, stack_impl ) \
@@ -165,7 +165,7 @@ namespace {
     CDSSTRESS_StdStack( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
-
+		*/
 	// SegmentedStack
 #define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
     TEST_F( test_fixture, stack_impl ) \

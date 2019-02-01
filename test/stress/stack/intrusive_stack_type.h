@@ -506,9 +506,9 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, FCStack_slist_mutex_elimination_stat ) \
 
 #define CDSSTRESS_SegmentedStack( test_fixture ) \
+    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin_stat    ) \
     CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin         ) \
     CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin_padding ) \
-    CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_spin_stat    ) \
     CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_mutex        ) \
     CDSSTRESS_Stack_F( test_fixture, SegmentedStack_HP_mutex_stat   ) \
     CDSSTRESS_Stack_F( test_fixture, SegmentedStack_DHP_mutex       ) \
