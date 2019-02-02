@@ -40,10 +40,10 @@ namespace cds { namespace intrusive {
 
             counter_type    m_nCreateSegmentReq;    ///< Number of request to create new segment
             counter_type    m_nDeleteSegmentReq;    ///< Number to request to delete segment
-            counter_type    m_nSegmentCreated;		///< Number of created segments
-            counter_type    m_nSegmentDeleted;		///< Number of deleted segments
-			counter_type    m_nSucceededCommits;	///< Number of succeeded commits
-			counter_type    m_nFailedCommits;		///< Number of failed commits
+            counter_type    m_nSegmentCreated;        ///< Number of created segments
+            counter_type    m_nSegmentDeleted;        ///< Number of deleted segments
+            counter_type    m_nSucceededCommits;    ///< Number of succeeded commits
+            counter_type    m_nFailedCommits;        ///< Number of failed commits
 
             //@cond
             void onPush()                 { ++m_nPush; }
@@ -56,8 +56,8 @@ namespace cds { namespace intrusive {
             void onDeleteSegmentReq()     { ++m_nDeleteSegmentReq; }
             void onSegmentCreated()       { ++m_nSegmentCreated; }
             void onSegmentDeleted()       { ++m_nSegmentDeleted; }
-			void onSucceededCommit()      { ++m_nSucceededCommits; }
-			void onFailedCommit()         { ++m_nFailedCommits; }
+            void onSucceededCommit()      { ++m_nSucceededCommits; }
+            void onFailedCommit()         { ++m_nFailedCommits; }
             //@endcond
         };
 
@@ -74,8 +74,8 @@ namespace cds { namespace intrusive {
             void onDeleteSegmentReq() const {}
             void onSegmentCreated() const   {}
             void onSegmentDeleted() const   {}
-			void onSucceededCommit() const  {}
-			void onFailedCommit() const     {}
+            void onSucceededCommit() const  {}
+            void onFailedCommit() const     {}
             //@endcond
         };
 
@@ -172,7 +172,7 @@ namespace cds { namespace intrusive {
         struct segment: public boost::intrusive::slist_base_hook<>
         {
             cell * cells;    // Cell array of size \ref m_nQuasiFactor
-			bool retired;	 // Mark that indicates is the segment removed
+            bool retired;     // Mark that indicates is the segment removed
             size_t version;  // version tag (ABA prevention tag)
             // cell array is placed here in one continuous memory block
 
@@ -180,7 +180,7 @@ namespace cds { namespace intrusive {
             explicit segment( size_t nCellCount )
                 // MSVC warning C4355: 'this': used in base member initializer list
                 : cells( reinterpret_cast< cell *>( this + 1 ))
-				, retired( false )
+                , retired( false )
                 , version( 0 )
             {
                 init( nCellCount );
@@ -275,11 +275,11 @@ namespace cds { namespace intrusive {
                 // The lock should be held
                 cell const * pLastCell = s.cells + quasi_factor();
                 for ( cell const * pCell = s.cells; pCell < pLastCell; ++pCell ) {
-					auto item = pCell->data.load(memory_model::memory_order_relaxed);
-					if (item.ptr() && !item.bits())
-					{
-						return false;
-					}
+                    auto item = pCell->data.load(memory_model::memory_order_relaxed);
+                    if (item.ptr() && !item.bits())
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -331,25 +331,25 @@ namespace cds { namespace intrusive {
                         return guard.assign( &m_List.front());
                     }
 
-					if ( empty(pHead) ) {  
-						// pHead is empty
-						pHead->retired = true;
-						m_List.pop_front();
-						if ( m_List.empty()) {
-							pRet = guard.assign( nullptr );
-						}
-						else
-							pRet = guard.assign( &m_List.front());
-						m_pHead.store( pRet, memory_model::memory_order_release );
-					}
-					else {   
-						// pHead is not empty
-						// since the lock is held, no one changed pHead
-						return pHead;
-					}
+                    if ( empty(pHead) ) {  
+                        // pHead is empty
+                        pHead->retired = true;
+                        m_List.pop_front();
+                        if ( m_List.empty()) {
+                            pRet = guard.assign( nullptr );
+                        }
+                        else
+                            pRet = guard.assign( &m_List.front());
+                        m_pHead.store( pRet, memory_model::memory_order_release );
+                    }
+                    else {   
+                        // pHead is not empty
+                        // since the lock is held, no one changed pHead
+                        return pHead;
+                    }
                 }
 
-				retire_segment( pHead );
+                retire_segment( pHead );
                 m_Stat.onSegmentDeleted();
             
                 return pRet;
@@ -361,35 +361,35 @@ namespace cds { namespace intrusive {
                 return m_nQuasiFactor;
             }
 
-			bool retired(segment *pSegment)
-			{
-				scoped_lock lock(m_Lock);
-				return (pSegment->retired);
-			}
+            bool retired(segment *pSegment)
+            {
+                scoped_lock lock(m_Lock);
+                return (pSegment->retired);
+            }
 
         private:
             typedef cds::details::Allocator< segment, allocator >   segment_allocator;
 
-			bool empty(segment const * s)
-			{
-				cell const * pLastCell = s->cells + quasi_factor();
-				for (cell const * pCell = s->cells; pCell < pLastCell; ++pCell) {
-					auto item = pCell->data.load(memory_model::memory_order_relaxed);
-					if (item.ptr() && !item.bits()) { 
-						// segments contains non deleted items
-						return false;
-					}
-				}
-				// check to the segment slots not changed
-				for (cell const * pCell = s->cells; pCell < pLastCell; ++pCell) {
-					auto item = pCell->data.load(memory_model::memory_order_relaxed);
-					if (item.ptr() && !item.bits()) { 
-						// segments contains non deleted items
-						return false;
-					}
-				}
-				return true;
-			}
+            bool empty(segment const * s)
+            {
+                cell const * pLastCell = s->cells + quasi_factor();
+                for (cell const * pCell = s->cells; pCell < pLastCell; ++pCell) {
+                    auto item = pCell->data.load(memory_model::memory_order_relaxed);
+                    if (item.ptr() && !item.bits()) { 
+                        // segments contains non deleted items
+                        return false;
+                    }
+                }
+                // check to the segment slots not changed
+                for (cell const * pCell = s->cells; pCell < pLastCell; ++pCell) {
+                    auto item = pCell->data.load(memory_model::memory_order_relaxed);
+                    if (item.ptr() && !item.bits()) { 
+                        // segments contains non deleted items
+                        return false;
+                    }
+                }
+                return true;
+            }
 
             static size_t get_version( segment * pSegment )
             {
@@ -445,46 +445,46 @@ namespace cds { namespace intrusive {
 
             ++m_ItemCounter;
 
-			typename gc::Guard segmentGuard;
-			while ( true ) {
-				segment * pHeadSegment = m_SegmentList.head(segmentGuard);
-				if ( !pHeadSegment) {
-					// no segments, create the new one
-					pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard );
-					assert(pHeadSegment);
-				}
+            typename gc::Guard segmentGuard;
+            while ( true ) {
+                segment * pHeadSegment = m_SegmentList.head(segmentGuard);
+                if ( !pHeadSegment) {
+                    // no segments, create the new one
+                    pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard );
+                    assert(pHeadSegment);
+                }
 
-				typename gc::Guard segGuard;
-				size_t i = 0;
-				size_t qf = quasi_factor();
-				do
-				{
-					if ( pHeadSegment->cells[i].data.load(memory_model::memory_order_relaxed).all() ) {
-						// Cell is not empty, go next
-						m_Stat.onPushPopulated();
-					}
-					else {
-						typename gc::Guard itemGuard;
-						regular_cell nullCell;
-						regular_cell newCell(&val);
-						itemGuard.assign(newCell.ptr());
-						if ( pHeadSegment->cells[i].data.compare_exchange_strong(nullCell, newCell, 
-							memory_model::memory_order_acquire, atomics::memory_order_relaxed) )
-						{
-							if (committed(pHeadSegment, newCell, i)) {
-								m_Stat.onPush();
-								return true;
-							}
-						}
+                typename gc::Guard segGuard;
+                size_t i = 0;
+                size_t qf = quasi_factor();
+                do
+                {
+                    if ( pHeadSegment->cells[i].data.load(memory_model::memory_order_relaxed).all() ) {
+                        // Cell is not empty, go next
+                        m_Stat.onPushPopulated();
+                    }
+                    else {
+                        typename gc::Guard itemGuard;
+                        regular_cell nullCell;
+                        regular_cell newCell(&val);
+                        itemGuard.assign(newCell.ptr());
+                        if ( pHeadSegment->cells[i].data.compare_exchange_strong(nullCell, newCell, 
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed) )
+                        {
+                            if (committed(pHeadSegment, newCell, i)) {
+                                m_Stat.onPush();
+                                return true;
+                            }
+                        }
 
-						assert(nullCell.ptr());
-						m_Stat.onPushContended();
-					}
-					i++;
-				} while (i < qf);
+                        assert(nullCell.ptr());
+                        m_Stat.onPushContended();
+                    }
+                    i++;
+                } while (i < qf);
 
-				// No available position, create a new segment
-				pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard);
+                // No available position, create a new segment
+                pHeadSegment = m_SegmentList.create_head(pHeadSegment, segmentGuard);
             }
         }
 
@@ -541,77 +541,77 @@ namespace cds { namespace intrusive {
         }
 
     protected:
-		//@cond
-		bool committed(segment *pHeadSegment, regular_cell &new_item, size_t index)
-		{
-			if (new_item.bits()) {   
-				// item already poped
-				m_Stat.onSucceededCommit();
-				return true;
-			}
-			else if (!m_SegmentList.retired(pHeadSegment)) {
-				m_Stat.onSucceededCommit();
-				return true;
-			}
-			else {
-				// segment is marked as removed,
-				// so try to mark item as removed
-				// if not succeeded, item already poped
-				if (!pHeadSegment->cells[index].data.compare_exchange_strong(new_item, new_item | 1, 
-					memory_model::memory_order_acquire, atomics::memory_order_relaxed))
-				{
-					m_Stat.onSucceededCommit();
-					return true;
-				}
-			}
+        //@cond
+        bool committed(segment *pHeadSegment, regular_cell &new_item, size_t index)
+        {
+            if (new_item.bits()) {   
+                // item already poped
+                m_Stat.onSucceededCommit();
+                return true;
+            }
+            else if (!m_SegmentList.retired(pHeadSegment)) {
+                m_Stat.onSucceededCommit();
+                return true;
+            }
+            else {
+                // segment is marked as removed,
+                // so try to mark item as removed
+                // if not succeeded, item already poped
+                if (!pHeadSegment->cells[index].data.compare_exchange_strong(new_item, new_item | 1, 
+                    memory_model::memory_order_acquire, atomics::memory_order_relaxed))
+                {
+                    m_Stat.onSucceededCommit();
+                    return true;
+                }
+            }
 
-			m_Stat.onFailedCommit();
-			return false;
-		}
-		//@endcond
+            m_Stat.onFailedCommit();
+            return false;
+        }
+        //@endcond
 
         //@cond
         bool do_pop( typename gc::Guard& itemGuard )
-		{
-			typename gc::Guard segmentGuard;
-			while (true) {
-				segment * pHeadSegment = m_SegmentList.head(segmentGuard);
-				if (!pHeadSegment) {
-					// Stack is empty
-					m_Stat.onPopEmpty();
-					return false;
-				}
-				size_t i = 1;
-				size_t qf = quasi_factor();
-				regular_cell item;
-				do
-				{
-					CDS_DEBUG_ONLY(++nLoopCount);
-					// Guard the item
-					// In segmented stack the cell cannot be reused
-					// So no loop is needed here to protect the cell
-					item = pHeadSegment->cells[qf - i].data.load(memory_model::memory_order_relaxed);
-					itemGuard.assign(item.ptr());
+        {
+            typename gc::Guard segmentGuard;
+            while (true) {
+                segment * pHeadSegment = m_SegmentList.head(segmentGuard);
+                if (!pHeadSegment) {
+                    // Stack is empty
+                    m_Stat.onPopEmpty();
+                    return false;
+                }
+                size_t i = 1;
+                size_t qf = quasi_factor();
+                regular_cell item;
+                do
+                {
+                    CDS_DEBUG_ONLY(++nLoopCount);
+                    // Guard the item
+                    // In segmented stack the cell cannot be reused
+                    // So no loop is needed here to protect the cell
+                    item = pHeadSegment->cells[qf - i].data.load(memory_model::memory_order_relaxed);
+                    itemGuard.assign(item.ptr());
 
-					// Check if this cell is not empty and not marked deleted
-					if (item.ptr() && !item.bits()) {
-						// Try to mark the cell as deleted
-						if (pHeadSegment->cells[qf - i].data.compare_exchange_strong(item, item | 1,
-							memory_model::memory_order_acquire, atomics::memory_order_relaxed))
-						{
-							--m_ItemCounter;
-							m_Stat.onPop();
+                    // Check if this cell is not empty and not marked deleted
+                    if (item.ptr() && !item.bits()) {
+                        // Try to mark the cell as deleted
+                        if (pHeadSegment->cells[qf - i].data.compare_exchange_strong(item, item | 1,
+                            memory_model::memory_order_acquire, atomics::memory_order_relaxed))
+                        {
+                            --m_ItemCounter;
+                            m_Stat.onPop();
 
-							return true;
-						}
-						assert(item.bits());
-						m_Stat.onPopContended();
-					}
-					i++;
-				} while (i <= qf);
-				// No nodes to pop, try remove the first segment
-				pHeadSegment = m_SegmentList.remove_head(pHeadSegment, segmentGuard);
-			}
+                            return true;
+                        }
+                        assert(item.bits());
+                        m_Stat.onPopContended();
+                    }
+                    i++;
+                } while (i <= qf);
+                // No nodes to pop, try remove the first segment
+                pHeadSegment = m_SegmentList.remove_head(pHeadSegment, segmentGuard);
+            }
         }
         //@endcond
     };
