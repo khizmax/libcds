@@ -159,7 +159,7 @@ namespace cds { namespace intrusive {
         typedef typename traits::stat          stat;   ///< Internal statistics policy
         typedef typename traits::lock_type     lock_type;   ///< Type of mutex for maintaining an internal list of allocated segments.
 
-        static const size_t c_nHazardPtrCount = 2 ; ///< Count of hazard pointer required for the algorithm
+        static const size_t c_nHazardPtrCount = 3 ; ///< Count of hazard pointer required for the algorithm
 
     protected:
         //@cond
