@@ -197,11 +197,8 @@ namespace cds { namespace intrusive {
                 std::integral_constant<unsigned int, c_nMaxHeight>
             >::type::value;
 
-        // c_nMaxHeight * 2 - pPred/pSucc guards
-        // + 1 - for erase, unlink
-        // + 1 - for clear
-        // + 1 - for help_remove()
-        static size_t const c_nHazardPtrCount = c_nMaxHeight * 2 + 3;
+        // pPrev / pCurr
+        static size_t const c_nHazardPtrCount = 3;
 
     protected:
         typedef typename node_type::atomic_marked_ptr   atomic_node_ptr;
@@ -236,10 +233,11 @@ namespace cds { namespace intrusive {
             void addLockPtr(node_type* pNode)
             {
                 assert(pNode != nullptr);
-                assert(m_LockedCounter >= 2 * c_nMaxHeight + 1);
 
                 if (contains(pNode))
                     return;
+
+                assert(m_LockedCounter <= c_nMaxHeight);
 
                 m_LockedArray[m_LockedCounter++] = pNode;
             }
@@ -257,7 +255,7 @@ namespace cds { namespace intrusive {
             {
                 for (auto& pNode : m_LockedArray) {
                     if (!pNode)
-                        return;
+                        break;
 
                     pNode->unlock();
                     pNode = nullptr;
@@ -271,7 +269,7 @@ namespace cds { namespace intrusive {
             node_type*   pCur;
 
         private:
-            node_type*      m_LockedArray[2 * c_nMaxHeight + 1];
+            node_type*      m_LockedArray[c_nMaxHeight + 1];
             unsigned int    m_LockedCounter;
         };
 
@@ -280,7 +278,7 @@ namespace cds { namespace intrusive {
             : m_Head(c_nMaxHeight)
             , m_nHeight(c_nMinHeight)
         {
-            static_assert( (std::is_same< gc, typename node_type::gc >::value), "GC and node_type::gc must be the same type" );
+            static_assert(std::is_same<gc, typename node_type::gc>::value, "GC and node_type::gc must be the same type");
 
             gc::check_available_guards(c_nHazardPtrCount);
 
@@ -301,16 +299,16 @@ namespace cds { namespace intrusive {
 
         iterator begin()
         {
-            return iterator( *m_Head.head());
+            return iterator(*m_Head.head());
         }
 
         const_iterator begin() const
         {
-            return const_iterator( *m_Head.head());
+            return const_iterator(*m_Head.head());
         }
         const_iterator cbegin() const
         {
-            return const_iterator( *m_Head.head());
+            return const_iterator(*m_Head.head());
         }
 
         iterator end()
@@ -331,7 +329,7 @@ namespace cds { namespace intrusive {
         
         bool insert(value_type& val)
         {
-            return insert( val, []( value_type& ) {} );
+            return insert(val, [](value_type&) {});
         }
 
         template <typename Func>
@@ -346,7 +344,7 @@ namespace cds { namespace intrusive {
 
             position pos;
 
-            if (find_position(val, pos, key_comparator())) {
+            if (find_position(val, pos, key_comparator(), true)) {
                 scp.release();
                 m_Stat.onInsertFailed();
                 return false;
@@ -364,7 +362,6 @@ namespace cds { namespace intrusive {
             m_Stat.onAddNode(nHeight);
             m_Stat.onInsertSuccess();
             scp.release();
-            pos.unlockAll();
             return true;
         }
 
@@ -380,7 +377,7 @@ namespace cds { namespace intrusive {
 
             position pos;
 
-            if (find_position(val, pos, key_comparator())) {
+            if (find_position(val, pos, key_comparator(), true)) {
                 scp.release();
                 func(false, *node_traits::to_value_ptr(pos.pCur), val);
                 m_Stat.onUpdateExist();
@@ -418,7 +415,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if (!find_position(val, pos, key_comparator())) {
+            if (!find_position(val, pos, key_comparator(), false)) {
                 m_Stat.onUnlinkFailed();
                 return false;
             }
@@ -476,7 +473,7 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Func>
-        bool erase( Q const& key, Func f )
+        bool erase(const Q& key, Func f)
         {
             return erase_( key, key_comparator(), f );
         }
@@ -585,7 +582,9 @@ namespace cds { namespace intrusive {
         {
             // Random generator produces a number from range [0..31]
             // We need a number from range [1..32]
-            return m_RandomLevelGen() + 1;
+            unsigned int level = m_RandomLevelGen() + 1;
+            assert(level <= c_nMaxHeight);
+            return level;
         }
 
         template <typename Q>
@@ -608,136 +607,201 @@ namespace cds { namespace intrusive {
         }
 
         template <typename Q, typename Compare>
-        bool find_position(const Q& val, position& pos, Compare cmp)
+        bool find_position(const Q& val, position& pos, Compare cmp, bool bStopIfFound)
         {
             typename gc::template GuardArray<2> guards;
 
-            node_type* pPrev;
-            marked_node_ptr pCurr;
-            node_type* pPrevAtThisLevel = m_Head.head();
+            node_type * pPred;
+            marked_node_ptr pSucc;
+            marked_node_ptr pCur;
 
-            int cmpResult = 1;
+        retry:
+            pPred = m_Head.head();
+            int nCmp = 1;
 
-            for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
-            retryAtLevel:
-                pPrev = pPrevAtThisLevel;
-                guards.assign(0, pPrev);
-
+            for ( int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
+                guards.assign(0, node_traits::to_value_ptr(pPred));
                 while (true) {
-                    pCurr = guards.protect(1, pPrev->next(nLevel), gc_protect);
+                    pCur = guards.protect(1, pPred->next(nLevel), gc_protect);
+                    if ( pCur.bits()) {
+                        // pCur.bits() means that pPred is logically deleted
+                        pos.unlockAll();
+                        goto retry;
+                    }
 
-                    if (nullptr == pCurr.ptr()) {
+                    if ( pCur.ptr() == nullptr ) {
                         // end of list at level nLevel - goto next level
                         break;
                     }
 
-                    cmpResult = cmp(*node_traits::to_value_ptr(pCurr.ptr()), val);
-                    if (cmpResult < 0) {
-                        pPrev = pCurr.ptr();
-                        guards.copy(0, 1);   // pPrev guard := pCurr guard
-                    } else {
-                        if (!pos.contains(pPrev)) {
-                            pPrev->lock();
-                        }
+                    // pSucc contains deletion mark for pCur
+                    pSucc = pCur->next(nLevel).load(memory_model::memory_order_acquire);
 
-                        if (pPrev->next(nLevel).load(memory_model::memory_order_relaxed) != pCurr.ptr()) {
-                            if (!pos.contains(pPrev)) {
-                                pPrev->unlock();
-                            }
+                    if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                        pos.unlockAll();
+                        goto retry;
+                    }
 
-                            goto retryAtLevel;
+                    if (pSucc.bits()) {
+                        // pCur is marked, i.e. logically deleted
+                        // try to help deleting pCur
+//                        help_remove(nLevel, pPred, pCur);
+                        goto retry;
+                    }
+                    else {
+                        nCmp = cmp(*node_traits::to_value_ptr(pCur.ptr()), val);
+                        if ( nCmp < 0 ) {
+                            pPred = pCur.ptr();
+                            guards.copy(0, 1);
                         }
-                        break;
+                        else if (nCmp == 0 && bStopIfFound)
+                            goto found;
+                        else
+                            break;
                     }
                 }
 
-                pos.addLockPtr(pPrev);
-                pos.pPrev[nLevel] = pPrev;
+                // Next level
+                if (!pos.contains(pPred)) {
+                    pPred->lock();
+                    pos.addLockPtr(pPred);
+                }
+
+                if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                    pos.unlockAll();
+                    goto retry;
+                }
+
+                pos.pPrev[nLevel] = pPred;
             }
 
-            if (cmpResult == 0) {
-                pos.pCur = pCurr.ptr();
-                pos.pCur->lock();
-                pos.addLockPtr(pos.pCur);
+            if (nCmp != 0)
+                return false;
 
-            }
-
-            return cmpResult == 0;
+        found:
+            pos.pCur = pCur.ptr();
+            return pCur.ptr() && nCmp == 0;
         }
 
         bool find_min_position(position& pos)
         {
             typename gc::template GuardArray<2> guards;
 
-            node_type* pPrev = m_Head.head();
-            marked_node_ptr pCurr;
+            node_type * pPred;
+            marked_node_ptr pSucc;
+            marked_node_ptr pCur;
 
-            pPrev->lock();
-            pos.addLockPtr(pPrev);
+        retry:
+            pPred = m_Head.head();
 
             for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
-                pCurr = pPrev->next(nLevel);
-                pos.pPrev[nLevel] = pPrev;
+                guards.assign(0, node_traits::to_value_ptr( pPred ));
+                pCur = guards.protect(1, pPred->next(nLevel), gc_protect);
+
+                // pCur.bits() means that pPred is logically deleted
+                // head cannot be deleted
+                assert(pCur.bits() == 0);
+
+                if (pCur.ptr()) {
+                    // pSucc contains deletion mark for pCur
+                    pSucc = pCur->next(nLevel).load(memory_model::memory_order_acquire);
+
+                    if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                        pos.unlockAll();
+                        goto retry;
+                    }
+
+                    if (pSucc.bits()) {
+                        // pCur is marked, i.e. logically deleted.
+                        // try to help deleting pCur
+//                        help_remove(nLevel, pPred, pCur);
+                        pos.unlockAll();
+                        goto retry;
+                    }
+                }
+
+                if (!pos.contains(pPred)) {
+                    pPred->lock();
+                    pos.addLockPtr(pPred);
+                }
+
+                if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                    pos.unlockAll();
+                    goto retry;
+                }
+
+                // Next level
+                pos.pPrev[nLevel] = pPred;
             }
 
-            if (nullptr != (pos.pCur = pCurr.ptr())) {
-                pos.pCur->lock();
-                pos.addLockPtr(pos.pCur);
-            }
-
-            return pos.pCur != nullptr;
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         bool find_max_position(position& pos)
         {
             typename gc::template GuardArray<2> guards;
 
-            node_type* pPrev;
-            marked_node_ptr pCurr;
-            node_type* pPrevAtThisLevel = m_Head.head();
+            node_type * pPred;
+            marked_node_ptr pSucc;
+            marked_node_ptr pCur;
+
+        retry:
+            pPred = m_Head.head();
 
             for (int nLevel = static_cast<int>(c_nMaxHeight - 1); nLevel >= 0; --nLevel) {
-            retryAtLevel:
-                pPrev = pPrevAtThisLevel;
-                guards.assign(0, pPrev);
-
-                while (true) {
-                    pCurr = guards.protect(1, pPrev->next(nLevel), gc_protect);
-                    if (pCurr.bits()) {
+                guards.assign(0, node_traits::to_value_ptr(pPred));
+                while ( true ) {
+                    pCur = guards.protect(1, pPred->next(nLevel), gc_protect);
+                    if (pCur.bits()) {
                         // pCur.bits() means that pPred is logically deleted
-                        goto retryAtLevel;
+                        pos.unlockAll();
+                        goto retry;
                     }
 
-                    if (nullptr == pCurr || nullptr == pCurr->next(nLevel).load(memory_model::memory_order_relaxed)) {
-                        bool lockThisNode = !pos.contains(pPrev);
-                        if (lockThisNode) {
-                            pPrev->lock();
-                        }
-
-                        if (pPrev->next(nLevel).load(memory_model::memory_order_relaxed) != pCurr.ptr()) {
-                            if (lockThisNode) {
-                                pPrev->unlock();
-                            }
-                            goto retryAtLevel;
-                        }
-
+                    if (pCur.ptr() == nullptr) {
+                        // end of the list at level nLevel - goto next level
                         break;
                     }
 
-                    pPrev = pCurr.ptr();
-                    guards.copy(0, 1);   // pPrev guard := pCurr guard
+                    // pSucc contains deletion mark for pCur
+                    pSucc = pCur->next(nLevel).load(memory_model::memory_order_acquire);
+
+                    if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                        pos.unlockAll();
+                        goto retry;
+                    }
+
+                    if ( pSucc.bits()) {
+                        // pCur is marked, i.e. logically deleted.
+                        // try to help deleting pCur
+//                        help_remove(nLevel, pPred, pCur);
+                        pos.unlockAll();
+                        goto retry;
+                    }
+                    else {
+                        if (!pSucc.ptr())
+                            break;
+
+                        pPred = pCur.ptr();
+                        guards.copy(0, 1);
+                    }
                 }
 
-                pos.addLockPtr(pPrev);
-                pos.pPrev[nLevel] = pPrev;
+                if (!pos.contains(pPred)) {
+                    pPred->lock();
+                    pos.addLockPtr(pPred);
+                }
+
+                if (pPred->next(nLevel).load(memory_model::memory_order_acquire).all() != pCur.ptr()) {
+                    pos.unlockAll();
+                    goto retry;
+                }
+
+                // Next level
+                pos.pPrev[nLevel] = pPred;
             }
 
-            if (nullptr != (pos.pCur = pCurr.ptr())) {
-                pos.pCur->lock();
-                pos.addLockPtr(pos.pCur);
-            }
-
-            return pos.pCur != nullptr;
+            return (pos.pCur = pCur.ptr()) != nullptr;
         }
 
         template <typename Func>
@@ -747,22 +811,20 @@ namespace cds { namespace intrusive {
 
             //for each level item set next to nullptr
             for (unsigned int nLevel = 1; nLevel < nHeight; ++nLevel)
-                pNode->next( nLevel ).store(marked_node_ptr(), memory_model::memory_order_relaxed );
+                pNode->next( nLevel ).store(marked_node_ptr(), memory_model::memory_order_relaxed);
 
             // Insert at level 0
-            marked_node_ptr pNodePtr(pNode);
             pNode->lock();
+            pos.addLockPtr(pNode);
             pNode->next(0).store(marked_node_ptr(pos.pPrev[0]->next(0)), memory_model::memory_order_relaxed);
-            pos.pPrev[0]->next(0).store(pNodePtr, memory_model::memory_order_relaxed);
+            pos.pPrev[0]->next(0).store(marked_node_ptr(pNode), memory_model::memory_order_relaxed);
             f(val);
 
             // Insert at level 1..max
             for (unsigned int nLevel = 1; nLevel < nHeight; ++nLevel) {
                 pNode->next(nLevel).store(marked_node_ptr(pos.pPrev[nLevel]->next(nLevel)), memory_model::memory_order_relaxed);
-                pos.pPrev[nLevel]->next(nLevel).store(pNodePtr, memory_model::memory_order_relaxed);
+                pos.pPrev[nLevel]->next(nLevel).store(marked_node_ptr(pNode), memory_model::memory_order_relaxed);
             }
-
-            pNode->unlock();
         }
 
         template <typename Func>
@@ -771,11 +833,8 @@ namespace cds { namespace intrusive {
             assert(pDel != nullptr);
 
             marked_node_ptr pSucc;
-            back_off bkoff;
 
             f(*node_traits::to_value_ptr(pDel));
-
-            marked_node_ptr pNext(pDel->next(0).load(memory_model::memory_order_relaxed).ptr());
 
             for (int nLevel = static_cast<int>(pDel->height() - 1); nLevel >= 0; --nLevel) {
                 pSucc = pDel->next(nLevel).load(memory_model::memory_order_relaxed);
@@ -809,7 +868,7 @@ namespace cds { namespace intrusive {
         try_again:
             pPred = m_Head.head();
             for ( int nLevel = static_cast<int>( m_nHeight.load( memory_model::memory_order_relaxed ) - 1 ); nLevel >= 0; --nLevel ) {
-                pCur = guards.protect( 1, pPred->next( nLevel ), gc_protect );
+                pCur = guards.protect(1, pPred->next( nLevel ), gc_protect);
 
                 while ( pCur != pNull ) {
                     if ( pCur.bits()) {
@@ -849,7 +908,7 @@ namespace cds { namespace intrusive {
         bool find_slowpath( Q& val, Compare cmp, Func f )
         {
             position pos;
-            if (find_position(val, pos, cmp)) {
+            if (find_position(val, pos, cmp, true)) {
                 f(*node_traits::to_value_ptr(pos.pCur), val);
                 return true;
             }
@@ -894,7 +953,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if (!find_position(val, pos, cmp)) {
+            if (!find_position(val, pos, cmp, false)) {
                 m_Stat.onEraseFailed();
                 return false;
             }
@@ -917,7 +976,7 @@ namespace cds { namespace intrusive {
         {
             position pos;
 
-            if (!find_position(val, pos, cmp)) {
+            if (!find_position(val, pos, cmp, false)) {
                 m_Stat.onExtractFailed();
                 return guarded_ptr();
             }
