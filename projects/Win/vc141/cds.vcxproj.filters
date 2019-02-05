@@ -1258,5 +1258,17 @@
     <ClInclude Include="..\..\..\cds\details\tls_holder.h">
       <Filter>Header Files\cds\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\details\valois_list_base.h">
+      <Filter>Header Files\cds\intrusive\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\impl\valois_list.h">
+      <Filter>Header Files\cds\intrusive\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\valois_list_dhp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cds\intrusive\valois_list_hp.h">
+      <Filter>Header Files\cds\intrusive</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

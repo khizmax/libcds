@@ -1164,6 +1164,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\details\single_link_struct.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\skip_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\details\split_list_base.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\details\valois_list_base.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\ellen_bintree_rcu.h" />
@@ -1177,6 +1178,7 @@
     <ClInclude Include="..\..\..\cds\intrusive\impl\michael_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\feldman_hashset.h" />
     <ClInclude Include="..\..\..\cds\intrusive\impl\skip_list.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\impl\valois_list.h" />
     <ClInclude Include="..\..\..\cds\intrusive\iterable_list_dhp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\iterable_list_hp.h" />
     <ClInclude Include="..\..\..\cds\intrusive\lazy_list_dhp.h" />
@@ -1206,6 +1208,8 @@
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\boost_unordered_set.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\resizing_policy.h" />
     <ClInclude Include="..\..\..\cds\intrusive\striped_set\striping_policy.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\valois_list_dhp.h" />
+    <ClInclude Include="..\..\..\cds\intrusive\valois_list_hp.h" />
     <ClInclude Include="..\..\..\cds\lock\array.h" />
     <ClInclude Include="..\..\..\cds\memory\pool_allocator.h" />
     <ClInclude Include="..\..\..\cds\memory\vyukov_queue_pool.h" />
