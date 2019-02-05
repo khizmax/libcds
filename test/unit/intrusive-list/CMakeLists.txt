@@ -47,9 +47,21 @@ target_link_libraries(${UNIT_ILIST_ITERABLE} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_ILIST_ITERABLE} COMMAND ${UNIT_ILIST_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 
+# intrusive::ValoisList
+set(UNIT_ILIST_VALOIS unit-ilist-valois)
+set(UNIT_ILIST_VALOIS_SOURCES
+        ../main.cpp
+        intrusive_valois_hp.cpp
+        intrusive_valois_dhp.cpp
+        )
+add_executable(${UNIT_ILIST_VALOIS} ${UNIT_ILIST_VALOIS_SOURCES})
+target_link_libraries(${UNIT_ILIST_VALOIS} ${CDS_TEST_LIBRARIES})
+add_test(NAME ${UNIT_ILIST_VALOIS} COMMAND ${UNIT_ILIST_VALOIS} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
 add_custom_target( unit-ilist
-    DEPENDS
+        DEPENDS
         ${UNIT_ILIST_ITERABLE}
         ${UNIT_ILIST_LAZY}
         ${UNIT_ILIST_MICHAEL}
-)
+        ${UNIT_ILIST_VALOIS}
+        )
