@@ -32,11 +32,6 @@
 #include <cds/algo/atomic.h>
 #include <cds/intrusive/details/sp_queue_base.h>
 
-//#include <boost/random/mersenne_twister.hpp>
-//#include <boost/random/uniform_int.hpp>
-//#include <boost/random/variate_generator.hpp>
-//#include <list>
-
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -85,31 +80,6 @@ namespace cds { namespace intrusive {
                 void onCloseQueue()				{ ++m_nClosingQueue			;}
                 //@endcond
 
-                //@cond
-                /*void reset()
-                {
-                    m_EnqueueCount.reset();
-                    m_DequeueCount.reset();
-                    m_EnqueueRace.reset();
-                    m_DequeueRace.reset();
-                    m_AdvanceTailError.reset();
-                    m_BadTail.reset();
-                    m_EmptyDequeue.reset();
-                }
-
-                stat& operator +=(stat const& s)
-                {
-                    m_EnqueueCount += s.m_EnqueueCount.get();
-                    m_DequeueCount += s.m_DequeueCount.get();
-                    m_EnqueueRace += s.m_EnqueueRace.get();
-                    m_DequeueRace += s.m_DequeueRace.get();
-                    m_AdvanceTailError += s.m_AdvanceTailError.get();
-                    m_BadTail += s.m_BadTail.get();
-                    m_EmptyDequeue += s.m_EmptyDequeue.get();
-
-                    return *this;
-                }*/
-                //@endcond
             };
 
             /// MSPriorityQueue empty statistics
@@ -341,48 +311,6 @@ namespace cds { namespace intrusive {
 				gc::template retire<disposer_thunk>(queue);
             }
 			
-/*			void dispose_stale_nodes( Slot &slot){
-				boost::mt19937 gen;
-				boost::uniform_int<> dist(0,99);
-				boost::variate_generator<boost::mt19937&, boost::uniform_int<> > roll(gen, dist);
-				
-				int random_int = roll();
-				//EXPECT_TRUE(false) << "lol";
-				if (random_int < probStale)
-				{	
-					
-					typename gc::template Guard node_guard;
-					typename std::list<node_type*> stale_nodes;
-					node_type* head = node_guard.protect(slot.m_pHead);
-					node_type* curr = head;
-					node_type* last = curr;
-					//EXPECT_TRUE(false) << "head" << node_traits::to_value_ptr(head->m_pNext)->nVal;
-					
-					while (curr != nullptr && curr->m_removed){
-						//if (current_node != PICKET)
-						stale_nodes.push_back(curr);
-						curr = node_guard.protect(curr->m_pNext);
-					}	
-					
-					if (stale_nodes.size() > 0)
-					{
-						if (slot.m_pHead.compare_exchange_strong(head, 
-																 last, 
-																 memory_model::memory_order_relaxed, 
-																 memory_model::memory_order_relaxed)){
-							stale_nodes.pop_back();
-							
-							for (typename std::list<node_type*>::iterator it = stale_nodes.begin(); it != stale_nodes.end(); it++){
-								//EXPECT_TRUE(false) << "Dis stale" << node_traits::to_value_ptr(*it)->nVal;
-								dispose_node(*it);
-							}
-						}
-					}
-					
-				}
-			}
-*/
-			
         public:
             /// Constructs empty speculative pairing queue
             /**
@@ -548,18 +476,11 @@ namespace cds { namespace intrusive {
                 }
 
 
-                size_t ticket = pQueue->m_Cntdeq++;//.fetch_add(1, memory_model::memory_order_seq_cst);
-                /*====== ТОТ САМЫЙ ВЫВОД TICKET =====*/
-                //std::string s = std::to_string(ticket) + "\n";
-                //std::cerr << s;
+                size_t ticket = pQueue->m_Cntdeq++;
 
                 size_t idx = ticket % C_SIZE;
 				guards.protect(0, pQueue->m_pair[idx].m_pRemoved);
 				guards.protect(1, pQueue->m_pair[idx].m_pHead);
-				
-				//dispose_stale_nodes(pQueue->m_pair[idx]);
-				
-				//guards.protect(1, pQueue->m_pair[idx].m_pHead);
 				
                 if (ticket >= pQueue->m_Tail.load(memory_model::memory_order_acquire) && ticket == idx) {//Error in article. may be must be >=
                     node_type* DUMMY = nullptr;
@@ -602,7 +523,6 @@ namespace cds { namespace intrusive {
 				
                 value_type* x = node_traits::to_value_ptr(pNode);
                 pQueue->m_pair[idx].m_pRemoved.store(pNode, memory_model::memory_order_release);
-				//pNode->m_removed = true;
                 --m_ItemCounter;
                 m_Stat.onDequeSuccess();
                 return x;
