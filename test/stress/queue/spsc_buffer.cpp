@@ -105,11 +105,11 @@ namespace {
             }
 
         public:
-            Queue&              m_Queue;
-            size_t              m_nPushFailed = 0;
-            size_t              m_nPushed = 0;
+            Queue& m_Queue;
+            size_t m_nPushFailed = 0;
+            size_t m_nPushed = 0;
 
-            double              m_PayloadResult = 0.0;
+            double m_PayloadResult = 0.0;
         };
 
         template <class Queue, class Payload = empty_functor>
@@ -119,13 +119,13 @@ namespace {
             typedef Payload payload_type;
 
         public:
-            Queue&              m_Queue;
-            size_t              m_nPopEmpty = 0;
-            size_t              m_nPopped = 0;
-            size_t              m_nBadValue = 0;
-            size_t              m_nPopFrontFailed = 0;
+            Queue& m_Queue;
+            size_t m_nPopEmpty = 0;
+            size_t m_nPopped = 0;
+            size_t m_nBadValue = 0;
+            size_t m_nPopFrontFailed = 0;
 
-            double              m_PayloadResult = 0.0;
+            double m_PayloadResult = 0.0;
 
         public:
             Consumer( cds_test::thread_pool& pool, Queue& queue )
