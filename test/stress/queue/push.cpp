@@ -60,7 +60,6 @@ namespace {
                     if ( !m_Queue.push( nItem )) {
                         ++m_nPushError;
                     }
-                    //EXPECT_TRUE(false) << "nItem = " << nItem;
                 }
             }
 
