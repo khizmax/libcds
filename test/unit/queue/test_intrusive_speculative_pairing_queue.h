@@ -84,8 +84,6 @@ namespace cds_test {
             for ( size_t i = 0; i < nSize; ++i )
                 arr[i].nVal = static_cast<int>(i);
 
-			//q.changeProbStale(0);
-			
             pv = q.pop();
             ASSERT_TRUE( pv == nullptr );
             ASSERT_TRUE( q.empty());
@@ -152,7 +150,6 @@ namespace cds_test {
 			
 			//clear stale nodes test
 			//------------------------------------
-			//q.changeProbStale(100);
 			for ( size_t i = 0; i < nSize; ++i )
             {
                 q.push( arr[i] );
@@ -171,21 +168,7 @@ namespace cds_test {
                     pv = q.dequeue();
                 ASSERT_FALSE( pv == nullptr );
                 ASSERT_EQ( pv->nVal, static_cast<int>(i));
-            }
-
-			/*
-			//Queue::gc::scan();
-            for ( size_t i = 0; i < nSize-20; ++i ) {
-                ASSERT_EQ( arr[i].nDisposeCount, 3 ) << "i=" << i;
-            }
-			for ( size_t i = nSize-20; i < nSize; ++i )
-			{
-				ASSERT_EQ( arr[i].nDisposeCount, 2 ) << "i=" << i;
-			}
-			//------------------------------------
-			//end clear stale nodes test
-			*/
-			
+            }	
 			//clear queue
 			q.clear();
 			Queue::gc::scan();
