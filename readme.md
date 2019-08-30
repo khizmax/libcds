@@ -117,7 +117,7 @@ References
 
 *Tree*
   - *EllenBinTree*: [2010] F.Ellen, P.Fatourou, E.Ruppert, F.van Breugel "Non-blocking Binary Search Tree"
-        [pdf](http://www.cs.vu.nl/~tcs/cm/faith.pdf)
+        [pdf](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.232.7881&rep=rep1&type=pdf)
   - *BronsonAVLTreeMap* - lock-based fine-grained AVL-tree implementation: 
         [2010] Nathan Bronson, Jared Casper, Hassan Chafi, Kunle Olukotun "A Practical Concurrent Binary Search Tree"
         [pdf](https://ppl.stanford.edu/papers/ppopp207-bronson.pdf)
