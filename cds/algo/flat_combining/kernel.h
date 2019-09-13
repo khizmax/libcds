@@ -691,8 +691,6 @@ namespace cds { namespace algo {
                         }
                         break;
                     case inactive:
-                        // Only m_pHead can be inactive in the publication list
-                        assert( p == m_pHead );
                         break;
                     case removed:
                         // Such record will be removed on compacting phase

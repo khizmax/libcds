@@ -42,6 +42,12 @@ namespace cds { namespace gc {
                 , m_funcFree( nullptr )
             {}
 
+            /// Copy ctor
+            retired_ptr( retired_ptr const& rp ) noexcept
+                : m_p( rp.m_p )
+                , m_funcFree( rp.m_funcFree )
+            {}
+
             /// Ctor
             retired_ptr( pointer p, free_retired_ptr_func func ) noexcept
                 : m_p( p )
