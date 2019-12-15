@@ -10,6 +10,7 @@ script:
 
 linux: &linux_gcc
   os: linux
+  dist: bionic
   addons:
     apt:
       sources:
@@ -24,17 +25,18 @@ linux: &linux_gcc
 
 linux: &linux_clang
   os: linux
+  dist: bionic
   addons:
     apt:
       sources:
         - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-4.0
+        - llvm-toolchain-bionic-7.0
       packages:
-        - clang-8.0
+        - clang-7.0
   compiler:
-    - clang-8.0          
+    - clang-7.0
   before_install:
-    - eval "CC=clang-8.0 && CXX=clang++-8.0"
+    - eval "CC=clang-7.0 && CXX=clang++-7.0"
   
       
 osx: &osx
@@ -48,7 +50,7 @@ osx: &osx
 
 matrix:
   include:
-##   BUILD_TYPE=Release CXX_COMPILER=g++-6
+##   BUILD_TYPE=Release CXX_COMPILER=g++-8
     - <<: *linux_gcc
       env: TARGET=unit-deque BUILD_TYPE=Release 
     - <<: *linux_gcc
@@ -88,7 +90,7 @@ matrix:
     - <<: *linux_gcc
       env: TARGET=unit-tree BUILD_TYPE=Release 
 
-##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
+##   BUILD_TYPE=Debug CXX_COMPILER=g++-8
     - <<: *linux_gcc
       env: TARGET=unit-deque BUILD_TYPE=Debug 
     - <<: *linux_gcc
@@ -114,7 +116,7 @@ matrix:
     - <<: *linux_gcc
       env: TARGET=unit-tree BUILD_TYPE=Debug 
 
-##   BUILD_TYPE=Release CXX_COMPILER=clang-4.0
+##   BUILD_TYPE=Release CXX_COMPILER=clang-7.0
     - <<: *linux_clang
       env: TARGET=unit-deque BUILD_TYPE=Release 
     - <<: *linux_clang
@@ -152,7 +154,7 @@ matrix:
 #  - BUILD_TYPE=Release  TARGET=unit-iset
 #  - BUILD_TYPE=Release  TARGET=unit-tree
 
-##   BUILD_TYPE=Debug CXX_COMPILER=clang-4.0
+##   BUILD_TYPE=Debug CXX_COMPILER=clang-7.0
     - <<: *linux_clang
       env: TARGET=unit-deque BUILD_TYPE=Debug 
     - <<: *linux_clang
