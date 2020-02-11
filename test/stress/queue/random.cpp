@@ -209,6 +209,7 @@ namespace {
     };
 
     CDSSTRESS_MSQueue( queue_random )
+    CDSSTRESS_SPQueue( queue_random )
     CDSSTRESS_MoirQueue( queue_random )
     CDSSTRESS_BasketQueue( queue_random )
     CDSSTRESS_OptimsticQueue( queue_random )

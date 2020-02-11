@@ -13,6 +13,7 @@
 #include <cds/intrusive/basket_queue.h>
 #include <cds/intrusive/fcqueue.h>
 #include <cds/intrusive/segmented_queue.h>
+#include <cds/intrusive/speculative_pairing_queue.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -136,7 +137,7 @@ namespace queue {
         };
         typedef cds::intrusive::MSQueue< cds::gc::DHP, T, traits_MSQueue_DHP_ic > MSQueue_DHP_ic;
         typedef cds::intrusive::MoirQueue< cds::gc::DHP, T, traits_MSQueue_DHP_ic > MoirQueue_DHP_ic;
-
+        
         // MSQueue + stat
         struct traits_MSQueue_HP_stat : public cds::intrusive::msqueue::traits
         {
@@ -154,6 +155,62 @@ namespace queue {
         typedef cds::intrusive::MSQueue< cds::gc::DHP, T, traits_MSQueue_DHP_stat > MSQueue_DHP_stat;
         typedef cds::intrusive::MoirQueue< cds::gc::DHP, T, traits_MSQueue_DHP_stat > MoirQueue_DHP_stat;
 
+
+        struct traits_SPQueue_HP : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::HP, T, traits_SPQueue_HP > SPQueue_HP;
+        
+        struct traits_SPQueue_HP_seqcst : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::opt::v::sequential_consistent memory_model;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::HP, T, traits_SPQueue_HP_seqcst > SPQueue_HP_seqcst;
+
+        struct traits_SPQueue_DHP : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::DHP, T, traits_SPQueue_DHP > SPQueue_DHP;
+
+        struct traits_SPQueue_DHP_seqcst : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::opt::v::sequential_consistent memory_model;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::DHP, T, traits_SPQueue_DHP_seqcst > SPQueue_DHP_seqcst;
+
+        // SPQueue + item counter
+        struct traits_SPQueue_HP_ic : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::HP, T, traits_SPQueue_HP_ic > SPQueue_HP_ic;
+
+        struct traits_SPQueue_DHP_ic : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::atomicity::item_counter item_counter;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::DHP, T, traits_SPQueue_DHP_ic > SPQueue_DHP_ic;
+
+        // SPQueue + stat
+        struct traits_SPQueue_HP_stat : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::HP > > hook;
+            typedef cds::intrusive::speculative_pairing_queue::stat<> stat;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::HP, T, traits_SPQueue_HP_stat > SPQueue_HP_stat;
+
+        struct traits_SPQueue_DHP_stat : public cds::intrusive::speculative_pairing_queue::traits
+        {
+            typedef cds::intrusive::sp_queue::base_hook< cds::opt::gc< cds::gc::DHP > > hook;
+            typedef cds::intrusive::speculative_pairing_queue::stat<> stat;
+        };
+        typedef cds::intrusive::SPQueue< cds::gc::DHP, T, traits_SPQueue_DHP_stat > SPQueue_DHP_stat;
 
         // OptimisticQueue
         struct traits_OptimisticQueue_HP : public cds::intrusive::optimistic_queue::traits

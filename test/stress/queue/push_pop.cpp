@@ -321,6 +321,7 @@ namespace {
     using simple_queue_push_pop = queue_push_pop<>;
 
     CDSSTRESS_MSQueue( simple_queue_push_pop )
+    CDSSTRESS_SPQueue( simple_queue_push_pop )
     CDSSTRESS_MoirQueue( simple_queue_push_pop )
     CDSSTRESS_BasketQueue( simple_queue_push_pop )
     CDSSTRESS_OptimsticQueue( simple_queue_push_pop )
@@ -397,6 +398,7 @@ namespace {
     }
 
     CDSSTRESS_SegmentedQueue( segmented_queue_push_pop )
+
 
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )

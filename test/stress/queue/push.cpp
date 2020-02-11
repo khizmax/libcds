@@ -57,8 +57,9 @@ namespace {
             virtual void test()
             {
                 for ( size_t nItem = m_nStartItem; nItem < m_nEndItem; ++nItem ) {
-                    if ( !m_Queue.push( nItem ))
+                    if ( !m_Queue.push( nItem )) {
                         ++m_nPushError;
+                    }
                 }
             }
 
@@ -89,6 +90,7 @@ namespace {
         template <class Queue>
         void test( Queue& q )
         {
+    try {
             cds_test::thread_pool& pool = get_pool();
 
             pool.add( new Producer<Queue>( pool, q ), s_nThreadCount );
@@ -113,6 +115,11 @@ namespace {
             analyze( q );
 
             propout() << q.statistics();
+    }
+    catch (std::exception& e)
+    {
+        EXPECT_TRUE(false) << "Exception catched : " << e.what();
+    }
         }
 
         template <class Queue>
@@ -132,6 +139,7 @@ namespace {
 
             size_t nPopped = 0;
             value_type val;
+
             while ( q.pop( val )) {
                 nPopped++;
                 ++arr[ val.nNo ];
@@ -144,7 +152,9 @@ namespace {
         }
     };
 
+
     CDSSTRESS_MSQueue( queue_push )
+    CDSSTRESS_SPQueue( queue_push )
     CDSSTRESS_MoirQueue( queue_push )
     CDSSTRESS_BasketQueue( queue_push )
     CDSSTRESS_OptimsticQueue( queue_push )
@@ -152,6 +162,7 @@ namespace {
     CDSSTRESS_FCDeque( queue_push )
     CDSSTRESS_RWQueue( queue_push )
     CDSSTRESS_StdQueue( queue_push )
+
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
