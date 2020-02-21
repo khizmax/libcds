@@ -1,5 +1,6 @@
 CDS C++ library
 ===============
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7391e3f221244134bd343cdde7b7deb6)](https://app.codacy.com/manual/khizmax/libcds?utm_source=github.com&utm_medium=referral&utm_content=khizmax/libcds&utm_campaign=Badge_Grade_Settings)
 [![GitHub version](https://badge.fury.io/gh/khizmax%2Flibcds.svg)](http://badge.fury.io/gh/khizmax%2Flibcds)
 [![License](https://img.shields.io/:license-boost-blue.svg?style=round-square)](https://github.com/khizmax/libcds/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/khizmax/libcds.svg?branch=dev)](https://travis-ci.org/khizmax/libcds)
