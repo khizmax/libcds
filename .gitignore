@@ -19,3 +19,8 @@
 /.cproject
 /.settings/
 /tools/change_license.pl
+/.metadata
+/build/*.cproject
+*.cproject
+*.project
+.settings

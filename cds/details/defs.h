@@ -6,9 +6,20 @@
 #ifndef CDSLIB_DEFS_H
 #define CDSLIB_DEFS_H
 
+#if defined(_DEBUG) || !defined(NDEBUG)
+#   include <assert.h>
+#else
+#   if defined(CDS_RELEASE_ASSERT)
+#       undef NDEBUG
+#       include <assert.h>
+#       define NDEBUG
+#   else
+#       include <assert.h>
+#   endif
+#endif
+
 #include <stddef.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <cstdint>
 #include <exception>
 #include <stdexcept>
