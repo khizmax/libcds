@@ -331,9 +331,12 @@ namespace cds {}
 #    define CDS_COMPILER CDS_COMPILER_UNKNOWN
 #endif  // Compiler choice
 
+#if defined(CDS_RELEASE_ASSERT) && !defined(CDS_DEBUG)
+#   define CDS_DEBUG
+#endif
 
 // CDS_VERIFY: Debug - assert(_expr); Release - _expr
-#if defined( CDS_DEBUG ) || defined(CDS_RELEASE_ASSERT)
+#if defined( CDS_DEBUG )
 #   define CDS_VERIFY( _expr )       assert( _expr )
 #   define CDS_VERIFY_FALSE( _expr ) assert( !( _expr ))
 #   define CDS_DEBUG_ONLY( _expr )        _expr
