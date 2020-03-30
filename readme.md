@@ -140,7 +140,7 @@ References
              [pdf](http://www.research.ibm.com/people/m/michael/podc-2002.pdf)
     * [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects" 
              [pdf](http://www.research.ibm.com/people/m/michael/ieeetpds-2004.pdf)
-    * [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers" 
+    * [2004] Andrei Alexandrescu, Maged Michael "Lock-free Data Structures with Hazard Pointers" 
              [pdf](http://www.researchgate.net/profile/Andrei_Alexandrescu/publication/252573326_Lock-Free_Data_Structures_with_Hazard_Pointers/links/0deec529e7804288fe000000.pdf)
   - User-space RCU
     * [2009] M.Desnoyers "Low-Impact Operating System Tracing" PhD Thesis,
