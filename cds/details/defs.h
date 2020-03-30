@@ -6,20 +6,9 @@
 #ifndef CDSLIB_DEFS_H
 #define CDSLIB_DEFS_H
 
-#if defined(_DEBUG) || !defined(NDEBUG)
-#   include <assert.h>
-#else
-#   if defined(CDS_RELEASE_ASSERT)
-#       undef NDEBUG
-#       include <assert.h>
-#       define NDEBUG
-#   else
-#       include <assert.h>
-#   endif
-#endif
-
 #include <stddef.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <cstdint>
 #include <exception>
 #include <stdexcept>
@@ -331,12 +320,9 @@ namespace cds {}
 #    define CDS_COMPILER CDS_COMPILER_UNKNOWN
 #endif  // Compiler choice
 
-#if defined(CDS_RELEASE_ASSERT) && !defined(CDS_DEBUG)
-#   define CDS_DEBUG
-#endif
 
 // CDS_VERIFY: Debug - assert(_expr); Release - _expr
-#if defined( CDS_DEBUG )
+#ifdef CDS_DEBUG
 #   define CDS_VERIFY( _expr )       assert( _expr )
 #   define CDS_VERIFY_FALSE( _expr ) assert( !( _expr ))
 #   define CDS_DEBUG_ONLY( _expr )        _expr
@@ -354,7 +340,7 @@ namespace cds {}
 #   define CDS_STRICT_DO( _expr )
 #endif
 
-#if defined(CDS_DEBUG) || defined(CDS_RELEASE_ASSERT)
+#ifdef CDS_DEBUG
 #   define cds_assert( expr )       assert( expr )
 #else
     static inline void cds_assert( bool expr ) {
