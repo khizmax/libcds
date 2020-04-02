@@ -95,6 +95,25 @@ namespace cds_test {
         return o;
     }
 
+    template <typename Counter>
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::michael_deque::stat<Counter> const& s )
+    {
+        return o
+            << CDSSTRESS_STAT_OUT( s, m_nPushLeft )
+            << CDSSTRESS_STAT_OUT( s, m_nPushRight )
+            << CDSSTRESS_STAT_OUT( s, m_nPopLeft )
+            << CDSSTRESS_STAT_OUT( s, m_nPopRight )
+            << CDSSTRESS_STAT_OUT( s, m_nFailedPopLeft )
+            << CDSSTRESS_STAT_OUT( s, m_nFailedPopRight )
+            << CDSSTRESS_STAT_OUT( s, m_nStabilizeRight )
+            << CDSSTRESS_STAT_OUT( s, m_nStabilizeLeft );
+    }
+
+    static inline property_stream& operator <<( property_stream& o, cds::intrusive::michael_deque::empty_stat const& /*s*/ )
+    {
+        return o;
+    }
+
 } // namespace cds_test
 
 #endif // CDSSTRESS_QUEUE_PRINT_STAT_H
