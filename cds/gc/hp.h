@@ -1301,7 +1301,7 @@ namespace cds { namespace gc {
 
         /// Checks that required hazard pointer count \p nCountNeeded is less or equal then max hazard pointer count
         /**
-            If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
+            If <tt> nCountNeeded > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
         */
         static void check_available_guards( size_t nCountNeeded )
         {
