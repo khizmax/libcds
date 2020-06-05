@@ -118,7 +118,7 @@ namespace cds {
             size_t  m_nFakeProcessorNumber  ;   ///< fake "current processor" number
 
             //@cond
-            size_t  m_nAttachCount;
+            std::atomic<size_t>  m_nAttachCount;
             //@endcond
 
             /// Per-thread elimination record
