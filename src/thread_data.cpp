@@ -16,7 +16,7 @@ namespace cds { namespace threading {
     {
         if ( m_nAttachCount++ == 0 ) {
             if ( cds::gc::HP::isUsed())
-                cds::gc::hp::smr::attach_thread();
+                cds::gc::hp::smr<>::attach_thread();
             if ( cds::gc::DHP::isUsed())
                 cds::gc::dhp::smr::attach_thread();
 
@@ -39,7 +39,7 @@ namespace cds { namespace threading {
             if ( cds::gc::DHP::isUsed())
                 cds::gc::dhp::smr::detach_thread();
             if ( cds::gc::HP::isUsed())
-                cds::gc::hp::smr::detach_thread();
+                cds::gc::hp::smr<>::detach_thread();
 
             if ( cds::urcu::details::singleton<cds::urcu::general_instant_tag>::isUsed()) {
                 cds::urcu::details::singleton<cds::urcu::general_instant_tag>::detach_thread( m_pGPIRCU );
