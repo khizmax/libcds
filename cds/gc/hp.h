@@ -510,12 +510,6 @@ namespace cds { namespace gc {
                 }
             }
 
-            /// Returns thread-local data for the current thread
-            static CDS_EXPORT_API thread_data* tls();
-
-            static CDS_EXPORT_API void attach_thread();
-            static CDS_EXPORT_API void detach_thread();
-
             /// Get internal statistics
             CDS_EXPORT_API void statistics( stat& st );
 

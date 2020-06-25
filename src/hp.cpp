@@ -124,12 +124,6 @@ namespace cds { namespace gc { namespace hp {
         return tls_;
     }
 
-    /*static*/ CDS_EXPORT_API thread_data* basic_smr::tls()
-    {
-        assert( tls_ != nullptr );
-        return tls_;
-    }
-
     struct basic_smr::thread_record: thread_data
     {
         // next hazard ptr record in list
@@ -313,22 +307,6 @@ namespace cds { namespace gc { namespace hp {
             }
         }
     }
-
-    /*static*/ CDS_EXPORT_API void basic_smr::attach_thread()
-    {
-        if ( !tls_ )
-            tls_ = instance().alloc_thread_data();
-    }
-
-    /*static*/ CDS_EXPORT_API void basic_smr::detach_thread()
-    {
-        thread_data* rec = tls_;
-        if ( rec ) {
-            tls_ = nullptr;
-            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
-        }
-    }
-
 
     CDS_EXPORT_API void basic_smr::inplace_scan( thread_data* pThreadRec )
     {
