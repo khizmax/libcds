@@ -39,8 +39,6 @@ Download the latest release from http://sourceforge.net/projects/libcds/files/
 
 See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
 
-Evolution of libcds (Gource visualization by Landon Wilkins): https://www.youtube.com/watch?v=FHaJvVdmJ0w
-
 **How to build**
    - *nix: [use CMake](build/cmake/readme.md)
    - Windows: use MS Visual C++ 2017 project
