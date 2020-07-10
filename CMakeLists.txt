@@ -105,14 +105,13 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type to Debug" FORCE)
 endif()
 
+# if the user passed LIBCDS_CXX_STANDARD on the command line, use it
+# otherwise default to cxx 11
+if (NOT LIBCDS_CXX_STANDARD)
+    set(LIBCDS_CXX_STANDARD 11 CACHE string "Preferred C++ standard")
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    string(REGEX MATCHALL "-std=[^ ]+" cxx_std_found ${CMAKE_CXX_FLAGS} " dummy@rg")
-    if(cxx_std_found)
-        message("C++ std: ${cxx_std_found}")
-    else()
-        list(APPEND LIBCDS_PUBLIC_CXX_FLAGS "-std=c++11")
-        message("C++ std: -std=c++11 (default)")
-    endif()
 
     list(APPEND LIBCDS_PRIVATE_CXX_FLAGS "-Wall" "-Wextra" "-pedantic")
 
@@ -169,12 +168,15 @@ set(SOURCES src/init.cpp
 add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES})
 set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
         DEBUG_POSTFIX "_d")
+set_property(TARGET ${CDS_SHARED_LIBRARY} PROPERTY CXX_STANDARD ${LIBCDS_CXX_STANDARD})
+
 if(MINGW)
     set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES DEFINE_SYMBOL CDS_BUILD_LIB)
 endif()
 
 add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
+set_property(TARGET ${CDS_STATIC_LIBRARY} PROPERTY CXX_STANDARD ${LIBCDS_CXX_STANDARD})
 if(MINGW)
     target_compile_definitions(${CDS_STATIC_LIBRARY} PRIVATE CDS_BUILD_STATIC_LIB)
 endif()
