@@ -751,7 +751,7 @@ namespace cds { namespace gc {
                 The function tries to load \p toGuard and to store it
                 to the HP slot repeatedly until the guard's value equals \p toGuard
 
-                @warning The guad object should be in linked state, otherwise the result is undefined
+                @warning The guard object should be in linked state, otherwise the result is undefined
             */
             template <typename T>
             T protect( atomics::atomic<T> const& toGuard )
@@ -776,7 +776,7 @@ namespace cds { namespace gc {
                 \endcode
                 Actually, the result of <tt> f( toGuard.load()) </tt> is assigned to the hazard pointer.
 
-                @warning The guad object should be in linked state, otherwise the result is undefined
+                @warning The guard object should be in linked state, otherwise the result is undefined
             */
             template <typename T, class Func>
             T protect( atomics::atomic<T> const& toGuard, Func f )
@@ -799,7 +799,7 @@ namespace cds { namespace gc {
                 Can be used for a pointer that cannot be changed concurrently or if the pointer is already
                 guarded by another guard.
 
-                @warning The guad object should be in linked state, otherwise the result is undefined
+                @warning The guard object should be in linked state, otherwise the result is undefined
             */
             template <typename T>
             T * assign( T* p )
@@ -1301,7 +1301,7 @@ namespace cds { namespace gc {
 
         /// Checks that required hazard pointer count \p nCountNeeded is less or equal then max hazard pointer count
         /**
-            If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
+            If <tt> nCountNeeded > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
         */
         static void check_available_guards( size_t nCountNeeded )
         {
