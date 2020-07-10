@@ -49,6 +49,7 @@ switches DCAS support on. You may manually disable DCAS support with the followi
 in GCC/clang (for MS VC++ compiler DCAS is not supported):
   - `-DCDS_DISABLE_128BIT_ATOMIC` - for 64bit build
   - `-DCDS_DISABLE_64BIT_ATOMIC` - for 32bit build
+
 **All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.**
   
 **Building libcds -use vcpkg
