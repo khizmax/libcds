@@ -17,8 +17,44 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 
 if (NOT GTEST_INCLUDE_DIRS)
-   find_package(GTest REQUIRED)
+   find_package(GTest)
+
+    if (NOT GTEST_FOUND)
+        # Download and make gtest library
+        # Download and unpack googletest at configure time
+        configure_file(CMakeLists.txt.gtest googletest-download/CMakeLists.txt)
+
+        execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+          RESULT_VARIABLE result
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+
+        if(result)
+          message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+        endif()
+
+        execute_process(COMMAND ${CMAKE_COMMAND} --build .
+          RESULT_VARIABLE result
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+
+        if(result)
+          message(FATAL_ERROR "Build step for googletest failed: ${result}")
+        endif()
+
+        # Prevent overriding the parent project's compiler/linker
+        # settings on Windows
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+        # Add googletest directly to our build. This defines
+        # the gtest and gtest_main targets.
+        add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+                         ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+                         EXCLUDE_FROM_ALL)
+                         
+        set(GTEST_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/googletest-src/googletest/include")
+        set(GTEST_LIBRARIES "gtest_main")
+    endif()
 endif()
+
 message("GTest: ${GTEST_INCLUDE_DIRS}, lib: ${GTEST_LIBRARIES}")
 
 include_directories(
