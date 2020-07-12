@@ -1,0 +1,14 @@
+#!/bin/bash
+
+PATH=/opt/gcc-9/bin:$PATH
+LD_LIBRARY_PATH=/opt/gcc-9/lib64:$LD_LIBRARY_PATH
+
+cmake -G "Unix Makefiles" \
+ -DCMAKE_BUILD_TYPE=RELEASE \
+ -DCMAKE_C_COMPILER=gcc-9 \
+ -DCMAKE_CXX_COMPILER=g++-9 \
+ -DLIBCDS_CXX_STANDARD=17 \
+ -DCMAKE_CXX_FLAGS="-march=native -Wmultistatement-macros -DCDS_RELEASE_ASSERT -g" \
+ -DLIBCDS_WITH_TESTS=ON \
+ ../source
+make -j 32 $*
