@@ -46,7 +46,7 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
 - `git clone https://github.com/khizmax/libcds.git`
 - `mkdir libcds-release`
 - `cd libcds-release`
-- `cmake -DWITH\_TESTS=ON -DCMAKE\_BUILD_TYPE=RELEASE ../libcds`
+- `cmake -DLIBCDS_WITH_TESTS=ON -DCMAKE_BUILD_TYPE=RELEASE ../libcds`
 ```
     -- The C compiler identification is GNU 4.8.3
     -- The CXX compiler identification is GNU 4.8.3
