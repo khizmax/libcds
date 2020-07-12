@@ -175,14 +175,15 @@ namespace {
         }
     };
 
-    //CDSSTRESS_MSQueue( spsc_queue )
-    //CDSSTRESS_MoirQueue( spsc_queue )
-    //CDSSTRESS_BasketQueue( spsc_queue )
-    //CDSSTRESS_OptimsticQueue( spsc_queue )
-    //CDSSTRESS_FCQueue( spsc_queue )
-    //CDSSTRESS_FCDeque( spsc_queue )
-    //CDSSTRESS_RWQueue( spsc_queue )
-    //CDSSTRESS_StdQueue( spsc_queue )
+    CDSSTRESS_MSQueue( spsc_queue )
+    CDSSTRESS_SPQueue( spsc_queue )
+    CDSSTRESS_MoirQueue( spsc_queue )
+    CDSSTRESS_BasketQueue( spsc_queue )
+    CDSSTRESS_OptimsticQueue( spsc_queue )
+    CDSSTRESS_FCQueue( spsc_queue )
+    CDSSTRESS_FCDeque( spsc_queue )
+    CDSSTRESS_RWQueue( spsc_queue )
+    CDSSTRESS_StdQueue( spsc_queue )
 
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \

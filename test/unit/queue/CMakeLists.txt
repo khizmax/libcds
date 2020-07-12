@@ -28,6 +28,10 @@ set(CDSGTEST_QUEUE_SOURCES
     intrusive_segmented_queue_hp.cpp
     intrusive_segmented_queue_dhp.cpp
     intrusive_vyukov_queue.cpp
+    intrusive_speculative_pairing_queue_hp.cpp
+    intrusive_speculative_pairing_queue_dhp.cpp
+	speculative_pairing_queue_hp.cpp
+	speculative_pairing_queue_dhp.cpp
 )
 
 include_directories(

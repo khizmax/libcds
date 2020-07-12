@@ -125,8 +125,11 @@ namespace {
 
             pool.add( new Consumer<Queue>( pool, q ), s_nThreadCount );
 
-            for ( size_t i = 0; i < s_nQueueSize; ++i )
+            for ( size_t i = 0; i < s_nQueueSize; ++i ) {
                 q.push( i );
+            }
+
+
 
             propout() << std::make_pair( "thread_count", s_nThreadCount )
                 << std::make_pair( "push_count", s_nQueueSize );
@@ -141,7 +144,9 @@ namespace {
         }
     };
 
+
     CDSSTRESS_MSQueue( queue_pop )
+    CDSSTRESS_SPQueue( queue_pop )
     CDSSTRESS_MoirQueue( queue_pop )
     CDSSTRESS_BasketQueue( queue_pop )
     CDSSTRESS_OptimsticQueue( queue_pop )
@@ -159,7 +164,9 @@ namespace {
         test( queue ); \
     }
 
+
     CDSSTRESS_VyukovQueue( queue_pop )
+
 
 #undef CDSSTRESS_Queue_F
 
@@ -215,6 +222,7 @@ namespace {
     }
 
     CDSSTRESS_SegmentedQueue( segmented_queue_pop )
+
 
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )

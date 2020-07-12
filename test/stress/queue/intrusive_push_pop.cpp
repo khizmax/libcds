@@ -314,7 +314,6 @@ namespace {
                 }
             }
             pool.add( new Consumer<Queue>( pool, q ), s_nReaderThreadCount );
-
             std::chrono::milliseconds duration = pool.run();
             propout() << std::make_pair( "duration", duration );
 
@@ -330,6 +329,7 @@ namespace {
             }
 
             analyze( q, nLeftOffset, nRightOffset );
+
 
             propout() << q.statistics();
         }
@@ -347,6 +347,16 @@ namespace {
         } \
         queue_type::gc::force_dispose(); \
     }
+
+
+    CDSSTRESS_QUEUE_F( SPQueue_HP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_HP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::HP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP,       cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_ic,    cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+    CDSSTRESS_QUEUE_F( SPQueue_DHP_stat,  cds::intrusive::speculative_pairing_queue::node<cds::gc::DHP> )
+
+
 
     CDSSTRESS_QUEUE_F( MSQueue_HP,       cds::intrusive::msqueue::node<cds::gc::HP> )
     CDSSTRESS_QUEUE_F( MSQueue_HP_ic,    cds::intrusive::msqueue::node<cds::gc::HP> )
@@ -375,6 +385,7 @@ namespace {
     CDSSTRESS_QUEUE_F( BasketQueue_DHP,      cds::intrusive::basket_queue::node<cds::gc::DHP> )
     CDSSTRESS_QUEUE_F( BasketQueue_DHP_ic,   cds::intrusive::basket_queue::node<cds::gc::DHP> )
     CDSSTRESS_QUEUE_F( BasketQueue_DHP_stat, cds::intrusive::basket_queue::node<cds::gc::DHP> )
+	
 #undef CDSSTRESS_QUEUE_F
 
 
@@ -399,6 +410,7 @@ namespace {
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_sm_stat,                boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm,                     boost::intrusive::list_base_hook<> )
     CDSSTRESS_QUEUE_F(FCQueue_list_wait_mm_stat,                boost::intrusive::list_base_hook<> )
+
 #undef CDSSTRESS_QUEUE_F
 
 
@@ -413,6 +425,7 @@ namespace {
 
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn )
     CDSSTRESS_QUEUE_F( VyukovMPMCCycleQueue_dyn_ic )
+
 #undef CDSSTRESS_QUEUE_F
 
 
