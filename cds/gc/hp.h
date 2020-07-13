@@ -347,20 +347,20 @@ namespace cds { namespace gc {
             };
             //@endcond
 
-            /// \p smr::scan() strategy
+            /// \p basic_smr::scan() strategy
             enum scan_type {
-                classic,    ///< classic scan as described in Michael's works (see smr::classic_scan())
-                inplace     ///< inplace scan without allocation (see smr::inplace_scan())
+                classic,    ///< classic scan as described in Michael's works (see basic_smr::classic_scan())
+                inplace     ///< inplace scan without allocation (see basic_smr::inplace_scan())
             };
 
             //@cond
             /// Hazard Pointer SMR (Safe Memory Reclamation)
-            class smr {
+            class basic_smr {
                 struct thread_record;
 
             public:
-                /// Returns the instance of Hazard Pointer \ref smr
-                static smr &instance() {
+                /// Returns the instance of Hazard Pointer \ref basic_smr
+                static basic_smr &instance() {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
                     assert( instance_ != nullptr );
 #       else
@@ -401,7 +401,7 @@ namespace cds { namespace gc {
                     construct(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType);
                 }
 
-                /// Destroys global instance of \ref smr
+                /// Destroys global instance of \ref basic_smr
                 /**
                     The parameter \p bDetachAll should be used carefully: if its value is \p true,
                     then the object destroyed automatically detaches all attached threads. This feature
@@ -511,14 +511,14 @@ namespace cds { namespace gc {
                 CDS_EXPORT_API void help_scan(thread_data *pThis);
 
             private:
-                CDS_EXPORT_API smr(
+                CDS_EXPORT_API basic_smr(
                         size_t nHazardPtrCount,     ///< Hazard pointer count per thread
                         size_t nMaxThreadCount,     ///< Max count of simultaneous working thread in your application
                         size_t nMaxRetiredPtrCount, ///< Capacity of the array of retired objects for the thread
                         scan_type nScanType         ///< Scan type (see \ref scan_type enum)
                 );
 
-                CDS_EXPORT_API ~smr();
+                CDS_EXPORT_API ~basic_smr();
 
                 CDS_EXPORT_API void detach_all_thread();
 
@@ -567,7 +567,7 @@ namespace cds { namespace gc {
                 CDS_EXPORT_API void free_thread_data(thread_record *pRec, bool callHelpScan);
 
             private:
-                static CDS_EXPORT_API smr *instance_;
+                static CDS_EXPORT_API basic_smr *instance_;
 
                 atomics::atomic<thread_record *> thread_list_;   ///< Head of thread list
 
@@ -575,7 +575,7 @@ namespace cds { namespace gc {
                 size_t const max_thread_count_;      ///< max count of thread
                 size_t const max_retired_ptr_count_; ///< max count of retired ptr per thread
                 scan_type const scan_type_;             ///< scan type (see \ref scan_type enum)
-                void ( smr::*scan_func_ )(thread_data *pRec);
+                void ( basic_smr::*scan_func_ )(thread_data *pRec);
             };
             //@endcond
 
@@ -583,7 +583,7 @@ namespace cds { namespace gc {
 
         //@cond
         // for backward compatibility
-        typedef details::smr smr;
+        typedef details::basic_smr smr;
         typedef smr GarbageCollector;
         //@endcond
     } // namespace hp
@@ -1467,7 +1467,7 @@ namespace cds { namespace gc {
     } // namespace cds::gc::details
 
     typedef details::HP HP;
-    typedef hp::details::smr smr;
+    typedef hp::details::basic_smr smr;
 }} // namespace cds::gc
 
 #endif // #ifndef CDSLIB_GC_HP_SMR_H

@@ -310,7 +310,7 @@ namespace cds { namespace gc {
                     }
 
                     // no free block
-                    // smr::scan() extend retired_array if needed
+                    // basic_smr::scan() extend retired_array if needed
                     return false;
                 }
 
@@ -325,7 +325,7 @@ namespace cds { namespace gc {
                 return ret;
             }
 
-        private: // called by smr
+        private: // called by basic_smr
             void init()
             {
                 if ( list_head_ == nullptr ) {
@@ -479,7 +479,7 @@ namespace cds { namespace gc {
             struct thread_record;
 
         public:
-            /// Returns the instance of Hazard Pointer \ref smr
+            /// Returns the instance of Hazard Pointer \ref basic_smr
             static smr& instance()
             {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
@@ -517,7 +517,7 @@ namespace cds { namespace gc {
                 construct( nInitialHazardPtrCount );
             }
 
-            /// Destroys global instance of \ref smr
+            /// Destroys global instance of \ref basic_smr
             /**
                 The parameter \p bDetachAll should be used carefully: if its value is \p true,
                 then the object destroyed automatically detaches all attached threads. This feature
