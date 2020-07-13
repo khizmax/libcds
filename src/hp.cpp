@@ -30,7 +30,7 @@
 #   define CDS_MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED    (1<<4)
 #endif
 
-namespace cds { namespace gc { namespace hp {
+namespace cds { namespace gc { namespace hp { namespace details {
 
     std::atomic<unsigned> shared_var_membar::shared_var_{ 0 };
 
@@ -129,7 +129,7 @@ namespace cds { namespace gc { namespace hp {
     struct smr::thread_record: thread_data
     {
         // next hazard ptr record in list
-        thread_record*                      next_ = nullptr; 
+        thread_record*                      next_ = nullptr;
         // Owner thread id; 0 - the record is free (not owned)
         atomics::atomic<cds::OS::ThreadId>  thread_id_{ cds::OS::c_NullThreadId };
         // true if record is free (not owned)
@@ -376,7 +376,7 @@ namespace cds { namespace gc { namespace hp {
             while ( pNode ) {
                 if ( pNode->thread_id_.load( atomics::memory_order_relaxed ) != cds::OS::c_NullThreadId ) {
                     thread_hp_storage& hpstg = pNode->hazards_;
-                    
+
                     for ( auto hp = hpstg.begin(), end = hpstg.end(); hp != end; ++hp ) {
                         void * hptr = hp->get( atomics::memory_order_relaxed );
                         if ( hptr ) {
@@ -539,10 +539,10 @@ namespace cds { namespace gc { namespace hp {
 #   endif
     }
 
-}}} // namespace cds::gc::hp
+}}}} // namespace cds::gc::hp::details
 
 CDS_EXPORT_API /*static*/ cds::gc::HP::stat const& cds::gc::HP::postmortem_statistics()
 {
-    return cds::gc::hp::s_postmortem_stat;
+    return cds::gc::hp::details::s_postmortem_stat;
 }
 
