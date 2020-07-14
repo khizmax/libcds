@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$GCC7_ROOT=/home/CI/gcc-7
+$GCC7_ROOT=/home/CI/bin/gcc-7
 PATH=$GCC7_ROOT/bin:$PATH
 LD_LIBRARY_PATH=$GCC7_ROOT/lib64:$LD_LIBRARY_PATH
 
