@@ -422,7 +422,6 @@ namespace cds_test {
 
 #define CDSSTRESS_TreiberStack_custom_HP( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP        ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_seqcst ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_pause  ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_exp    ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_stat    ) \
@@ -457,7 +456,6 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_5ms_stat ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_10ms ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_10ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_seqcst ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_pause ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_exp ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_stat ) \
