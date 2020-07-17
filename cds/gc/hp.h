@@ -62,566 +62,581 @@ namespace cds {
 namespace cds { namespace gc {
     /// Hazard pointer implementation details
     namespace hp {
-        using namespace cds::gc::hp::common;
+        namespace details {
+            using namespace cds::gc::hp::common;
 
-        /// Exception "Not enough Hazard Pointer"
-        class not_enough_hazard_ptr: public std::length_error
-        {
-        //@cond
-        public:
-            not_enough_hazard_ptr()
-                : std::length_error( "Not enough Hazard Pointer" )
-            {}
-        //@endcond
-        };
+            /// Exception "Not enough Hazard Pointer"
+            class not_enough_hazard_ptr : public std::length_error {
+                //@cond
+            public:
+                not_enough_hazard_ptr()
+                        : std::length_error("Not enough Hazard Pointer") {}
+                //@endcond
+            };
 
-        /// Exception "Hazard Pointer SMR is not initialized"
-        class not_initialized: public std::runtime_error
-        {
-        //@cond
-        public:
-            not_initialized()
-                : std::runtime_error( "Global Hazard Pointer SMR object is not initialized" )
-            {}
-        //@endcond
-        };
+            /// Exception "Hazard Pointer SMR is not initialized"
+            class not_initialized : public std::runtime_error {
+                //@cond
+            public:
+                not_initialized()
+                        : std::runtime_error("Global Hazard Pointer SMR object is not initialized") {}
+                //@endcond
+            };
 
-        //@cond
-        /// Per-thread hazard pointer storage
-        class thread_hp_storage {
-        public:
-            thread_hp_storage( guard* arr, size_t nSize ) noexcept
-                : free_head_( arr )
-                , array_( arr )
-                , capacity_( nSize )
+            //@cond
+            /// Per-thread hazard pointer storage
+            class thread_hp_storage {
+            public:
+                thread_hp_storage(guard *arr, size_t nSize) noexcept
+                        : free_head_(arr), array_(arr), capacity_(nSize)
 #       ifdef CDS_ENABLE_HPSTAT
                 , alloc_guard_count_(0)
                 , free_guard_count_(0)
 #       endif
-            {
-                // Initialize guards
-                new( arr ) guard[nSize];
+                {
+                    // Initialize guards
+                    new(arr) guard[nSize];
 
-                for ( guard* pEnd = arr + nSize - 1; arr < pEnd; ++arr )
-                    arr->next_ = arr + 1;
-                arr->next_ = nullptr;
-            }
-
-            thread_hp_storage() = delete;
-            thread_hp_storage( thread_hp_storage const& ) = delete;
-            thread_hp_storage( thread_hp_storage&& ) = delete;
-
-            size_t capacity() const noexcept
-            {
-                return capacity_;
-            }
-
-            bool full() const noexcept
-            {
-                return free_head_ == nullptr;
-            }
-
-            guard* alloc()
-            {
-#       ifdef CDS_DISABLE_SMR_EXCEPTION
-                assert( !full());
-#       else
-                if ( full())
-                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
-#       endif
-                guard* g = free_head_;
-                free_head_ = g->next_;
-                CDS_HPSTAT( ++alloc_guard_count_ );
-                return g;
-            }
-
-            void free( guard* g ) noexcept
-            {
-                assert( g >= array_ && g < array_ + capacity());
-
-                if ( g ) {
-                    g->clear();
-                    g->next_ = free_head_;
-                    free_head_ = g;
-                    CDS_HPSTAT( ++free_guard_count_ );
-                }
-            }
-
-            template< size_t Capacity>
-            size_t alloc( guard_array<Capacity>& arr )
-            {
-                size_t i;
-                guard* g = free_head_;
-                for ( i = 0; i < Capacity && g; ++i ) {
-                    arr.reset( i, g );
-                    g = g->next_;
+                    for (guard *pEnd = arr + nSize - 1; arr < pEnd; ++arr)
+                        arr->next_ = arr + 1;
+                    arr->next_ = nullptr;
                 }
 
-#       ifdef CDS_DISABLE_SMR_EXCEPTION
-                assert( i == Capacity );
-#       else
-                if ( i != Capacity )
-                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
-#       endif
-                free_head_ = g;
-                CDS_HPSTAT( alloc_guard_count_ += Capacity );
-                return i;
-            }
+                thread_hp_storage() = delete;
 
-            template <size_t Capacity>
-            void free( guard_array<Capacity>& arr ) noexcept
-            {
-                guard* gList = free_head_;
-                for ( size_t i = 0; i < Capacity; ++i ) {
-                    guard* g = arr[i];
-                    if ( g ) {
+                thread_hp_storage(thread_hp_storage const &) = delete;
+
+                thread_hp_storage(thread_hp_storage &&) = delete;
+
+                size_t capacity() const noexcept {
+                    return capacity_;
+                }
+
+                bool full() const noexcept {
+                    return free_head_ == nullptr;
+                }
+
+                guard *alloc() {
+#       ifdef CDS_DISABLE_SMR_EXCEPTION
+                    assert( !full());
+#       else
+                    if (full())
+                        CDS_THROW_EXCEPTION(not_enough_hazard_ptr());
+#       endif
+                    guard *g = free_head_;
+                    free_head_ = g->next_;
+                    CDS_HPSTAT(++alloc_guard_count_);
+                    return g;
+                }
+
+                void free(guard *g) noexcept {
+                    assert(g >= array_ && g < array_ + capacity());
+
+                    if (g) {
                         g->clear();
-                        g->next_ = gList;
-                        gList = g;
-                        CDS_HPSTAT( ++free_guard_count_ );
+                        g->next_ = free_head_;
+                        free_head_ = g;
+                        CDS_HPSTAT(++free_guard_count_);
                     }
                 }
-                free_head_ = gList;
-            }
 
-            // cppcheck-suppress functionConst
-            void clear()
-            {
-                for ( guard* cur = array_, *last = array_ + capacity(); cur < last; ++cur )
-                    cur->clear();
-            }
+                template<size_t Capacity>
+                size_t alloc(guard_array<Capacity> &arr) {
+                    size_t i;
+                    guard *g = free_head_;
+                    for (i = 0; i < Capacity && g; ++i) {
+                        arr.reset(i, g);
+                        g = g->next_;
+                    }
 
-            guard& operator[]( size_t idx )
-            {
-                assert( idx < capacity());
-
-                return array_[idx];
-            }
-
-            static size_t calc_array_size( size_t capacity )
-            {
-                return sizeof( guard ) * capacity;
-            }
-
-            guard* begin() const
-            {
-                return array_;
-            }
-
-            guard* end() const
-            {
-                return &array_[capacity_];
-            }
-
-        private:
-            guard*          free_head_; ///< Head of free guard list
-            guard* const    array_;     ///< HP array
-            size_t const    capacity_;  ///< HP array capacity
-#       ifdef CDS_ENABLE_HPSTAT
-        public:
-            size_t          alloc_guard_count_;
-            size_t          free_guard_count_;
+#       ifdef CDS_DISABLE_SMR_EXCEPTION
+                    assert( i == Capacity );
+#       else
+                    if (i != Capacity)
+                        CDS_THROW_EXCEPTION(not_enough_hazard_ptr());
 #       endif
-        };
-        //@endcond
+                    free_head_ = g;
+                    CDS_HPSTAT(alloc_guard_count_ += Capacity);
+                    return i;
+                }
 
-        //@cond
-        /// Per-thread retired array
-        class retired_array
-        {
-        public:
-            retired_array( retired_ptr* arr, size_t capacity ) noexcept
-                : current_( arr )
-                , last_( arr + capacity )
-                , retired_( arr )
+                template<size_t Capacity>
+                void free(guard_array<Capacity> &arr) noexcept {
+                    guard *gList = free_head_;
+                    for (size_t i = 0; i < Capacity; ++i) {
+                        guard *g = arr[i];
+                        if (g) {
+                            g->clear();
+                            g->next_ = gList;
+                            gList = g;
+                            CDS_HPSTAT(++free_guard_count_);
+                        }
+                    }
+                    free_head_ = gList;
+                }
+
+                // cppcheck-suppress functionConst
+                void clear() {
+                    for (guard *cur = array_, *last = array_ + capacity(); cur < last; ++cur)
+                        cur->clear();
+                }
+
+                guard &operator[](size_t idx) {
+                    assert(idx < capacity());
+
+                    return array_[idx];
+                }
+
+                static size_t calc_array_size(size_t capacity) {
+                    return sizeof(guard) * capacity;
+                }
+
+                guard *begin() const {
+                    return array_;
+                }
+
+                guard *end() const {
+                    return &array_[capacity_];
+                }
+
+            private:
+                guard *free_head_; ///< Head of free guard list
+                guard *const array_;     ///< HP array
+                size_t const capacity_;  ///< HP array capacity
+#       ifdef CDS_ENABLE_HPSTAT
+                public:
+                    size_t          alloc_guard_count_;
+                    size_t          free_guard_count_;
+#       endif
+            };
+            //@endcond
+
+            //@cond
+            /// Per-thread retired array
+            class retired_array {
+            public:
+                retired_array(retired_ptr *arr, size_t capacity) noexcept
+                        : current_(arr), last_(arr + capacity), retired_(arr)
 #       ifdef CDS_ENABLE_HPSTAT
                 , retire_call_count_(0)
 #       endif
-            {}
+                {}
 
-            retired_array() = delete;
-            retired_array( retired_array const& ) = delete;
-            retired_array( retired_array&& ) = delete;
+                retired_array() = delete;
 
-            size_t capacity() const noexcept
-            {
-                return last_ - retired_;
-            }
+                retired_array(retired_array const &) = delete;
 
-            size_t size() const noexcept
-            {
-                return current_.load(atomics::memory_order_relaxed) - retired_;
-            }
+                retired_array(retired_array &&) = delete;
 
-            bool push( retired_ptr&& p ) noexcept
-            {
-                retired_ptr* cur = current_.load( atomics::memory_order_relaxed );
-                *cur = p;
-                CDS_HPSTAT( ++retire_call_count_ );
-                current_.store( cur + 1, atomics::memory_order_relaxed );
-                return cur + 1 < last_;
-            }
+                size_t capacity() const noexcept {
+                    return last_ - retired_;
+                }
 
-            retired_ptr* first() const noexcept
-            {
-                return retired_;
-            }
+                size_t size() const noexcept {
+                    return current_.load(atomics::memory_order_relaxed) - retired_;
+                }
 
-            retired_ptr* last() const noexcept
-            {
-                return current_.load( atomics::memory_order_relaxed );
-            }
+                bool push(retired_ptr &&p) noexcept {
+                    retired_ptr *cur = current_.load(atomics::memory_order_relaxed);
+                    *cur = p;
+                    CDS_HPSTAT(++retire_call_count_);
+                    current_.store(cur + 1, atomics::memory_order_relaxed);
+                    return cur + 1 < last_;
+                }
 
-            void reset( size_t nSize ) noexcept
-            {
-                current_.store( first() + nSize, atomics::memory_order_relaxed );
-            }
+                retired_ptr *first() const noexcept {
+                    return retired_;
+                }
 
-            void interthread_clear()
-            {
-                current_.exchange( first(), atomics::memory_order_acq_rel );
-            }
+                retired_ptr *last() const noexcept {
+                    return current_.load(atomics::memory_order_relaxed);
+                }
 
-            bool full() const noexcept
-            {
-                return current_.load( atomics::memory_order_relaxed ) == last_;
-            }
+                void reset(size_t nSize) noexcept {
+                    current_.store(first() + nSize, atomics::memory_order_relaxed);
+                }
 
-            static size_t calc_array_size( size_t capacity )
-            {
-                return sizeof( retired_ptr ) * capacity;
-            }
+                void interthread_clear() {
+                    current_.exchange(first(), atomics::memory_order_acq_rel);
+                }
 
-        private:
-            atomics::atomic<retired_ptr*> current_;
-            retired_ptr* const            last_;
-            retired_ptr* const            retired_;
+                bool full() const noexcept {
+                    return current_.load(atomics::memory_order_relaxed) == last_;
+                }
+
+                static size_t calc_array_size(size_t capacity) {
+                    return sizeof(retired_ptr) * capacity;
+                }
+
+            private:
+                atomics::atomic<retired_ptr *> current_;
+                retired_ptr *const last_;
+                retired_ptr *const retired_;
 #       ifdef CDS_ENABLE_HPSTAT
-        public:
-            size_t  retire_call_count_;
+                public:
+                    size_t  retire_call_count_;
 #       endif
-        };
-        //@endcond
+            };
+            //@endcond
 
-        /// Internal statistics
-        struct stat {
-            size_t  guard_allocated;    ///< Count of allocated HP guards
-            size_t  guard_freed;        ///< Count of freed HP guards
-            size_t  retired_count;      ///< Count of retired pointers
-            size_t  free_count;         ///< Count of free pointers
-            size_t  scan_count;         ///< Count of \p scan() call
-            size_t  help_scan_count;    ///< Count of \p help_scan() call
+            /// Internal statistics
+            struct stat {
+                size_t guard_allocated;    ///< Count of allocated HP guards
+                size_t guard_freed;        ///< Count of freed HP guards
+                size_t retired_count;      ///< Count of retired pointers
+                size_t free_count;         ///< Count of free pointers
+                size_t scan_count;         ///< Count of \p scan() call
+                size_t help_scan_count;    ///< Count of \p help_scan() call
 
-            size_t  thread_rec_count;   ///< Count of thread records
+                size_t thread_rec_count;   ///< Count of thread records
 
-            /// Default ctor
-            stat()
-            {
-                clear();
-            }
+                /// Default ctor
+                stat() {
+                    clear();
+                }
 
-            /// Clears all counters
-            void clear()
-            {
-                guard_allocated =
+                /// Clears all counters
+                void clear() {
+                    guard_allocated =
                     guard_freed =
                     retired_count =
                     free_count =
                     scan_count =
                     help_scan_count =
                     thread_rec_count = 0;
-            }
-        };
+                }
+            };
 
-        //@cond
-        /// Per-thread data
-        struct thread_data {
-            thread_hp_storage   hazards_;   ///< Hazard pointers private to the thread
-            retired_array       retired_;   ///< Retired data private to the thread
+            stat const& postmortem_statistics();
 
-            char pad1_[cds::c_nCacheLineSize];
-            atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
-            char pad2_[cds::c_nCacheLineSize];
+            //@cond
+            /// Per-thread data
+            struct thread_data {
+                thread_hp_storage hazards_;   ///< Hazard pointers private to the thread
+                retired_array retired_;   ///< Retired data private to the thread
+
+                char pad1_[cds::c_nCacheLineSize];
+                atomics::atomic<unsigned int> sync_; ///< dummy var to introduce synchronizes-with relationship between threads
+                char pad2_[cds::c_nCacheLineSize];
 
 #       ifdef CDS_ENABLE_HPSTAT
-            // Internal statistics:
-            size_t              free_count_;
-            size_t              scan_count_;
-            size_t              help_scan_count_;
+                // Internal statistics:
+                size_t              free_count_;
+                size_t              scan_count_;
+                size_t              help_scan_count_;
 #       endif
 
-            // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
-            // cppcheck-suppress uninitMemberVar
-            thread_data( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
-                : hazards_( guards, guard_count )
-                , retired_( retired_arr, retired_capacity )
-                , sync_(0)
+                // CppCheck warn: pad1_ and pad2_ is uninitialized in ctor
+                // cppcheck-suppress uninitMemberVar
+                thread_data(guard *guards, size_t guard_count, retired_ptr *retired_arr, size_t retired_capacity)
+                        : hazards_(guards, guard_count), retired_(retired_arr, retired_capacity), sync_(0)
 #       ifdef CDS_ENABLE_HPSTAT
                 , free_count_(0)
                 , scan_count_(0)
                 , help_scan_count_(0)
 #       endif
-            {}
+                {}
 
-            thread_data() = delete;
-            thread_data( thread_data const& ) = delete;
-            thread_data( thread_data&& ) = delete;
+                thread_data() = delete;
 
-            void sync()
-            {
-                sync_.fetch_add( 1, atomics::memory_order_acq_rel );
-            }
-        };
-        //@endcond
+                thread_data(thread_data const &) = delete;
 
-        /// \p smr::scan() strategy
-        enum scan_type {
-            classic,    ///< classic scan as described in Michael's works (see smr::classic_scan())
-            inplace     ///< inplace scan without allocation (see smr::inplace_scan())
-        };
+                thread_data(thread_data &&) = delete;
 
-        //@cond
-        /// Hazard Pointer SMR (Safe Memory Reclamation)
-        class smr
-        {
-            struct thread_record;
-
-        public:
-            /// Returns the instance of Hazard Pointer \ref smr
-            static smr& instance()
-            {
-#       ifdef CDS_DISABLE_SMR_EXCEPTION
-                assert( instance_ != nullptr );
-#       else
-                if ( !instance_ )
-                    CDS_THROW_EXCEPTION( not_initialized());
-#       endif
-                return *instance_;
-            }
-
-            /// Creates Hazard Pointer SMR singleton
-            /**
-                Hazard Pointer SMR is a singleton. If HP instance is not initialized then the function creates the instance.
-                Otherwise it does nothing.
-
-                The Michael's HP reclamation schema depends of three parameters:
-                - \p nHazardPtrCount - HP pointer count per thread. Usually it is small number (2-4) depending from
-                    the data structure algorithms. By default, if \p nHazardPtrCount = 0,
-                    the function uses maximum of HP count for CDS library
-                - \p nMaxThreadCount - max count of thread with using HP GC in your application. Default is 100.
-                - \p nMaxRetiredPtrCount - capacity of array of retired pointers for each thread. Must be greater than
-                    <tt> nHazardPtrCount * nMaxThreadCount </tt>
-                    Default is <tt>2 * nHazardPtrCount * nMaxThreadCount</tt>
-            */
-            static CDS_EXPORT_API void construct(
-                size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
-                size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
-                size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
-                scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
-            );
-
-            // for back-copatibility
-            static void Construct(
-                size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
-                size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
-                size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
-                scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
-            )
-            {
-                construct( nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
-            }
-
-            /// Destroys global instance of \ref smr
-            /**
-                The parameter \p bDetachAll should be used carefully: if its value is \p true,
-                then the object destroyed automatically detaches all attached threads. This feature
-                can be useful when you have no control over the thread termination, for example,
-                when \p libcds is injected into existing external thread.
-            */
-            static CDS_EXPORT_API void destruct(
-                bool bDetachAll = false     ///< Detach all threads
-            );
-
-            // for back-compatibility
-            static void Destruct(
-                bool bDetachAll = false     ///< Detach all threads
-            )
-            {
-                destruct( bDetachAll );
-            }
-
-            /// Checks if global SMR object is constructed and may be used
-            static bool isUsed() noexcept
-            {
-                return instance_ != nullptr;
-            }
-
-            /// Set memory management functions
-            /**
-                @note This function may be called <b>BEFORE</b> creating an instance
-                of Hazard Pointer SMR
-
-                SMR object allocates some memory for thread-specific data and for
-                creating SMR object.
-                By default, a standard \p new and \p delete operators are used for this.
-            */
-            static CDS_EXPORT_API void set_memory_allocator(
-                void* ( *alloc_func )( size_t size ),
-                void (*free_func )( void * p )
-            );
-
-            /// Returns max Hazard Pointer count per thread
-            size_t get_hazard_ptr_count() const noexcept
-            {
-                return hazard_ptr_count_;
-            }
-
-            /// Returns max thread count
-            size_t get_max_thread_count() const noexcept
-            {
-                return max_thread_count_;
-            }
-
-            /// Returns max size of retired objects array
-            size_t get_max_retired_ptr_count() const noexcept
-            {
-                return max_retired_ptr_count_;
-            }
-
-            /// Get current scan strategy
-            scan_type get_scan_type() const
-            {
-                return scan_type_;
-            }
-
-            /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
-            /**
-                If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
-            */
-            static void check_hazard_ptr_count( size_t nRequiredCount )
-            {
-                if ( instance().get_hazard_ptr_count() < nRequiredCount ) {
-#       ifdef CDS_DISABLE_SMR_EXCEPTION
-                    assert( false );    // not enough hazard ptr
-#       else
-                    CDS_THROW_EXCEPTION( not_enough_hazard_ptr());
-#       endif
+                void sync() {
+                    sync_.fetch_add(1, atomics::memory_order_acq_rel);
                 }
-            }
+            };
+            //@endcond
 
-            /// Returns thread-local data for the current thread
-            static CDS_EXPORT_API thread_data* tls();
+            /// \p smr::scan() strategy
+            enum scan_type {
+                classic,    ///< classic scan as described in Michael's works (see smr::classic_scan())
+                inplace     ///< inplace scan without allocation (see smr::inplace_scan())
+            };
 
-            static CDS_EXPORT_API void attach_thread();
-            static CDS_EXPORT_API void detach_thread();
+            //@cond
+            /// Hazard Pointer SMR (Safe Memory Reclamation)
+            class basic_smr {
+                template<typename TLSManager>
+                friend class generic_smr;
+                struct thread_record;
 
-            /// Get internal statistics
-            CDS_EXPORT_API void statistics( stat& st );
+            public:
+                /// Returns the instance of Hazard Pointer \ref basic_smr
+                static basic_smr &instance() {
+#       ifdef CDS_DISABLE_SMR_EXCEPTION
+                    assert( instance_ != nullptr );
+#       else
+                    if (!instance_)
+                        CDS_THROW_EXCEPTION(not_initialized());
+#       endif
+                    return *instance_;
+                }
 
-        public: // for internal use only
-            /// The main garbage collecting function
-            /**
-                This function is called internally when upper bound of thread's list of reclaimed pointers
-                is reached.
+                /// Creates Hazard Pointer SMR singleton
+                /**
+                    Hazard Pointer SMR is a singleton. If HP instance is not initialized then the function creates the instance.
+                    Otherwise it does nothing.
 
-                There are the following scan algorithm:
-                - \ref hzp_gc_classic_scan "classic_scan" allocates memory for internal use
-                - \ref hzp_gc_inplace_scan "inplace_scan" does not allocate any memory
+                    The Michael's HP reclamation schema depends of three parameters:
+                    - \p nHazardPtrCount - HP pointer count per thread. Usually it is small number (2-4) depending from
+                        the data structure algorithms. By default, if \p nHazardPtrCount = 0,
+                        the function uses maximum of HP count for CDS library
+                    - \p nMaxThreadCount - max count of thread with using HP GC in your application. Default is 100.
+                    - \p nMaxRetiredPtrCount - capacity of array of retired pointers for each thread. Must be greater than
+                        <tt> nHazardPtrCount * nMaxThreadCount </tt>
+                        Default is <tt>2 * nHazardPtrCount * nMaxThreadCount</tt>
+                */
+                static CDS_EXPORT_API void construct(
+                        size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
+                        size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
+                        size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
+                        scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
+                );
 
-                Use \p set_scan_type() member function to setup appropriate scan algorithm.
-            */
-            void scan( thread_data* pRec )
-            {
-                pRec->sync();
-                ( this->*scan_func_ )( pRec );
-            }
+                // for back-copatibility
+                static void Construct(
+                        size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
+                        size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
+                        size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
+                        scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
+                ) {
+                    construct(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType);
+                }
 
-            /// Helper scan routine
-            /**
-                The function guarantees that every node that is eligible for reuse is eventually freed, barring
-                thread failures. To do so, after executing \p scan(), a thread executes a \p %help_scan(),
-                where it checks every HP record. If an HP record is inactive, the thread moves all "lost" reclaimed pointers
-                to thread's list of reclaimed pointers.
+                /// Destroys global instance of \ref basic_smr
+                /**
+                    The parameter \p bDetachAll should be used carefully: if its value is \p true,
+                    then the object destroyed automatically detaches all attached threads. This feature
+                    can be useful when you have no control over the thread termination, for example,
+                    when \p libcds is injected into existing external thread.
+                */
+                static CDS_EXPORT_API void destruct(
+                        bool bDetachAll = false     ///< Detach all threads
+                );
 
-                The function is called internally by \p scan().
-            */
-            CDS_EXPORT_API void help_scan( thread_data* pThis );
+                // for back-compatibility
+                static void Destruct(
+                        bool bDetachAll = false     ///< Detach all threads
+                ) {
+                    destruct(bDetachAll);
+                }
 
-        private:
-            CDS_EXPORT_API smr(
-                size_t nHazardPtrCount,     ///< Hazard pointer count per thread
-                size_t nMaxThreadCount,     ///< Max count of simultaneous working thread in your application
-                size_t nMaxRetiredPtrCount, ///< Capacity of the array of retired objects for the thread
-                scan_type nScanType         ///< Scan type (see \ref scan_type enum)
-            );
+                /// Checks if global SMR object is constructed and may be used
+                static bool isUsed() noexcept {
+                    return instance_ != nullptr;
+                }
 
-            CDS_EXPORT_API ~smr();
+                /// Set memory management functions
+                /**
+                    @note This function may be called <b>BEFORE</b> creating an instance
+                    of Hazard Pointer SMR
 
-            CDS_EXPORT_API void detach_all_thread();
+                    SMR object allocates some memory for thread-specific data and for
+                    creating SMR object.
+                    By default, a standard \p new and \p delete operators are used for this.
+                */
+                static CDS_EXPORT_API void set_memory_allocator(
+                        void *( *alloc_func )(size_t size),
+                        void (*free_func )(void *p)
+                );
 
-            /// Classic scan algorithm
-            /** @anchor hzp_gc_classic_scan
-                Classical scan algorithm as described in Michael's paper.
+                /// Returns max Hazard Pointer count per thread
+                size_t get_hazard_ptr_count() const noexcept {
+                    return hazard_ptr_count_;
+                }
 
-                A scan includes four stages. The first stage involves scanning the array HP for non-null values.
-                Whenever a non-null value is encountered, it is inserted in a local list of currently protected pointer.
-                Only stage 1 accesses shared variables. The following stages operate only on private variables.
+                /// Returns max thread count
+                size_t get_max_thread_count() const noexcept {
+                    return max_thread_count_;
+                }
 
-                The second stage of a scan involves sorting local list of protected pointers to allow
-                binary search in the third stage.
+                /// Returns max size of retired objects array
+                size_t get_max_retired_ptr_count() const noexcept {
+                    return max_retired_ptr_count_;
+                }
 
-                The third stage of a scan involves checking each reclaimed node
-                against the pointers in local list of protected pointers. If the binary search yields
-                no match, the node is freed. Otherwise, it cannot be deleted now and must kept in thread's list
-                of reclaimed pointers.
+                /// Get current scan strategy
+                scan_type get_scan_type() const {
+                    return scan_type_;
+                }
 
-                The forth stage prepares new thread's private list of reclaimed pointers
-                that could not be freed during the current scan, where they remain until the next scan.
+                /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
+                /**
+                    If <tt> nRequiredCount > get_hazard_ptr_count()</tt> then the exception \p not_enough_hazard_ptr is thrown
+                */
+                static void check_hazard_ptr_count(size_t nRequiredCount) {
+                    if (instance().get_hazard_ptr_count() < nRequiredCount) {
+#       ifdef CDS_DISABLE_SMR_EXCEPTION
+                        assert( false );    // not enough hazard ptr
+#       else
+                        CDS_THROW_EXCEPTION(not_enough_hazard_ptr());
+#       endif
+                    }
+                }
 
-                This algorithm allocates memory for internal HP array.
+                /// Get internal statistics
+                CDS_EXPORT_API void statistics(stat &st);
 
-                This function is called internally by ThreadGC object when upper bound of thread's list of reclaimed pointers
-                is reached.
-            */
-            CDS_EXPORT_API void classic_scan( thread_data* pRec );
+            public: // for internal use only
+                /// The main garbage collecting function
+                /**
+                    This function is called internally when upper bound of thread's list of reclaimed pointers
+                    is reached.
 
-            /// In-place scan algorithm
-            /** @anchor hzp_gc_inplace_scan
-                Unlike the \p classic_scan() algorithm, \p %inplace_scan() does not allocate any memory.
-                All operations are performed in-place.
-            */
-            CDS_EXPORT_API void inplace_scan( thread_data* pRec );
+                    There are the following scan algorithm:
+                    - \ref hzp_gc_classic_scan "classic_scan" allocates memory for internal use
+                    - \ref hzp_gc_inplace_scan "inplace_scan" does not allocate any memory
 
-        private:
-            CDS_EXPORT_API thread_record* create_thread_data();
-            static CDS_EXPORT_API void destroy_thread_data( thread_record* pRec );
+                    Use \p set_scan_type() member function to setup appropriate scan algorithm.
+                */
+                void scan(thread_data *pRec) {
+                    pRec->sync();
+                    (this->*scan_func_)(pRec);
+                }
 
-            /// Allocates Hazard Pointer SMR thread private data
-            CDS_EXPORT_API thread_record* alloc_thread_data();
+                /// Helper scan routine
+                /**
+                    The function guarantees that every node that is eligible for reuse is eventually freed, barring
+                    thread failures. To do so, after executing \p scan(), a thread executes a \p %help_scan(),
+                    where it checks every HP record. If an HP record is inactive, the thread moves all "lost" reclaimed pointers
+                    to thread's list of reclaimed pointers.
 
-            /// Free HP SMR thread-private data
-            CDS_EXPORT_API void free_thread_data( thread_record* pRec, bool callHelpScan );
+                    The function is called internally by \p scan().
+                */
+                CDS_EXPORT_API void help_scan(thread_data *pThis);
 
-        private:
-            static CDS_EXPORT_API smr* instance_;
+            private:
+                CDS_EXPORT_API basic_smr(
+                        size_t nHazardPtrCount,     ///< Hazard pointer count per thread
+                        size_t nMaxThreadCount,     ///< Max count of simultaneous working thread in your application
+                        size_t nMaxRetiredPtrCount, ///< Capacity of the array of retired objects for the thread
+                        scan_type nScanType         ///< Scan type (see \ref scan_type enum)
+                );
 
-            atomics::atomic< thread_record*>    thread_list_;   ///< Head of thread list
+                CDS_EXPORT_API ~basic_smr();
 
-            size_t const    hazard_ptr_count_;      ///< max count of thread's hazard pointer
-            size_t const    max_thread_count_;      ///< max count of thread
-            size_t const    max_retired_ptr_count_; ///< max count of retired ptr per thread
-            scan_type const scan_type_;             ///< scan type (see \ref scan_type enum)
-            void ( smr::*scan_func_ )( thread_data* pRec );
-        };
-        //@endcond
+                CDS_EXPORT_API void detach_all_thread();
+
+                /// Classic scan algorithm
+                /** @anchor hzp_gc_classic_scan
+                    Classical scan algorithm as described in Michael's paper.
+
+                    A scan includes four stages. The first stage involves scanning the array HP for non-null values.
+                    Whenever a non-null value is encountered, it is inserted in a local list of currently protected pointer.
+                    Only stage 1 accesses shared variables. The following stages operate only on private variables.
+
+                    The second stage of a scan involves sorting local list of protected pointers to allow
+                    binary search in the third stage.
+
+                    The third stage of a scan involves checking each reclaimed node
+                    against the pointers in local list of protected pointers. If the binary search yields
+                    no match, the node is freed. Otherwise, it cannot be deleted now and must kept in thread's list
+                    of reclaimed pointers.
+
+                    The forth stage prepares new thread's private list of reclaimed pointers
+                    that could not be freed during the current scan, where they remain until the next scan.
+
+                    This algorithm allocates memory for internal HP array.
+
+                    This function is called internally by ThreadGC object when upper bound of thread's list of reclaimed pointers
+                    is reached.
+                */
+                CDS_EXPORT_API void classic_scan(thread_data *pRec);
+
+                /// In-place scan algorithm
+                /** @anchor hzp_gc_inplace_scan
+                    Unlike the \p classic_scan() algorithm, \p %inplace_scan() does not allocate any memory.
+                    All operations are performed in-place.
+                */
+                CDS_EXPORT_API void inplace_scan(thread_data *pRec);
+
+            private:
+                CDS_EXPORT_API thread_record *create_thread_data();
+
+                static CDS_EXPORT_API void destroy_thread_data(thread_record *pRec);
+
+                /// Allocates Hazard Pointer SMR thread private data
+                CDS_EXPORT_API thread_record *alloc_thread_data();
+
+                /// Free HP SMR thread-private data
+                CDS_EXPORT_API void free_thread_data(thread_record *pRec, bool callHelpScan);
+
+            private:
+                static CDS_EXPORT_API basic_smr *instance_;
+
+                atomics::atomic<thread_record *> thread_list_;   ///< Head of thread list
+
+                size_t const hazard_ptr_count_;      ///< max count of thread's hazard pointer
+                size_t const max_thread_count_;      ///< max count of thread
+                size_t const max_retired_ptr_count_; ///< max count of retired ptr per thread
+                scan_type const scan_type_;             ///< scan type (see \ref scan_type enum)
+                void ( basic_smr::*scan_func_ )(thread_data *pRec);
+            };
+            //@endcond
+
+            class DefaultTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            class StrangeTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            class HeapTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            template<typename TLSManager>
+            class generic_smr : public basic_smr {
+            public:
+                /// Returns thread-local data for the current thread
+                static CDS_EXPORT_API thread_data* tls()
+                {
+                    thread_data* data = TLSManager::getTLS();
+                    assert( data != nullptr );
+                    return data;
+                }
+
+                static CDS_EXPORT_API void attach_thread()
+                {
+                    thread_data* data = TLSManager::getTLS();
+                    if ( !data )
+                        TLSManager::setTLS(reinterpret_cast<thread_data *>(instance().alloc_thread_data()));
+                }
+
+                static CDS_EXPORT_API void detach_thread()
+                {
+                    thread_data* rec = TLSManager::getTLS();
+                    if ( rec ) {
+                        TLSManager::setTLS(nullptr);
+                        instance().free_thread_data(reinterpret_cast<thread_record*>( rec ), true );
+                    }
+                }
+            };
+
+
+
+        } // namespace details
 
         //@cond
         // for backward compatibility
+        typedef details::generic_smr<details::DefaultTLSManager> smr;
         typedef smr GarbageCollector;
         //@endcond
 
-    } // namespace hp
+        template<typename TLSManager>
+        using custom_smr = details::generic_smr<TLSManager>;
+    } // namespace cds::gc::hp
 
+    namespace details {
     /// Hazard Pointer SMR (Safe Memory Reclamation)
     /**  @ingroup cds_garbage_collector
 
@@ -637,11 +652,12 @@ namespace cds { namespace gc {
         by contructing \p %cds::gc::HP object in beginning of your \p main().
         See \ref cds_how_to_use "How to use" section for details how to apply SMR schema.
     */
-    class HP
+    template<typename TLSManager>
+    class generic_HP
     {
     public:
         /// Native guarded pointer type
-        typedef hp::hazard_ptr guarded_pointer;
+        typedef hp::details::hazard_ptr guarded_pointer;
 
         /// Atomic reference
         template <typename T> using atomic_ref = atomics::atomic<T *>;
@@ -653,10 +669,10 @@ namespace cds { namespace gc {
         template <typename T> using atomic_type = atomics::atomic<T>;
 
         /// Exception "Not enough Hazard Pointer"
-        typedef hp::not_enough_hazard_ptr not_enough_hazard_ptr_exception;
+        typedef hp::details::not_enough_hazard_ptr not_enough_hazard_ptr_exception;
 
         /// Internal statistics
-        typedef hp::stat stat;
+        typedef hp::details::stat stat;
 
         /// Hazard Pointer guard
         /**
@@ -682,7 +698,7 @@ namespace cds { namespace gc {
                 @warning Can throw \p not_enough_hazard_ptr if internal hazard pointer objects are exhausted.
             */
             Guard()
-                : guard_( hp::smr::tls()->hazards_.alloc())
+                : guard_( hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc())
             {}
 
             /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
@@ -732,14 +748,14 @@ namespace cds { namespace gc {
             void link()
             {
                 if ( !guard_ )
-                    guard_ = hp::smr::tls()->hazards_.alloc();
+                    guard_ = hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc();
             }
 
             /// Unlinks the guard from internal hazard pointer; the guard becomes in unlinked state
             void unlink()
             {
                 if ( guard_ ) {
-                    hp::smr::tls()->hazards_.free( guard_ );
+                    hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guard_ );
                     guard_ = nullptr;
                 }
             }
@@ -807,7 +823,7 @@ namespace cds { namespace gc {
                 assert( guard_ != nullptr );
 
                 guard_->set( p );
-                hp::smr::tls()->sync();
+                hp::details::generic_smr<TLSManager>::tls()->sync();
                 return p;
             }
 
@@ -863,14 +879,14 @@ namespace cds { namespace gc {
             }
 
             //@cond
-            hp::guard* release()
+            hp::details::guard* release()
             {
-                hp::guard* g = guard_;
+                hp::details::guard* g = guard_;
                 guard_ = nullptr;
                 return g;
             }
 
-            hp::guard*& guard_ref()
+            hp::details::guard*& guard_ref()
             {
                 return guard_;
             }
@@ -878,7 +894,7 @@ namespace cds { namespace gc {
 
         private:
             //@cond
-            hp::guard* guard_;
+            hp::details::guard* guard_;
             //@endcond
         };
 
@@ -904,7 +920,7 @@ namespace cds { namespace gc {
             /// Default ctor allocates \p Count hazard pointers
             GuardArray()
             {
-                hp::smr::tls()->hazards_.alloc( guards_ );
+                hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc( guards_ );
             }
 
             /// Move ctor is prohibited
@@ -922,7 +938,7 @@ namespace cds { namespace gc {
             /// Frees allocated hazard pointers
             ~GuardArray()
             {
-                hp::smr::tls()->hazards_.free( guards_ );
+                hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guards_ );
             }
 
             /// Protects a pointer of type \p atomic<T*>
@@ -978,7 +994,7 @@ namespace cds { namespace gc {
                 assert( nIndex < capacity());
 
                 guards_.set( nIndex, p );
-                hp::smr::tls()->sync();
+                hp::details::generic_smr<TLSManager>::tls()->sync();
                 return p;
             }
 
@@ -1027,7 +1043,7 @@ namespace cds { namespace gc {
             }
 
             //@cond
-            hp::guard* release( size_t nIndex ) noexcept
+            hp::details::guard* release( size_t nIndex ) noexcept
             {
                 return guards_.release( nIndex );
             }
@@ -1041,7 +1057,7 @@ namespace cds { namespace gc {
 
         private:
             //@cond
-            hp::guard_array<c_nCapacity> guards_;
+            hp::details::guard_array<c_nCapacity> guards_;
             //@endcond
         };
 
@@ -1113,7 +1129,7 @@ namespace cds { namespace gc {
             {}
 
             //@cond
-            explicit guarded_ptr( hp::guard* g ) noexcept
+            explicit guarded_ptr( hp::details::guard* g ) noexcept
                 : guard_( g )
             {}
 
@@ -1235,13 +1251,13 @@ namespace cds { namespace gc {
             void alloc_guard()
             {
                 if ( !guard_ )
-                    guard_ = hp::smr::tls()->hazards_.alloc();
+                    guard_ = hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc();
             }
 
             void free_guard()
             {
                 if ( guard_ ) {
-                    hp::smr::tls()->hazards_.free( guard_ );
+                    hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guard_ );
                     guard_ = nullptr;
                 }
             }
@@ -1249,15 +1265,15 @@ namespace cds { namespace gc {
 
         private:
             //@cond
-            hp::guard* guard_;
+            hp::details::guard* guard_;
             //@endcond
         };
 
     public:
         /// \p scan() type
         enum class scan_type {
-            classic = hp::classic,    ///< classic scan as described in Michael's papers
-            inplace = hp::inplace     ///< inplace scan without allocation
+            classic = hp::details::classic,    ///< classic scan as described in Michael's papers
+            inplace = hp::details::inplace     ///< inplace scan without allocation
         };
 
         /// Initializes %HP singleton
@@ -1273,18 +1289,18 @@ namespace cds { namespace gc {
             - \p nMaxRetiredPtrCount - capacity of array of retired pointers for each thread. Must be greater than
                 <tt> nHazardPtrCount * nMaxThreadCount </tt>. Default is <tt>2 * nHazardPtrCount * nMaxThreadCount </tt>.
         */
-        HP(
+        generic_HP(
             size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
             size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
             size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
             scan_type nScanType = scan_type::inplace   ///< Scan type (see \p scan_type enum)
         )
         {
-            hp::smr::construct(
+            hp::details::generic_smr<TLSManager>::construct(
                 nHazardPtrCount,
                 nMaxThreadCount,
                 nMaxRetiredPtrCount,
-                static_cast<hp::scan_type>(nScanType)
+                static_cast<hp::details::scan_type>(nScanType)
             );
         }
 
@@ -1294,9 +1310,9 @@ namespace cds { namespace gc {
             use CDS data structures based on \p %cds::gc::HP.
             Usually, %HP object is destroyed at the end of your \p main().
         */
-        ~HP()
+        ~generic_HP()
         {
-            hp::smr::destruct( true );
+            hp::details::generic_smr<TLSManager>::destruct( true );
         }
 
         /// Checks that required hazard pointer count \p nCountNeeded is less or equal then max hazard pointer count
@@ -1305,7 +1321,7 @@ namespace cds { namespace gc {
         */
         static void check_available_guards( size_t nCountNeeded )
         {
-            hp::smr::check_hazard_ptr_count( nCountNeeded );
+            hp::details::generic_smr<TLSManager>::check_hazard_ptr_count( nCountNeeded );
         }
 
         /// Set memory management functions
@@ -1322,25 +1338,25 @@ namespace cds { namespace gc {
             void( *free_func )( void * p )          ///< \p free() function
         )
         {
-            hp::smr::set_memory_allocator( alloc_func, free_func );
+            hp::details::generic_smr<TLSManager>::set_memory_allocator( alloc_func, free_func );
         }
 
         /// Returns max Hazard Pointer count
         static size_t max_hazard_count()
         {
-            return hp::smr::instance().get_hazard_ptr_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_hazard_ptr_count();
         }
 
         /// Returns max count of thread
         static size_t max_thread_count()
         {
-            return hp::smr::instance().get_max_thread_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_max_thread_count();
         }
 
         /// Returns capacity of retired pointer array
         static size_t retired_array_capacity()
         {
-            return hp::smr::instance().get_max_retired_ptr_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_max_retired_ptr_count();
         }
 
         /// Retire pointer \p p with function \p func
@@ -1352,9 +1368,9 @@ namespace cds { namespace gc {
         template <typename T>
         static void retire( T * p, void( *func )( void * ))
         {
-            hp::thread_data* rec = hp::smr::tls();
-            if ( !rec->retired_.push( hp::retired_ptr( p, func )))
-                hp::smr::instance().scan( rec );
+            hp::details::thread_data* rec = hp::details::generic_smr<TLSManager>::tls();
+            if ( !rec->retired_.push( hp::details::retired_ptr( p, func )))
+                hp::details::generic_smr<TLSManager>::instance().scan( rec );
         }
 
         /// Retire pointer \p p with functor of type \p Disposer
@@ -1409,20 +1425,20 @@ namespace cds { namespace gc {
         template <class Disposer, typename T>
         static void retire( T * p )
         {
-            if ( !hp::smr::tls()->retired_.push( hp::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
+            if ( !hp::details::generic_smr<TLSManager>::tls()->retired_.push( hp::details::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
                 scan();
         }
 
         /// Get current scan strategy
         static scan_type getScanType()
         {
-            return static_cast<scan_type>( hp::smr::instance().get_scan_type());
+            return static_cast<scan_type>( hp::details::generic_smr<TLSManager>::instance().get_scan_type());
         }
 
         /// Checks if Hazard Pointer GC is constructed and may be used
         static bool isUsed()
         {
-            return hp::smr::isUsed();
+            return hp::details::generic_smr<TLSManager>::isUsed();
         }
 
         /// Forces SMR call for current thread
@@ -1431,7 +1447,7 @@ namespace cds { namespace gc {
         */
         static void scan()
         {
-            hp::smr::instance().scan( hp::smr::tls());
+            hp::details::generic_smr<TLSManager>::instance().scan( hp::details::generic_smr<TLSManager>::tls());
         }
 
         /// Synonym for \p scan()
@@ -1449,7 +1465,7 @@ namespace cds { namespace gc {
         */
         static void statistics( stat& st )
         {
-            hp::smr::instance().statistics( st );
+            hp::details::generic_smr<TLSManager>::instance().statistics( st );
         }
 
         /// Returns post-mortem statistics
@@ -1495,9 +1511,19 @@ namespace cds { namespace gc {
             }
             \endcode
         */
-        CDS_EXPORT_API static stat const& postmortem_statistics();
+        static stat const& postmortem_statistics() {
+            return cds::gc::hp::details::postmortem_statistics();
+        }
     };
+    } // namespace cds::gc::details
 
+    //@cond
+    // for backward compatibility
+    typedef details::generic_HP<hp::details::DefaultTLSManager> HP;
+    //@endcond
+
+    template<typename TLSManager>
+    using custom_HP = details::generic_HP<TLSManager>;
 }} // namespace cds::gc
 
 #endif // #ifndef CDSLIB_GC_HP_SMR_H

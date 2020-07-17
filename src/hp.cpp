@@ -30,7 +30,7 @@
 #   define CDS_MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED    (1<<4)
 #endif
 
-namespace cds { namespace gc { namespace hp {
+namespace cds { namespace gc { namespace hp { namespace details {
 
     std::atomic<unsigned> shared_var_membar::shared_var_{ 0 };
 
@@ -117,19 +117,12 @@ namespace cds { namespace gc { namespace hp {
         stat s_postmortem_stat;
     } // namespace
 
-    /*static*/ CDS_EXPORT_API smr* smr::instance_ = nullptr;
-    thread_local thread_data* tls_ = nullptr;
+    /*static*/ CDS_EXPORT_API basic_smr* basic_smr::instance_ = nullptr;
 
-    /*static*/ CDS_EXPORT_API thread_data* smr::tls()
-    {
-        assert( tls_ != nullptr );
-        return tls_;
-    }
-
-    struct smr::thread_record: thread_data
+    struct basic_smr::thread_record: thread_data
     {
         // next hazard ptr record in list
-        thread_record*                      next_ = nullptr; 
+        thread_record*                      next_ = nullptr;
         // Owner thread id; 0 - the record is free (not owned)
         atomics::atomic<cds::OS::ThreadId>  thread_id_{ cds::OS::c_NullThreadId };
         // true if record is free (not owned)
@@ -140,7 +133,7 @@ namespace cds { namespace gc { namespace hp {
         {}
     };
 
-    /*static*/ CDS_EXPORT_API void smr::set_memory_allocator(
+    /*static*/ CDS_EXPORT_API void basic_smr::set_memory_allocator(
         void* ( *alloc_func )( size_t size ),
         void( *free_func )( void * p )
     )
@@ -153,36 +146,36 @@ namespace cds { namespace gc { namespace hp {
     }
 
 
-    /*static*/ CDS_EXPORT_API void smr::construct( size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
+    /*static*/ CDS_EXPORT_API void basic_smr::construct(size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
     {
         if ( !instance_ ) {
-            instance_ = new( s_alloc_memory(sizeof(smr))) smr( nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
+            instance_ = new( s_alloc_memory(sizeof(basic_smr))) basic_smr(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
         }
     }
 
-    /*static*/ CDS_EXPORT_API void smr::destruct( bool bDetachAll )
+    /*static*/ CDS_EXPORT_API void basic_smr::destruct(bool bDetachAll )
     {
         if ( instance_ ) {
             if ( bDetachAll )
                 instance_->detach_all_thread();
 
-            instance_->~smr();
+            instance_->~basic_smr();
             s_free_memory( instance_ );
             instance_ = nullptr;
         }
     }
 
-    CDS_EXPORT_API smr::smr( size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
+    CDS_EXPORT_API basic_smr::basic_smr(size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
         : hazard_ptr_count_( nHazardPtrCount == 0 ? defaults::c_nHazardPointerPerThread : nHazardPtrCount )
         , max_thread_count_( nMaxThreadCount == 0 ? defaults::c_nMaxThreadCount : nMaxThreadCount )
         , max_retired_ptr_count_( calc_retired_size( nMaxRetiredPtrCount, hazard_ptr_count_, max_thread_count_ ))
         , scan_type_( nScanType )
-        , scan_func_( nScanType == classic ? &smr::classic_scan : &smr::inplace_scan )
+        , scan_func_( nScanType == classic ? &basic_smr::classic_scan : &basic_smr::inplace_scan )
     {
         thread_list_.store( nullptr, atomics::memory_order_release );
     }
 
-    CDS_EXPORT_API smr::~smr()
+    CDS_EXPORT_API basic_smr::~basic_smr()
     {
         CDS_DEBUG_ONLY( const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId; )
         CDS_DEBUG_ONLY( const cds::OS::ThreadId mainThreadId = cds::OS::get_current_thread_id();)
@@ -212,7 +205,7 @@ namespace cds { namespace gc { namespace hp {
     }
 
 
-    CDS_EXPORT_API smr::thread_record* smr::create_thread_data()
+    CDS_EXPORT_API basic_smr::thread_record* basic_smr::create_thread_data()
     {
         size_t const guard_array_size = thread_hp_storage::calc_array_size( get_hazard_ptr_count());
         size_t const retired_array_size = retired_array::calc_array_size( get_max_retired_ptr_count());
@@ -248,7 +241,7 @@ namespace cds { namespace gc { namespace hp {
         );
     }
 
-    /*static*/ CDS_EXPORT_API void smr::destroy_thread_data( thread_record* pRec )
+    /*static*/ CDS_EXPORT_API void basic_smr::destroy_thread_data(thread_record* pRec )
     {
         // all retired pointers must be freed
         assert( pRec->retired_.size() == 0 );
@@ -258,7 +251,7 @@ namespace cds { namespace gc { namespace hp {
     }
 
 
-    CDS_EXPORT_API smr::thread_record* smr::alloc_thread_data()
+    CDS_EXPORT_API basic_smr::thread_record* basic_smr::alloc_thread_data()
     {
         thread_record * hprec;
         const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
@@ -286,7 +279,7 @@ namespace cds { namespace gc { namespace hp {
         return hprec;
     }
 
-    CDS_EXPORT_API void smr::free_thread_data( smr::thread_record* pRec, bool callHelpScan )
+    CDS_EXPORT_API void basic_smr::free_thread_data(basic_smr::thread_record* pRec, bool callHelpScan )
     {
         assert( pRec != nullptr );
 
@@ -297,7 +290,7 @@ namespace cds { namespace gc { namespace hp {
         pRec->thread_id_.store( cds::OS::c_NullThreadId, atomics::memory_order_release );
     }
 
-    CDS_EXPORT_API void smr::detach_all_thread()
+    CDS_EXPORT_API void basic_smr::detach_all_thread()
     {
         thread_record * pNext = nullptr;
         const cds::OS::ThreadId nullThreadId = cds::OS::c_NullThreadId;
@@ -310,23 +303,7 @@ namespace cds { namespace gc { namespace hp {
         }
     }
 
-    /*static*/ CDS_EXPORT_API void smr::attach_thread()
-    {
-        if ( !tls_ )
-            tls_ = instance().alloc_thread_data();
-    }
-
-    /*static*/ CDS_EXPORT_API void smr::detach_thread()
-    {
-        thread_data* rec = tls_;
-        if ( rec ) {
-            tls_ = nullptr;
-            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
-        }
-    }
-
-
-    CDS_EXPORT_API void smr::inplace_scan( thread_data* pThreadRec )
+    CDS_EXPORT_API void basic_smr::inplace_scan(thread_data* pThreadRec )
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
 
@@ -376,7 +353,7 @@ namespace cds { namespace gc { namespace hp {
             while ( pNode ) {
                 if ( pNode->thread_id_.load( atomics::memory_order_relaxed ) != cds::OS::c_NullThreadId ) {
                     thread_hp_storage& hpstg = pNode->hazards_;
-                    
+
                     for ( auto hp = hpstg.begin(), end = hpstg.end(); hp != end; ++hp ) {
                         void * hptr = hp->get( atomics::memory_order_relaxed );
                         if ( hptr ) {
@@ -415,7 +392,7 @@ namespace cds { namespace gc { namespace hp {
     }
 
     // cppcheck-suppress functionConst
-    CDS_EXPORT_API void smr::classic_scan( thread_data* pThreadRec )
+    CDS_EXPORT_API void basic_smr::classic_scan(thread_data* pThreadRec )
     {
         thread_record* pRec = static_cast<thread_record*>( pThreadRec );
 
@@ -469,7 +446,7 @@ namespace cds { namespace gc { namespace hp {
         }
     }
 
-    CDS_EXPORT_API void smr::help_scan( thread_data* pThis )
+    CDS_EXPORT_API void basic_smr::help_scan(thread_data* pThis )
     {
         assert( static_cast<thread_record*>( pThis )->thread_id_.load( atomics::memory_order_relaxed ) == cds::OS::get_current_thread_id());
 
@@ -520,7 +497,7 @@ namespace cds { namespace gc { namespace hp {
         }
     }
 
-    CDS_EXPORT_API void smr::statistics( stat& st )
+    CDS_EXPORT_API void basic_smr::statistics(stat& st )
     {
         st.clear();
 #   ifdef CDS_ENABLE_HPSTAT
@@ -539,10 +516,9 @@ namespace cds { namespace gc { namespace hp {
 #   endif
     }
 
-}}} // namespace cds::gc::hp
+    cds::gc::hp::details::stat const& postmortem_statistics()
+    {
+        return s_postmortem_stat;
+    }
 
-CDS_EXPORT_API /*static*/ cds::gc::HP::stat const& cds::gc::HP::postmortem_statistics()
-{
-    return cds::gc::hp::s_postmortem_stat;
-}
-
+}}}} // namespace cds::gc::hp::details

@@ -6,7 +6,7 @@
 #include <cds/details/defs.h>
 #include <atomic>
 
-namespace cds { namespace gc { namespace hp {
+namespace cds { namespace gc { namespace hp { namespace details {
 
     class seq_qst_membar {
     public:
@@ -115,4 +115,4 @@ namespace cds { namespace gc { namespace hp {
     typedef default_membar asymmetric_global_membar;
 #endif
 
-}}} // namespace cds::gc::hp
+}}}} // namespace cds::gc::hp::details

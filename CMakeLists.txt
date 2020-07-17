@@ -160,6 +160,7 @@ set(HEADERS_COMPONENT devel)
 
 set(SOURCES src/init.cpp
             src/hp.cpp
+            src/hp_thread_local.cpp
             src/dhp.cpp
             src/urcu_gp.cpp
             src/urcu_sh.cpp
