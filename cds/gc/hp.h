@@ -349,10 +349,10 @@ namespace cds { namespace gc {
             };
             //@endcond
 
-            /// \p basic_smr::scan() strategy
+            /// \p smr::scan() strategy
             enum scan_type {
-                classic,    ///< classic scan as described in Michael's works (see basic_smr::classic_scan())
-                inplace     ///< inplace scan without allocation (see basic_smr::inplace_scan())
+                classic,    ///< classic scan as described in Michael's works (see smr::classic_scan())
+                inplace     ///< inplace scan without allocation (see smr::inplace_scan())
             };
 
             //@cond
