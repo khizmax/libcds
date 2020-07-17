@@ -307,7 +307,7 @@ namespace cds { namespace gc {
                 }
             };
 
-            static stat const& postmortem_statistics();
+            stat const& postmortem_statistics();
 
             //@cond
             /// Per-thread data
@@ -631,6 +631,9 @@ namespace cds { namespace gc {
         typedef details::generic_smr<details::DefaultTLSManager> smr;
         typedef smr GarbageCollector;
         //@endcond
+
+        template<typename TLSManager>
+        using custom_smr = details::generic_smr<TLSManager>;
     } // namespace cds::gc::hp
 
     namespace details {
@@ -1514,9 +1517,13 @@ namespace cds { namespace gc {
     };
     } // namespace cds::gc::details
 
+    //@cond
     // for backward compatibility
     typedef details::generic_HP<hp::details::DefaultTLSManager> HP;
-    typedef hp::details::basic_smr smr;
+    //@endcond
+
+    template<typename TLSManager>
+    using custom_HP = details::generic_HP<TLSManager>;
 }} // namespace cds::gc
 
 #endif // #ifndef CDSLIB_GC_HP_SMR_H

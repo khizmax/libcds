@@ -118,7 +118,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
     } // namespace
 
     /*static*/ CDS_EXPORT_API basic_smr* basic_smr::instance_ = nullptr;
-    thread_local thread_data* tls_ = nullptr;
 
     struct basic_smr::thread_record: thread_data
     {
