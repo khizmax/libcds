@@ -607,9 +607,8 @@ namespace cds { namespace gc {
 
                 static CDS_EXPORT_API void attach_thread()
                 {
-                    thread_data* data = TLSManager::getTLS();
-                    if ( !data )
-                        TLSManager::setTLS(reinterpret_cast<thread_data *>(instance().alloc_thread_data()));
+                    if ( !TLSManager::getTLS() )
+                        TLSManager::setTLS(instance().alloc_thread_data());
                 }
 
                 static CDS_EXPORT_API void detach_thread()
