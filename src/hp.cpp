@@ -119,20 +119,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
     /*static*/ CDS_EXPORT_API basic_smr* basic_smr::instance_ = nullptr;
 
-    struct basic_smr::thread_record: thread_data
-    {
-        // next hazard ptr record in list
-        thread_record*                      next_ = nullptr;
-        // Owner thread id; 0 - the record is free (not owned)
-        atomics::atomic<cds::OS::ThreadId>  thread_id_{ cds::OS::c_NullThreadId };
-        // true if record is free (not owned)
-        atomics::atomic<bool>               free_{ false };
-
-        thread_record( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
-            : thread_data( guards, guard_count, retired_arr, retired_capacity )
-        {}
-    };
-
     /*static*/ CDS_EXPORT_API void basic_smr::set_memory_allocator(
         void* ( *alloc_func )( size_t size ),
         void( *free_func )( void * p )

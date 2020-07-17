@@ -360,7 +360,19 @@ namespace cds { namespace gc {
             class basic_smr {
                 template<typename TLSManager>
                 friend class generic_smr;
-                struct thread_record;
+                struct thread_record: thread_data
+                {
+                    // next hazard ptr record in list
+                    thread_record*                      next_ = nullptr;
+                    // Owner thread id; 0 - the record is free (not owned)
+                    atomics::atomic<cds::OS::ThreadId>  thread_id_{ cds::OS::c_NullThreadId };
+                    // true if record is free (not owned)
+                    atomics::atomic<bool>               free_{ false };
+
+                    thread_record( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
+                            : thread_data( guards, guard_count, retired_arr, retired_capacity )
+                    {}
+                };
 
             public:
                 /// Returns the instance of Hazard Pointer \ref basic_smr
@@ -616,7 +628,7 @@ namespace cds { namespace gc {
                     thread_data* rec = TLSManager::getTLS();
                     if ( rec ) {
                         TLSManager::setTLS(nullptr);
-                        instance().free_thread_data(reinterpret_cast<thread_record*>( rec ), true );
+                        instance().free_thread_data(static_cast<thread_record*>( rec ), true );
                     }
                 }
             };
