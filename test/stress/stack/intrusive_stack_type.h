@@ -80,13 +80,18 @@ namespace istack {
 
     // TreiberStack
         typedef cds::intrusive::TreiberStack< cds::gc::HP, T > Treiber_HP;
-        typedef cds::intrusive::TreiberStack< custom_HP,   T > Treiber_custom_HP;
+        struct traits_Treiber_custom_HP: public
+           cds::intrusive::treiber_stack::make_traits <
+               cds::intrusive::opt::hook< base_hook<custom_HP> >
+           > ::type
+        {};
+        typedef cds::intrusive::TreiberStack< custom_HP,   T, traits_Treiber_custom_HP > Treiber_custom_HP;
         struct traits_Treiber_DHP: public
             cds::intrusive::treiber_stack::make_traits <
                 cds::intrusive::opt::hook< base_hook<cds::gc::DHP> >
             > ::type
         {};
-        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_DHP >Treiber_DHP;
+        typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_DHP > Treiber_DHP;
 
         template <class GC> struct traits_Treiber_seqcst : public
             cds::intrusive::treiber_stack::make_traits <
@@ -420,17 +425,7 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_seqcst ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_pause  ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_exp    ) \
-
-#define CDSSTRESS_TreiberStack_mixed_HP( test_fixture ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_HP        ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_HP_seqcst ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_HP_pause  ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_HP_exp    ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_HP_stat   ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP        ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_seqcst ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_pause  ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_exp    ) \
+    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_stat    ) \
 
 #define CDSSTRESS_TreiberStack_DHP( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_DHP       ) \
@@ -455,34 +450,6 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Elimination_HP_dyn_stat ) \
 
 #define CDSSTRESS_EliminationStack_custom_HP( test_fixture ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_2ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_2ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_5ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_5ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_10ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_10ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_seqcst ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_pause ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_exp ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_dyn ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_dyn_stat ) \
-
-#define CDSSTRESS_EliminationStack_mixed_HP( test_fixture ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_2ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_2ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_5ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_5ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_10ms ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_10ms_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_seqcst ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_pause ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_exp ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_stat ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_dyn ) \
-    CDSSTRESS_Stack_F( test_fixture, Elimination_HP_dyn_stat ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_2ms ) \
     CDSSTRESS_Stack_F( test_fixture, Elimination_custom_HP_2ms_stat ) \
