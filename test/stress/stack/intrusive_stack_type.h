@@ -105,7 +105,7 @@ namespace istack {
             > ::type
         {};
         typedef cds::intrusive::TreiberStack< cds::gc::HP,  T, traits_Treiber_stat<cds::gc::HP>  > Treiber_HP_stat;
-        typedef cds::intrusive::TreiberStack< custom_HP,    T, traits_Treiber_stat<custom_HP>    > Treiber_generic_custom_HP_stat;
+        typedef cds::intrusive::TreiberStack< custom_HP,    T, traits_Treiber_stat<custom_HP>    > Treiber_custom_HP_stat;
         typedef cds::intrusive::TreiberStack< cds::gc::DHP, T, traits_Treiber_stat<cds::gc::DHP> > Treiber_DHP_stat;
 
         template <class GC> struct traits_Treiber_yield: public
