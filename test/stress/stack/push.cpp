@@ -180,5 +180,6 @@ namespace {
     CDSSTRESS_FCStack( stack_push )
     CDSSTRESS_FCDeque( stack_push )
     CDSSTRESS_StdStack( stack_push )
+    CDSSTRESS_TSDeque( stack_push )
 
 } // namespace

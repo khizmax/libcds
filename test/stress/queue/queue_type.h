@@ -16,6 +16,8 @@
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
 #include <cds/container/weak_ringbuffer.h>
+#include <cds/container/ts_deque.h>
+#include <cds/container/ts_timestamp.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -95,6 +97,60 @@ namespace queue {
             bool pop( T& v )
             {
                 return base_class::pop_front( v );
+            }
+            bool deque( T& v )
+            {
+                return pop(v);
+            }
+        };
+
+        template <typename T, typename Timestamp, typename Traits=cds::container::tsdeque::traits >
+        class TSDequeL: public cds::container::TSDeque<T, Timestamp, Traits >
+        {
+            typedef cds::container::TSDeque<T, Timestamp, Traits > base_class;
+        public:
+            TSDequeL() : base_class( 17, 0 )
+            {}
+
+            bool push( T const& v )
+            {
+                return base_class::insert_left( v );
+            }
+            bool enqueue( T const& v )
+            {
+                return push( v );
+            }
+
+            bool pop( T& v )
+            {
+                return base_class::remove_right( &v );
+            }
+            bool deque( T& v )
+            {
+                return pop(v);
+            }
+        };
+
+        template <typename T, typename Timestamp, typename Traits=cds::container::tsdeque::traits >
+        class TSDequeR: public cds::container::TSDeque<T, Timestamp, Traits >
+        {
+            typedef cds::container::TSDeque<T, Timestamp, Traits > base_class;
+        public:
+            TSDequeR() : base_class( 17, 0 )
+            {}
+
+            bool push( T const& v )
+            {
+                return base_class::insert_right( v );
+            }
+            bool enqueue( T const& v )
+            {
+                return push( v );
+            }
+
+            bool pop( T& v )
+            {
+                return base_class::remove_left( &v );
             }
             bool deque( T& v )
             {
@@ -503,6 +559,20 @@ namespace fc_details{
         typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination, boost::container::deque<Value> > FCDequeR_boost_elimination;
         typedef details::FCDequeR< Value, fc_details::traits_FCDeque_elimination_stat, boost::container::deque<Value> > FCDequeR_boost_elimination_stat;
 
+        // TSDeque
+        struct traits_TSDeque_item_counter:
+            public cds::container::tsdeque::make_traits<
+                cds::opt::item_counter< cds::atomicity::cache_friendly_item_counter >
+            >::type
+        {};
+
+        typedef details::TSDequeL< Value, cds::container::HardwareTimestamp, traits_TSDeque_item_counter > TSDequeL_hardware_timestamp;
+        typedef details::TSDequeL< Value, cds::container::HardwareIntervalTimestamp, traits_TSDeque_item_counter > TSDequeL_hardware_interval_timestamp;
+        typedef details::TSDequeL< Value, cds::container::AtomicCounterTimestamp, traits_TSDeque_item_counter > TSDequeL_atomic_counter_timestamp;
+        typedef details::TSDequeR< Value, cds::container::HardwareTimestamp, traits_TSDeque_item_counter > TSDequeR_hardware_timestamp;
+        typedef details::TSDequeR< Value, cds::container::HardwareIntervalTimestamp, traits_TSDeque_item_counter > TSDequeR_hardware_interval_timestamp;
+        typedef details::TSDequeR< Value, cds::container::AtomicCounterTimestamp, traits_TSDeque_item_counter > TSDequeR_atomic_counter_timestamp;
+
         // STL
         typedef StdQueue_deque<Value>               StdQueue_deque_Spinlock;
         typedef StdQueue_list<Value>                StdQueue_list_Spinlock;
@@ -830,6 +900,10 @@ namespace cds_test {
     CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_mutex    ) \
     CDSSTRESS_FCQueue_F( test_fixture, FCDequeL_HeavyValue_stat     ) \
     CDSSTRESS_FCDeque_HeavyValue_1( test_fixture )
+
+#define CDSSTRESS_TSDeque( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, TSDequeL_atomic_counter_timestamp ) \
+    CDSSTRESS_Queue_F( test_fixture, TSDequeR_atomic_counter_timestamp )
 
 #define CDSSTRESS_RWQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin   ) \
