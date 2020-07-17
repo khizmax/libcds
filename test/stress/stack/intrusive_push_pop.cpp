@@ -44,6 +44,7 @@ namespace {
     protected:
         typedef base_class::value_type<> value_type;
         typedef base_class::value_type< cds::intrusive::treiber_stack::node< cds::gc::HP >> hp_value_type;
+        typedef base_class::value_type< cds::intrusive::treiber_stack::node< istack::custom_HP >> custom_hp_value_type;
         typedef base_class::value_type< cds::intrusive::treiber_stack::node< cds::gc::DHP >> dhp_value_type;
 
         template <typename Stack>
@@ -99,8 +100,18 @@ namespace {
     }
 
     CDSSTRESS_TreiberStack_HP( intrusive_stack_push_pop )
+
+#undef CDSSTRESS_Stack_F
+
+// TreiberStack<custom_HP>
+#define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
+    TEST_F( test_fixture, stack_impl ) \
+    { \
+        typedef typename istack::Types<custom_hp_value_type>::stack_impl stack_type; \
+        test< stack_type >(); \
+    }
+
     CDSSTRESS_TreiberStack_custom_HP( intrusive_stack_push_pop )
-    CDSSTRESS_TreiberStack_mixed_HP( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
 
@@ -125,11 +136,32 @@ namespace {
     }
 
     CDSSTRESS_EliminationStack_HP( intrusive_stack_push_pop )
-    CDSSTRESS_EliminationStack_custom_HP( intrusive_stack_push_pop )
-    CDSSTRESS_EliminationStack_mixed_HP( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
 
+// TreiberStack<custom_HP> + elimination enabled
+#define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
+    TEST_F( test_fixture, stack_impl ) \
+    { \
+        typedef typename istack::Types<custom_hp_value_type>::stack_impl stack_type; \
+        test_elimination< stack_type >(); \
+    }
+
+    CDSSTRESS_EliminationStack_custom_HP( intrusive_stack_push_pop )
+
+#undef CDSSTRESS_Stack_F
+
+// TreiberStack<mixed_HP> + elimination enabled
+#define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \
+    TEST_F( test_fixture, stack_impl ) \
+    { \
+        typedef typename istack::Types<hp_value_type>::stack_impl stack_type; \
+        test_elimination< stack_type >(); \
+    }
+
+    CDSSTRESS_EliminationStack_mixed_HP( intrusive_stack_push_pop )
+
+#undef CDSSTRESS_Stack_F
 
     // TreiberStack<cds::gc::DHP> + elimination enabled
 #define CDSSTRESS_Stack_F( test_fixture, stack_impl ) \

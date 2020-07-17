@@ -70,10 +70,10 @@ namespace istack {
         };
     }
 
+    using custom_HP = cds::gc::custom_HP<cds::gc::hp::details::HeapTLSManager>;
+
     template <typename T>
     struct Types {
-
-        using custom_HP = cds::gc::custom_HP<cds::gc::hp::details::HeapTLSManager>;
 
         template <class GC>
         using base_hook = cds::intrusive::treiber_stack::base_hook < cds::opt::gc< GC > >;
@@ -420,7 +420,6 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_seqcst ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_pause  ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_exp    ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_stat   ) \
 
 #define CDSSTRESS_TreiberStack_mixed_HP( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_HP        ) \
@@ -432,7 +431,6 @@ namespace cds_test {
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_seqcst ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_pause  ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_exp    ) \
-    CDSSTRESS_Stack_F( test_fixture, Treiber_custom_HP_stat   ) \
 
 #define CDSSTRESS_TreiberStack_DHP( test_fixture ) \
     CDSSTRESS_Stack_F( test_fixture, Treiber_DHP       ) \
