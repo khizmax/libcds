@@ -307,6 +307,8 @@ namespace cds { namespace gc {
                 }
             };
 
+            static stat const& postmortem_statistics();
+
             //@cond
             /// Per-thread data
             struct thread_data {
@@ -356,6 +358,8 @@ namespace cds { namespace gc {
             //@cond
             /// Hazard Pointer SMR (Safe Memory Reclamation)
             class basic_smr {
+                template<typename TLSManager>
+                friend class generic_smr;
                 struct thread_record;
 
             public:
@@ -472,13 +476,6 @@ namespace cds { namespace gc {
                     }
                 }
 
-                /// Returns thread-local data for the current thread
-                static CDS_EXPORT_API thread_data *tls();
-
-                static CDS_EXPORT_API void attach_thread();
-
-                static CDS_EXPORT_API void detach_thread();
-
                 /// Get internal statistics
                 CDS_EXPORT_API void statistics(stat &st);
 
@@ -579,14 +576,62 @@ namespace cds { namespace gc {
             };
             //@endcond
 
+            class DefaultTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            class StrangeTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            class HeapTLSManager {
+            public:
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+
+            template<typename TLSManager>
+            class generic_smr : public basic_smr {
+            public:
+                /// Returns thread-local data for the current thread
+                static CDS_EXPORT_API thread_data* tls()
+                {
+                    thread_data* data = TLSManager::getTLS();
+                    assert( data != nullptr );
+                    return data;
+                }
+
+                static CDS_EXPORT_API void attach_thread()
+                {
+                    thread_data* data = TLSManager::getTLS();
+                    if ( !data )
+                        TLSManager::setTLS(reinterpret_cast<thread_data *>(instance().alloc_thread_data()));
+                }
+
+                static CDS_EXPORT_API void detach_thread()
+                {
+                    thread_data* rec = TLSManager::getTLS();
+                    if ( rec ) {
+                        TLSManager::setTLS(nullptr);
+                        instance().free_thread_data(reinterpret_cast<thread_record*>( rec ), true );
+                    }
+                }
+            };
+
+
+
         } // namespace details
 
         //@cond
         // for backward compatibility
-        typedef details::basic_smr smr;
+        typedef details::generic_smr<details::DefaultTLSManager> smr;
         typedef smr GarbageCollector;
         //@endcond
-    } // namespace hp
+    } // namespace cds::gc::hp
 
     namespace details {
     /// Hazard Pointer SMR (Safe Memory Reclamation)
@@ -604,7 +649,8 @@ namespace cds { namespace gc {
         by contructing \p %cds::gc::HP object in beginning of your \p main().
         See \ref cds_how_to_use "How to use" section for details how to apply SMR schema.
     */
-    class HP
+    template<typename TLSManager>
+    class generic_HP
     {
     public:
         /// Native guarded pointer type
@@ -649,7 +695,7 @@ namespace cds { namespace gc {
                 @warning Can throw \p not_enough_hazard_ptr if internal hazard pointer objects are exhausted.
             */
             Guard()
-                : guard_( hp::smr::tls()->hazards_.alloc())
+                : guard_( hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc())
             {}
 
             /// Initilalizes an unlinked guard i.e. the guard contains no hazard pointer. Used for move semantics support
@@ -699,14 +745,14 @@ namespace cds { namespace gc {
             void link()
             {
                 if ( !guard_ )
-                    guard_ = hp::smr::tls()->hazards_.alloc();
+                    guard_ = hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc();
             }
 
             /// Unlinks the guard from internal hazard pointer; the guard becomes in unlinked state
             void unlink()
             {
                 if ( guard_ ) {
-                    hp::smr::tls()->hazards_.free( guard_ );
+                    hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guard_ );
                     guard_ = nullptr;
                 }
             }
@@ -774,7 +820,7 @@ namespace cds { namespace gc {
                 assert( guard_ != nullptr );
 
                 guard_->set( p );
-                hp::smr::tls()->sync();
+                hp::details::generic_smr<TLSManager>::tls()->sync();
                 return p;
             }
 
@@ -871,7 +917,7 @@ namespace cds { namespace gc {
             /// Default ctor allocates \p Count hazard pointers
             GuardArray()
             {
-                hp::smr::tls()->hazards_.alloc( guards_ );
+                hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc( guards_ );
             }
 
             /// Move ctor is prohibited
@@ -889,7 +935,7 @@ namespace cds { namespace gc {
             /// Frees allocated hazard pointers
             ~GuardArray()
             {
-                hp::smr::tls()->hazards_.free( guards_ );
+                hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guards_ );
             }
 
             /// Protects a pointer of type \p atomic<T*>
@@ -945,7 +991,7 @@ namespace cds { namespace gc {
                 assert( nIndex < capacity());
 
                 guards_.set( nIndex, p );
-                hp::smr::tls()->sync();
+                hp::details::generic_smr<TLSManager>::tls()->sync();
                 return p;
             }
 
@@ -1202,13 +1248,13 @@ namespace cds { namespace gc {
             void alloc_guard()
             {
                 if ( !guard_ )
-                    guard_ = hp::smr::tls()->hazards_.alloc();
+                    guard_ = hp::details::generic_smr<TLSManager>::tls()->hazards_.alloc();
             }
 
             void free_guard()
             {
                 if ( guard_ ) {
-                    hp::smr::tls()->hazards_.free( guard_ );
+                    hp::details::generic_smr<TLSManager>::tls()->hazards_.free( guard_ );
                     guard_ = nullptr;
                 }
             }
@@ -1240,14 +1286,14 @@ namespace cds { namespace gc {
             - \p nMaxRetiredPtrCount - capacity of array of retired pointers for each thread. Must be greater than
                 <tt> nHazardPtrCount * nMaxThreadCount </tt>. Default is <tt>2 * nHazardPtrCount * nMaxThreadCount </tt>.
         */
-        HP(
+        generic_HP(
             size_t nHazardPtrCount = 0,     ///< Hazard pointer count per thread
             size_t nMaxThreadCount = 0,     ///< Max count of simultaneous working thread in your application
             size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
             scan_type nScanType = scan_type::inplace   ///< Scan type (see \p scan_type enum)
         )
         {
-            hp::smr::construct(
+            hp::details::generic_smr<TLSManager>::construct(
                 nHazardPtrCount,
                 nMaxThreadCount,
                 nMaxRetiredPtrCount,
@@ -1261,9 +1307,9 @@ namespace cds { namespace gc {
             use CDS data structures based on \p %cds::gc::HP.
             Usually, %HP object is destroyed at the end of your \p main().
         */
-        ~HP()
+        ~generic_HP()
         {
-            hp::smr::destruct( true );
+            hp::details::generic_smr<TLSManager>::destruct( true );
         }
 
         /// Checks that required hazard pointer count \p nCountNeeded is less or equal then max hazard pointer count
@@ -1272,7 +1318,7 @@ namespace cds { namespace gc {
         */
         static void check_available_guards( size_t nCountNeeded )
         {
-            hp::smr::check_hazard_ptr_count( nCountNeeded );
+            hp::details::generic_smr<TLSManager>::check_hazard_ptr_count( nCountNeeded );
         }
 
         /// Set memory management functions
@@ -1289,25 +1335,25 @@ namespace cds { namespace gc {
             void( *free_func )( void * p )          ///< \p free() function
         )
         {
-            hp::smr::set_memory_allocator( alloc_func, free_func );
+            hp::details::generic_smr<TLSManager>::set_memory_allocator( alloc_func, free_func );
         }
 
         /// Returns max Hazard Pointer count
         static size_t max_hazard_count()
         {
-            return hp::smr::instance().get_hazard_ptr_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_hazard_ptr_count();
         }
 
         /// Returns max count of thread
         static size_t max_thread_count()
         {
-            return hp::smr::instance().get_max_thread_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_max_thread_count();
         }
 
         /// Returns capacity of retired pointer array
         static size_t retired_array_capacity()
         {
-            return hp::smr::instance().get_max_retired_ptr_count();
+            return hp::details::generic_smr<TLSManager>::instance().get_max_retired_ptr_count();
         }
 
         /// Retire pointer \p p with function \p func
@@ -1319,9 +1365,9 @@ namespace cds { namespace gc {
         template <typename T>
         static void retire( T * p, void( *func )( void * ))
         {
-            hp::details::thread_data* rec = hp::smr::tls();
+            hp::details::thread_data* rec = hp::details::generic_smr<TLSManager>::tls();
             if ( !rec->retired_.push( hp::details::retired_ptr( p, func )))
-                hp::smr::instance().scan( rec );
+                hp::details::generic_smr<TLSManager>::instance().scan( rec );
         }
 
         /// Retire pointer \p p with functor of type \p Disposer
@@ -1376,20 +1422,20 @@ namespace cds { namespace gc {
         template <class Disposer, typename T>
         static void retire( T * p )
         {
-            if ( !hp::smr::tls()->retired_.push( hp::details::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
+            if ( !hp::details::generic_smr<TLSManager>::tls()->retired_.push( hp::details::retired_ptr( p, +[]( void* p ) { Disposer()( static_cast<T*>( p )); })))
                 scan();
         }
 
         /// Get current scan strategy
         static scan_type getScanType()
         {
-            return static_cast<scan_type>( hp::smr::instance().get_scan_type());
+            return static_cast<scan_type>( hp::details::generic_smr<TLSManager>::instance().get_scan_type());
         }
 
         /// Checks if Hazard Pointer GC is constructed and may be used
         static bool isUsed()
         {
-            return hp::smr::isUsed();
+            return hp::details::generic_smr<TLSManager>::isUsed();
         }
 
         /// Forces SMR call for current thread
@@ -1398,7 +1444,7 @@ namespace cds { namespace gc {
         */
         static void scan()
         {
-            hp::smr::instance().scan( hp::smr::tls());
+            hp::details::generic_smr<TLSManager>::instance().scan( hp::details::generic_smr<TLSManager>::tls());
         }
 
         /// Synonym for \p scan()
@@ -1416,7 +1462,7 @@ namespace cds { namespace gc {
         */
         static void statistics( stat& st )
         {
-            hp::smr::instance().statistics( st );
+            hp::details::generic_smr<TLSManager>::instance().statistics( st );
         }
 
         /// Returns post-mortem statistics
@@ -1462,11 +1508,14 @@ namespace cds { namespace gc {
             }
             \endcode
         */
-        CDS_EXPORT_API static stat const& postmortem_statistics();
+        static stat const& postmortem_statistics() {
+            return cds::gc::hp::details::postmortem_statistics();
+        }
     };
     } // namespace cds::gc::details
 
-    typedef details::HP HP;
+    // for backward compatibility
+    typedef details::generic_HP<hp::details::DefaultTLSManager> HP;
     typedef hp::details::basic_smr smr;
 }} // namespace cds::gc
 

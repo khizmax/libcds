@@ -120,12 +120,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
     /*static*/ CDS_EXPORT_API basic_smr* basic_smr::instance_ = nullptr;
     thread_local thread_data* tls_ = nullptr;
 
-    /*static*/ CDS_EXPORT_API thread_data* basic_smr::tls()
-    {
-        assert( tls_ != nullptr );
-        return tls_;
-    }
-
     struct basic_smr::thread_record: thread_data
     {
         // next hazard ptr record in list
@@ -309,22 +303,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
             }
         }
     }
-
-    /*static*/ CDS_EXPORT_API void basic_smr::attach_thread()
-    {
-        if ( !tls_ )
-            tls_ = instance().alloc_thread_data();
-    }
-
-    /*static*/ CDS_EXPORT_API void basic_smr::detach_thread()
-    {
-        thread_data* rec = tls_;
-        if ( rec ) {
-            tls_ = nullptr;
-            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
-        }
-    }
-
 
     CDS_EXPORT_API void basic_smr::inplace_scan(thread_data* pThreadRec )
     {
@@ -539,10 +517,9 @@ namespace cds { namespace gc { namespace hp { namespace details {
 #   endif
     }
 
+    cds::gc::hp::details::stat const& postmortem_statistics()
+    {
+        return s_postmortem_stat;
+    }
+
 }}}} // namespace cds::gc::hp::details
-
-CDS_EXPORT_API /*static*/ cds::gc::HP::stat const& cds::gc::HP::postmortem_statistics()
-{
-    return cds::gc::hp::details::s_postmortem_stat;
-}
-
