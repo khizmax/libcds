@@ -99,6 +99,8 @@ namespace {
     }
 
     CDSSTRESS_TreiberStack_HP( intrusive_stack_push_pop )
+    CDSSTRESS_TreiberStack_custom_HP( intrusive_stack_push_pop )
+    CDSSTRESS_TreiberStack_mixed_HP( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
 
@@ -123,6 +125,8 @@ namespace {
     }
 
     CDSSTRESS_EliminationStack_HP( intrusive_stack_push_pop )
+    CDSSTRESS_EliminationStack_custom_HP( intrusive_stack_push_pop )
+    CDSSTRESS_EliminationStack_mixed_HP( intrusive_stack_push_pop )
 
 #undef CDSSTRESS_Stack_F
 
