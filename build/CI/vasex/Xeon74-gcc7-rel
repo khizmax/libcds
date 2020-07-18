@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TMPDIR=${HOME}/tmp/ci
+
 GCC7_ROOT=/home/CI/bin/gcc-7
 PATH=$GCC7_ROOT/bin:$PATH
 LD_LIBRARY_PATH=$GCC7_ROOT/lib64:$LD_LIBRARY_PATH

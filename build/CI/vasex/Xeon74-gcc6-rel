@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TMPDIR=${HOME}/tmp/ci
+
 GCC6_ROOT=/home/CI/bin/gcc-6
 PATH=$GCC6_ROOT/bin:$PATH
 LD_LIBRARY_PATH=$GCC6_ROOT/lib64:$LD_LIBRARY_PATH
