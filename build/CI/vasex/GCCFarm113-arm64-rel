@@ -6,12 +6,12 @@ PATH=${HOME}/bin/cmake-3.11/bin:$PATH
 
 CDSTEST_CFG_RELEASE=test-express-gccfarm.conf
 
-GCC_ROOT=${HOME}/bin/gcc-ppc64-gcfarm
+GCC_ROOT=${HOME}/bin/gcc-arm64-gcfarm
 GTEST_ROOT=${HOME}/lib/gtest
 
 cmake -G "Unix Makefiles" \
- -DCMAKE_C_COMPILER=${GCC_ROOT}/bin/gcc
- -DCMAKE_CXX_COMPILER=${GCC_ROOT}/bin/g++
+ -DCMAKE_C_COMPILER=${GCC_ROOT}/bin/gcc \
+ -DCMAKE_CXX_COMPILER=${GCC_ROOT}/bin/g++ \
  -DCMAKE_BUILD_TYPE=RELEASE \
  -DCMAKE_C_COMPILER=gcc \
  -DCMAKE_CXX_COMPILER=g++ \
