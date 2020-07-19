@@ -14,7 +14,7 @@ namespace cds {
                 thread_local std::pair<thread_data *, thread_data *> *tls2_ = new std::pair<thread_data *, thread_data *>(
                         nullptr,
                         nullptr);
-                const size_t MAXIMUM_THREAD_ID = 1000000;
+                const size_t MAXIMUM_THREAD_ID = 10000000;
                 static thread_data *heap_tls_[MAXIMUM_THREAD_ID];
 
                 /*static*/ CDS_EXPORT_API thread_data *DefaultTLSManager::getTLS() {
