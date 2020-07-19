@@ -13,6 +13,7 @@
 #include <mutex>
 #include <chrono>
 #include <cds/threading/model.h>
+#include <cds/gc/hp.h>
 
 namespace cds_test {
 
@@ -38,10 +39,12 @@ namespace cds_test {
         virtual void SetUp()
         {
             cds::threading::Manager::attachThread();
+            cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::attach_thread();
         }
 
         virtual void TearDown()
         {
+            cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::detach_thread();
             cds::threading::Manager::detachThread();
         }
 
