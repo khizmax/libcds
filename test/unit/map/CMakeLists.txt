@@ -122,7 +122,15 @@ add_executable(${UNIT_MAP_SPLIT_LAZY} ${UNIT_MAP_SPLIT_LAZY_SOURCES})
 target_link_libraries(${UNIT_MAP_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})
 add_test(NAME ${UNIT_MAP_SPLIT_LAZY} COMMAND ${UNIT_MAP_SPLIT_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-
+# WF_Hashtable unit test
+set(UNIT_MAP_WF_HASHTABLE unit-map-wf-hashtable)
+set(UNIT_MAP_WF_HASHTABLE_SOURCES
+	../main.cpp
+    test_wf_hashtable.cpp
+)
+add_executable(${UNIT_MAP_WF_HASHTABLE} ${UNIT_MAP_WF_HASHTABLE_SOURCES })
+target_link_libraries(${UNIT_MAP_WF_HASHTABLE} ${CDS_TEST_LIBRARIES})
+add_test(NAME ${UNIT_MAP_WF_HASHTABLE} COMMAND ${UNIT_MAP_WF_HASHTABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 add_custom_target( unit-map
     DEPENDS
@@ -134,4 +142,5 @@ add_custom_target( unit-map
         ${UNIT_MAP_SPLIT_MICHAEL}
         ${UNIT_MAP_SPLIT_ITERABLE}
         ${UNIT_MAP_SPLIT_LAZY}
+		${UNIT_MAP_WF_HASHTABLE}
 )
