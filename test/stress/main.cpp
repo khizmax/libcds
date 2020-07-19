@@ -73,9 +73,11 @@ int main( int argc, char **argv )
 #endif // CDSUNIT_USE_URCU
 
         cds::threading::Manager::attachThread();
+        cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::attach_thread();
 
         result =  RUN_ALL_TESTS();
 
+        cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::detach_thread();
         cds::threading::Manager::detachThread();
     }
 
