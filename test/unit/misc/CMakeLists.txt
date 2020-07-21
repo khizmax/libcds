@@ -9,7 +9,6 @@ set(CDSGTEST_MISC_SOURCES
     hash_tuple.cpp
     permutation_generator.cpp
     split_bitstring.cpp
-    tls_holder.cpp
 )
 
 include_directories(
