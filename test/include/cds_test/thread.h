@@ -14,6 +14,12 @@
 #include <chrono>
 #include <cds/threading/model.h>
 
+#if CDS_THREADING_HPX
+#include <hpx/include/threads.hpp>
+#include <hpx/synchronization/spinlock.hpp>
+#include <hpx/synchronization/condition_variable.hpp>
+#endif
+
 namespace cds_test {
 
     // Forwards
@@ -73,13 +79,13 @@ namespace cds_test {
 
             void reset( size_t count )
             {
-                std::unique_lock< std::mutex > lock( m_mtx );
+                std::unique_lock< mutex_type > lock( m_mtx );
                 m_count = count;
             }
 
             bool wait()
             {
-                std::unique_lock< std::mutex > lock( m_mtx );
+                std::unique_lock< mutex_type > lock( m_mtx );
                 if ( --m_count == 0 ) {
                     m_cv.notify_all();
                     return true;
@@ -90,11 +96,19 @@ namespace cds_test {
 
                 return false;
             }
+        private:
+#if CDS_THREADING_HPX
+            using mutex_type = hpx::lcos::local::mutex;
+            using condition_variable_type = hpx::lcos::local::condition_variable;
+#else
+            using mutex_type = std::mutex;
+            using condition_variable_type = std::condition_variable;
+#endif
 
         private:
             size_t      m_count;
-            std::mutex  m_mtx;
-            std::condition_variable m_cv;
+            mutex_type  m_mtx;
+            condition_variable_type m_cv;
         };
 
         class initial_gate
@@ -106,27 +120,34 @@ namespace cds_test {
 
             void wait()
             {
-                std::unique_lock< std::mutex > lock( m_mtx );
+                std::unique_lock< mutex_type > lock( m_mtx );
                 while ( !m_ready )
                     m_cv.wait( lock );
             }
 
             void ready()
             {
-                std::unique_lock< std::mutex > lock( m_mtx );
+                std::unique_lock< mutex_type > lock( m_mtx );
                 m_ready = true;
                 m_cv.notify_all();
             }
 
             void reset()
             {
-                std::unique_lock< std::mutex > lock( m_mtx );
+                std::unique_lock< mutex_type > lock( m_mtx );
                 m_ready = false;
             }
 
         private:
-            std::mutex  m_mtx;
-            std::condition_variable m_cv;
+#if CDS_THREADING_HPX
+            using mutex_type = hpx::lcos::local::mutex;
+            using condition_variable_type = hpx::lcos::local::condition_variable;
+#else
+            using mutex_type = std::mutex;
+            using condition_variable_type = std::condition_variable;
+#endif
+            mutex_type  m_mtx;
+            condition_variable_type m_cv;
             bool        m_ready;
         };
 
@@ -164,9 +185,13 @@ namespace cds_test {
         {
             m_startBarrier.reset( m_workers.size() + 1 );
             m_stopBarrier.reset( m_workers.size() + 1 );
-
+#if CDS_THREADING_HPX
+            using thread_type = hpx::thread;
+#else
+            using thread_type = std::thread;
+#endif
             // Create threads
-            std::vector< std::thread > threads;
+            std::vector< thread_type > threads;
             threads.reserve( m_workers.size());
             for ( auto w : m_workers )
                 threads.emplace_back( &thread::run, w );
@@ -186,7 +211,11 @@ namespace cds_test {
 
             if ( duration != std::chrono::seconds::zero()) {
                 for ( ;; ) {
+#if CDS_THREADING_HPX
+                    hpx::this_thread::sleep_for( native_duration );
+#else
                     std::this_thread::sleep_for( native_duration );
+#endif
                     auto time_now = std::chrono::steady_clock::now();
                     if ( time_now >= expected_end )
                         break;

@@ -11,17 +11,17 @@
 #   if CDS_COMPILER == CDS_COMPILER_MSVC || (CDS_COMPILER == CDS_COMPILER_INTEL && CDS_OS_INTERFACE == CDS_OSI_WINDOWS)
         // For MSVC, CDS_THREADING_MSVC and CDS_THREADING_WIN_TLS is supported.
         // CDS_THREADING_MSVC must be explicitly defined if needed
-#       if !defined(CDS_THREADING_MSVC) && !defined(CDS_THREADING_WIN_TLS) && !defined(CDS_THREADING_CXX11)
+#       if !defined(CDS_THREADING_MSVC) && !defined(CDS_THREADING_WIN_TLS) && !defined(CDS_THREADING_CXX11) && !defined(CDS_THREADING_HPX)
 #           define CDS_THREADING_WIN_TLS
 #       endif
 #   elif CDS_COMPILER == CDS_COMPILER_GCC || CDS_COMPILER == CDS_COMPILER_CLANG || CDS_COMPILER == CDS_COMPILER_INTEL
         // For GCC, CDS_THREADING_GCC and CDS_THREADING_PTHREAD is supported
         // CDS_THREADING_GCC must be explicitly defined if needed
 #       if CDS_OS_INTERFACE == CDS_OSI_WINDOWS
-#           if !defined(CDS_THREADING_GCC) && !defined(CDS_THREADING_WIN_TLS) && !defined(CDS_THREADING_CXX11)
+#           if !defined(CDS_THREADING_GCC) && !defined(CDS_THREADING_WIN_TLS) && !defined(CDS_THREADING_CXX11) && !defined(CDS_THREADING_HPX)
 #               define CDS_THREADING_WIN_TLS
 #           endif
-#       elif !defined(CDS_THREADING_GCC) && !defined(CDS_THREADING_PTHREAD) && !defined(CDS_THREADING_CXX11)
+#       elif !defined(CDS_THREADING_GCC) && !defined(CDS_THREADING_PTHREAD) && !defined(CDS_THREADING_CXX11) && !defined(CDS_THREADING_HPX)
 #           define CDS_THREADING_PTHREAD
 #       endif
 #   else
@@ -30,8 +30,9 @@
 #endif // #if defined(CDS_THREADING_AUTODETECT)
 
 
-
-#if defined(CDS_THREADING_MSVC)
+#if defined(CDS_THREADING_HPX)
+#   include <cds/threading/details/hpx.h>
+#elif defined(CDS_THREADING_MSVC)
 #   include <cds/threading/details/msvc.h>
 #elif defined(CDS_THREADING_WIN_TLS)
 #   include <cds/threading/details/wintls.h>

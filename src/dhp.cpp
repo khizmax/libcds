@@ -132,6 +132,10 @@ namespace cds { namespace gc { namespace dhp {
 
     /*static*/ CDS_EXPORT_API thread_data* smr::tls()
     {
+#if CDS_THREADING_HPX
+        std::size_t hpx_dhp_data = hpx::threads::get_libcds_dynamic_hazard_pointer_data(hpx::threads::get_self_id());
+        thread_data * tls_ = reinterpret_cast<thread_data*> (hpx_dhp_data);
+#endif
         assert( tls_ != nullptr );
         return tls_;
     }
@@ -216,17 +220,40 @@ namespace cds { namespace gc { namespace dhp {
 
     /*static*/ CDS_EXPORT_API void smr::attach_thread()
     {
+#if CDS_THREADING_HPX
+        std::size_t hpx_dhp_data = hpx::threads::get_libcds_dynamic_hazard_pointer_data(hpx::threads::get_self_id());
+        thread_data * tls_ = reinterpret_cast<thread_data*> (hpx_dhp_data);
+        if ( !tls_ )
+        {
+            tls_ = instance().alloc_thread_data();
+            hpx_dhp_data = reinterpret_cast<std::size_t>(tls_);
+            hpx::threads::set_libcds_dynamic_hazard_pointer_data(hpx::threads::get_self_id(), hpx_dhp_data);
+        }
+#else
         if ( !tls_ )
             tls_ = instance().alloc_thread_data();
+#endif
     }
 
     /*static*/ CDS_EXPORT_API void smr::detach_thread()
     {
+#if CDS_THREADING_HPX
+        std::size_t hpx_dhp_data = hpx::threads::get_libcds_dynamic_hazard_pointer_data(hpx::threads::get_self_id());
+        thread_data * tls_ = reinterpret_cast<thread_data*> (hpx_dhp_data);
+        thread_data* rec = tls_;
+        if ( rec ) {
+            tls_ = nullptr;
+            hpx_dhp_data = reinterpret_cast<std::size_t>(tls_);
+            hpx::threads::set_libcds_dynamic_hazard_pointer_data(hpx::threads::get_self_id(), hpx_dhp_data);
+            instance().free_thread_data( static_cast<thread_record*>( rec ), true );
+        }
+#else
         thread_data* rec = tls_;
         if ( rec ) {
             tls_ = nullptr;
             instance().free_thread_data( static_cast<thread_record*>( rec ), true );
         }
+#endif
     }
 
     CDS_EXPORT_API void smr::detach_all_thread()

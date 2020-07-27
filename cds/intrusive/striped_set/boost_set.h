@@ -6,6 +6,10 @@
 #ifndef CDSLIB_INTRUSIVE_STRIPED_SET_BOOST_SET_ADAPTER_H
 #define CDSLIB_INTRUSIVE_STRIPED_SET_BOOST_SET_ADAPTER_H
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <boost/intrusive/set.hpp>
 #include <cds/intrusive/striped_set/adapter.h>
 

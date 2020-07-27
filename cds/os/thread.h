@@ -15,12 +15,20 @@
 #    include <cds/os/posix/thread.h>
 #endif
 
+#if CDS_THREADING_HPX
+#include <hpx/modules/threading.hpp>
+#endif
+
 namespace cds { namespace OS {
 
     /// Default backoff::yield implementation
     static inline void    backoff()
     {
+#if CDS_THREADING_HPX
+        hpx::this_thread::yield();
+#else
         std::this_thread::yield();
+#endif
     }
 }} // namespace cds::OS
 

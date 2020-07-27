@@ -22,6 +22,9 @@
 #endif
 #include <random>
 
+#if CDS_THREADING_HPX
+#include <hpx/hpx_main.hpp>
+#endif
 
 /*static*/ std::random_device cds_test::fixture::random_dev_;
 /*static*/ std::mt19937 cds_test::fixture::random_gen_( random_dev_());

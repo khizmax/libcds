@@ -16,7 +16,7 @@
 #   endif
 #endif
 
-static cds::OS::ThreadId    s_MainThreadId = 0;
+static cds::OS::ThreadId    s_MainThreadId = cds::OS::ThreadId(0);
 static HINSTANCE            s_DllInstance = nullptr;
 
 #if _WIN32_WINNT < 0x0601

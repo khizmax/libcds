@@ -6,6 +6,10 @@
 #ifndef CDSLIB_CONTAINER_STRIPED_SET_BOOST_FLAT_SET_ADAPTER_H
 #define CDSLIB_CONTAINER_STRIPED_SET_BOOST_FLAT_SET_ADAPTER_H
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <boost/version.hpp>
 #if BOOST_VERSION < 104800
 #   error "For boost::container::flat_set you must use boost 1.48 or above"

@@ -6,6 +6,10 @@
 #ifndef CDSLIB_INTRUSIVE_FCSTACK_H
 #define CDSLIB_INTRUSIVE_FCSTACK_H
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <cds/algo/flat_combining.h>
 #include <cds/algo/elimination_opt.h>
 #include <cds/intrusive/options.h>

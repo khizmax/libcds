@@ -1,0 +1,18 @@
+#!/bin/bash
+
+export TMPDIR=${HOME}/tmp/ci
+
+GCC7_ROOT=/home/CI/bin/gcc-7
+PATH=$GCC7_ROOT/bin:$PATH
+LD_LIBRARY_PATH=$GCC7_ROOT/lib64:$LD_LIBRARY_PATH
+
+cmake -G "Unix Makefiles" \
+ -DCMAKE_BUILD_TYPE=RELEASE \
+ -DCMAKE_C_COMPILER=gcc-7 \
+ -DCMAKE_CXX_COMPILER=g++-7 \
+ -DLIBCDS_CXX_STANDARD=14 \
+ -DCMAKE_CXX_FLAGS="-march=native -DCDS_RELEASE_ASSERT -g" \
+ -DCMAKE_EXE_LINKER_FLAGS="-Wl,-rpath=$GCC7_ROOT/lib64" \
+ -DLIBCDS_WITH_TESTS=ON \
+ ../source
+make -j 10 $*

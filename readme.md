@@ -39,8 +39,6 @@ Download the latest release from http://sourceforge.net/projects/libcds/files/
 
 See online doxygen-generated doc here: http://libcds.sourceforge.net/doc/cds-api/index.html
 
-Evolution of libcds (Gource visualization by Landon Wilkins): https://www.youtube.com/watch?v=FHaJvVdmJ0w
-
 **How to build**
    - *nix: [use CMake](build/cmake/readme.md)
    - Windows: use MS Visual C++ 2017 project
@@ -51,6 +49,8 @@ switches DCAS support on. You may manually disable DCAS support with the followi
 in GCC/clang (for MS VC++ compiler DCAS is not supported):
   - `-DCDS_DISABLE_128BIT_ATOMIC` - for 64bit build
   - `-DCDS_DISABLE_64BIT_ATOMIC` - for 32bit build
+
+**All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.**
   
 **Building libcds -use vcpkg
 
@@ -64,8 +64,6 @@ You can download and install libcds using the [vcpkg](https://github.com/Microso
     
 The libcds port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
-**All your projects AND libcds MUST be compiled with the same flags - either with DCAS support or without it.**
-   
    
 **Pull request requirements**
 - Pull-request to *master* branch will be unconditionally rejected
@@ -141,7 +139,7 @@ References
              [pdf](http://www.research.ibm.com/people/m/michael/podc-2002.pdf)
     * [2003] Maged M.Michael "Hazard Pointers: Safe memory reclamation for lock-free objects" 
              [pdf](http://www.research.ibm.com/people/m/michael/ieeetpds-2004.pdf)
-    * [2004] Andrei Alexandrescy, Maged Michael "Lock-free Data Structures with Hazard Pointers" 
+    * [2004] Andrei Alexandrescu, Maged Michael "Lock-free Data Structures with Hazard Pointers" 
              [pdf](http://www.researchgate.net/profile/Andrei_Alexandrescu/publication/252573326_Lock-Free_Data_Structures_with_Hazard_Pointers/links/0deec529e7804288fe000000.pdf)
   - User-space RCU
     * [2009] M.Desnoyers "Low-Impact Operating System Tracing" PhD Thesis,

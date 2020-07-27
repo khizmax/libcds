@@ -3,6 +3,10 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <cds_test/ext_gtest.h>
 #include <cds/intrusive/fcqueue.h>
 
@@ -193,7 +197,11 @@ namespace {
         struct traits : public cds::intrusive::fcqueue::traits
         {
             typedef IntrusiveFCQueue::disposer disposer;
+#if CDS_THREADING_HPX
+            typedef hpx::lcos::local::mutex lock_type;
+#else
             typedef std::mutex lock_type;
+#endif
             typedef cds::intrusive::fcqueue::stat<> stat;
         };
         typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type >, traits > queue_type;
@@ -208,7 +216,11 @@ namespace {
         struct traits: public cds::intrusive::fcqueue::traits
         {
             typedef IntrusiveFCQueue::disposer disposer;
+#if CDS_THREADING_HPX
+            typedef hpx::lcos::local::mutex lock_type;
+#else
             typedef std::mutex lock_type;
+#endif
             typedef cds::intrusive::fcqueue::stat<> stat;
             typedef cds::algo::flat_combining::wait_strategy::single_mutex_multi_condvar<> wait_strategy;
         };
@@ -272,7 +284,11 @@ namespace {
         struct traits : public cds::intrusive::fcqueue::traits
         {
             typedef IntrusiveFCQueue::disposer disposer;
+#if CDS_THREADING_HPX
+            typedef hpx::lcos::local::mutex lock_type;
+#else
             typedef std::mutex lock_type;
+#endif
             typedef cds::intrusive::fcqueue::stat<> stat;
         };
         typedef cds::intrusive::FCQueue< value_type, boost::intrusive::list< value_type, member_option >, traits > queue_type;
@@ -378,11 +394,16 @@ namespace {
     TEST_F( IntrusiveFCQueue, slist_base_elimination )
     {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
+#if CDS_THREADING_HPX
+        typedef hpx::lcos::local::mutex lock_type;
+#else
+        typedef std::mutex lock_type;
+#endif
         struct traits : public
             cds::intrusive::fcqueue::make_traits <
                 cds::intrusive::opt::disposer< disposer >
                 , cds::opt::enable_elimination < true >
-                , cds::opt::lock_type< std::mutex >
+                , cds::opt::lock_type< lock_type >
             > ::type
         {};
         typedef cds::intrusive::FCQueue< value_type, boost::intrusive::slist< value_type, boost::intrusive::cache_last< true >>, traits > queue_type;

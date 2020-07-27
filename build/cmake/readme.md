@@ -20,11 +20,11 @@ Compiling and testing
 
 After using command cmake -L <path to the project's root directory with CMakeLists.txt> one can see some additional variables, that can activate additional features:
 
-- `WITH_TESTS:BOOL=OFF`: if you want to build library with unit testing support use *-DWITH_TESTS=ON* on prepare step. Be careful with this flag, because compile time will dramatically increase
-- `WITH_TESTS_COVERAGE:BOOL=OFF`: Analyze test coverage using gcov (only for gcc)
-- `WITH_BOOST_ATOMIC:BOOL=OFF`: Use boost atomics (only for boost >= 1.54)
-- `WITH_ASAN:BOOL=OFF`: compile libcds with AddressSanitizer instrumentation
-- `WITH_TSAN:BOOL=OFF`: compile libcds with ThreadSanitizer instrumentation
+- `LIBCDS_WITH_TESTS:BOOL=OFF`: if you want to build library with unit testing support use *-DLIBCDS_WITH_TESTS=ON* on prepare step. Be careful with this flag, because compile time will dramatically increase
+- `LIBCDS_WITH_TESTS_COVERAGE:BOOL=OFF`: Analyze test coverage using gcov (only for gcc)
+- `LIBCDS_WITH_BOOST_ATOMIC:BOOL=OFF`: Use boost atomics (only for boost >= 1.54)
+- `LIBCDS_WITH_ASAN:BOOL=OFF`: compile libcds with AddressSanitizer instrumentation
+- `LIBCDS_WITH_TSAN:BOOL=OFF`: compile libcds with ThreadSanitizer instrumentation
 
 Additional gtest hints (for unit and stress tests only):
 - `GTEST_INCLUDE_DIRS=path`: gives full `path` to gtest include dir. 
@@ -46,7 +46,7 @@ In order to package library *CPack* is used, command *cpack -G <Generator>* shou
 - `git clone https://github.com/khizmax/libcds.git`
 - `mkdir libcds-release`
 - `cd libcds-release`
-- `cmake -DWITH\_TESTS=ON -DCMAKE\_BUILD_TYPE=RELEASE ../libcds`
+- `cmake -DLIBCDS_WITH_TESTS=ON -DCMAKE_BUILD_TYPE=RELEASE ../libcds`
 ```
     -- The C compiler identification is GNU 4.8.3
     -- The CXX compiler identification is GNU 4.8.3

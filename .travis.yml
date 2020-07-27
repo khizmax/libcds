@@ -10,36 +10,38 @@ script:
 
 linux: &linux_gcc
   os: linux
+  dist: bionic
   addons:
     apt:
       sources:
         - ubuntu-toolchain-r-test
       packages:
-        - g++-6
+        - g++-8
   compiler:
-    - g++-6
+    - g++-8
   before_install:
-    - eval "CC=gcc-6 && CXX=g++-6"
+    - eval "CC=gcc-8 && CXX=g++-8"
     
 
 linux: &linux_clang
   os: linux
+  dist: bionic
   addons:
     apt:
       sources:
         - ubuntu-toolchain-r-test
-        - llvm-toolchain-trusty-4.0
+        - llvm-toolchain-bionic-6.0
       packages:
-        - clang-4.0
+        - clang-6.0
   compiler:
-    - clang-4.0          
+    - clang-6.0
   before_install:
-    - eval "CC=clang-4.0 && CXX=clang++-4.0"
+    - eval "CC=clang-6.0 && CXX=clang++-6.0"
   
       
 osx: &osx
    os: osx
-   osx_image: xcode8.3
+   osx_image: xcode9.2
    compiler:
     - clang
    before_install:
@@ -48,7 +50,7 @@ osx: &osx
 
 matrix:
   include:
-##   BUILD_TYPE=Release CXX_COMPILER=g++-6
+##   BUILD_TYPE=Release CXX_COMPILER=g++-8
     - <<: *linux_gcc
       env: TARGET=unit-deque BUILD_TYPE=Release 
     - <<: *linux_gcc
@@ -88,7 +90,7 @@ matrix:
     - <<: *linux_gcc
       env: TARGET=unit-tree BUILD_TYPE=Release 
 
-##   BUILD_TYPE=Debug CXX_COMPILER=g++-6
+##   BUILD_TYPE=Debug CXX_COMPILER=g++-8
     - <<: *linux_gcc
       env: TARGET=unit-deque BUILD_TYPE=Debug 
     - <<: *linux_gcc
@@ -114,7 +116,7 @@ matrix:
     - <<: *linux_gcc
       env: TARGET=unit-tree BUILD_TYPE=Debug 
 
-##   BUILD_TYPE=Release CXX_COMPILER=clang-4.0
+##   BUILD_TYPE=Release CXX_COMPILER=clang-6.0
     - <<: *linux_clang
       env: TARGET=unit-deque BUILD_TYPE=Release 
     - <<: *linux_clang
@@ -152,7 +154,7 @@ matrix:
 #  - BUILD_TYPE=Release  TARGET=unit-iset
 #  - BUILD_TYPE=Release  TARGET=unit-tree
 
-##   BUILD_TYPE=Debug CXX_COMPILER=clang-4.0
+##   BUILD_TYPE=Debug CXX_COMPILER=clang-6.0
     - <<: *linux_clang
       env: TARGET=unit-deque BUILD_TYPE=Debug 
     - <<: *linux_clang

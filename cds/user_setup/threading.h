@@ -20,6 +20,8 @@
     CDS_THREADING_PTHREAD - use cds::Threading::Manager implementation based on pthread thread-specific
     data functions pthread_getspecific/pthread_setspecific
 
+    CDS_THREADING_HPX - use HPX thread to maintain thread-specific data
+
     CDS_THREADING_USER_DEFINED - use user-defined threading model
 */
 #define CDS_THREADING_AUTODETECT

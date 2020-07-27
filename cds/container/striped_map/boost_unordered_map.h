@@ -6,6 +6,10 @@
 #ifndef CDSLIB_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
 #define CDSLIB_CONTAINER_STRIPED_MAP_BOOST_UNORDERED_MAP_ADAPTER_H
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <cds/container/striped_set/adapter.h>
 #include <boost/unordered_map.hpp>
 

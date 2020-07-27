@@ -3,6 +3,10 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <cds_test/ext_gtest.h>
 #include <cds/container/fcdeque.h>
 #include <boost/container/deque.hpp>
@@ -182,7 +186,11 @@ namespace {
                 cds::opt::enable_elimination< true >
             >::type
         {
+#if CDS_THREADING_HPX
+            typedef hpx::lcos::local::mutex lock_type;
+#else
             typedef std::mutex lock_type;
+#endif
         };
         typedef cds::container::FCDeque<int, std::deque<int>, deque_traits > deque_type;
 
@@ -261,19 +269,36 @@ namespace {
 
     TEST_F( FCDeque, boost_mutex )
     {
+#if CDS_THREADING_HPX
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+                ,cds::opt::lock_type< hpx::lcos::local::mutex >
+            >::type
+        > deque_type;
+#else
         typedef cds::container::FCDeque<int, boost::container::deque<int>,
             cds::container::fcdeque::make_traits<
                 cds::opt::enable_elimination< true >
                 ,cds::opt::lock_type< std::mutex >
             >::type
         > deque_type;
-
+#endif
         deque_type dq;
         test( dq );
     }
 
     TEST_F( FCDeque, boost_mutex_multi_mutex_multi_condvar )
     {
+#if CDS_THREADING_HPX
+        typedef cds::container::FCDeque<int, boost::container::deque<int>,
+            cds::container::fcdeque::make_traits<
+                cds::opt::enable_elimination< true >
+                , cds::opt::lock_type< hpx::lcos::local::mutex >
+                , cds::opt::wait_strategy< cds::algo::flat_combining::wait_strategy::multi_mutex_multi_condvar<>>
+            >::type
+        > deque_type;
+#else
         typedef cds::container::FCDeque<int, boost::container::deque<int>,
             cds::container::fcdeque::make_traits<
                 cds::opt::enable_elimination< true >
@@ -282,6 +307,7 @@ namespace {
             >::type
         > deque_type;
 
+#endif
         deque_type dq;
         test( dq );
     }

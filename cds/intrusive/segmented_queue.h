@@ -6,6 +6,10 @@
 #ifndef CDSLIB_INTRUSIVE_SEGMENTED_QUEUE_H
 #define CDSLIB_INTRUSIVE_SEGMENTED_QUEUE_H
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <mutex>
 #include <cds/intrusive/details/base.h>
 #include <cds/details/marked_ptr.h>

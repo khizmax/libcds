@@ -6,6 +6,12 @@
 #ifndef CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H
 #define CDSLIB_ALGO_FLAT_COMBINING_WAIT_STRATEGY_H
 
+#ifdef CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#include <hpx/synchronization/spinlock.hpp>
+#include <hpx/synchronization/condition_variable.hpp>
+#endif
+
 #include <cds/algo/flat_combining/defs.h>
 #include <cds/algo/backoff_strategy.h>
 #include <mutex>
@@ -37,6 +43,18 @@ namespace cds { namespace algo { namespace flat_combining {
     */
     namespace wait_strategy {
 
+        struct thread_traits
+        {
+#ifdef CDS_THREADING_HPX
+            using mutex_type = hpx::lcos::local::mutex;
+            using condition_variable_type =  hpx::lcos::local::condition_variable;
+            using cv_status = hpx::lcos::local::cv_status;
+#else
+            using mutex_type = std::mutex;
+            using condition_variable_type =  std::condition_variable;
+            using cv_status = std::cv_status;
+#endif
+        };
         /// Empty wait strategy
         /**
             Empty wait strategy is just spinning on request field.
@@ -187,11 +205,11 @@ namespace cds { namespace algo { namespace flat_combining {
         class single_mutex_single_condvar
         {
         //@cond
-            std::mutex  m_mutex;
-            std::condition_variable m_condvar;
+            thread_traits::mutex_type  m_mutex;
+            thread_traits::condition_variable_type m_condvar;
             bool        m_wakeup;
 
-            typedef std::unique_lock< std::mutex > unique_lock;
+            typedef std::unique_lock< thread_traits::mutex_type > unique_lock;
         //@endcond
 
         public:
@@ -227,7 +245,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
+                        bool ret = m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == thread_traits::cv_status::no_timeout;
                         m_wakeup = false;
                         return ret;
                     }
@@ -263,10 +281,10 @@ namespace cds { namespace algo { namespace flat_combining {
         class single_mutex_multi_condvar
         {
         //@cond
-            std::mutex  m_mutex;
+            thread_traits::mutex_type m_mutex;
             bool        m_wakeup;
 
-            typedef std::unique_lock< std::mutex > unique_lock;
+            typedef std::unique_lock< thread_traits::mutex_type > unique_lock;
         //@endcond
 
         public:
@@ -281,7 +299,7 @@ namespace cds { namespace algo { namespace flat_combining {
                 struct type: public PublicationRecord
                 {
                     //@cond
-                    std::condition_variable m_condvar;
+                    thread_traits::condition_variable_type m_condvar;
                     //@endcond
                 };
             };
@@ -309,7 +327,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
+                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == thread_traits::cv_status::no_timeout;
                         m_wakeup = false;
                         return ret;
                     }
@@ -343,7 +361,7 @@ namespace cds { namespace algo { namespace flat_combining {
         class multi_mutex_multi_condvar
         {
         //@cond
-            typedef std::unique_lock< std::mutex > unique_lock;
+            typedef std::unique_lock< thread_traits::mutex_type > unique_lock;
         //@endcond
         public:
             enum {
@@ -357,8 +375,8 @@ namespace cds { namespace algo { namespace flat_combining {
                 struct type: public PublicationRecord
                 {
                     //@cond
-                    std::mutex              m_mutex;
-                    std::condition_variable m_condvar;
+                    thread_traits::mutex_type              m_mutex;
+                    thread_traits::condition_variable_type m_condvar;
                     bool                    m_wakeup;
 
                     type()
@@ -386,7 +404,7 @@ namespace cds { namespace algo { namespace flat_combining {
                             return true;
                         }
 
-                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == std::cv_status::no_timeout;
+                        bool ret = rec.m_condvar.wait_for( lock, std::chrono::milliseconds( c_nWaitMilliseconds )) == thread_traits::cv_status::no_timeout;
                         rec.m_wakeup = false;
                         return ret;
                     }

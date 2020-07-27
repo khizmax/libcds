@@ -11,6 +11,8 @@
 #   include <stdio.h>
 #endif
 
+#include <utility>  // std::move
+
 namespace cds {
 
 #if !defined( CDS_USER_DEFINED_THROW_EXCEPTION )
@@ -40,7 +42,7 @@ namespace cds {
         CDS_UNUSED( file );
         CDS_UNUSED( line );
 
-        throw exception;
+        throw std::move( exception );
     }
 #else
     template <typename E>

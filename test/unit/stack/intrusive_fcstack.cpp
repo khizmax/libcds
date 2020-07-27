@@ -3,6 +3,10 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#if CDS_THREADING_HPX
+#include <hpx/config.hpp>
+#endif
+
 #include <cds_test/ext_gtest.h>
 #include <cds/intrusive/fcstack.h>
 
@@ -220,7 +224,11 @@ namespace {
         typedef base_hook_item< boost::intrusive::slist_base_hook<> > value_type;
         struct stack_traits : public cds::intrusive::fcstack::traits
         {
+#if CDS_THREADING_HPX
+            typedef hpx::lcos::local::mutex lock_type;
+#else
             typedef std::mutex lock_type;
+#endif
         };
         typedef cds::intrusive::FCStack< value_type, boost::intrusive::slist< value_type >, stack_traits > stack_type;
         test<stack_type>();
@@ -377,11 +385,19 @@ namespace {
     TEST_F( IntrusiveFCStack, list_mutex )
     {
         typedef base_hook_item< boost::intrusive::list_base_hook<> > value_type;
+#if CDS_THREADING_HPX
+        typedef cds::intrusive::FCStack< value_type, boost::intrusive::list< value_type >,
+                cds::intrusive::fcstack::make_traits<
+                        cds::opt::lock_type< hpx::lcos::local::mutex >
+                >::type
+        > stack_type;
+#else
         typedef cds::intrusive::FCStack< value_type, boost::intrusive::list< value_type >,
             cds::intrusive::fcstack::make_traits<
             cds::opt::lock_type< std::mutex >
             >::type
         > stack_type;
+#endif
         test<stack_type>();
     }
 

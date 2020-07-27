@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cmake -G "Unix Makefiles" \
+ -DCMAKE_BUILD_TYPE=RELEASE \
+ -DCMAKE_C_COMPILER=gcc \
+ -DCMAKE_CXX_COMPILER=g++ \
+ -DLIBCDS_CXX_STANDARD=17 \
+ -DCMAKE_CXX_FLAGS="-march=native -Wmultistatement-macros -DCDS_RELEASE_ASSERT -g" \
+ -DLIBCDS_WITH_TESTS=ON \
+ ../source
+make -j 32 $*
