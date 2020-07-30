@@ -13,6 +13,7 @@
 #include <cds/intrusive/basket_queue.h>
 #include <cds/intrusive/fcqueue.h>
 #include <cds/intrusive/segmented_queue.h>
+#include <cds/intrusive/ca_segmented_queue.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -443,6 +444,50 @@ namespace queue {
         typedef cds::intrusive::SegmentedQueue< cds::gc::DHP, T, traits_SegmentedQueue_mutex >  SegmentedQueue_DHP_mutex;
         typedef cds::intrusive::SegmentedQueue< cds::gc::DHP, T, traits_SegmentedQueue_mutex_padding >  SegmentedQueue_DHP_mutex_padding;
         typedef cds::intrusive::SegmentedQueue< cds::gc::DHP, T, traits_SegmentedQueue_mutex_stat >  SegmentedQueue_DHP_mutex_stat;
+
+        // CASegmentedQueue
+        class traits_CASegmentedQueue_spin_stat:
+            public cds::intrusive::ca_segmented_queue::make_traits<
+                cds::opt::stat< cds::intrusive::ca_segmented_queue::stat<> >
+            >::type
+        {};
+        class traits_CASegmentedQueue_spin_padding :
+            public cds::intrusive::ca_segmented_queue::make_traits<
+            cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex_stat :
+            public cds::intrusive::ca_segmented_queue::make_traits<
+                cds::opt::stat< cds::intrusive::ca_segmented_queue::stat<> >
+                ,cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex:
+            public cds::intrusive::ca_segmented_queue::make_traits<
+                cds::opt::lock_type< std::mutex >
+            >::type
+        {};
+        class traits_CASegmentedQueue_mutex_padding:
+            public cds::intrusive::ca_segmented_queue::make_traits<
+                cds::opt::lock_type< std::mutex >
+                ,cds::opt::padding< cds::opt::cache_line_padding >
+            >::type
+        {};
+
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T >  CASegmentedQueue_HP_spin;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T, traits_CASegmentedQueue_spin_padding >  CASegmentedQueue_HP_spin_padding;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T, traits_CASegmentedQueue_spin_stat >  CASegmentedQueue_HP_spin_stat;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T, traits_CASegmentedQueue_mutex >  CASegmentedQueue_HP_mutex;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T, traits_CASegmentedQueue_mutex_padding >  CASegmentedQueue_HP_mutex_padding;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::HP, T, traits_CASegmentedQueue_mutex_stat >  CASegmentedQueue_HP_mutex_stat;
+
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T >  CASegmentedQueue_DHP_spin;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T, traits_CASegmentedQueue_spin_padding >  CASegmentedQueue_DHP_spin_padding;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T, traits_CASegmentedQueue_spin_stat >  CASegmentedQueue_DHP_spin_stat;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T, traits_CASegmentedQueue_mutex >  CASegmentedQueue_DHP_mutex;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T, traits_CASegmentedQueue_mutex_padding >  CASegmentedQueue_DHP_mutex_padding;
+        typedef cds::intrusive::CASegmentedQueue< cds::gc::DHP, T, traits_CASegmentedQueue_mutex_stat >  CASegmentedQueue_DHP_mutex_stat;
+
 
         // Boost SList
         typedef details::BoostSList< T, std::mutex >      BoostSList_mutex;

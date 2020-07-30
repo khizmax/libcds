@@ -28,6 +28,10 @@ set(CDSGTEST_QUEUE_SOURCES
     intrusive_segmented_queue_hp.cpp
     intrusive_segmented_queue_dhp.cpp
     intrusive_vyukov_queue.cpp
+    intrusive_ca_segmented_queue_hp.cpp
+    intrusive_ca_segmented_queue_dhp.cpp
+    ca_segmented_queue_hp.cpp
+    ca_segmented_queue_dhp.cpp
 )
 
 include_directories(
@@ -38,3 +42,4 @@ add_executable(${PACKAGE_NAME} ${CDSGTEST_QUEUE_SOURCES})
 target_link_libraries(${PACKAGE_NAME} ${CDS_TEST_LIBRARIES})
 
 add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+

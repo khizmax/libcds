@@ -484,6 +484,16 @@ namespace {
     //CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_padding )
     CDSSTRESS_QUEUE_F( SegmentedQueue_DHP_mutex_stat )
 
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_HP_spin )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_HP_spin_stat )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_HP_mutex )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_HP_mutex_stat )
+
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_DHP_spin )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_DHP_spin_stat )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_DHP_mutex )
+    CDSSTRESS_QUEUE_F( CASegmentedQueue_DHP_mutex_stat )
+
 
 #ifdef CDSTEST_GTEST_INSTANTIATE_TEST_CASE_P_HAS_4TH_ARG
     static std::string get_test_parameter_name( testing::TestParamInfo<size_t> const& p )
