@@ -447,18 +447,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
                     static CDS_EXPORT_API thread_data* getTLS();
                     static CDS_EXPORT_API void setTLS(thread_data*);
                 };
-
-                class StrangeTLSManager {
-                public:
-                    static CDS_EXPORT_API thread_data* getTLS();
-                    static CDS_EXPORT_API void setTLS(thread_data*);
-                };
-
-                class HeapTLSManager {
-                public:
-                    static CDS_EXPORT_API thread_data* getTLS();
-                    static CDS_EXPORT_API void setTLS(thread_data*);
-                };
 }}}}
 
 #endif // #ifndef CDSLIB_GC_DETAILS_HP_COMMON_H
