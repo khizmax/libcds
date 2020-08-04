@@ -39,12 +39,12 @@ namespace cds_test {
         virtual void SetUp()
         {
             cds::threading::Manager::attachThread();
-            cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::attach_thread();
+            cds::gc::hp::smr::attach_thread();
         }
 
         virtual void TearDown()
         {
-            cds::gc::hp::custom_smr<cds::gc::hp::details::HeapTLSManager>::detach_thread();
+            cds::gc::hp::smr::detach_thread();
             cds::threading::Manager::detachThread();
         }
 
