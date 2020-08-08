@@ -3,7 +3,7 @@
 # PowerPC 64bit - GCCFarm gcc112
 
 export GCC_ROOT=/opt/cfarm/gcc-latest
-export PATH=${HOME}/bin/cmake-3.11/bin:$PATH
+export PATH=${GCC_ROOT}/bin:${HOME}/bin/cmake-3.11/bin:$PATH
 export LD_LIBRARY_PATH=${GCC_ROOT}/lib64:/opt/cfarm/mpfr-latest/lib:/opt/cfarm/gmp-latest/lib:/opt/cfarm/mpc-latest/lib:$LD_LIBRARY_PATH
 
 CDSTEST_CFG_RELEASE=test-gccfarm.conf
@@ -14,13 +14,11 @@ cmake -G "Unix Makefiles" \
  -DCMAKE_C_COMPILER=${GCC_ROOT}/bin/gcc \
  -DCMAKE_CXX_COMPILER=${GCC_ROOT}/bin/g++ \
  -DCMAKE_BUILD_TYPE=RELEASE \
- -DCMAKE_C_COMPILER=gcc \
- -DCMAKE_CXX_COMPILER=g++ \
- -DCMAKE_CXX_FLAGS="-march=native -DCDS_RELEASE_ASSERT -g -Wl,-rpath=${GCC_ROOT}/lib64" \
+ -DCMAKE_CXX_FLAGS="-mcpu=native -DCDS_RELEASE_ASSERT -g -Wl,-rpath=${GCC_ROOT}/lib64" \
  -DLIBCDS_WITH_TESTS=ON \
  -DBOOST_ROOT=${HOME}/lib/boost \
  -DBOOST_LIBRARYDIR=${HOME}/lib/boost-pcc64-gccfarm \
- -DGTEST_INCLUDE_DIRS=${GTEST_ROOT}/googletest/include \
- -DGTEST_LIBRARIES=${GTEST_ROOT}/lib-pcc64-gccfarm/libgtest.a \
+ -DGTEST_INCLUDE_DIRS=$GTEST_ROOT/googletest/include \
+ -DGTEST_LIBRARIES=$GTEST_ROOT/lib-ppc64-gccfarm/libgtest.a \
  ../source
 make -j 4 $*
