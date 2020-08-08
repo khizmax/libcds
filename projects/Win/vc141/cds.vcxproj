@@ -1004,6 +1004,7 @@
     <ClCompile Include="..\..\..\src\dhp.cpp" />
     <ClCompile Include="..\..\..\src\dllmain.cpp" />
     <ClCompile Include="..\..\..\src\hp.cpp" />
+    <ClCompile Include="..\..\..\src\hp_thread_local.cpp" />
     <ClCompile Include="..\..\..\src\init.cpp" />
     <ClCompile Include="..\..\..\src\thread_data.cpp" />
     <ClCompile Include="..\..\..\src\topology_hpux.cpp" />
