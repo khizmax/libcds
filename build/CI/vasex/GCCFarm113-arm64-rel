@@ -1,20 +1,19 @@
 #!/bin/bash
 
-# ARM 64bit - GCCFarm gcc113
+# ARM 64bit - GCCFarm gcc113 
 
-PATH=${HOME}/bin/cmake-3.11/bin:$PATH
+export GCC_ROOT=/opt/cfarm/gcc-latest
+export PATH=${HOME}/bin/cmake-3.11/bin:$PATH
+export LD_LIBRARY_PATH=${GCC_ROOT}/lib64:/opt/cfarm/mpfr-latest/lib:/opt/cfarm/gmp-latest/lib:/opt/cfarm/mpc-latest/lib:$LD_LIBRARY_PATH
 
 CDSTEST_CFG_RELEASE=test-express-gccfarm.conf
 
-GCC_ROOT=/opt/cfarm/gcc-latest
 GTEST_ROOT=${HOME}/lib/gtest
 
 cmake -G "Unix Makefiles" \
+ -DCMAKE_BUILD_TYPE=RELEASE \
  -DCMAKE_C_COMPILER=${GCC_ROOT}/bin/gcc \
  -DCMAKE_CXX_COMPILER=${GCC_ROOT}/bin/g++ \
- -DCMAKE_BUILD_TYPE=RELEASE \
- -DCMAKE_C_COMPILER=gcc \
- -DCMAKE_CXX_COMPILER=g++ \
  -DCMAKE_CXX_FLAGS="-march=native -DCDS_RELEASE_ASSERT -g -Wl,-rpath=${GCC_ROOT}/lib64" \
  -DLIBCDS_WITH_TESTS=ON \
  -DBOOST_ROOT=${HOME}/lib/boost \
