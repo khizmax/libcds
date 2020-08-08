@@ -2,9 +2,9 @@
 
 # PowerPC 64bit - GCCFarm gcc112
 
-export GCC_ROOT=/opt/cfarm/gcc-latest
+export GCC_ROOT=${HOME}/bin/gcc-6
 export PATH=${GCC_ROOT}/bin:${HOME}/bin/cmake-3.11/bin:$PATH
-export LD_LIBRARY_PATH=${GCC_ROOT}/lib64:/opt/cfarm/mpfr-latest/lib:/opt/cfarm/gmp-latest/lib:/opt/cfarm/mpc-latest/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${GCC_ROOT}/lib64:$LD_LIBRARY_PATH
 
 CDSTEST_CFG_RELEASE=test-gccfarm.conf
 

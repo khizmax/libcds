@@ -23,4 +23,4 @@ cmake -G "Unix Makefiles" \
  -DGTEST_INCLUDE_DIRS=$GTEST_ROOT/googletest/include \
  -DGTEST_LIBRARIES=$GTEST_ROOT/lib-ppc64-gccfarm/libgtest.a \
  ../source
-make -j 4 $*
+make -j 8 $*
