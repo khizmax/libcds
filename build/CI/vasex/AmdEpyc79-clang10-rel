@@ -1,0 +1,16 @@
+#!/bin/bash
+
+CLANG_ROOT=/opt/clang-10
+PATH=$CLANG_ROOT/bin:$PATH
+LD_LIBRARY_PATH=$CLANG_ROOT/lib:$LD_LIBRARY_PATH
+
+cmake -G "Unix Makefiles" \
+ -DCMAKE_BUILD_TYPE=RELEASE \
+ -DCMAKE_C_COMPILER=clang-10 \
+ -DCMAKE_CXX_COMPILER=clang-10 \
+ -DLIBCDS_CXX_STANDARD=17 \
+ -DCMAKE_CXX_FLAGS="-march=native -Wmultistatement-macros -DCDS_RELEASE_ASSERT -g" \
+ -DCMAKE_EXE_LINKER_FLAGS="-Wl,-rpath=$CLANG_ROOT/lib" \
+ -DLIBCDS_WITH_TESTS=ON \
+ ../source
+make -j 32 $*

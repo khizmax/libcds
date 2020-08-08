@@ -104,7 +104,6 @@
     <ClCompile Include="..\..\..\test\unit\misc\hash_tuple.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\permutation_generator.cpp" />
     <ClCompile Include="..\..\..\test\unit\misc\split_bitstring.cpp" />
-    <ClCompile Include="..\..\..\test\unit\misc\tls_holder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\misc\cxx11_convert_memory_order.h" />
