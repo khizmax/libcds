@@ -1,13 +1,13 @@
 #!/bin/bash
 
-CLANG_ROOT=/opt/clang-10
+CLANG_ROOT=/opt/clang-9
 PATH=$CLANG_ROOT/bin:$PATH
 LD_LIBRARY_PATH=$CLANG_ROOT/lib:$LD_LIBRARY_PATH
 
 cmake -G "Unix Makefiles" \
  -DCMAKE_BUILD_TYPE=RELEASE \
- -DCMAKE_C_COMPILER=clang-10 \
- -DCMAKE_CXX_COMPILER=clang-10 \
+ -DCMAKE_C_COMPILER=clang-9 \
+ -DCMAKE_CXX_COMPILER=clang-9 \
  -DLIBCDS_CXX_STANDARD=17 \
  -DCMAKE_CXX_FLAGS="-stdlib=libc++ -march=native -Wmultistatement-macros -DCDS_RELEASE_ASSERT -g" \
  -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld -Wl,-rpath=$CLANG_ROOT/lib -lc++ -lc++abi" \
