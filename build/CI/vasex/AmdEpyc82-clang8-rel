@@ -9,7 +9,7 @@ cmake -G "Unix Makefiles" \
  -DCMAKE_C_COMPILER=clang-8 \
  -DCMAKE_CXX_COMPILER=clang-8 \
  -DLIBCDS_CXX_STANDARD=14 \
- -DCMAKE_CXX_FLAGS="-stdlib=libc++ -march=native -Wmultistatement-macros -DCDS_RELEASE_ASSERT -g" \
+ -DCMAKE_CXX_FLAGS="-stdlib=libc++ -march=native -DCDS_RELEASE_ASSERT -g" \
  -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld -Wl,-rpath=$CLANG_ROOT/lib -lc++ -lc++abi" \
  -DLIBCDS_WITH_TESTS=ON \
  ../source
