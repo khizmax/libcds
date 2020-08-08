@@ -7,7 +7,7 @@ export TMPDIR=/home/khizmax/tmp
 
 CDSTEST_CFG_RELEASE=test-gccfarm.conf
 
-GCC_ROOT=${HOME}/bin/gcc-ppc64-gcfarm
+GCC_ROOT=/opt/cfarm/gcc-latest
 GTEST_ROOT=${HOME}/lib/gtest
 
 cmake -G "Unix Makefiles" \

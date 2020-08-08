@@ -2,11 +2,13 @@
 
 # PowerPC 64bit - GCCFarm gcc112
 
+GCC_ROOT=/opt/cfarm/gcc-latest
 PATH=${HOME}/bin/cmake-3.11/bin:$PATH
+#LD_LIBRARY_PATH=${GCC_ROOT}/lib64:$LD_LIBRARY_PATH
 
 CDSTEST_CFG_RELEASE=test-gccfarm.conf
 
-GCC_ROOT=${HOME}/bin/gcc-ppc64-gcfarm
+#GCC_ROOT=${HOME}/bin/gcc-ppc64-gcfarm
 GTEST_ROOT=${HOME}/lib/gtest
 
 cmake -G "Unix Makefiles" \

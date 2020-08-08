@@ -6,7 +6,7 @@ PATH=${HOME}/bin/cmake-3.11/bin:$PATH
 
 CDSTEST_CFG_RELEASE=test-express-gccfarm.conf
 
-GCC_ROOT=${HOME}/bin/gcc-arm64-gcfarm
+GCC_ROOT=/opt/crarm/gcc-latest
 GTEST_ROOT=${HOME}/lib/gtest
 
 cmake -G "Unix Makefiles" \
