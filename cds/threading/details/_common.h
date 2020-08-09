@@ -121,9 +121,6 @@ namespace cds {
             size_t  m_nAttachCount;
             //@endcond
 
-            /// Per-thread elimination record
-            cds::algo::elimination::record   m_EliminationRec;
-
             //@cond
             static CDS_EXPORT_API atomics::atomic<size_t> s_nLastUsedProcNo;
             static CDS_EXPORT_API size_t                  s_nProcCount;

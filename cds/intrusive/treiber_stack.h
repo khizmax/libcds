@@ -187,6 +187,9 @@ namespace cds { namespace intrusive {
             /// Enable elimination back-off; by default, it is disabled
             static constexpr const bool enable_elimination = false;
 
+            /// Elimination record storage type
+            typedef cds::algo::elimination::storage  elimination_storage;
+
             /// Back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             typedef cds::backoff::delay<>          elimination_backoff;
 
@@ -233,6 +236,7 @@ namespace cds { namespace intrusive {
                 Default is <tt> %opt::v::initialized_static_buffer< any_type, 4 > </tt>.
             - \p opt::random_engine - a random engine to generate a random position in elimination array.
                 Default is \p opt::v::c_rand.
+            - \p opt::elimination_storage - a storage class for elmination records. Default is \p cds::algo::elimination::storage.
             - \p opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             - \p opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin
 
@@ -306,10 +310,15 @@ namespace cds { namespace intrusive {
             {
                 typedef typename Traits::back_off   back_off;
 
+                /// Storage for elimination records (by default, TLS-based)
+                typedef typename Traits::elimination_storage elimination_storage;
+
                 /// Back-off for elimination (usually delay)
                 typedef typename Traits::elimination_backoff elimination_backoff_type;
+
                 /// Lock type used in elimination back-off
                 typedef typename Traits::lock_type elimination_lock_type;
+
                 /// Random engine used in elimination back-off
                 typedef typename Traits::random_engine elimination_random_engine;
 
@@ -394,7 +403,7 @@ namespace cds { namespace intrusive {
                     elimination_backoff_type bkoff;
                     op.nStatus.store( op_waiting, atomics::memory_order_relaxed );
 
-                    elimination_rec * myRec = cds::algo::elimination::init_record( op );
+                    elimination_rec * myRec = cds::algo::elimination::init_record<elimination_storage>( op );
 
                     collision_array_record& slot = m_Elimination.collisions[ slot_index() ];
                     {
@@ -414,7 +423,7 @@ namespace cds { namespace intrusive {
                                 himOp->nStatus.store( op_collided, atomics::memory_order_release );
                                 slot.lock.unlock();
 
-                                cds::algo::elimination::clear_record();
+                                cds::algo::elimination::clear_record<elimination_storage>();
                                 stat.onActiveCollision( op.idOp );
                                 return true;
                             }
@@ -440,7 +449,7 @@ namespace cds { namespace intrusive {
                     else
                         stat.onPassiveCollision( op.idOp );
 
-                    cds::algo::elimination::clear_record();
+                    cds::algo::elimination::clear_record<elimination_storage>();
                     return bCollided;
                 }
             };
@@ -642,10 +651,16 @@ namespace cds { namespace intrusive {
 
         /// Elimination back-off is enabled or not
         static constexpr const bool enable_elimination = traits::enable_elimination;
+
+        /// Storage for elimination records (by default, TLS-based)
+        typedef typename traits::elimination_storage  elimination_storage;
+
         /// back-off strategy used to wait for elimination
         typedef typename traits::elimination_backoff elimination_backoff_type;
+
         /// Lock type used in elimination back-off
         typedef typename traits::lock_type elimination_lock_type;
+
         /// Random engine used in elimination back-off
         typedef typename traits::random_engine elimination_random_engine;
 

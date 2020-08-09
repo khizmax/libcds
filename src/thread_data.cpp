@@ -6,6 +6,26 @@
 #include <cds/threading/details/_common.h>
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
+#include <cds/algo/elimination_tls.h>
+
+namespace cds { namespace algo { namespace elimination {
+
+#ifndef CDS_DISABLE_CLASS_TLS_INLINE
+    // GCC, CLang
+    thread_local record storage::tls_;
+
+#else   // MSVC
+    namespace {
+        thread_local record tls_;
+    } // namespace
+
+    CDS_EXPORT_API record& storage::get() noexcept
+    {
+        return tls_;
+    }
+#endif
+
+}}} // cds::algo::elimination
 
 namespace cds { namespace threading {
 

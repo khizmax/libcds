@@ -18,18 +18,35 @@ namespace cds { namespace algo { namespace elimination {
     */
     struct record
     {
-        operation_desc *    pOp ;   ///< Operation descriptor
-
-        /// Initialization
-        record()
-            : pOp( nullptr )
-        {}
+        operation_desc *    pOp = nullptr;   ///< Operation descriptor
 
         /// Checks if the record is free
         bool is_free() const
         {
             return pOp == nullptr;
         }
+    };
+
+    /// \p thread_local storage for elimination record for current thread
+    /** @headerfile cds/algo/elimination.h
+    */
+    class storage
+    {
+#ifndef CDS_DISABLE_CLASS_TLS_INLINE
+        // GCC, CLang
+    public:
+        /// Get elimination \p @record for the current thread
+        static record& get() noexcept
+        {
+            return tls_;
+        }
+
+    private:
+        static thread_local record tls_;
+#else   //MSVC
+    public:
+        static CDS_EXPORT_API record& get() noexcept;
+#endif  //#ifndef CDS_DISABLE_CLASS_TLS_INLINE
     };
 
 }}} // cds::algo::elimination

@@ -42,11 +42,6 @@ namespace cds { namespace threading {
         return p ? p->m_pSHBRCU : nullptr;
     }
 #endif
-
-    static inline cds::algo::elimination::record& elimination_record()
-    {
-        return Manager::thread_data()->m_EliminationRec;
-    }
     //@endcond
 
 }} // namespace cds::threading

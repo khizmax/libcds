@@ -26,24 +26,33 @@ namespace cds { namespace algo {
         and all such disjoint collisions can be performed in parallel. If a thread has not met another
         in the selected location or if it met a thread with an operation that cannot be eliminated
         (such as two push operations), an alternative scheme must be used.
+
+        For each thread an struct \p @record stores current elimination record. TLS-based \p @storage class
+        manages per-thread elimination record.
     */
     namespace elimination {
 
         /// Base class describing an operation for eliminating
         /**
-            This class contains some debugng info.
-            Actual operation descriptor depends on real container and its interface.
+            This class contains some debug info.
+            Actual operation descriptor depends on real container and its interface
+            and must be inherited from \p operation_desc.
         */
         struct operation_desc
         {
-            record * pOwner;    ///< Owner of the descriptor
+            record * pOwner = nullptr;    ///< Owner of the descriptor
         };
 
         /// Acquires elimination record for the current thread
-        template <typename OperationDesc>
+        /**
+            \p OperationDesc must be inherited from \p @operation_desc.
+
+            \p Storage - class managing elimination \p @record, for example, TLS-based \p @storage.
+        */
+        template <class Storage, typename OperationDesc>
         static inline record * init_record( OperationDesc& op )
         {
-            record& rec = cds::threading::elimination_record();
+            record& rec = Storage::get();
             assert( rec.is_free());
             op.pOwner = &rec;
             rec.pOp = static_cast<operation_desc *>( &op );
@@ -51,9 +60,10 @@ namespace cds { namespace algo {
         }
 
         /// Releases elimination record for the current thread
+        template <class Storage>
         static inline void clear_record()
         {
-            cds::threading::elimination_record().pOp = nullptr;
+            Storage::get().pOp = nullptr;
         }
     } // namespace elimination
 }} // namespace cds::algo

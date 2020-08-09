@@ -57,6 +57,9 @@ namespace cds { namespace container {
             /// Enable elimination back-off; by default, it is disabled
             static constexpr const bool enable_elimination = false;
 
+            /// Elimination record storage type
+            typedef cds::algo::elimination::storage elimination_storage;
+
             /// Back-off strategy to wait for elimination, default is cds::backoff::delay<>
             typedef cds::backoff::delay<>          elimination_backoff;
 
@@ -99,6 +102,7 @@ namespace cds { namespace container {
                 Default is <tt> %opt::v::initialized_static_buffer< any_type, 4 > </tt>.
             - \p opt::random_engine - a random engine to generate a random position in elimination array.
                 Default is \p opt::v::c_rand.
+            - \p opt::elimination_storage - a storage class for elmination records. Default is \p cds::algo::elimination::storage.
             - \p opt::elimination_backoff - back-off strategy to wait for elimination, default is \p cds::backoff::delay<>
             - \p opt::lock_type - a lock type used in elimination back-off, default is \p cds::sync::spin.
 

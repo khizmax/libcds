@@ -21,6 +21,21 @@ namespace cds { namespace opt {
         //@endcond
     };
 
+    /// \ref cds_elimination_description "Elimination storage" option setter
+    /**
+        Storage for elimination.
+        Usually, it is TLS-based \p cds::algo::elimination::storage.
+    */
+    template <typename Type>
+    struct elimination_storage {
+        //@cond
+        template <class Base> struct pack: public Base
+        {
+            typedef Type elimination_storage;
+        };
+        //@endcond
+    };
+
     /// \ref cds_elimination_description "Elimination back-off strategy" option setter
     /**
         Back-off strategy for elimination.

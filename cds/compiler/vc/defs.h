@@ -109,6 +109,26 @@
 #   define CDS_EXCEPTION_ENABLED
 #endif
 
+    /*
+        MSVC does not support inlining of thread_local static data members in class for DLL.
+        Example:
+        // .h
+        class storage
+        {
+        public:
+            record& get()
+            {
+                return tls_;
+            }
+
+        private:
+            static thread_local record tls_;
+        };
+
+        // .cpp (DLL)
+        thread_local record storage::tls_
+    */
+#define CDS_DISABLE_CLASS_TLS_INLINE
 
 // double-width CAS support
 //#define CDS_DCAS_SUPPORT
