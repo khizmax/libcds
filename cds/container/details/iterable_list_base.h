@@ -27,7 +27,7 @@ namespace cds { namespace container {
         //@cond
         template <typename Stat = cds::intrusive::iterable_list::wrapped_stat<>::stat_type >
         using wrapped_stat = cds::intrusive::iterable_list::wrapped_stat< Stat >;
-        //@endif
+        //@endcond
 
         /// \p IterableList traits
         struct traits

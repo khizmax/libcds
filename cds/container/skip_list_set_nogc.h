@@ -323,7 +323,7 @@ namespace cds { namespace container {
         {
             return contains( key );
         }
-        //@edncond
+        //@endcond
 
         /// Checks whether the set contains \p key using \p pred predicate for searching
         /**

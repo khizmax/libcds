@@ -35,14 +35,16 @@ namespace cds { namespace algo { namespace elimination {
 #ifndef CDS_DISABLE_CLASS_TLS_INLINE
         // GCC, CLang
     public:
-        /// Get elimination \p @record for the current thread
+        /// Get elimination \p cds::algo::elimination::record for the current thread
         static record& get() noexcept
         {
             return tls_;
         }
 
     private:
+        //@cond
         static thread_local record tls_;
+        //@endcond
 #else   //MSVC
     public:
         static CDS_EXPORT_API record& get() noexcept;

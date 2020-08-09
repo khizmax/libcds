@@ -831,8 +831,8 @@ namespace cds { namespace opt {
         };
 
         //@cond
-        /// Totally relaxed \p opt::memory_model ordering (do not use!)
-        /**
+        // Totally relaxed \p opt::memory_model ordering (do not use!)
+        /*
             In this memory model any memory constraint is equivalent to \p std::memory_order_relaxed.
             @warning Do not use this model! It intended for testing purposes only
             to verify debugging instruments like Thread Sanitizer.

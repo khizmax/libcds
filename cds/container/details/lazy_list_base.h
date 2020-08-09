@@ -27,7 +27,7 @@ namespace cds { namespace container {
         //@cond
         template <typename Stat = cds::intrusive::lazy_list::wrapped_stat<>::stat_type>
         using wrapped_stat = cds::intrusive::lazy_list::wrapped_stat< Stat >;
-        //@endif
+        //@endcond
 
         /// LazyList traits
         /**

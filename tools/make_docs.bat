@@ -1,7 +1,7 @@
 set DOXYPRJ_ROOT=.
 cd ..
-rm -fr doc
-md doc
+del /F /Q doc\*
 "%DOXYGEN_PATH%\bin\doxygen" doxygen\cds.doxy > tools\doxygen.log 2>&1
-cp -f doxygen/index.html doc/index.html
+
+copy /Y doxygen\index.html doc\index.html
 cd tools

@@ -385,8 +385,8 @@ namespace cds { namespace container {
             return iterator( base_class::find_with_( key, typename maker::template predicate_wrapper<Less>()));
         }
         //@cond
-        // eprecated, use contains()
         template <typename Q, typename Less>
+        CDS_DEPRECATED("deprecated, use contains()")
         iterator find_with( Q const& key, Less pred )
         {
             return contains( key, pred );

@@ -27,8 +27,8 @@ namespace cds { namespace algo {
         in the selected location or if it met a thread with an operation that cannot be eliminated
         (such as two push operations), an alternative scheme must be used.
 
-        For each thread an struct \p @record stores current elimination record. TLS-based \p @storage class
-        manages per-thread elimination record.
+        For each thread an struct \p cds::algo::elimination::record stores current elimination record. 
+        TLS-based \p cds::algo::elimination::storage class manages per-thread elimination record.
     */
     namespace elimination {
 
@@ -45,9 +45,10 @@ namespace cds { namespace algo {
 
         /// Acquires elimination record for the current thread
         /**
-            \p OperationDesc must be inherited from \p @operation_desc.
+            \p OperationDesc must be inherited from \p cds::algo::elimination::operation_desc.
 
-            \p Storage - class managing elimination \p @record, for example, TLS-based \p @storage.
+            \p Storage - class managing elimination \p cds::algo::elimination::record, 
+            for example, TLS-based \p cds::algo::elimination::storage.
         */
         template <class Storage, typename OperationDesc>
         static inline record * init_record( OperationDesc& op )

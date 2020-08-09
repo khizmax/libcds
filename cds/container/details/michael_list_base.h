@@ -27,7 +27,7 @@ namespace cds { namespace container {
         //@cond
         template <typename Stat = cds::intrusive::michael_list::wrapped_stat<>::stat_type>
         using wrapped_stat = cds::intrusive::michael_list::wrapped_stat< Stat >;
-        //@endif
+        //@endcond
 
         /// MichaelList traits
         struct traits

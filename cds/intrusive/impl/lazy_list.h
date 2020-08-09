@@ -783,7 +783,7 @@ namespace cds { namespace intrusive {
         {
             return contains( key );
         }
-        //@cond
+        //@endcond
 
         /// Checks whether the map contains \p key using \p pred predicate for searching
         /**

@@ -698,7 +698,7 @@ namespace cds { namespace container {
             \endcode
             the assertion could be raised.
 
-            For each item the \ref disposer provided by \p Traits template parameter will be called.
+            For each item the \p Traits::disposer  will be called.
         */
         void clear()
         {

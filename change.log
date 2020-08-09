@@ -1,6 +1,6 @@
 3.0.0
     General release
-    - Adapt libcds for HPX (https://github.com/STEllAR-GROUP/hpx), developed by Alexander Gaev (https://github.com/Krock21rus)
+    - Adapt libcds for HPX (https://github.com/STEllAR-GROUP/hpx), thanks to Alexander Gaev (https://github.com/Krock21rus) for the adaptation
     - added support for GCC-10, GCC-9, Clang-8, Clang-9 (fixed warnings)
 
 2.3.3 31.12.2018
