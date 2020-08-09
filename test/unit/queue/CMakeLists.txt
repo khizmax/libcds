@@ -34,6 +34,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
+
 add_executable(${PACKAGE_NAME} ${CDSGTEST_QUEUE_SOURCES})
 target_link_libraries(${PACKAGE_NAME} ${CDS_TEST_LIBRARIES})
 strip_binary(${PACKAGE_NAME})

@@ -2,6 +2,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
+
 # stress-queue-pop
 set(CDSSTRESS_QUEUE_POP stress-queue-pop)
 set(CDSSTRESS_QUEUE_POP_SOURCES
