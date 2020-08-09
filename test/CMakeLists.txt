@@ -27,7 +27,7 @@ function(strip_binary EXE_FILE )
             COMMENT "Strip ${EXE_FILE}"
         )
     endif()
-endfunction(strip_test_executable)
+endfunction()
 
 if (NOT GTEST_INCLUDE_DIRS)
    find_package(GTest)
