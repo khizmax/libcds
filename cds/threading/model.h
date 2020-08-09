@@ -12,9 +12,6 @@
 
 namespace cds { namespace threading {
 
-    /// Returns thread specific data of \p GC garbage collector
-    //template <class GC> typename GC::thread_gc_impl&  getGC();
-
     /// Returns RCU thread specific data (thread GC) for current thread
     /**
         Template argument \p RCUtag is one of \ref cds_urcu_tags "RCU tags"

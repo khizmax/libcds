@@ -77,7 +77,7 @@ namespace cds {
         \endcode
 
         The library's core (dynamic linked library) is free of usage of user-supplied \p cds::threading::Manager code.
-        \p cds::threading::Manager is necessary for header-only part of \p CDS library (for \ref cds::threading::getGC functions).
+        \p cds::threading::Manager is necessary for header-only part of \p CDS library.
 
 
         Each thread that uses \p libcds data structures should be attached to threading::Manager before using
