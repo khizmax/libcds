@@ -15,6 +15,19 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+function(strip_binary EXE_FILE )
+    if( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
+        add_custom_command(TARGET ${EXE_FILE} POST_BUILD
+            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+            COMMAND ${CMAKE_OBJCOPY} --only-keep-debug ${EXE_FILE} ${EXE_FILE}.dbg
+            COMMAND ${CMAKE_STRIP} --strip-debug --strip-unneeded ${EXE_FILE}
+            COMMAND ${CMAKE_OBJCOPY} --add-gnu-debuglink ${EXE_FILE}.dbg ${EXE_FILE}
+            COMMAND tar -czf ${EXE_FILE}.dbg.tgz ${EXE_FILE}.dbg
+            COMMAND rm -f ${EXE_FILE}.dbg
+            COMMENT "Strip ${EXE_FILE}"
+        )
+    endif()
+endfunction(strip_test_executable)
 
 if (NOT GTEST_INCLUDE_DIRS)
    find_package(GTest)

@@ -21,5 +21,5 @@ include_directories(
 
 add_executable(${PACKAGE_NAME} ${CDSGTEST_STRIPED_MAP_SOURCES})
 target_link_libraries(${PACKAGE_NAME} ${CDS_TEST_LIBRARIES})
-
+strip_binary(${PACKAGE_NAME})
 add_test(NAME ${PACKAGE_NAME} COMMAND ${PACKAGE_NAME} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
