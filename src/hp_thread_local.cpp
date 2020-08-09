@@ -8,21 +8,32 @@
 
 namespace cds { namespace gc { namespace hp { namespace details {
 
-    // for DefaultTLS Manager
-    thread_local thread_data *tls_ = nullptr;
+#ifdef CDS_DISABLE_CLASS_TLS_INLINE
+    // MSVC
+    namespace {
+        // for DefaultTLS Manager
+        thread_local thread_data* default_tls_manager_ = nullptr;
+    } // namespace
+
+    /*static*/ CDS_EXPORT_API thread_data* DefaultTLSManager::getTLS() noexcept
+    {
+        return default_tls_manager_;
+    }
+
+    /*static*/ CDS_EXPORT_API void DefaultTLSManager::setTLS( thread_data* td ) noexcept
+    {
+        default_tls_manager_ = td;
+    }
+#else
+    // GCC, CLang
+    thread_local thread_data* DefaultTLSManager::tls_ = nullptr;
+#endif
 
     // for StrangeTLSManager
     thread_local std::pair<thread_data *, thread_data *> *tls2_ = new std::pair<thread_data *, thread_data *>(
             nullptr,
             nullptr);
 
-    /*static*/ CDS_EXPORT_API thread_data *DefaultTLSManager::getTLS() {
-        return tls_;
-    }
-
-    /*static*/ CDS_EXPORT_API void DefaultTLSManager::setTLS(thread_data *new_tls) {
-        tls_ = new_tls;
-    }
 
     /*static*/ CDS_EXPORT_API thread_data *StrangeTLSManager::getTLS() {
         if (cds::OS::get_current_thread_id() % 2 == 0) { // % 2 with ThreadId structure?
