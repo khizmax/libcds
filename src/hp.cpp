@@ -240,7 +240,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
         // First try to reuse a free (non-active) HP record
         for ( hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->next_ ) {
-            thread_data* null_rec = nullptr;
+            thread_record* null_rec = nullptr;
             if ( !hprec->owner_rec_.compare_exchange_strong( null_rec, hprec, atomics::memory_order_relaxed, atomics::memory_order_relaxed ))
                 continue;
             hprec->free_.store( false, atomics::memory_order_release );
