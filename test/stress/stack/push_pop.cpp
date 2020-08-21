@@ -11,6 +11,7 @@ namespace {
     static size_t s_nPopThreadCount = 4;
     static size_t s_nStackSize = 1000000;
     static size_t s_nEliminationSize = 4;
+	static size_t s_nQuasiFactor = 15;
 
     static atomics::atomic<size_t>  s_nWorkingProducers( 0 );
 
@@ -150,6 +151,7 @@ namespace {
             s_nPopThreadCount  = cfg.get_size_t( "PopThreadCount",  s_nPopThreadCount );
             s_nStackSize       = cfg.get_size_t( "StackSize",       s_nStackSize );
             s_nEliminationSize = cfg.get_size_t( "EliminationSize", s_nEliminationSize );
+            s_nQuasiFactor     = cfg.get_size_t( "s_nQuasiFactor", s_nQuasiFactor );
 
             if ( s_nPushThreadCount == 0 )
                 s_nPushThreadCount = 1;
@@ -257,5 +259,6 @@ namespace {
     CDSSTRESS_FCStack( stack_push_pop )
     CDSSTRESS_FCDeque( stack_push_pop )
     CDSSTRESS_StdStack( stack_push_pop )
+	CDSSTRESS_SegmentedStack( stack_push_pop )
 
 } // namespace
