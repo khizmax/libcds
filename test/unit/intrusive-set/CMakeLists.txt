@@ -83,6 +83,17 @@ target_link_libraries(${UNIT_ISET_SKIP} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_ISET_SKIP})
 add_test(NAME ${UNIT_ISET_SKIP} COMMAND ${UNIT_ISET_SKIP} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
+# intrusive::LazySkipListSet
+set(UNIT_ISET_LAZYSKIP unit-iset-lazy-skip)
+set(UNIT_ISET_LAZYSKIP_SOURCES
+    ../main.cpp
+    intrusive_lazyskiplist_hp.cpp
+    intrusive_lazyskiplist_dhp.cpp
+)
+add_executable(${UNIT_ISET_LAZYSKIP} ${UNIT_ISET_LAZYSKIP_SOURCES})
+target_link_libraries(${UNIT_ISET_LAZYSKIP} ${CDS_TEST_LIBRARIES})
+add_test(NAME ${UNIT_ISET_LAZYSKIP} COMMAND ${UNIT_ISET_LAZYSKIP} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
 # intrusive::SplitListSet<MichaelList>
 set(UNIT_ISET_SPLIT_MICHAEL unit-iset-split-michael)
 set(UNIT_ISET_SPLIT_MICHAEL_SOURCES
@@ -137,6 +148,7 @@ add_custom_target( unit-iset
         ${UNIT_ISET_MICHAEL_ITERABLE}
         ${UNIT_ISET_MICHAEL_LAZY}
         ${UNIT_ISET_SKIP}
+        ${UNIT_ISET_LAZYSKIP}
         ${UNIT_ISET_SPLIT_MICHAEL}
         ${UNIT_ISET_SPLIT_ITERABLE}
         ${UNIT_ISET_SPLIT_LAZY}
