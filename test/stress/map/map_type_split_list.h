@@ -430,6 +430,7 @@ namespace map {
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         typedef SplitListMap< rcu_shb, Key, Value, SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHB_st_less_stat;
 #endif
+    };
 
 
     template <typename GC, typename K, typename T, typename Traits >
