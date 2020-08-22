@@ -171,9 +171,6 @@ namespace cds { namespace gc { namespace hp { namespace details {
         thread_record* pNext = nullptr;
         for ( thread_record* hprec = pHead; hprec; hprec = pNext )
         {
-            assert( hprec->owner_rec_.load( atomics::memory_order_relaxed ) == nullptr
-                || hprec->owner_rec_.load( atomics::memory_order_relaxed ) == hprec );
-
             retired_array& arr = hprec->retired_;
             for ( retired_ptr* cur{ arr.first() }, *last{ arr.last() }; cur != last; ++cur ) {
                 cur->free();
@@ -240,8 +237,8 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
         // First try to reuse a free (non-active) HP record
         for ( hprec = thread_list_.load( atomics::memory_order_acquire ); hprec; hprec = hprec->next_ ) {
-            thread_record* null_rec = nullptr;
-            if ( !hprec->owner_rec_.compare_exchange_strong( null_rec, hprec, atomics::memory_order_relaxed, atomics::memory_order_relaxed ))
+            bool false_variable = false;
+            if ( !hprec->owned_.compare_exchange_strong( false_variable, true, atomics::memory_order_relaxed, atomics::memory_order_relaxed ))
                 continue;
             hprec->free_.store( false, atomics::memory_order_release );
             return hprec;
@@ -249,8 +246,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
         // No HP records available for reuse
         // Allocate and push a new HP record
-        hprec = create_thread_data();
-        hprec->owner_rec_.store( hprec, atomics::memory_order_relaxed );
+        hprec = create_thread_data(); // already owned
 
         thread_record* pOldHead = thread_list_.load( atomics::memory_order_relaxed );
         do {
@@ -268,7 +264,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
         scan( pRec );
         if ( callHelpScan )
             help_scan( pRec );
-        pRec->owner_rec_.store( nullptr, atomics::memory_order_release );
+        pRec->owned_.store( false, atomics::memory_order_release );
     }
 
     CDS_EXPORT_API void basic_smr::detach_all_thread()
@@ -277,7 +273,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
         for ( thread_record * hprec = thread_list_.load( atomics::memory_order_relaxed ); hprec; hprec = pNext ) {
             pNext = hprec->next_;
-            if ( hprec->owner_rec_.load( atomics::memory_order_relaxed ) != nullptr ) {
+            if (hprec->owned_.load(atomics::memory_order_relaxed)) {
                 free_thread_data( hprec, false );
             }
         }
@@ -331,7 +327,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
         {
             retired_ptr dummy_retired;
             while ( pNode ) {
-                if ( pNode->owner_rec_.load( atomics::memory_order_relaxed ) != nullptr ) {
+                if (pNode->owned_.load(atomics::memory_order_relaxed)) {
                     thread_hp_storage& hpstg = pNode->hazards_;
 
                     for ( auto hp = hpstg.begin(), end = hpstg.end(); hp != end; ++hp ) {
@@ -387,7 +383,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
         thread_record* pNode = thread_list_.load( atomics::memory_order_acquire );
 
         while ( pNode ) {
-            if ( pNode->owner_rec_.load( std::memory_order_relaxed ) != nullptr ) {
+            if (pNode->owned_.load(std::memory_order_relaxed)) {
                 for ( size_t i = 0; i < get_hazard_ptr_count(); ++i ) {
                     void * hptr = pNode->hazards_[i].get();
                     if ( hptr )
@@ -428,7 +424,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
     CDS_EXPORT_API void basic_smr::help_scan(thread_data* pThis )
     {
-        assert( static_cast<thread_record*>( pThis )->owner_rec_.load( atomics::memory_order_relaxed ) == static_cast<thread_record*>( pThis ));
+        assert( static_cast<thread_record*>( pThis )->owned_.load( atomics::memory_order_relaxed ));
 
         CDS_HPSTAT( ++pThis->help_scan_count_ );
 
@@ -444,9 +440,9 @@ namespace cds { namespace gc { namespace hp { namespace details {
             // Owns hprec if it is empty.
             // Several threads may work concurrently so we use atomic technique only.
             {
-                thread_record* curOwner = hprec->owner_rec_.load( atomics::memory_order_relaxed );
-                if ( curOwner == nullptr ) {
-                    if ( !hprec->owner_rec_.compare_exchange_strong( curOwner, hprec, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
+                bool is_owned = hprec->owned_.load( atomics::memory_order_relaxed );
+                if (!is_owned) {
+                    if ( !hprec->owned_.compare_exchange_strong( is_owned, true, atomics::memory_order_acquire, atomics::memory_order_relaxed ))
                         continue;
                 }
                 else
@@ -469,7 +465,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
             src.interthread_clear();
             hprec->free_.store( true, atomics::memory_order_release );
-            hprec->owner_rec_.store( nullptr, atomics::memory_order_release );
+            hprec->owned_.store( false, atomics::memory_order_release );
 
             scan( pThis );
         }
