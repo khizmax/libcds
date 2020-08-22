@@ -82,11 +82,12 @@ namespace cds { namespace gc {
                     thread_record*                      next_ = nullptr;
                     // true if record is owned by thread
                     atomics::atomic<bool>  owned_;
-                    // true if record is free (not owned)
+                    // true if record is not owned and has no retired ptrs
                     atomics::atomic<bool>               free_{ false };
 
                     thread_record( guard* guards, size_t guard_count, retired_ptr* retired_arr, size_t retired_capacity )
-                            : thread_data( guards, guard_count, retired_arr, retired_capacity ), owned_(true)
+                        : thread_data( guards, guard_count, retired_arr, retired_capacity )
+                        , owned_(true)
                     {}
                 };
 
