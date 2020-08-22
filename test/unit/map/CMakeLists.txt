@@ -35,18 +35,6 @@ target_link_libraries(${UNIT_MAP_MICHAEL} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_MAP_MICHAEL})
 add_test(NAME ${UNIT_MAP_MICHAEL} COMMAND ${UNIT_MAP_MICHAEL} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# MichaelHashMap<IterableList> unit test
-set(UNIT_MAP_MICHAEL_ITERABLE unit-map-michael-iterable)
-set(UNIT_MAP_MICHAEL_ITERABLE_SOURCES 
-    ../main.cpp
-    michael_iterable_hp.cpp
-    michael_iterable_dhp.cpp
-)
-add_executable(${UNIT_MAP_MICHAEL_ITERABLE} ${UNIT_MAP_MICHAEL_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_MAP_MICHAEL_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_MAP_MICHAEL_ITERABLE})
-add_test(NAME ${UNIT_MAP_MICHAEL_ITERABLE} COMMAND ${UNIT_MAP_MICHAEL_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 # MichaelHashMap<LazyList> unit test
 set(UNIT_MAP_MICHAEL_LAZY unit-map-michael-lazy)
 set(UNIT_MAP_MICHAEL_LAZY_SOURCES 
@@ -98,18 +86,6 @@ target_link_libraries(${UNIT_MAP_SPLIT_MICHAEL} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_MAP_SPLIT_MICHAEL})
 add_test(NAME ${UNIT_MAP_SPLIT_MICHAEL} COMMAND ${UNIT_MAP_SPLIT_MICHAEL} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# SplitListMap<IterableList> unit test
-set(UNIT_MAP_SPLIT_ITERABLE unit-map-split-iterable)
-set(UNIT_MAP_SPLIT_ITERABLE_SOURCES 
-    ../main.cpp
-    split_iterable_hp.cpp
-    split_iterable_dhp.cpp
-)
-add_executable(${UNIT_MAP_SPLIT_ITERABLE} ${UNIT_MAP_SPLIT_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_MAP_SPLIT_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_MAP_SPLIT_ITERABLE})
-add_test(NAME ${UNIT_MAP_SPLIT_ITERABLE} COMMAND ${UNIT_MAP_SPLIT_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 # SplitListMap<LazyList> unit test
 set(UNIT_MAP_SPLIT_LAZY unit-map-split-lazy)
 set(UNIT_MAP_SPLIT_LAZY_SOURCES 
@@ -132,10 +108,8 @@ add_custom_target( unit-map
     DEPENDS
         ${UNIT_MAP_FELDMAN}
         ${UNIT_MAP_MICHAEL}
-        ${UNIT_MAP_MICHAEL_ITERABLE}
         ${UNIT_MAP_MICHAEL_LAZY}
         ${UNIT_MAP_SKIP_LIST}
         ${UNIT_MAP_SPLIT_MICHAEL}
-        ${UNIT_MAP_SPLIT_ITERABLE}
         ${UNIT_MAP_SPLIT_LAZY}
 )

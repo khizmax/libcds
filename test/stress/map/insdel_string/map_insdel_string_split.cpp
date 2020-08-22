@@ -9,6 +9,5 @@
 namespace map {
 
     CDSSTRESS_SplitListMap( Map_InsDel_string_LF, run_test, std::string, size_t )
-    CDSSTRESS_SplitListIterableMap( Map_InsDel_string_LF, run_test, std::string, size_t )
 
 } // namespace map

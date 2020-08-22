@@ -29,8 +29,4 @@ namespace cds { namespace container {
 #   include <cds/container/details/make_split_list_set_lazy_list.h>
 #endif
 
-#ifdef CDSLIB_CONTAINER_DETAILS_ITERABLE_LIST_BASE_H
-#   include <cds/container/details/make_split_list_set_iterable_list.h>
-#endif
-
 #endif // #ifndef CDSLIB_CONTAINER_DETAILS_MAKE_SPLIT_LIST_SET_H

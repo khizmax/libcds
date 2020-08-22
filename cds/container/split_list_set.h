@@ -410,37 +410,6 @@ namespace cds { namespace container {
             return insert_node( alloc_node( std::forward<Args>(args)...));
         }
 
-        /// Inserts or updates the node (only for \p IterableList -based set)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the set.
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        upsert( Q&& val, bool bAllowInsert = true )
-        {
-            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
-
-            auto bRet = base_class::upsert( *pNode, bAllowInsert );
-
-            if ( bRet.first )
-                pNode.release();
-            return bRet;
-        }
-
         /// Updates the node
         /**
             The operation performs inserting or changing data with lock-free manner.
@@ -463,19 +432,11 @@ namespace cds { namespace container {
 
             The functor may change non-key fields of the \p item.
 
-            <b>for \p IterableList</b>
-            \code
-                void func( value_type& val, value_type * old );
-            \endcode
-            where
-            - \p val - a new data constructed from \p key
-            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the set.
 
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList"
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -485,7 +446,7 @@ namespace cds { namespace container {
         std::pair<bool, bool>
 #else
         typename std::enable_if<
-            std::is_same<Q, Q>::value && !is_iterable_list<ordered_list>::value,
+            std::is_same<Q, Q>::value,
             std::pair<bool, bool>
         >::type
 #endif
@@ -502,26 +463,6 @@ namespace cds { namespace container {
                 pNode.release();
             return bRet;
         }
-        //@cond
-        template <typename Q, typename Func>
-        typename std::enable_if<
-            std::is_same<Q, Q>::value && is_iterable_list<ordered_list>::value,
-            std::pair<bool, bool>
-        >::type
-        update( Q&& val, Func func, bool bAllowInsert = true )
-        {
-            scoped_node_ptr pNode( alloc_node( std::forward<Q>( val )));
-
-            auto bRet = base_class::update( *pNode,
-                [&func]( node_type& item, node_type* old ) {
-                    func( item.m_Value, old ? &old->m_Value : nullptr );
-                }, bAllowInsert );
-
-            if ( bRet.first )
-                pNode.release();
-            return bRet;
-        }
-        //@endcond
 
         //@cond
         template <typename Q, typename Func>
@@ -600,28 +541,6 @@ namespace cds { namespace container {
             return base_class::erase_with( key, typename maker::template predicate_wrapper<Less>(),
                 [&f](node_type& node) { f( node.m_Value ); } );
         }
-
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based set)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %SplitListSet based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            return base_class::erase_at( static_cast<typename iterator::iterator_base_class const&>( iter ));
-        }
-
 
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_SplitListSet_hp_extract
@@ -708,32 +627,6 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList -based set)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find( Q& key )
-        {
-            return find_iterator_( key );
-        }
-        //@cond
-        template <typename Q>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find( Q const& key )
-        {
-            return find_iterator_( key );
-        }
-        //@endcond
-
-
         /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListSet_find_func "find(Q&, Func)"
@@ -751,35 +644,6 @@ namespace cds { namespace container {
         bool find_with( Q const& key, Less pred, Func f )
         {
             return find_with_( key, pred, f );
-        }
-        //@endcond
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList -based set)
-        /**
-            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( Q& key, Less pred )
-        {
-            return find_iterator_with_( key, pred );
-        }
-        //@cond
-        template <typename Q, typename Less>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find_with( Q const& key, Less pred )
-        {
-            return find_iterator_with_( key, pred );
         }
         //@endcond
 
@@ -914,27 +778,12 @@ namespace cds { namespace container {
             return base_class::find( val, [&f]( node_type& item, Q& v ) { f( item.m_Value, v ); } );
         }
 
-        template <typename Q>
-        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator>::type
-        find_iterator_( Q& val )
-        {
-            return iterator( base_class::find( val ));
-        }
-
         template <typename Q, typename Less, typename Func>
         bool find_with_( Q& val, Less pred, Func f )
         {
             CDS_UNUSED( pred );
             return base_class::find_with( val, typename maker::template predicate_wrapper<Less>(),
                 [&f]( node_type& item, Q& v ) { f( item.m_Value, v ); } );
-        }
-
-        template <typename Q, typename Less>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator>::type
-        find_iterator_with_( Q& val, Less pred )
-        {
-            CDS_UNUSED( pred );
-            return iterator( base_class::find_with( val, typename maker::template predicate_wrapper<Less>()));
         }
 
         struct node_disposer {

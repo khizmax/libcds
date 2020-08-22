@@ -78,8 +78,6 @@
     <ClCompile Include="..\..\..\test\stress\main.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\iter_erase\map_iter_erase.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\iter_erase\map_iter_erase_feldman_hashmap.cpp" />
-    <ClCompile Include="..\..\..\test\stress\map\iter_erase\map_iter_erase_michael.cpp" />
-    <ClCompile Include="..\..\..\test\stress\map\iter_erase\map_iter_erase_split.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\test\stress\map\iter_erase\CMakeLists.txt" />

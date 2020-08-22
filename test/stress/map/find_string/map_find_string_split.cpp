@@ -9,7 +9,6 @@
 namespace map {
 
     CDSSTRESS_SplitListMap(      Map_find_string_LF, run_test, std::string, Map_find_string::value_type )
-    CDSSTRESS_SplitListIterableMap( Map_find_string_LF, run_test, std::string, Map_find_string::value_type )
     CDSSTRESS_SplitListMap_nogc( Map_find_string_LF, run_test, std::string, Map_find_string::value_type )
 
 } // namespace map

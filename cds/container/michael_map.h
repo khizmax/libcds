@@ -7,7 +7,6 @@
 #define CDSLIB_CONTAINER_MICHAEL_MAP_H
 
 #include <cds/container/details/michael_map_base.h>
-#include <cds/container/details/iterable_list_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {
@@ -29,7 +28,7 @@ namespace cds { namespace container {
             from the \p libcds library.
             Note the \p GC must be the same as the GC used for \p OrderedList
         - \p OrderedList - ordered key-value list implementation used as bucket for hash map, for example, \p MichaelKVList,
-            \p LazyKVList, \p IterableKVList. The ordered list implementation specifies the \p Key and \p Value types
+            \p LazyKVList. The ordered list implementation specifies the \p Key and \p Value types
             stored in the hash-map, the reclamation schema \p GC used by hash-map, the comparison functor for the type \p Key
             and other features specific for the ordered list.
         - \p Traits - map traits, default is \p michael_map::traits.
@@ -280,7 +279,6 @@ namespace cds { namespace container {
               However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the map.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
               Use this iterator on the concurrent container for debugging purpose only.
-            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
 
             The iterator interface:
             \code
@@ -495,22 +493,11 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \p mapped_type.
 
-            <b>for \p IterableKVList</b>
-            \code
-                void func( value_type& val, value_type * old );
-            \endcode
-            where
-            - \p val - a new data constructed from \p key
-            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
-            The functor may change non-key fields of \p val; however, \p func must guarantee
-            that during changing no any other modifications could be made on this item by concurrent threads.
-
             @return <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already exists.
 
-            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" and \ref cds_nonintrusive_IterableKVList_gc "IterableKVList"
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -534,34 +521,6 @@ namespace cds { namespace container {
             return bRet;
         }
         //@endcond
-
-        /// Inserts or updates the node (only for \p IterableKVList)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the map.
-        */
-        template <typename Q, typename V>
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        upsert( Q&& key, V&& val, bool bAllowInsert = true )
-        {
-            std::pair<bool, bool> bRet = bucket( val ).upsert( std::forward<Q>( key ), std::forward<V>( val ), bAllowInsert );
-            if ( bRet.second )
-                ++m_ItemCounter;
-            return bRet;
-        }
 
         /// For key \p key inserts data of type \p mapped_type created from \p args
         /**
@@ -648,34 +607,6 @@ namespace cds { namespace container {
             return bRet;
         }
 
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based map)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %MichaelHashMap based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            assert( iter != end());
-            assert( iter.bucket() != nullptr );
-
-            if ( iter.bucket()->erase_at( iter.underlying_iterator())) {
-                --m_ItemCounter;
-                return true;
-            }
-            return false;
-        }
-
         /// Extracts the item with specified \p key
         /** \anchor cds_nonintrusive_MichaelHashMap_hp_extract
             The function searches an item with key equal to \p key,
@@ -754,28 +685,6 @@ namespace cds { namespace container {
             return bucket( key ).find( key, f );
         }
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for map based on \p IterableList
-        */
-        template <typename K>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<K,K>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find( K const& key )
-        {
-            auto& b = bucket( key );
-            auto it = b.find( key );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-
-
         /// Finds the key \p val using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_MichaelMap_find_cfunc "find(K const&, Func)"
@@ -787,31 +696,6 @@ namespace cds { namespace container {
         bool find_with( K const& key, Less pred, Func f )
         {
             return bucket( key ).find_with( key, pred, f );
-        }
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            The function is an analog of \p find(K&) but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for map based on \p IterableList
-        */
-        template <typename K, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<K, K>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( K const& key, Less pred )
-        {
-            auto& b = bucket( key );
-            auto it = b.find_with( key, pred );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
         }
 
         /// Checks whether the map contains \p key

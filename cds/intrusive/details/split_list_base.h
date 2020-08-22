@@ -83,32 +83,6 @@ namespace cds { namespace intrusive {
             }
         };
 
-        //@cond
-        // for IterableList
-        template <>
-        struct node<void>: public hash_node
-        {
-            // Default ctor
-            node()
-                : hash_node( 0 )
-            {
-                assert( is_dummy());
-            }
-
-            /// Initializes dummy node with \p nHash value
-            explicit node( size_t nHash )
-                : hash_node( nHash )
-            {
-                assert( is_dummy());
-            }
-
-            /// Checks if the node is dummy node
-            bool is_dummy() const
-            {
-                return hash_node::is_dummy();
-            }
-        };
-        //@endcond
 
         /// \p SplitListSet internal statistics. May be used for debugging or profiling
         /**
@@ -848,11 +822,8 @@ namespace cds { namespace intrusive {
                 {}
             };
 
-            template <class OrderedList, class Traits, bool Iterable >
-            class ordered_list_adapter;
-
-            template <class OrderedList, class Traits>
-            class ordered_list_adapter< OrderedList, Traits, false >
+            template <class OrderedList, class Traits >
+            class ordered_list_adapter
             {
                 typedef OrderedList native_ordered_list;
                 typedef Traits      traits;
@@ -1025,154 +996,7 @@ namespace cds { namespace intrusive {
             };
 
             template <class OrderedList, class Traits>
-            class ordered_list_adapter< OrderedList, Traits, true >
-            {
-                typedef OrderedList native_ordered_list;
-                typedef Traits      traits;
-
-                typedef typename native_ordered_list::gc                gc;
-                typedef typename native_ordered_list::key_comparator    native_key_comparator;
-                typedef typename native_ordered_list::value_type        value_type;
-                typedef typename native_ordered_list::disposer          native_disposer;
-
-                struct key_compare {
-                    int operator()( value_type const& v1, value_type const& v2 ) const
-                    {
-                        hash_node const& n1 = static_cast<hash_node const&>( v1 );
-                        hash_node const& n2 = static_cast<hash_node const&>( v2 );
-                        if ( n1.m_nHash != n2.m_nHash )
-                            return n1.m_nHash < n2.m_nHash ? -1 : 1;
-
-                        if ( n1.is_dummy()) {
-                            assert( n2.is_dummy());
-                            return 0;
-                        }
-
-                        assert( !n1.is_dummy() && !n2.is_dummy());
-
-                        return native_key_comparator()(v1, v2);
-                    }
-
-                    template <typename Q>
-                    int operator()( value_type const& v, search_value_type<Q> const& q ) const
-                    {
-                        hash_node const& n = static_cast<hash_node const&>( v );
-                        if ( n.m_nHash != q.nHash )
-                            return n.m_nHash < q.nHash ? -1 : 1;
-
-                        assert( !n.is_dummy());
-                        return native_key_comparator()(v, q.val);
-                    }
-
-                    template <typename Q>
-                    int operator()( search_value_type<Q> const& q, value_type const& v ) const
-                    {
-                        return -operator()( v, q );
-                    }
-                };
-
-                struct wrapped_disposer
-                {
-                    void operator()( value_type * v )
-                    {
-                        if ( !static_cast<hash_node*>( v )->is_dummy())
-                            native_disposer()( v );
-                    }
-                };
-
-            public:
-                typedef void ordered_list_node_type;
-
-                struct aux_node: public native_ordered_list::node_type, public hash_node
-                {
-                    aux_node()
-                    {
-                        typedef typename native_ordered_list::node_type list_node_type;
-
-                        list_node_type::data.store( typename list_node_type::marked_data_ptr(
-                            static_cast<value_type*>( static_cast<hash_node *>( this ))),
-                            atomics::memory_order_release
-                        );
-                    }
-                };
-
-                struct node_traits
-                {
-                    static hash_node * to_node_ptr( value_type& v )
-                    {
-                        return static_cast<hash_node *>( &v );
-                    }
-
-                    static hash_node * to_node_ptr( value_type * v )
-                    {
-                        return static_cast<hash_node *>( v );
-                    }
-
-                    static hash_node const * to_node_ptr( value_type const& v )
-                    {
-                        return static_cast<hash_node const*>( &v );
-                    }
-
-                    static hash_node const * to_node_ptr( value_type const * v )
-                    {
-                        return static_cast<hash_node const *>( v );
-                    }
-                };
-
-                template <typename Less>
-                struct make_compare_from_less: public cds::opt::details::make_comparator_from_less<Less>
-                {
-                    typedef cds::opt::details::make_comparator_from_less<Less>  base_class;
-
-                    template <typename Q>
-                    int operator()( value_type const& v, search_value_type<Q> const& q ) const
-                    {
-                        hash_node const& n = static_cast<hash_node const&>( v );
-                        if ( n.m_nHash != q.nHash )
-                            return n.m_nHash < q.nHash ? -1 : 1;
-
-                        assert( !n.is_dummy());
-                        return base_class()(v, q.val);
-                    }
-
-                    template <typename Q>
-                    int operator()( search_value_type<Q> const& q, value_type const& v ) const
-                    {
-                        hash_node const& n = static_cast<hash_node const&>( v );
-                        if ( n.m_nHash != q.nHash )
-                            return q.nHash < n.m_nHash ? -1 : 1;
-
-                        assert( !n.is_dummy());
-                        return base_class()(q.val, v);
-                    }
-
-                    int operator()( value_type const& lhs, value_type const& rhs ) const
-                    {
-                        hash_node const& n1 = static_cast<hash_node const&>( lhs );
-                        hash_node const& n2 = static_cast<hash_node const&>( rhs );
-                        if ( n1.m_nHash != n2.m_nHash )
-                            return n1.m_nHash < n2.m_nHash ? -1 : 1;
-
-                        if ( n1.is_dummy()) {
-                            assert( n2.is_dummy());
-                            return 0;
-                        }
-
-                        assert( !n1.is_dummy() && !n2.is_dummy());
-
-                        return base_class()( lhs, rhs );
-                    }
-                };
-
-                typedef typename native_ordered_list::template rebind_traits<
-                    opt::compare< key_compare >
-                    , opt::disposer< wrapped_disposer >
-                    , opt::boundary_node_type< aux_node >
-                >::type result;
-            };
-
-            template <class OrderedList, class Traits>
-            using rebind_list_traits = ordered_list_adapter< OrderedList, Traits, is_iterable_list<OrderedList>::value >;
+            using rebind_list_traits = ordered_list_adapter< OrderedList, Traits >;
 
             template <typename OrderedList, bool IsConst>
             struct select_list_iterator;

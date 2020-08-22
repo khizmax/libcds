@@ -371,19 +371,11 @@ namespace cds { namespace container {
 
             The functor may change any fields of the \p item.second that is \p mapped_type.
 
-            <b>for \p IterableKVList</b>
-            \code
-                void func( value_type& val, value_type * old );
-            \endcode
-            where
-            - \p val - a new data constructed from \p key
-            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
             \p second is true if new item has been added or \p false if the item with \p key
             already is in the map.
 
-            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList" and \ref cds_nonintrusive_IterableKVList_gc "IterableKVList"
+            @warning For \ref cds_nonintrusive_MichaelKVList_gc "MichaelKVList"
             as the ordered list see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_nonintrusive_LazyKVList_gc "LazyKVList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -393,7 +385,7 @@ namespace cds { namespace container {
         std::pair<bool, bool>
 #else
         typename std::enable_if<
-            std::is_same<K,K>::value && !is_iterable_list< ordered_list >::value,
+            std::is_same<K,K>::value,
             std::pair<bool, bool>
         >::type
 #endif
@@ -409,53 +401,12 @@ namespace cds { namespace container {
         }
         //@cond
         template <typename K, typename Func>
-#ifdef CDS_DOXYGE_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same<K, K>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        update( K&& key, Func func, bool bAllowInsert = true )
-        {
-            return base_class::update( std::make_pair( key_type( std::forward<K>( key )), mapped_type()), func, bAllowInsert );
-        }
-        //@endcond
-        //@cond
-        template <typename K, typename Func>
         CDS_DEPRECATED("ensure() is deprecated, use update()")
         std::pair<bool, bool> ensure( K const& key, Func func )
         {
             return update( key, func, true );
         }
         //@endcond
-
-        /// Inserts or updates the node (only for \p IterableKVList)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If \p key is not found in the map, then \p key is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the map.
-            */
-        template <typename Q, typename V>
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        upsert( Q&& key, V&& val, bool bAllowInsert = true )
-        {
-            return base_class::upsert( std::make_pair( key_type( std::forward<Q>( key )), mapped_type( std::forward<V>( val ))), bAllowInsert );
-        }
-
 
         /// Deletes \p key from the map
         /** \anchor cds_nonintrusive_SplitListMap_erase_val
@@ -515,27 +466,6 @@ namespace cds { namespace container {
         {
             CDS_UNUSED( pred );
             return base_class::erase_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>(), f );
-        }
-
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based map)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %SplitListMap based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            return base_class::erase_at( iter );
         }
 
         /// Extracts the item with specified \p key
@@ -611,23 +541,6 @@ namespace cds { namespace container {
             return base_class::find( key, [&f](value_type& pair, K const&){ f( pair ); } );
         }
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for map based on \p IterableList
-        */
-        template <typename K>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<K,K>::value && is_iterable_list<ordered_list>::value, iterator >::type
-#endif
-        find( K const& key )
-        {
-            return base_class::find( key );
-        }
-
         /// Finds the key \p val using \p pred predicate for searching
         /**
             The function is an analog of \ref cds_nonintrusive_SplitListMap_find_cfunc "find(K const&, Func)"
@@ -642,28 +555,6 @@ namespace cds { namespace container {
             return base_class::find_with( key,
                 cds::details::predicate_wrapper<value_type, Less, key_accessor>(),
                 [&f](value_type& pair, K const&){ f( pair ); } );
-        }
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            The function is an analog of \p find(K&) but \p pred is used for key comparing.
-            \p Less functor has interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the map.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for map based on \p IterableList
-        */
-        template <typename K, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<K, K>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( K const& key, Less pred )
-        {
-            CDS_UNUSED( pred );
-            return base_class::find_with( key, cds::details::predicate_wrapper<value_type, Less, key_accessor>());
         }
 
         /// Checks whether the map contains \p key

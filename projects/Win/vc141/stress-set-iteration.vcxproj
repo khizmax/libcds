@@ -78,8 +78,6 @@
     <ClCompile Include="..\..\..\test\stress\main.cpp" />
     <ClCompile Include="..\..\..\test\stress\set\iteration\set_iteration.cpp" />
     <ClCompile Include="..\..\..\test\stress\set\iteration\set_iteration_feldman_hashset.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\iteration\set_iteration_michael.cpp" />
-    <ClCompile Include="..\..\..\test\stress\set\iteration\set_iteration_split.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\stress\set\iteration\set_iteration.h" />

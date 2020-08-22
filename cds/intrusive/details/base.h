@@ -299,15 +299,6 @@ namespace intrusive {
         @ingroup cds_intrusive_containers
     */
 
-    //@cond
-    class iterable_list_tag
-    {};
-
-    template <typename List>
-    struct is_iterable_list: public std::is_base_of< iterable_list_tag, List>
-    {};
-    //@endcond
-
 }} // namespace cds::intrusuve
 
 #endif  // #ifndef CDSLIB_INTRUSIVE_DETAILS_BASE_H

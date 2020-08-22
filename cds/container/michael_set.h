@@ -7,7 +7,6 @@
 #define CDSLIB_CONTAINER_MICHAEL_SET_H
 
 #include <cds/container/details/michael_set_base.h>
-#include <cds/container/details/iterable_list_base.h>
 #include <cds/details/allocator.h>
 
 namespace cds { namespace container {
@@ -29,7 +28,7 @@ namespace cds { namespace container {
             from the \p libcds library.
             Note the \p GC must be the same as the \p GC used for \p OrderedList
         - \p OrderedList - ordered list implementation used as bucket for hash set, possible implementations:
-            \p MichaelList, \p LazyList, \p IterableList.
+            \p MichaelList, \p LazyList.
             The ordered list implementation specifies the type \p T to be stored in the hash-set,
             the comparing functor for the type \p T and other features specific for the ordered list.
         - \p Traits - set traits, default is \p michael_set::traits.
@@ -207,7 +206,6 @@ namespace cds { namespace container {
               However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
               Use this iterator on the concurrent container for debugging purpose only.
-            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
 
             The iterator interface:
             \code
@@ -353,7 +351,7 @@ namespace cds { namespace container {
             where \p val is the item inserted.
             The user-defined functor is called only if the inserting is success.
 
-            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList"
+            @warning For \ref cds_nonintrusive_MichaelList_gc "MichaelList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             @ref cds_nonintrusive_LazyList_gc "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -389,19 +387,11 @@ namespace cds { namespace container {
 
             The functor may change non-key fields of the \p item.
 
-            <b>for \p IterableList</b>
-            \code
-                void func( value_type& val, value_type * old );
-            \endcode
-            where
-            - \p val - a new data constructed from \p key
-            - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
             @return <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
 
-            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList" and \ref cds_nonintrusive_IterableList_gc "IterableList"
+            @warning For \ref cds_intrusive_MichaelList_hp "MichaelList"
             as the bucket see \ref cds_intrusive_item_creating "insert item troubleshooting".
             \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
             synchronization.
@@ -422,34 +412,6 @@ namespace cds { namespace container {
             return update( val, func, true );
         }
         //@endcond
-
-        /// Inserts or updates the node (only for \p IterableList)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the set.
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool>
-#else
-        typename std::enable_if<
-            std::is_same< Q, Q>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-#endif
-        upsert( Q&& val, bool bAllowInsert = true )
-        {
-            std::pair<bool, bool> bRet = bucket( val ).upsert( std::forward<Q>( val ), bAllowInsert );
-            if ( bRet.second )
-                ++m_ItemCounter;
-            return bRet;
-        }
 
         /// Inserts data of type \p value_type constructed from \p args
         /**
@@ -539,34 +501,6 @@ namespace cds { namespace container {
             if ( bRet )
                 --m_ItemCounter;
             return bRet;
-        }
-
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based set)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %MichaelHashSet based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            assert( iter != end());
-            assert( iter.bucket() != nullptr );
-
-            if ( iter.bucket()->erase_at( iter.underlying_iterator())) {
-                --m_ItemCounter;
-                return true;
-            }
-            return false;
         }
 
         /// Extracts the item with specified \p key
@@ -659,39 +593,6 @@ namespace cds { namespace container {
         }
         //@endcond
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find( Q& key )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@cond
-        template <typename Q>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find( Q const& key )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@endcond
-
         /// Finds the key \p key using \p pred predicate for searching
         /**
             The function is an analog of \p find(Q&, Func) but \p pred is used for key comparing.
@@ -708,43 +609,6 @@ namespace cds { namespace container {
         bool find_with( Q const& key, Less pred, Func f )
         {
             return bucket( key ).find_with( key, pred, f );
-        }
-        //@endcond
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( Q& key, Less pred )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@cond
-        template <typename Q, typename Less>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find_with( Q const& key, Less pred )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
         }
         //@endcond
 
@@ -930,8 +794,7 @@ namespace cds { namespace container {
         }
 
         template <typename List, typename... Args>
-        typename std::enable_if< !is_iterable_list<List>::value, bool>::type
-        bucket_emplace( Args&&... args )
+        bool bucket_emplace( Args&&... args )
         {
             class list_accessor: public List
             {
@@ -944,22 +807,6 @@ namespace cds { namespace container {
             auto pNode = list_accessor::alloc_node( std::forward<Args>( args )... );
             assert( pNode != nullptr );
             return static_cast<list_accessor&>( bucket( list_accessor::node_to_value( *pNode ))).insert_node( pNode );
-        }
-
-        template <typename List, typename... Args>
-        typename std::enable_if< is_iterable_list<List>::value, bool>::type
-        bucket_emplace( Args&&... args )
-        {
-            class list_accessor: public List
-            {
-            public:
-                using List::alloc_data;
-                using List::insert_node;
-            };
-
-            auto pData = list_accessor::alloc_data( std::forward<Args>( args )... );
-            assert( pData != nullptr );
-            return static_cast<list_accessor&>( bucket( *pData )).insert_node( pData );
         }
         //@endcond
     };

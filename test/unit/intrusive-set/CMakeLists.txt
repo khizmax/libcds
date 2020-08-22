@@ -54,18 +54,6 @@ target_link_libraries(${UNIT_ISET_MICHAEL_LAZY} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_ISET_MICHAEL_LAZY})
 add_test(NAME ${UNIT_ISET_MICHAEL_LAZY} COMMAND ${UNIT_ISET_MICHAEL_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# intrusive::MichaelHashSet<IterableList>
-set(UNIT_ISET_MICHAEL_ITERABLE unit-iset-michael-iterable)
-set(UNIT_ISET_MICHAEL_ITERABLE_SOURCES
-    ../main.cpp
-    intrusive_michael_iterable_dhp.cpp
-    intrusive_michael_iterable_hp.cpp
-)
-add_executable(${UNIT_ISET_MICHAEL_ITERABLE} ${UNIT_ISET_MICHAEL_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_ISET_MICHAEL_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_ISET_MICHAEL_ITERABLE})
-add_test(NAME ${UNIT_ISET_MICHAEL_ITERABLE} COMMAND ${UNIT_ISET_MICHAEL_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 # intrusive::SkipListSet
 set(UNIT_ISET_SKIP unit-iset-skip)
 set(UNIT_ISET_SKIP_SOURCES
@@ -117,27 +105,13 @@ target_link_libraries(${UNIT_ISET_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_ISET_SPLIT_LAZY})
 add_test(NAME ${UNIT_ISET_SPLIT_LAZY} COMMAND ${UNIT_ISET_SPLIT_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# intrusive::SplitListSet<IterableList>
-set(UNIT_ISET_SPLIT_ITERABLE unit-iset-split-iterable)
-set(UNIT_ISET_SPLIT_ITERABLE_SOURCES
-    ../main.cpp
-    intrusive_split_iterable_hp.cpp
-    intrusive_split_iterable_dhp.cpp
-)
-add_executable(${UNIT_ISET_SPLIT_ITERABLE} ${UNIT_ISET_SPLIT_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_ISET_SPLIT_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_ISET_SPLIT_ITERABLE})
-add_test(NAME ${UNIT_ISET_SPLIT_ITERABLE} COMMAND ${UNIT_ISET_SPLIT_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 
 add_custom_target( unit-iset
     DEPENDS
         ${UNIT_ISET_FELDMAN}
         ${UNIT_ISET_MICHAEL}
-        ${UNIT_ISET_MICHAEL_ITERABLE}
         ${UNIT_ISET_MICHAEL_LAZY}
         ${UNIT_ISET_SKIP}
         ${UNIT_ISET_SPLIT_MICHAEL}
-        ${UNIT_ISET_SPLIT_ITERABLE}
         ${UNIT_ISET_SPLIT_LAZY}
 )

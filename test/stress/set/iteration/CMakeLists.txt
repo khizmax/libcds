@@ -4,7 +4,6 @@ set(CDSSTRESS_SET_ITERATION_SOURCES
     ../../main.cpp
     set_iteration.cpp
     set_iteration_feldman_hashset.cpp
-    set_iteration_michael.cpp
 )
 
 include_directories(

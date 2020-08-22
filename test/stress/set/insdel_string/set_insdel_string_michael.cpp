@@ -9,6 +9,5 @@
 namespace set {
 
     CDSSTRESS_MichaelSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
-    CDSSTRESS_MichaelIterableSet( Set_InsDel_string_LF, run_test_extract, std::string, size_t )
 
 } // namespace set

@@ -108,9 +108,6 @@ namespace cds { namespace intrusive {
 
         <b>How to use</b>
 
-        Split-list based on \p IterableList differs from split-list based on \p MichaelList or \p LazyList
-        because \p %IterableList stores data "as is" - it cannot use any hook.
-
         Suppose, your split-list contains values of type \p Foo.
         For \p %MichaelList and \p %LazyList, \p Foo declaration should be based on ordered-list node:
         - \p %MichaelList:
@@ -123,14 +120,6 @@ namespace cds { namespace intrusive {
         - \p %LazyList:
         \code
         struct Foo: public cds::intrusive::split_list::node< cds::intrusive::lazy_list::node< cds::gc::HP > >
-        {
-            // ... field declarations
-        };
-        \endcode
-
-        For \p %IterableList, \p Foo should be based on \p void:
-        \code
-        struct Foo: public cds::intrusive::split_list::node<void>
         {
             // ... field declarations
         };
@@ -308,33 +297,11 @@ namespace cds { namespace intrusive {
                 return base_class::update_at( h, val, func, bAllowInsert );
             }
 
-            template <typename Q>
-            typename std::enable_if<
-                std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
-                std::pair<bool, bool>
-            >::type
-            upsert_at( aux_node_type * pHead, Q& val, bool bAllowInsert )
-            {
-                assert( pHead != nullptr );
-                bucket_head_type h( pHead );
-                return base_class::upsert_at( h, val, bAllowInsert );
-            }
-
             bool unlink_at( aux_node_type * pHead, value_type& val )
             {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
                 return base_class::unlink_at( h, val );
-            }
-
-            template <typename Iterator>
-            typename std::enable_if<
-                std::is_same< Iterator, typename ordered_list::iterator>::value && is_iterable_list< ordered_list >::value,
-                bool
-            >::type
-            erase_at( Iterator iter )
-            {
-                return base_class::erase_at( iter );
             }
 
             template <typename Q, typename Compare, typename Func>
@@ -375,18 +342,6 @@ namespace cds { namespace intrusive {
                 assert( pHead != nullptr );
                 bucket_head_type h(pHead);
                 return base_class::find_at( h, val, cmp );
-            }
-
-            template <typename Q, typename Compare>
-            typename std::enable_if<
-                std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value,
-                typename base_class::iterator
-            >::type
-            find_iterator_at( aux_node_type * pHead, split_list::details::search_value_type<Q> const& val, Compare cmp )
-            {
-                assert( pHead != nullptr );
-                bucket_head_type h( pHead );
-                return base_class::find_iterator_at( h, val, cmp );
             }
 
             template <typename Q, typename Compare>
@@ -458,7 +413,6 @@ namespace cds { namespace intrusive {
               However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
               Use this iterator on the concurrent container for debugging purpose only.
-            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
         */
         typedef iterator_type<false>    iterator;
 
@@ -642,14 +596,6 @@ namespace cds { namespace intrusive {
                 \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
                 synchronization.
 
-            <b>for \p IterableList</b>
-                \code
-                void func( value_type& val, value_type * old );
-                \endcode
-                where
-                - \p val - argument \p val passed into the \p %update() function
-                - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
             Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p val
             already is in the list.
@@ -680,45 +626,6 @@ namespace cds { namespace intrusive {
             return update( val, func, true );
         }
         //@endcond
-
-        /// Inserts or updates the node (only for \p IterableList)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later
-            by call \p Traits::disposer.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the set.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool> upsert( value_type& val, bool bAllowInsert = true )
-#else
-        template <typename Q>
-        typename std::enable_if<
-            std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-        upsert( Q& val, bool bAllowInsert = true )
-#endif
-        {
-            size_t nHash = hash_value( val );
-            aux_node_type * pHead = get_bucket( nHash );
-            assert( pHead != nullptr );
-
-            node_traits::to_node_ptr( val )->m_nHash = split_list::regular_hash<bit_reversal>( nHash );
-
-            std::pair<bool, bool> bRet = m_List.upsert_at( pHead, val, bAllowInsert );
-            if ( bRet.first && bRet.second ) {
-                inc_item_count();
-                m_Stat.onUpdateNew();
-            }
-            else
-                m_Stat.onUpdateExist();
-            return bRet;
-        }
 
         /// Unlinks the item \p val from the set
         /**
@@ -819,34 +726,6 @@ namespace cds { namespace intrusive {
             return erase_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
 
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based set)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %SplitListSet based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            assert( iter != end());
-
-            if ( m_List.erase_at( iter.underlying_iterator())) {
-                --m_ItemCounter;
-                m_Stat.onEraseSuccess();
-                return true;
-            }
-            return false;
-        }
-
         /// Extracts the item with specified \p key
         /** \anchor cds_intrusive_SplitListSet_hp_extract
             The function searches an item with key equal to \p key,
@@ -929,32 +808,6 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find( Q& key )
-        {
-            return find_iterator_( key, key_comparator());
-        }
-        //@cond
-        template <typename Q>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find( Q const& key )
-        {
-            return find_iterator_( key, key_comparator());
-        }
-        //@endcond
-
-
         /// Finds the key \p key with \p pred predicate for comparing
         /**
             The function is an analog of \ref cds_intrusive_SplitListSet_hp_find_func "find(Q&, Func)"
@@ -976,38 +829,6 @@ namespace cds { namespace intrusive {
             return find_( key, typename ordered_list_adapter::template make_compare_from_less<Less>(), f );
         }
         //@endcond
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( Q& key, Less pred )
-        {
-            CDS_UNUSED( pred );
-            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
-        }
-        //@cond
-        template <typename Q, typename Less>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find_with( Q const& key, Less pred )
-        {
-            CDS_UNUSED( pred );
-            return find_iterator_( key, typename ordered_list_adapter::template make_compare_from_less<Less>());
-        }
-        //@endcond
-
 
         /// Checks whether the set contains \p key
         /**

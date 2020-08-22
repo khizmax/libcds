@@ -14,8 +14,6 @@
 #include <cds/container/lazy_list_hp.h>
 #include <cds/container/lazy_list_dhp.h>
 #include <cds/container/lazy_list_rcu.h>
-#include <cds/container/iterable_list_hp.h>
-#include <cds/container/iterable_list_dhp.h>
 
 #include <cds/container/split_list_set.h>
 #include <cds/container/split_list_set_rcu.h>
@@ -23,7 +21,6 @@
 #include <cds_test/stat_splitlist_out.h>
 #include <cds_test/stat_michael_list_out.h>
 #include <cds_test/stat_lazy_list_out.h>
-#include <cds_test/stat_iterable_list_out.h>
 
 namespace set {
 
@@ -387,124 +384,6 @@ namespace set {
         typedef SplitListSet< rcu_shb, key_val, traits_SplitList_Lazy_st_less_stat > SplitList_Lazy_RCU_SHB_st_less_stat;
 #endif
 
-        // ***************************************************************************
-        // SplitListSet based on IterableList
-
-        struct traits_SplitList_Iterable_dyn_cmp :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_HP_dyn_cmp;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_dyn_cmp > SplitList_Iterable_DHP_dyn_cmp;
-
-        struct traits_SplitList_Iterable_dyn_cmp_stat:
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,co::stat< cc::split_list::stat<> >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::compare< compare >
-                        ,co::stat< cc::iterable_list::stat<>>
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP, key_val, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_HP_dyn_cmp_stat;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_dyn_cmp_stat > SplitList_Iterable_DHP_dyn_cmp_stat;
-
-        struct traits_SplitList_Iterable_dyn_cmp_seqcst :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,co::memory_model< co::v::sequential_consistent >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::compare< compare >
-                        ,co::memory_model< co::v::sequential_consistent >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_HP_dyn_cmp_seqcst;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_dyn_cmp_seqcst > SplitList_Iterable_DHP_dyn_cmp_seqcst;
-
-        struct traits_SplitList_Iterable_st_cmp :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::compare< compare >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_HP_st_cmp;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_st_cmp > SplitList_Iterable_DHP_st_cmp;
-
-        //HP + less
-        struct traits_SplitList_Iterable_dyn_less :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_HP_dyn_less;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_dyn_less > SplitList_Iterable_DHP_dyn_less;
-
-        struct traits_SplitList_Iterable_st_less :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::less< less >
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_st_less > SplitList_Iterable_HP_st_less;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_st_less > SplitList_Iterable_DHP_st_less;
-
-        struct traits_SplitList_Iterable_st_less_stat :
-            public cc::split_list::make_traits<
-                cc::split_list::ordered_list<cc::iterable_list_tag>
-                ,cc::split_list::dynamic_bucket_table< false >
-                ,co::hash< hash >
-                , co::item_counter<cds::atomicity::cache_friendly_item_counter >
-                ,co::stat< cc::split_list::stat<>>
-                ,cc::split_list::ordered_list_traits<
-                    typename cc::iterable_list::make_traits<
-                        co::less< less >
-                        ,co::stat< cc::iterable_list::stat<>>
-                    >::type
-                >
-            >::type
-        {};
-        typedef SplitListSet< cds::gc::HP,  key_val, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_HP_st_less_stat;
-        typedef SplitListSet< cds::gc::DHP, key_val, traits_SplitList_Iterable_st_less_stat > SplitList_Iterable_DHP_st_less_stat;
-
     };
 
     template <typename GC, typename T, typename Traits>
@@ -685,29 +564,5 @@ namespace set {
 #define CDSSTRESS_SplitListSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListSet_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_SplitListSet_RCU( fixture, test_case, key_type, value_type ) \
-
-#if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
-#   define CDSSTRESS_SplitListIterableSet_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp,             key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp_stat,         key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp_seqcst,       key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp_seqcst,      key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_st_cmp,               key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_dyn_less,            key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_st_less,              key_type, value_type ) \
-        CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_st_less_stat,        key_type, value_type ) \
-
-#else
-#   define CDSSTRESS_SplitListIterableSet_1( fixture, test_case, key_type, value_type )
-#endif
-
-#define CDSSTRESS_SplitListIterableSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_dyn_cmp,              key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_dyn_cmp_stat,        key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_st_cmp,              key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_dyn_less,             key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_DHP_st_less,             key_type, value_type ) \
-    CDSSTRESS_SplitListSet_case( fixture, test_case, SplitList_Iterable_HP_st_less_stat,         key_type, value_type ) \
-    CDSSTRESS_SplitListIterableSet_1( fixture, test_case, key_type, value_type )
 
 #endif // #ifndef CDSUNIT_SET_TYPE_SPLIT_LIST_H

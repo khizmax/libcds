@@ -1180,45 +1180,6 @@
     <ClInclude Include="..\..\..\cds\algo\flat_combining\kernel.h">
       <Filter>Header Files\cds\algo\flat_combining</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\details\iterable_list_base.h">
-      <Filter>Header Files\cds\intrusive\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\impl\iterable_list.h">
-      <Filter>Header Files\cds\intrusive\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_dhp.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\intrusive\iterable_list_hp.h">
-      <Filter>Header Files\cds\intrusive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\iterable_list_base.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\make_iterable_list.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\make_iterable_kvlist.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\impl\iterable_list.h">
-      <Filter>Header Files\cds\container\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\iterable_list_dhp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\iterable_list_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\impl\iterable_kvlist.h">
-      <Filter>Header Files\cds\container\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\iterable_kvlist_dhp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\iterable_kvlist_hp.h">
-      <Filter>Header Files\cds\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\cds\intrusive\free_list_selector.h">
       <Filter>Header Files\cds\intrusive</Filter>
     </ClInclude>
@@ -1229,9 +1190,6 @@
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_michael_list.h">
-      <Filter>Header Files\cds\container\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cds\container\details\make_split_list_set_iterable_list.h">
       <Filter>Header Files\cds\container\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\cds\gc\details\hp_common.h">

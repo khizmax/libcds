@@ -8,14 +8,12 @@
 
 #include "set_type_michael_list.h"
 #include "set_type_lazy_list.h"
-#include "set_type_iterable_list.h"
 
 #include <cds/container/michael_set.h>
 #include <cds/container/michael_set_rcu.h>
 
 #include <cds_test/stat_michael_list_out.h>
 #include <cds_test/stat_lazy_list_out.h>
-#include <cds_test/stat_iterable_list_out.h>
 
 namespace set {
 
@@ -167,27 +165,6 @@ namespace set {
         typedef MichaelHashSet< rcu_shb, typename ll::LazyList_RCU_SHB_less_seqcst, traits_MichaelSet > MichaelSet_Lazy_RCU_SHB_less_seqcst;
 #endif
 
-
-        // ***************************************************************************
-        // MichaelHashSet based on IterableList
-
-        typedef iterable_list_type< Key, Val > il;
-
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp, traits_MichaelSet > MichaelSet_Iterable_HP_cmp;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp, traits_MichaelSet > MichaelSet_Iterable_DHP_cmp;
-
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_cmp_stat, traits_MichaelSet > MichaelSet_Iterable_HP_cmp_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_cmp_stat, traits_MichaelSet > MichaelSet_Iterable_DHP_cmp_stat;
-
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less, traits_MichaelSet > MichaelSet_Iterable_HP_less;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less, traits_MichaelSet > MichaelSet_Iterable_DHP_less;
-
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_stat, traits_MichaelSet > MichaelSet_Iterable_HP_less_stat;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_stat, traits_MichaelSet > MichaelSet_Iterable_DHP_less_stat;
-
-        typedef MichaelHashSet< cds::gc::HP, typename il::IterableList_HP_less_seqcst, traits_MichaelSet > MichaelSet_Iterable_HP_less_seqcst;
-        typedef MichaelHashSet< cds::gc::DHP, typename il::IterableList_DHP_less_seqcst, traits_MichaelSet > MichaelSet_Iterable_DHP_less_seqcst;
-
     };
 
     template <typename GC, typename T, typename Traits>
@@ -219,15 +196,8 @@ namespace set {
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less,       key_type, value_type ) \
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHT_less_stat,  key_type, value_type ) \
 
-#   define CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp,        key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp_stat,   key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less,       key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less_stat,  key_type, value_type ) \
-
 #else
 #   define CDSSTRESS_MichaelSet_SHRCU_1( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type )
 #endif
 
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
@@ -241,16 +211,8 @@ namespace set {
         CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Lazy_RCU_SHB_less_stat,  key_type, value_type ) \
         CDSSTRESS_MichaelSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
 
-#   define CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_cmp,        key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_cmp_stat,   key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHT_less,       key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_RCU_SHB_less_stat,  key_type, value_type ) \
-        CDSSTRESS_MichaelIterableSet_SHRCU_1( fixture, test_case, key_type, value_type ) \
-
 #else
 #   define CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_MichaelIterableSet_SHRCU( fixture, test_case, key_type, value_type )
 #endif
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL > 0
@@ -282,17 +244,10 @@ namespace set {
         \
         CDSSTRESS_MichaelSet_SHRCU( fixture, test_case, key_type, value_type ) \
 
-#   define CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp,            key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp_stat,        key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less,            key_type, value_type ) \
-        CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less_stat,      key_type, value_type ) \
-
 
 #else
 #   define CDSSTRESS_MichaelSet_HP_1( fixture, test_case, key_type, value_type )
 #   define CDSSTRESS_MichaelSet_RCU_1( fixture, test_case, key_type, value_type )
-#   define CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type )
 #endif
 
 
@@ -329,12 +284,5 @@ namespace set {
 #define CDSSTRESS_MichaelSet( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelSet_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelSet_RCU( fixture, test_case, key_type, value_type ) \
-
-#define CDSSTRESS_MichaelIterableSet( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_cmp,             key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_cmp_stat,       key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_DHP_less,           key_type, value_type ) \
-    CDSSTRESS_MichaelSet_case( fixture, test_case, MichaelSet_Iterable_HP_less_stat,       key_type, value_type ) \
-    CDSSTRESS_MichaelIterableSet_1( fixture, test_case, key_type, value_type ) \
 
 #endif // #ifndef CDSUNIT_SET_TYPE_MICHAEL_H

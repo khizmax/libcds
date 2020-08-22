@@ -4,8 +4,6 @@ set(CDSSTRESS_SET_ITER_ERASE_SOURCES
     ../../main.cpp
     set_iter_erase.cpp
     set_iter_erase_feldman_hashset.cpp
-    set_iter_erase_michael.cpp
-    set_iter_erase_split.cpp
 )
 
 include_directories(

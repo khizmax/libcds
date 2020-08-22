@@ -9,6 +9,5 @@
 namespace set {
 
     CDSSTRESS_MichaelSet( Set_DelOdd_LF, run_test_extract, key_thread, size_t )
-    CDSSTRESS_MichaelIterableSet( Set_DelOdd_LF, run_test_extract, key_thread, size_t )
 
 } // namespace set

@@ -9,6 +9,5 @@
 namespace set {
 
     CDSSTRESS_SplitListSet( Set_InsDel_func_LF, run_test, size_t, value )
-    CDSSTRESS_SplitListIterableSet( Set_InsDel_func_LF, run_test, size_t, value )
 
 } // namespace set

@@ -2,20 +2,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# IterableList
-set(UNIT_LIST_ITERABLE unit-list-iterable)
-set(UNIT_LIST_ITERABLE_SOURCES
-    ../main.cpp
-    iterable_hp.cpp
-    iterable_dhp.cpp
-    kv_iterable_hp.cpp
-    kv_iterable_dhp.cpp
-)
-add_executable(${UNIT_LIST_ITERABLE} ${UNIT_LIST_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_LIST_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_LIST_ITERABLE})
-add_test(NAME ${UNIT_LIST_ITERABLE} COMMAND ${UNIT_LIST_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 # LazyList
 set(UNIT_LIST_LAZY unit-list-lazy)
 set(UNIT_LIST_LAZY_SOURCES
@@ -67,7 +53,6 @@ add_test(NAME ${UNIT_LIST_MICHAEL} COMMAND ${UNIT_LIST_MICHAEL} WORKING_DIRECTOR
 
 add_custom_target( unit-list
     DEPENDS
-        ${UNIT_LIST_ITERABLE}
         ${UNIT_LIST_LAZY}
         ${UNIT_LIST_MICHAEL}
 )

@@ -7,7 +7,6 @@
 #define CDSLIB_INTRUSIVE_MICHAEL_SET_H
 
 #include <cds/intrusive/details/michael_set_base.h>
-#include <cds/intrusive/details/iterable_list_base.h>
 #include <memory>
 
 namespace cds { namespace intrusive {
@@ -27,7 +26,7 @@ namespace cds { namespace intrusive {
         Template parameters are:
         - \p GC - Garbage collector used. Note the \p GC must be the same as the GC used for \p OrderedList
         - \p OrderedList - ordered list implementation used as bucket for hash set, possible implementations:
-            \p MichaelList, \p LazyList, \p IterableList.
+            \p MichaelList, \p LazyList.
             The intrusive ordered list implementation specifies the type \p T stored in the hash-set, the reclamation
             schema \p GC used by hash-set, the comparison functor for the type \p T and other features specific for
             the ordered list.
@@ -289,7 +288,6 @@ namespace cds { namespace intrusive {
               However, in case of concurrent deleting operations it is no guarantee that you iterate all item in the set.
               Moreover, a crash is possible when you try to iterate the next element that has been deleted by concurrent thread.
               Use this iterator on the concurrent container for debugging purpose only.
-            - for \p IterableList: iterator is thread-safe. You may use it freely in concurrent environment.
         */
         typedef michael_set::details::iterator< internal_bucket_type, false > iterator;
 
@@ -445,14 +443,6 @@ namespace cds { namespace intrusive {
                 \ref cds_intrusive_LazyList_hp "LazyList" provides exclusive access to inserted item and does not require any node-level
                 synchronization.
 
-            <b>for \p IterableList</b>
-                \code
-                void func( value_type& val, value_type * old );
-                \endcode
-                where
-                - \p val - argument \p val passed into the \p %update() function
-                - \p old - old value that will be retired. If new item has been inserted then \p old is \p nullptr.
-
             Returns <tt> std::pair<bool, bool> </tt> where \p first is \p true if operation is successful,
             \p second is \p true if new item has been added or \p false if the item with \p key
             already is in the set.
@@ -473,35 +463,6 @@ namespace cds { namespace intrusive {
             return update( val, func, true );
         }
         //@endcond
-
-        /// Inserts or updates the node (only for \p IterableList)
-        /**
-            The operation performs inserting or changing data with lock-free manner.
-
-            If the item \p val is not found in the set, then \p val is inserted iff \p bAllowInsert is \p true.
-            Otherwise, the current element is changed to \p val, the old element will be retired later
-            by call \p Traits::disposer.
-
-            Returns std::pair<bool, bool> where \p first is \p true if operation is successful,
-            \p second is \p true if \p val has been added or \p false if the item with that key
-            already in the set.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        std::pair<bool, bool> upsert( value_type& val, bool bAllowInsert = true )
-#else
-        template <typename Q>
-        typename std::enable_if<
-            std::is_same< Q, value_type>::value && is_iterable_list< ordered_list >::value,
-            std::pair<bool, bool>
-        >::type
-        upsert( Q& val, bool bAllowInsert = true )
-#endif
-        {
-            std::pair<bool, bool> bRet = bucket( val ).upsert( val, bAllowInsert );
-            if ( bRet.second )
-                ++m_ItemCounter;
-            return bRet;
-        }
 
         /// Unlinks the item \p val from the set
         /**
@@ -592,34 +553,6 @@ namespace cds { namespace intrusive {
         bool erase_with( Q const& key, Less pred, Func f )
         {
             if ( bucket( key ).erase_with( key, pred, f )) {
-                --m_ItemCounter;
-                return true;
-            }
-            return false;
-        }
-
-        /// Deletes the item pointed by iterator \p iter (only for \p IterableList based set)
-        /**
-            Returns \p true if the operation is successful, \p false otherwise.
-            The function can return \p false if the node the iterator points to has already been deleted
-            by other thread.
-
-            The function does not invalidate the iterator, it remains valid and can be used for further traversing.
-
-            @note \p %erase_at() is supported only for \p %MichaelHashSet based on \p IterableList.
-        */
-#ifdef CDS_DOXYGEN_INVOKED
-        bool erase_at( iterator const& iter )
-#else
-        template <typename Iterator>
-        typename std::enable_if< std::is_same<Iterator, iterator>::value && is_iterable_list< ordered_list >::value, bool >::type
-        erase_at( Iterator const& iter )
-#endif
-        {
-            assert( iter != end());
-            assert( iter.bucket() != nullptr );
-
-            if ( iter.bucket()->erase_at( iter.underlying_iterator())) {
                 --m_ItemCounter;
                 return true;
             }
@@ -717,39 +650,6 @@ namespace cds { namespace intrusive {
         }
         //@endcond
 
-        /// Finds \p key and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q,Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find( Q& key )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@cond
-        template <typename Q>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find( Q const& key )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find( key );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@endcond
-
 
         /// Finds the key \p key using \p pred predicate for searching
         /**
@@ -768,43 +668,6 @@ namespace cds { namespace intrusive {
         bool find_with( Q const& key, Less pred, Func f )
         {
             return bucket( key ).find_with( key, pred, f );
-        }
-        //@endcond
-
-        /// Finds \p key using \p pred predicate and returns iterator pointed to the item found (only for \p IterableList)
-        /**
-            The function is an analog of \p find(Q&) but \p pred is used for key comparing.
-            \p Less functor has the interface like \p std::less.
-            \p pred must imply the same element order as the comparator used for building the set.
-
-            If \p key is not found the function returns \p end().
-
-            @note This function is supported only for the set based on \p IterableList
-        */
-        template <typename Q, typename Less>
-#ifdef CDS_DOXYGEN_INVOKED
-        iterator
-#else
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-#endif
-        find_with( Q& key, Less pred )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
-        }
-        //@cond
-        template <typename Q, typename Less>
-        typename std::enable_if< std::is_same<Q, Q>::value && is_iterable_list< ordered_list >::value, iterator >::type
-        find_with( Q const& key, Less pred )
-        {
-            internal_bucket_type& b = bucket( key );
-            typename internal_bucket_type::iterator it = b.find_with( key, pred );
-            if ( it == b.end())
-                return end();
-            return iterator( it, &b, bucket_end());
         }
         //@endcond
 

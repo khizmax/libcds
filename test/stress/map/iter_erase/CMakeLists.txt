@@ -4,8 +4,6 @@ set(CDSSTRESS_MAP_ITER_ERASE_SOURCES
     ../../main.cpp
     map_iter_erase.cpp
     map_iter_erase_feldman_hashmap.cpp
-    map_iter_erase_michael.cpp
-    map_iter_erase_split.cpp
 )
 
 include_directories(

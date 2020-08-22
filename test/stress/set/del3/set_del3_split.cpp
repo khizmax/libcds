@@ -9,7 +9,5 @@
 namespace set {
 
     CDSSTRESS_SplitListSet( Set_Del3_LF, run_test_extract, key_thread, size_t )
-    CDSSTRESS_SplitListIterableSet( Set_Del3_LF, run_test_extract, key_thread, size_t )
-
 
 } // namespace set

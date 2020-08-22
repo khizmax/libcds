@@ -9,6 +9,5 @@
 namespace map {
 
     CDSSTRESS_SplitListMap( Map_InsDel_func_LF, run_test, size_t, Map_InsDel_func::value_type )
-    CDSSTRESS_SplitListIterableMap( Map_InsDel_func_LF, run_test, size_t, Map_InsDel_func::value_type )
 
 } // namespace map

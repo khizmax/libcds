@@ -8,7 +8,6 @@
 
 #include "map_type_michael_list.h"
 #include "map_type_lazy_list.h"
-#include "map_type_iterable_list.h"
 
 #include <cds/container/michael_map.h>
 #include <cds/container/michael_map_rcu.h>
@@ -195,26 +194,6 @@ namespace map {
         typedef MichaelHashMap< rcu_shb, typename ll::LazyList_RCU_SHB_less_seqcst, traits_MichaelMap_hash > MichaelMap_Lazy_RCU_SHB_less_seqcst;
 #endif
 
-
-        // ***************************************************************************
-        // MichaelHashMap based on IterableKVList
-        typedef iterable_list_type< Key, Value > il;
-
-        typedef MichaelHashMap< cds::gc::HP,  typename il::IterableList_HP_cmp,  traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp;
-        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp;
-
-        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_cmp_stat, traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp_stat;
-        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp_stat, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp_stat;
-
-        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_less, traits_MichaelMap_hash > MichaelMap_Iterable_HP_less;
-        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_less, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_less;
-
-        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_less_stat, traits_MichaelMap_hash > MichaelMap_Iterable_HP_less_stat;
-        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_less_stat, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_less_stat;
-
-        typedef MichaelHashMap< cds::gc::HP, typename il::IterableList_HP_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_HP_cmp_seqcst;
-        typedef MichaelHashMap< cds::gc::DHP, typename il::IterableList_DHP_cmp_seqcst, traits_MichaelMap_hash > MichaelMap_Iterable_DHP_cmp_seqcst;
-
     };
 }   // namespace map
 
@@ -276,9 +255,6 @@ namespace map {
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_cmp_seqcst,         key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_seqcst,         key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less_seqcst,        key_type, value_type ) \
-        \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_seqcst,      key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_seqcst,     key_type, value_type ) \
 
 #   define  CDSSTRESS_MichaelMap_RCU_2( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_RCU_GPI_cmp_seqcst,          key_type, value_type ) \
@@ -307,12 +283,6 @@ namespace map {
 
 #if defined(CDS_STRESS_TEST_LEVEL) && CDS_STRESS_TEST_LEVEL == 1
 
-#   define CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp,            key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp_stat,        key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less,            key_type, value_type ) \
-        CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less_stat,      key_type, value_type ) \
-
 #   define CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_DHP_cmp,                     key_type, value_type ) \
         CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp_stat,                 key_type, value_type ) \
@@ -340,18 +310,11 @@ namespace map {
         CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type ) \
 
 #else
-#   define CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_RCU_1( fixture, test_case, key_type, value_type )
 #   define  CDSSTRESS_MichaelMap_1( fixture, test_case, key_type, value_type )
 #endif
 
-#define CDSSTRESS_MichaelMap_Iterable( fixture, test_case, key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_cmp,             key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_cmp_stat,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_DHP_less,           key_type, value_type ) \
-    CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Iterable_HP_less_stat,       key_type, value_type ) \
-    CDSSTRESS_MichaelMap_Iterable_1( fixture, test_case, key_type, value_type ) \
 
 #define CDSSTRESS_MichaelMap_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_HP_cmp,                      key_type, value_type ) \
@@ -364,7 +327,6 @@ namespace map {
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_DHP_less,               key_type, value_type ) \
     CDSSTRESS_MichaelMap_case( fixture, test_case, MichaelMap_Lazy_HP_less_stat,           key_type, value_type ) \
     \
-    CDSSTRESS_MichaelMap_Iterable( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_HP_1( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_MichaelMap_HP_2( fixture, test_case, key_type, value_type ) \
 

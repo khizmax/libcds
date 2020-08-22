@@ -36,22 +36,9 @@ target_link_libraries(${UNIT_ILIST_LAZY} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_ILIST_LAZY})
 add_test(NAME ${UNIT_ILIST_LAZY} COMMAND ${UNIT_ILIST_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# intrusive::IterableList
-set(UNIT_ILIST_ITERABLE unit-ilist-iterable)
-set(UNIT_ILIST_ITERABLE_SOURCES
-    ../main.cpp
-    intrusive_iterable_hp.cpp
-    intrusive_iterable_dhp.cpp
-)
-add_executable(${UNIT_ILIST_ITERABLE} ${UNIT_ILIST_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_ILIST_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_ILIST_ITERABLE})
-add_test(NAME ${UNIT_ILIST_ITERABLE} COMMAND ${UNIT_ILIST_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 
 add_custom_target( unit-ilist
     DEPENDS
-        ${UNIT_ILIST_ITERABLE}
         ${UNIT_ILIST_LAZY}
         ${UNIT_ILIST_MICHAEL}
 )

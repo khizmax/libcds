@@ -202,7 +202,7 @@ namespace map {
                     operator()( bNew, val.first, val.second );
                 }
 
-                // For FeldmanHashMap, IterableList
+                // For FeldmanHashMap
                 template <typename Val>
                 void operator()( Val& cur, Val * old )
                 {

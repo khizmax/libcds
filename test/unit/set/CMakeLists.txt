@@ -35,18 +35,6 @@ target_link_libraries(${UNIT_SET_MICHAEL} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_SET_MICHAEL})
 add_test(NAME ${UNIT_SET_MICHAEL} COMMAND ${UNIT_SET_MICHAEL} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# MichaelSet<IterableList>
-set(UNIT_SET_MICHAEL_ITERABLE unit-set-michael-iterable)
-set(UNIT_SET_MICHAEL_ITERABLE_SOURCES
-    ../main.cpp
-    michael_iterable_hp.cpp
-    michael_iterable_dhp.cpp
-)
-add_executable(${UNIT_SET_MICHAEL_ITERABLE} ${UNIT_SET_MICHAEL_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_SET_MICHAEL_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_SET_MICHAEL_ITERABLE})
-add_test(NAME ${UNIT_SET_MICHAEL_ITERABLE} COMMAND ${UNIT_SET_MICHAEL_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 # MichaelSet<LazyList>
 set(UNIT_SET_MICHAEL_LAZY unit-set-michael-lazy)
 set(UNIT_SET_MICHAEL_LAZY_SOURCES
@@ -115,27 +103,13 @@ target_link_libraries(${UNIT_SET_SPLIT_LAZY} ${CDS_TEST_LIBRARIES})
 strip_binary(${UNIT_SET_SPLIT_LAZY})
 add_test(NAME ${UNIT_SET_SPLIT_LAZY} COMMAND ${UNIT_SET_SPLIT_LAZY} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-# SplitListSet<IterableList>
-set(UNIT_SET_SPLIT_ITERABLE unit-set-split-iterable)
-set(UNIT_SET_SPLIT_ITERABLE_SOURCES
-    ../main.cpp
-    split_iterable_hp.cpp
-    split_iterable_dhp.cpp
-)
-add_executable(${UNIT_SET_SPLIT_ITERABLE} ${UNIT_SET_SPLIT_ITERABLE_SOURCES})
-target_link_libraries(${UNIT_SET_SPLIT_ITERABLE} ${CDS_TEST_LIBRARIES})
-strip_binary(${UNIT_SET_SPLIT_ITERABLE})
-add_test(NAME ${UNIT_SET_SPLIT_ITERABLE} COMMAND ${UNIT_SET_SPLIT_ITERABLE} WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-
 
 add_custom_target( unit-set
     DEPENDS
         ${UNIT_SET_FELDMAN}
         ${UNIT_SET_MICHAEL}
-        ${UNIT_SET_MICHAEL_ITERABLE}
         ${UNIT_SET_MICHAEL_LAZY}
         ${UNIT_SET_SKIP}
         ${UNIT_SET_SPLIT_MICHAEL}
-        ${UNIT_SET_SPLIT_ITERABLE}
         ${UNIT_SET_SPLIT_LAZY}
 )
