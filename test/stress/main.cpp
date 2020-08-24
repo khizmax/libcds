@@ -54,7 +54,9 @@ int main( int argc, char **argv )
                 general_cfg.get_size_t( "hazard_pointer_count", 16 ),
                 general_cfg.get_size_t( "hp_max_thread_count", 0 ),
                 general_cfg.get_size_t( "hp_retired_ptr_count", 0 ),
-                general_cfg.get( "hp_scan_strategy", "inplace" ) == "inplace" ? cds::gc::HP::scan_type::inplace : cds::gc::HP::scan_type::classic
+                general_cfg.get( "hp_scan_strategy", "inplace" ) == "inplace" ?
+                cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager>::scan_type::inplace
+                : cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager>::scan_type::classic
         );
 
         cds::gc::DHP dhpGC(
