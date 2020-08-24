@@ -262,7 +262,7 @@ namespace cds { namespace gc {
                 /// TLS manager type
                 typedef TLSManager  tls_manager;
 
-                static generic_smr *instance_;
+                static generic_smr<tls_manager> *instance_;
 
                 /// Returns the instance of Hazard Pointer \ref generic_smr<TLSManager>. Different for every TLSManager
                 static generic_smr<tls_manager> &instance() {
@@ -408,7 +408,7 @@ namespace cds { namespace gc {
             };
 
             template<typename TLSManager>
-            generic_smr<TLSManager>* generic_smr<TLSManager>::instance_;
+            generic_smr<TLSManager>* generic_smr<TLSManager>::instance_ = nullptr;
 
         } // namespace details
 
