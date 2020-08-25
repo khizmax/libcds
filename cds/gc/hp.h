@@ -412,6 +412,8 @@ namespace cds { namespace gc {
             /**
                 By default, HP stores its data in TLS.
                 This class provides such behavoiur.
+
+                Also this class manages generic_smr<DefaultTLSManager>* singleton.
             */
             class DefaultTLSManager {
 #ifndef CDS_DISABLE_CLASS_TLS_INLINE
