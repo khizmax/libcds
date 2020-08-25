@@ -118,7 +118,7 @@ namespace cds { namespace gc {
             //@cond
             /// Hazard Pointer SMR (Safe Memory Reclamation)
             class basic_smr {
-                template<typename TLSManager>
+                template<typename DataHolder>
                 friend class generic_smr;
                 struct thread_record: thread_data
                 {
@@ -254,28 +254,28 @@ namespace cds { namespace gc {
             };
             //@endcond
 
-            template<typename TLSManager>
+            template<typename DataHolder>
             class generic_smr : public basic_smr
             {
             public:
 
                 /// TLS manager type
-                typedef TLSManager  tls_manager;
+                typedef DataHolder  data_holder;
 
-                /// Returns the instance of Hazard Pointer \ref generic_smr<TLSManager>. Different for every TLSManager
-                static generic_smr<tls_manager> &instance() {
+                /// Returns the instance of Hazard Pointer \ref generic_smr<DataHolder>. Different for every DataHolder
+                static generic_smr<data_holder> &instance() {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
-                    assert( tls_manager::getInstance() != nullptr );
+                    assert( data_holder::getInstance() != nullptr );
 #       else
-                    if (!tls_manager::getInstance())
+                    if (!data_holder::getInstance())
                         CDS_THROW_EXCEPTION(not_initialized());
 #       endif
-                    return *tls_manager::getInstance();
+                    return *data_holder::getInstance();
                 }
 
                 /// Checks if global SMR object is constructed and may be used
                 static bool isUsed() noexcept {
-                    return tls_manager::getInstance() != nullptr;
+                    return data_holder::getInstance() != nullptr;
                 }
 
                 /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
@@ -297,7 +297,7 @@ namespace cds { namespace gc {
                     @note This function may be called <b>BEFORE</b> creating an instance
                     of Hazard Pointer SMR
 
-                    @note The same allocator will be used for all TLSManagers
+                    @note The same allocator will be used for all DataHolders
 
                     SMR object allocates some memory for thread-specific data and for
                     creating SMR object.
@@ -309,7 +309,7 @@ namespace cds { namespace gc {
                 ) {
 
                   // The memory allocation functions may be set BEFORE initializing HP SMR!!!
-                  assert( tls_manager::getInstance() == nullptr );
+                  assert(data_holder::getInstance() == nullptr );
 
                   s_alloc_memory = alloc_func;
                   s_free_memory = free_func;
@@ -337,10 +337,10 @@ namespace cds { namespace gc {
                         size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
                         scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
                 ) {
-                    if ( !tls_manager::getInstance() ) {
-                        tls_manager::setInstance(
-                                            new(s_alloc_memory(sizeof(generic_smr<tls_manager>)))
-                                            generic_smr<tls_manager>(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType)
+                    if ( !data_holder::getInstance() ) {
+                        data_holder::setInstance(
+                                            new(s_alloc_memory(sizeof(generic_smr<data_holder>)))
+                                            generic_smr<data_holder>(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType)
                                         );
                     }
                 }
@@ -355,7 +355,7 @@ namespace cds { namespace gc {
                     construct(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType);
                 }
 
-                /// Destroys global instance of \ref generic_smr<TLSManager>
+                /// Destroys global instance of \ref generic_smr<DataHolder>
                 /**
                     The parameter \p bDetachAll should be used carefully: if its value is \p true,
                     then the object destroyed automatically detaches all attached threads. This feature
@@ -365,13 +365,13 @@ namespace cds { namespace gc {
                 static void destruct(
                         bool bDetachAll = false     ///< Detach all threads
                 ) {
-                    if ( tls_manager::getInstance() ) {
+                    if ( data_holder::getInstance() ) {
                         if ( bDetachAll )
-                            tls_manager::getInstance()->detach_all_thread();
+                            data_holder::getInstance()->detach_all_thread();
 
-                        tls_manager::getInstance()->~generic_smr<tls_manager>();
-                        s_free_memory( tls_manager::getInstance() );
-                        tls_manager::setInstance(nullptr);
+                        data_holder::getInstance()->~generic_smr<data_holder>();
+                        s_free_memory(data_holder::getInstance() );
+                        data_holder::setInstance(nullptr);
                     }
                 }
 
@@ -385,7 +385,7 @@ namespace cds { namespace gc {
                 /// Returns thread-local data for the current thread
                 static thread_data* tls()
                 {
-                    thread_data* data = tls_manager::getTLS();
+                    thread_data* data = data_holder::getTLS();
                     assert( data != nullptr );
                     return data;
                 }
@@ -393,38 +393,37 @@ namespace cds { namespace gc {
                 /// Attach current thread to HP
                 static void attach_thread()
                 {
-                    if ( !tls_manager::getTLS() )
-                        tls_manager::setTLS(instance().alloc_thread_data());
+                    if ( !data_holder::getTLS() )
+                        data_holder::setTLS(instance().alloc_thread_data());
                 }
 
                 /// Detach current thread from HP
                 static void detach_thread()
                 {
-                    thread_data* rec = tls_manager::getTLS();
+                    thread_data* rec = data_holder::getTLS();
                     if ( rec ) {
-                        tls_manager::setTLS(nullptr);
+                        data_holder::setTLS(nullptr);
                         instance().free_thread_data(static_cast<thread_record*>( rec ), true );
                     }
                 }
             };
 
-            /// Default TLS manager
+            /// Default Data Holder
             /**
                 By default, HP stores its data in TLS.
+                Also HP stores generic_smr<DataHolder>* instance as singleton.
                 This class provides such behavoiur.
-
-                Also this class manages generic_smr<DefaultTLSManager>* singleton.
             */
-            class DefaultTLSManager {
+            class DefaultDataHolder {
 #ifndef CDS_DISABLE_CLASS_TLS_INLINE
                 // GCC, CLang
             public:
-                /// Get generic_smr<DefaultTLSManager> pointer
-                static generic_smr<DefaultTLSManager>* getInstance() {
+                /// Get generic_smr<DefaultDataHolder> pointer
+                static generic_smr<DefaultDataHolder>* getInstance() {
                     return instance_;
                 }
-                /// Set generic_smr<DefaultTLSManager> pointer
-                static void setInstance(generic_smr<DefaultTLSManager>* new_instance) {
+                /// Set generic_smr<DefaultDataHolder> pointer
+                static void setInstance(generic_smr<DefaultDataHolder>* new_instance) {
                     instance_ = new_instance;
                 }
                 /// Get HP data for current thread
@@ -443,13 +442,13 @@ namespace cds { namespace gc {
                 //@endcond
 
                 //@cond
-                static generic_smr<DefaultTLSManager>* instance_;
+                static generic_smr<DefaultDataHolder>* instance_;
                 //@endcond
 #else
                 // MSVC
     public:
-        static CDS_EXPORT_API generic_smr<DefaultTLSManager>* getInstance() noexcept;
-        static CDS_EXPORT_API void setInstance(generic_smr<DefaultTLSManager>*) noexcept;
+        static CDS_EXPORT_API generic_smr<DefaultDataHolder>* getInstance() noexcept;
+        static CDS_EXPORT_API void setInstance(generic_smr<DefaultDataHolder>*) noexcept;
         static CDS_EXPORT_API thread_data* getTLS() noexcept;
         static CDS_EXPORT_API void setTLS(thread_data*) noexcept;
 #endif
@@ -457,10 +456,10 @@ namespace cds { namespace gc {
 
             //@cond
             // Strange thread manager for testing purpose only!
-            class StrangeTLSManager {
+            class StrangeDataHolder {
             public:
-                static CDS_EXPORT_API generic_smr<StrangeTLSManager>* getInstance();
-                static CDS_EXPORT_API void setInstance(generic_smr<StrangeTLSManager>*);
+                static CDS_EXPORT_API generic_smr<StrangeDataHolder>* getInstance();
+                static CDS_EXPORT_API void setInstance(generic_smr<StrangeDataHolder>*);
                 static CDS_EXPORT_API thread_data* getTLS();
                 static CDS_EXPORT_API void setTLS(thread_data*);
             };
@@ -469,12 +468,12 @@ namespace cds { namespace gc {
 
         //@cond
         // for backward compatibility
-        typedef details::generic_smr<details::DefaultTLSManager> smr;
+        typedef details::generic_smr<details::DefaultDataHolder> smr;
         typedef smr GarbageCollector;
         //@endcond
 
-        template<typename TLSManager>
-        using custom_smr = details::generic_smr<TLSManager>;
+        template<typename DataHolder>
+        using custom_smr = details::generic_smr<DataHolder>;
     } // namespace cds::gc::hp
 
     namespace details {
@@ -493,16 +492,16 @@ namespace cds { namespace gc {
             by contructing \p %cds::gc::HP object in beginning of your \p main().
             See \ref cds_how_to_use "How to use" section for details how to apply SMR schema.
         */
-        template<typename TLSManager>
+        template<typename DataHolder>
         class generic_HP
         {
         public:
             /// TLS manager type
-            using tls_manager = TLSManager;
+            using data_holder = DataHolder;
 
         private:
             //@cond
-            using hp_implementation = hp::details::generic_smr<tls_manager>;
+            using hp_implementation = hp::details::generic_smr<data_holder>;
             //@endcond
 
         public:
@@ -1367,13 +1366,13 @@ namespace cds { namespace gc {
         };
     } // namespace cds::gc::details
 
-    /// Default Hazard Pointer schema with \p %hp::details::DefaultTLSManager
-    typedef details::generic_HP<hp::details::DefaultTLSManager> HP;
+    /// Default Hazard Pointer schema with \p %hp::details::DefaultDataHolder
+    typedef details::generic_HP<hp::details::DefaultDataHolder> HP;
 
 
-    /// Custom Hazard Pointer schema with custom-provided \p TLSManager
-    template<typename TLSManager>
-    using custom_HP = details::generic_HP<TLSManager>;
+    /// Custom Hazard Pointer schema with custom-provided \p DataHolder
+    template<typename DataHolder>
+    using custom_HP = details::generic_HP<DataHolder>;
 
 }} // namespace cds::gc
 

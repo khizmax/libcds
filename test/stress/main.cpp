@@ -41,7 +41,7 @@ int main( int argc, char **argv )
 
         cds_test::config const& general_cfg = cds_test::stress_fixture::get_config( "General" );
 
-        // Init SMR DefaultTLSManagers
+        // Init SMR DefaultDataHolder
         cds::gc::HP hzpGC(
             general_cfg.get_size_t( "hazard_pointer_count", 16 ),
             general_cfg.get_size_t( "hp_max_thread_count", 0 ),
@@ -49,14 +49,14 @@ int main( int argc, char **argv )
             general_cfg.get( "hp_scan_strategy", "inplace" ) == "inplace" ? cds::gc::HP::scan_type::inplace : cds::gc::HP::scan_type::classic
         );
 
-        // Init SMR StrangeTLSManagers
-        cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager> hzpGCStrange(
+        // Init SMR StrangeDataHolder
+        cds::gc::custom_HP<cds::gc::hp::details::StrangeDataHolder> hzpGCStrange(
                 general_cfg.get_size_t( "hazard_pointer_count", 16 ),
                 general_cfg.get_size_t( "hp_max_thread_count", 0 ),
                 general_cfg.get_size_t( "hp_retired_ptr_count", 0 ),
                 general_cfg.get( "hp_scan_strategy", "inplace" ) == "inplace" ?
-                cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager>::scan_type::inplace
-                : cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager>::scan_type::classic
+                cds::gc::custom_HP<cds::gc::hp::details::StrangeDataHolder>::scan_type::inplace
+                : cds::gc::custom_HP<cds::gc::hp::details::StrangeDataHolder>::scan_type::classic
         );
 
         cds::gc::DHP dhpGC(
@@ -83,11 +83,11 @@ int main( int argc, char **argv )
 #endif // CDSUNIT_USE_URCU
 
         cds::threading::Manager::attachThread();
-        cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::attach_thread();
+        cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::attach_thread();
 
         result =  RUN_ALL_TESTS();
 
-        cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::detach_thread();
+        cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::detach_thread();
         cds::threading::Manager::detachThread();
     }
 
