@@ -262,22 +262,20 @@ namespace cds { namespace gc {
                 /// TLS manager type
                 typedef TLSManager  tls_manager;
 
-                static generic_smr<tls_manager> *instance_;
-
                 /// Returns the instance of Hazard Pointer \ref generic_smr<TLSManager>. Different for every TLSManager
                 static generic_smr<tls_manager> &instance() {
 #       ifdef CDS_DISABLE_SMR_EXCEPTION
-                    assert( instance_ != nullptr );
+                    assert( tls_manager::getInstance() != nullptr );
 #       else
-                    if (!instance_)
+                    if (!tls_manager::getInstance())
                         CDS_THROW_EXCEPTION(not_initialized());
 #       endif
-                    return *instance_;
+                    return *tls_manager::getInstance();
                 }
 
                 /// Checks if global SMR object is constructed and may be used
                 static bool isUsed() noexcept {
-                    return instance_ != nullptr;
+                    return tls_manager::getInstance() != nullptr;
                 }
 
                 /// Checks that required hazard pointer count \p nRequiredCount is less or equal then max hazard pointer count
@@ -311,7 +309,7 @@ namespace cds { namespace gc {
                 ) {
 
                   // The memory allocation functions may be set BEFORE initializing HP SMR!!!
-                  assert( instance_ == nullptr );
+                  assert( tls_manager::getInstance() == nullptr );
 
                   s_alloc_memory = alloc_func;
                   s_free_memory = free_func;
@@ -339,8 +337,11 @@ namespace cds { namespace gc {
                         size_t nMaxRetiredPtrCount = 0, ///< Capacity of the array of retired objects for the thread
                         scan_type nScanType = inplace   ///< Scan type (see \ref scan_type enum)
                 ) {
-                    if ( !instance_ ) {
-                        instance_ = new( s_alloc_memory(sizeof(generic_smr<tls_manager>))) generic_smr<tls_manager>(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
+                    if ( !tls_manager::getInstance() ) {
+                        tls_manager::setInstance(
+                                            new(s_alloc_memory(sizeof(generic_smr<tls_manager>)))
+                                            generic_smr<tls_manager>(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType)
+                                        );
                     }
                 }
 
@@ -364,13 +365,13 @@ namespace cds { namespace gc {
                 static void destruct(
                         bool bDetachAll = false     ///< Detach all threads
                 ) {
-                    if ( instance_ ) {
+                    if ( tls_manager::getInstance() ) {
                         if ( bDetachAll )
-                            instance_->detach_all_thread();
+                            tls_manager::getInstance()->detach_all_thread();
 
-                        instance_->~generic_smr<tls_manager>();
-                        s_free_memory( instance_ );
-                        instance_ = nullptr;
+                        tls_manager::getInstance()->~generic_smr<tls_manager>();
+                        s_free_memory( tls_manager::getInstance() );
+                        tls_manager::setInstance(nullptr);
                     }
                 }
 
@@ -407,9 +408,61 @@ namespace cds { namespace gc {
                 }
             };
 
-            template<typename TLSManager>
-            generic_smr<TLSManager>* generic_smr<TLSManager>::instance_ = nullptr;
+            /// Default TLS manager
+            /**
+                By default, HP stores its data in TLS.
+                This class provides such behavoiur.
+            */
+            class DefaultTLSManager {
+#ifndef CDS_DISABLE_CLASS_TLS_INLINE
+                // GCC, CLang
+            public:
+                /// Get generic_smr<DefaultTLSManager> pointer
+                static generic_smr<DefaultTLSManager>* getInstance() {
+                    return instance_;
+                }
+                /// Set generic_smr<DefaultTLSManager> pointer
+                static void setInstance(generic_smr<DefaultTLSManager>* new_instance) {
+                    instance_ = new_instance;
+                }
+                /// Get HP data for current thread
+                static thread_data* getTLS()
+                {
+                    return tls_;
+                }
+                /// Set HP data for current thread
+                static void setTLS(thread_data* td)
+                {
+                    tls_ = td;
+                }
+            private:
+                //@cond
+                static thread_local thread_data* tls_;
+                //@endcond
 
+                //@cond
+                static generic_smr<DefaultTLSManager>* instance_;
+                //@endcond
+#else
+                // MSVC
+    public:
+        static CDS_EXPORT_API generic_smr<DefaultTLSManager>* getInstance() noexcept;
+        static CDS_EXPORT_API void setInstance(generic_smr<DefaultTLSManager>*) noexcept;
+        static CDS_EXPORT_API thread_data* getTLS() noexcept;
+        static CDS_EXPORT_API void setTLS(thread_data*) noexcept;
+#endif
+            };
+
+            //@cond
+            // Strange thread manager for testing purpose only!
+            class StrangeTLSManager {
+            public:
+                static CDS_EXPORT_API generic_smr<StrangeTLSManager>* getInstance();
+                static CDS_EXPORT_API void setInstance(generic_smr<StrangeTLSManager>*);
+                static CDS_EXPORT_API thread_data* getTLS();
+                static CDS_EXPORT_API void setTLS(thread_data*);
+            };
+            //@endcond
         } // namespace details
 
         //@cond
