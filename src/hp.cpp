@@ -67,88 +67,10 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
 #endif
 
-    namespace {
-        void * default_alloc_memory( size_t size )
-        {
-            return new uintptr_t[( size + sizeof( uintptr_t ) - 1 ) / sizeof( uintptr_t) ];
-        }
-
-        void default_free_memory( void* p )
-        {
-            delete[] reinterpret_cast<uintptr_t*>( p );
-        }
-
-        void* ( *s_alloc_memory )( size_t size ) = default_alloc_memory;
-        void ( *s_free_memory )( void* p ) = default_free_memory;
-
-        template <typename T>
-        class allocator
-        {
-        public:
-            typedef T   value_type;
-
-            allocator() {}
-            allocator( allocator const& ) {}
-            template <class U>
-            explicit allocator( allocator<U> const& ) {}
-
-            static T* allocate( size_t nCount )
-            {
-                return reinterpret_cast<T*>( s_alloc_memory( sizeof( value_type ) * nCount ));
-            }
-
-            static void deallocate( T* p, size_t /*nCount*/ )
-            {
-                s_free_memory( reinterpret_cast<void*>( p ));
-            }
-        };
-
-        struct defaults {
-            static const size_t c_nHazardPointerPerThread = 8;
-            static const size_t c_nMaxThreadCount = 100;
-        };
-
-        size_t calc_retired_size( size_t nSize, size_t nHPCount, size_t nThreadCount )
-        {
-            size_t const min_size = nHPCount * nThreadCount;
-            return nSize < min_size ? min_size * 2 : nSize;
-        }
-
-        stat s_postmortem_stat;
-    } // namespace
-
-    /*static*/ CDS_EXPORT_API basic_smr* basic_smr::instance_ = nullptr;
-
-    /*static*/ CDS_EXPORT_API void basic_smr::set_memory_allocator(
-        void* ( *alloc_func )( size_t size ),
-        void( *free_func )( void * p )
-    )
+    size_t calc_retired_size( size_t nSize, size_t nHPCount, size_t nThreadCount )
     {
-        // The memory allocation functions may be set BEFORE initializing HP SMR!!!
-        assert( instance_ == nullptr );
-
-        s_alloc_memory = alloc_func;
-        s_free_memory = free_func;
-    }
-
-
-    /*static*/ CDS_EXPORT_API void basic_smr::construct(size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )
-    {
-        if ( !instance_ ) {
-            instance_ = new( s_alloc_memory(sizeof(basic_smr))) basic_smr(nHazardPtrCount, nMaxThreadCount, nMaxRetiredPtrCount, nScanType );
-        }
-    }
-
-    /*static*/ CDS_EXPORT_API void basic_smr::destruct(bool bDetachAll )
-    {
-        if ( instance_ ) {
-            if ( bDetachAll )
-                instance_->detach_all_thread();
-
-            instance_->~basic_smr();
-            s_free_memory( instance_ );
-            instance_ = nullptr;
-        }
+        size_t const min_size = nHPCount * nThreadCount;
+        return nSize < min_size ? min_size * 2 : nSize;
     }
 
     CDS_EXPORT_API basic_smr::basic_smr(size_t nHazardPtrCount, size_t nMaxThreadCount, size_t nMaxRetiredPtrCount, scan_type nScanType )

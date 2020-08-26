@@ -70,7 +70,7 @@ namespace istack {
         };
     }
 
-    using custom_HP = cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager>;
+    using custom_HP = cds::gc::custom_HP<cds::gc::hp::details::StrangeDataHolder>;
 
     template <typename T>
     struct Types {

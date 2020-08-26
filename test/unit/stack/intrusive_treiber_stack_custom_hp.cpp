@@ -16,7 +16,7 @@ namespace {
     {
         typedef cds_test::IntrusiveTreiberStack base_class;
     protected:
-        typedef cds::gc::custom_HP<cds::gc::hp::details::StrangeTLSManager> gc_type;
+        typedef cds::gc::custom_HP<cds::gc::hp::details::StrangeDataHolder> gc_type;
 
         void SetUp()
         {
@@ -31,16 +31,16 @@ namespace {
             >::type
               > stack_type;
 
-            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::construct( stack_type::c_nHazardPtrCount );
+            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::construct( stack_type::c_nHazardPtrCount );
             //cds::threading::Manager::attachThread();
-            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::attach_thread(); // extra attach
+            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::attach_thread(); // extra attach
         }
 
         void TearDown()
         {
             //cds::threading::Manager::detachThread();
-            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::detach_thread(); // extra detach
-            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeTLSManager>::destruct();
+            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::detach_thread(); // extra detach
+            cds::gc::hp::custom_smr<cds::gc::hp::details::StrangeDataHolder>::destruct();
         }
 
         template <typename Stack>
