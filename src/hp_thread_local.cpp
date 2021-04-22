@@ -36,7 +36,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
 
 
     /*static*/ CDS_EXPORT_API thread_data *StrangeTLSManager::getTLS() {
-        if ((unsigned long) cds::OS::get_current_thread_id() % 2 == 0) { // % 2 with ThreadId structure?
+        if ((uintptr_t) cds::OS::get_current_thread_id() % 2 == 0) { // % 2 with ThreadId structure?
             return tls2_->second;
         } else {
             return tls2_->first;
@@ -44,7 +44,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
     }
 
     /*static*/ CDS_EXPORT_API void StrangeTLSManager::setTLS(thread_data *new_tls) {
-        if ((unsigned long) cds::OS::get_current_thread_id() % 2 == 0) { // % 2 with ThreadId structure?
+        if ((uintptr_t) cds::OS::get_current_thread_id() % 2 == 0) { // % 2 with ThreadId structure?
             tls2_->second = new_tls;
         } else {
             tls2_->first = new_tls;
