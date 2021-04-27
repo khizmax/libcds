@@ -257,5 +257,6 @@ namespace {
     CDSSTRESS_FCStack( stack_push_pop )
     CDSSTRESS_FCDeque( stack_push_pop )
     CDSSTRESS_StdStack( stack_push_pop )
+	CDSSTRESS_WilliamsStack( stack_push_pop )
 
 } // namespace
