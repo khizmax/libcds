@@ -1,7 +1,7 @@
 set(PACKAGE_NAME unit-tree)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
- 
+
 set(CDSGTEST_TREE_SOURCES
     ../main.cpp
     bronson_avltree_map_rcu_gpb.cpp
@@ -31,6 +31,8 @@ set(CDSGTEST_TREE_SOURCES
     intrusive_ellenbintree_rcu_gpi.cpp
     intrusive_ellenbintree_rcu_gpt.cpp
     intrusive_ellenbintree_rcu_shb.cpp
+    intrusive_ellen_bintree_nogc.cpp
+
 )
 
 include_directories(
