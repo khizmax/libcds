@@ -26,6 +26,7 @@ set(CDSSTRESS_SET_INSDELFIND_LOCK_SOURCES
     ../../main.cpp
     set_insdelfind.cpp
     set_insdelfind_cuckoo.cpp
+    set_insdelfind_hopscotch.cpp
     set_insdelfind_std.cpp
     set_insdelfind_striped.cpp
 )

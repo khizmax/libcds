@@ -19,6 +19,11 @@ namespace cds_test {
         struct key_type {
             int nKey;
 
+            operator int() const
+            {
+                return nKey;
+            }
+
             explicit key_type( int n )
                 : nKey( n )
             {}
@@ -160,6 +165,13 @@ namespace cds_test {
                 return v1 > v2.nKey ? 1 : 0;
             }
 
+            int operator ()(int v1, int v2) const
+            {
+                if (v1 < v2)
+                    return -1;
+                return v1 > v2 ? 1 : 0;
+            }
+
             int operator ()( key_type const& v1, std::string const& v2 ) const
             {
                 int n2 = std::stoi( v2 );
@@ -242,6 +254,11 @@ namespace cds_test {
 
         struct other_item {
             int nKey;
+
+            operator int() const
+            {
+                return nKey;
+            }
 
             other_item( int key )
                 : nKey( key )

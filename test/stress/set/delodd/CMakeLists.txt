@@ -6,6 +6,7 @@ set(CDSSTRESS_SET_DELODD_SOURCES
     set_delodd_cuckoo.cpp
     set_delodd_ellentree.cpp
     set_delodd_feldman_hashset.cpp
+    set_delodd_hopscotch.cpp
     set_delodd_michael.cpp
     set_delodd_skip.cpp
     set_delodd_split.cpp

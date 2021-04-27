@@ -102,6 +102,7 @@
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_ellentree_rcu.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_feldman_hashset_hp.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_feldman_hashset_rcu.cpp" />
+    <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_hopscotch.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_michael_hp.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_michael_rcu.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\insdelfind\map_insdelfind_skip_hp.cpp" />
@@ -433,7 +434,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtestd.lib;stress-framework_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;stress-framework_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">

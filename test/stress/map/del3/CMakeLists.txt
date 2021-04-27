@@ -7,6 +7,7 @@ set(CDSSTRESS_MAP_DEL3_SOURCES
     map_del3_cuckoo.cpp
     map_del3_ellentree.cpp
     map_del3_feldman_hashmap.cpp
+    map_del3_hopscotch.cpp
     map_del3_michael.cpp
     map_del3_skip.cpp
     map_del3_split.cpp

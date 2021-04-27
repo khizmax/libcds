@@ -5,6 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCDSUNIT_ENABLE_BOOST_CONTAINER")
 set(CDSGTEST_STRIPED_MAP_SOURCES
     ../main.cpp
     cuckoo_map.cpp
+    hopscotch_hashmap.cpp
     map_boost_flat_map.cpp
     map_boost_list.cpp
     map_boost_map.cpp

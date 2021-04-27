@@ -7,6 +7,7 @@ set(CDSSTRESS_MAP_FIND_STRING_SOURCES
     map_find_string_cuckoo.cpp
     map_find_string_ellentree.cpp
     map_find_string_feldman_hashset.cpp
+    map_find_string_hopscotch.cpp
     map_find_string_michael.cpp
     map_find_string_skip.cpp
     map_find_string_split.cpp

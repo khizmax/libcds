@@ -7,6 +7,7 @@ set(CDSSTRESS_MAP_INSDELFIND_HP_SOURCES
     map_insdelfind_cuckoo.cpp
     map_insdelfind_ellentree_hp.cpp
     map_insdelfind_feldman_hashset_hp.cpp
+    map_insdelfind_hopscotch.cpp
     map_insdelfind_michael_hp.cpp
     map_insdelfind_skip_hp.cpp
     map_insdelfind_split_hp.cpp
