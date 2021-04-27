@@ -92,6 +92,12 @@
     <ClCompile Include="..\..\..\test\unit\queue\weak_ringbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\queue\williams_queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\unit\queue\williams_queue_spsc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\unit\queue\test_generic_queue.h">

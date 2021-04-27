@@ -16,6 +16,8 @@
 #include <cds/container/fcdeque.h>
 #include <cds/container/segmented_queue.h>
 #include <cds/container/weak_ringbuffer.h>
+#include <cds/container/williams_queue.h>
+#include <cds/container/williams_queue_spsc.h>
 
 #include <cds/gc/hp.h>
 #include <cds/gc/dhp.h>
@@ -397,6 +399,28 @@ namespace fc_details{
             >::type
         {};
         typedef cds::container::RWQueue< Value, traits_RWQueue_mutex > RWQueue_mutex;
+
+        // WilliamsQueue
+        typedef cds::container::WilliamsQueue< Value > WilliamsQueue_default;
+
+        struct traits_WilliamsQueue_ic :
+                 public cds::container::williams_queue::make_traits<
+                 cds::opt::item_counter<cds::atomicity::empty_item_counter>
+                 >::type
+        {};
+        
+        typedef cds::container::WilliamsQueue< Value, traits_WilliamsQueue_ic > WilliamsQueue_ic;
+
+        // WilliamsQueueSPSC
+        typedef cds::container::WilliamsQueueSPSC< Value > WilliamsQueueSPSC_default;
+
+        struct traits_WilliamsQueueSPSC_ic :
+                 public cds::container::williams_queue_spsc::make_traits<
+                 cds::opt::item_counter<cds::atomicity::empty_item_counter>
+                 >::type
+        {};
+        
+        typedef cds::container::WilliamsQueueSPSC< Value, traits_WilliamsQueueSPSC_ic > WilliamsQueueSPSC_ic;
 
         // FCQueue
         struct traits_FCQueue_stat:
@@ -835,6 +859,14 @@ namespace cds_test {
     CDSSTRESS_Queue_F( test_fixture, RWQueue_Spin   ) \
     CDSSTRESS_Queue_F( test_fixture, RWQueue_mutex  ) \
     CDSSTRESS_RWQueue_1( test_fixture )
+
+#define CDSSTRESS_WilliamsQueue( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_default ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueue_ic      )
+
+#define CDSSTRESS_WilliamsQueueSPSC( test_fixture ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueueSPSC_default ) \
+    CDSSTRESS_Queue_F( test_fixture, WilliamsQueueSPSC_ic      )
 
 #define CDSSTRESS_SegmentedQueue( test_fixture ) \
     CDSSTRESS_Queue_F( test_fixture, SegmentedQueue_HP_spin         ) \

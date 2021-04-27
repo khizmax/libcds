@@ -149,7 +149,8 @@ namespace {
     CDSSTRESS_FCDeque( queue_pop )
     CDSSTRESS_RWQueue( queue_pop )
     CDSSTRESS_StdQueue( queue_pop )
-
+    CDSSTRESS_WilliamsQueue( queue_pop )
+    
 #undef CDSSTRESS_Queue_F
 #define CDSSTRESS_Queue_F( test_fixture, type_name ) \
     TEST_F( test_fixture, type_name ) \
