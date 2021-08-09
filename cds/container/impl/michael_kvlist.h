@@ -470,6 +470,40 @@ namespace cds { namespace container {
         {
             return update_at( head(), std::forward<K>( key ), f, bAllowInsert );
         }
+
+        /// Updates or inserts data (\p val) by \p key
+        /**
+            The operation performs inserting or replacing the element with lock-free manner.
+
+            If the \p key not found in the list, then the \p val will be inserted iff
+			\p bAllowInsert is \p true.
+            Otherwise, if \p key is found, the functor \p func is called with item found.
+
+            The functor \p Func signature is:
+            \code
+                struct my_functor {
+                    void operator()( bool bNew, value_type& item );
+                };
+            \endcode
+            with arguments:
+            - \p bNew - \p true if the item has been inserted, \p false otherwise
+            - \p item - the item found or inserted
+
+            The functor may change any fields of the \p item.second of \p mapped_type;
+            however, \p func must guarantee that during changing no any other modifications
+            could be made on this item by concurrent threads.
+
+            Returns <tt> std::pair<bool, bool> </tt> where \p first is true if operation is successful,
+            \p second is true if new item has been added or \p false if the item with \p key
+            already exists.
+
+            @warning See \ref cds_intrusive_item_creating "insert item troubleshooting"
+        */
+        template <typename K, typename V, typename Func>
+        std::pair<bool, bool> update( K&& key, V&& val, Func f, bool bAllowInsert = true )
+        {
+            return update_at( head(), std::forward<K>( key ), std::forward<V>( val ), f, bAllowInsert );
+        }
         //@cond
         template <typename K, typename Func>
         CDS_DEPRECATED("ensure() is deprecated, use update()")
@@ -804,18 +838,35 @@ namespace cds { namespace container {
             return insert_node_at( refHead, alloc_node( std::forward<K>(key), std::forward<Args>(args)... ));
         }
 
-        template <typename K, typename Func>
-        std::pair<bool, bool> update_at( head_type& refHead, K&& key, Func f, bool bAllowInsert )
+        template <typename Func>
+        std::pair<bool, bool> update_node_at( head_type& refHead, node_type* pNode, Func f, bool bAllowInsert )
         {
-            scoped_node_ptr pNode( alloc_node( std::forward<K>( key )));
+            scoped_node_ptr p(pNode);
 
             std::pair<bool, bool> ret = base_class::update_at( refHead, *pNode,
                 [&f]( bool bNew, node_type& node, node_type& ){ f( bNew, node.m_Data ); },
                 bAllowInsert );
+
             if ( ret.first && ret.second )
-                pNode.release();
+                p.release();
 
             return ret;
+        }
+
+        template <typename K, typename Func>
+        std::pair<bool, bool> update_at( head_type& refHead, K&& key, Func f, bool bAllowInsert )
+        {
+            node_type* pNode = alloc_node( std::forward<K>( key ));
+
+            return update_node_at( refHead, pNode, f, bAllowInsert );
+        }
+
+        template <typename K, typename V, typename Func>
+        std::pair<bool, bool> update_at( head_type& refHead, K&& key, V&& val, Func f, bool bAllowInsert )
+        {
+            node_type* pNode = alloc_node( std::forward<K>( key ), std::forward<V>( val ));
+
+            return update_node_at( refHead, pNode, f, bAllowInsert );
         }
 
         template <typename K, typename Compare>
