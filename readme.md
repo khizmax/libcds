@@ -1,3 +1,8 @@
+!!! STOP WAR !!!
+===============
+
+
+
 CDS C++ library
 ===============
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7391e3f221244134bd343cdde7b7deb6)](https://app.codacy.com/manual/khizmax/libcds?utm_source=github.com&utm_medium=referral&utm_content=khizmax/libcds&utm_campaign=Badge_Grade_Settings)
