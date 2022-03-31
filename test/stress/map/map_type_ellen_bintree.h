@@ -11,6 +11,7 @@
 #include <cds/container/ellen_bintree_map_rcu.h>
 #include <cds/container/ellen_bintree_map_hp.h>
 #include <cds/container/ellen_bintree_map_dhp.h>
+#include <cds/container/ellen_bintree_map_nogc.h>
 
 #include <cds_test/stat_ellenbintree_out.h>
 #include "framework/ellen_bintree_update_desc_pool.h"
@@ -24,7 +25,7 @@ namespace map {
     public:
         template <typename Config>
         EllenBinTreeMap( Config const& /*cfg*/)
-            : base_class()
+                : base_class()
         {}
 
         std::pair<Key, bool> extract_min_key()
@@ -84,6 +85,12 @@ namespace map {
                 typedef cc::ellen_bintree::internal_node< Key, leaf_node >          internal_node;
                 typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
             };
+
+            struct no_gc {
+                typedef cc::ellen_bintree::map_node<cds::gc::nogc, Key, Value>       leaf_node;
+                typedef cc::ellen_bintree::internal_node< Key, leaf_node >          internal_node;
+                typedef cc::ellen_bintree::update_desc< leaf_node, internal_node >  update_desc;
+            };
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
             struct shb {
                 typedef cc::ellen_bintree::map_node<rcu_shb, Key, Value>            leaf_node;
@@ -97,7 +104,7 @@ namespace map {
                 co::less< less >
                 ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
                 ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
-            >::type
+        >::type
         {};
         struct traits_EllenBinTreeMap_hp : traits_EllenBinTreeMap {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
@@ -123,6 +130,11 @@ namespace map {
             typedef cds::memory::pool_allocator< typename ellen_bintree_props::gpt::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
         };
         typedef EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_gpt > EllenBinTreeMap_rcu_gpt;
+
+        struct traits_EllenBinTreeMap_nogc : traits_EllenBinTreeMap {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::no_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef EllenBinTreeMap<cds::gc::nogc, Key, Value, traits_EllenBinTreeMap_nogc > EllenBinTreeMap_nogc;
 
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits_EllenBinTreeMap_shb : traits_EllenBinTreeMap {
@@ -154,12 +166,12 @@ namespace map {
         struct traits_EllenBinTreeMap_stat: public cc::ellen_bintree::make_set_traits<
                 co::less< less >
                 ,cc::ellen_bintree::update_desc_allocator<
-                    cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
+                        cds::memory::pool_allocator< typename ellen_bintree_props::hp_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor >
                 >
                 ,co::node_allocator< ellen_bintree_pool::internal_node_allocator< int > >
                 ,co::stat< cc::ellen_bintree::stat<> >
                 ,co::item_counter< cds::atomicity::cache_friendly_item_counter >
-            >::type
+        >::type
         {};
 
         struct traits_EllenBinTreeMap_stat_hp : public traits_EllenBinTreeMap_stat
@@ -192,6 +204,13 @@ namespace map {
         };
         typedef EllenBinTreeMap< rcu_gpt, Key, Value, traits_EllenBinTreeMap_stat_gpt > EllenBinTreeMap_rcu_gpt_stat;
 
+        struct traits_EllenBinTreeMap_stat_nogc : public traits_EllenBinTreeMap_stat
+        {
+            typedef cds::memory::pool_allocator< typename ellen_bintree_props::no_gc::update_desc, ellen_bintree_pool::update_desc_pool_accessor > update_desc_allocator;
+        };
+        typedef EllenBinTreeMap< cds::gc::nogc, Key, Value, traits_EllenBinTreeMap_stat_nogc > EllenBinTreeMap_nogc_stat;
+
+
 #ifdef CDS_URCU_SIGNAL_HANDLING_ENABLED
         struct traits_EllenBinTreeMap_stat_shb : public traits_EllenBinTreeMap_stat
         {
@@ -200,7 +219,6 @@ namespace map {
         typedef EllenBinTreeMap< rcu_shb, Key, Value, traits_EllenBinTreeMap_stat_shb > EllenBinTreeMap_rcu_shb_stat;
 #endif
     };
-
     template <typename GC, typename Key, typename T, typename Traits>
     static inline void print_stat( cds_test::property_stream& o, EllenBinTreeMap<GC, Key, T, Traits> const& s )
     {
@@ -242,6 +260,7 @@ namespace map {
     {
         EXPECT_TRUE( m.check_consistency());
     }
+
 }   // namespace map
 
 
@@ -292,8 +311,15 @@ namespace map {
     CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_rcu_gpt_stat,   key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_RCU_1( fixture, test_case, key_type, value_type ) \
 
+#define CDSSTRESS_EllenBinTreeMap_NOGC( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeMap_case( fixture, test_case, EllenBinTreeMap_nogc,        key_type, value_type ) \
+
+
 #define CDSSTRESS_EllenBinTreeMap( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_HP( fixture, test_case, key_type, value_type ) \
     CDSSTRESS_EllenBinTreeMap_RCU( fixture, test_case, key_type, value_type ) \
+
+#define CDSSTRESS_EllenBinTreeMapNOGC( fixture, test_case, key_type, value_type ) \
+    CDSSTRESS_EllenBinTreeMap_NOGC( fixture, test_case, key_type, value_type ) \
 
 #endif // ifndef CDSUNIT_MAP_TYPE_ELLEN_BINTREE_H

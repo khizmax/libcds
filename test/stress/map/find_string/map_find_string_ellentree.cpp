@@ -9,5 +9,6 @@
 namespace map {
 
     CDSSTRESS_EllenBinTreeMap( Map_find_string, run_test, std::string, Map_find_string::value_type )
+    CDSSTRESS_EllenBinTreeMapNOGC( Map_find_string, run_test, std::string, Map_find_string::value_type )
 
 } // namespace map
