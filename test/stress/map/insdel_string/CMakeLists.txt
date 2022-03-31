@@ -6,7 +6,8 @@ set(CDSSTRESS_MAP_INSDEL_STRING_SOURCES
     map_insdel_string_bronsonavltree.cpp
     map_insdel_string_cuckoo.cpp
     map_insdel_string_ellentree.cpp
-    map_insdel_string_feldman_hashset.cpp
+    map_insdel_string_feldman_hashmap.cpp
+    map_insdel_string_hopscotch.cpp
     map_insdel_string_michael.cpp
     map_insdel_string_skip.cpp
     map_insdel_string_split.cpp

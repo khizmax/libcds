@@ -100,6 +100,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_ellentree.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_feldman_hashmap.cpp" />
+    <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_hopscotch.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_michael.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_skip.cpp" />
     <ClCompile Include="..\..\..\test\stress\map\del3\map_del3_split.cpp">
@@ -426,7 +427,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(GTEST_LIB32);$(GTEST_ROOT)/lib/x86;$(BOOST_PATH)/stage32/lib;$(BOOST_PATH)/stage/lib;$(BOOST_PATH)/bin;%(AdditionalLibraryDirectories);$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcds-$(PlatformTarget).lib;gtestd.lib;stress-framework_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcds-$(PlatformTarget)-dbg.lib;gtestd.lib;stress-framework_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">
