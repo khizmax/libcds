@@ -25,12 +25,71 @@ namespace cds {
     namespace container {
         namespace hamt {
 
+            struct LookupResult {
+                enum LookupResultStatus {
+                    NotFound,
+                    Found,
+                    Failed
+                };
+
+                int value;
+                LookupResultStatus status;
+
+                bool operator==(LookupResult b) const {
+                    if ((this->status == NotFound) && (b.status == NotFound)) return true;
+                    if ((this->status == Failed) && (b.status == Failed)) return true;
+                    if ((this->status == Found) && (b.status == Found)) return this->value == b.value;
+                    return false;
+                }
+
+                bool operator!=(LookupResult b) const {
+                    return !(*this == b);
+                }
+            };
+
+            LookupResult createSuccessfulLookupResult(int value) {
+                return {value, LookupResult::Found};
+            }
+
+            static const LookupResult LOOKUP_RESTART{0, LookupResult::Failed};
+
+            struct RemoveResult {
+                enum Status {
+                    Removed,
+                    Failed,
+                    NotFound,
+                };
+
+                int value;
+                Status status;
+
+                bool operator==(RemoveResult rightOperand) const {
+                    if ((status == NotFound) && (rightOperand.status == NotFound)) return true;
+                    if ((status == Failed) && (rightOperand.status == Failed)) return true;
+                    if ((status == Removed) && (rightOperand.status == Removed)) return value == rightOperand.value;
+                    return false;
+                }
+
+                bool operator!=(RemoveResult rightOperand) const {
+                    return !(*this == rightOperand);
+                }
+            };
+
+            const LookupResult LOOKUP_NOT_FOUND{0, LookupResult::NotFound};
+            const RemoveResult REMOVE_NOT_FOUND{0, RemoveResult::NotFound};
+            const RemoveResult REMOVE_RESTART{0, RemoveResult::Failed};
+
+            RemoveResult createSuccessfulRemoveResult(int value) {
+                return {value, RemoveResult::Removed};
+            }
 
         } // namespace hamt
 
 
-        template<typename K, typename V>
+
+        template<class GC, typename K, typename V>
         class Hamt {
+            typedef GC gc;
             typedef K key_type;
             typedef V value_type;
 
@@ -49,18 +108,6 @@ namespace cds {
                     data = data & (~(1 << pos));
                 }
             };
-
-            uint64_t generateSimpleHash(uint64_t key) {
-                return key;
-            }
-
-            uint64_t generateSimpleHash(string key) {
-                uint64_t hash = 0;
-                for (size_t i = 0; i < key.size(); i++) {
-                    hash += key[i] * i;
-                }
-                return hash;
-            }
 
             uint8_t extractHashPartByLevel(uint64_t hash, uint8_t level) {
                 return (hash >> (level * HASH_PIECE_LEN)) & ((1 << HASH_PIECE_LEN) - 1);
@@ -85,6 +132,13 @@ namespace cds {
 
             class SNode : public Node {
             public:
+                static uint64_t generateSimpleHash(string key) {
+                    uint64_t hash = 0;
+                    for (size_t i = 0; i < key.size(); i++) {
+                        hash += key[i] * i;
+                    }
+                    return hash;
+                }
 
                 SNode(key_type k, value_type v) : Node(SNODE) {
                     this->pair.insert({k, v});
@@ -196,64 +250,6 @@ namespace cds {
                 atomic<CNode *> main;
             };
 
-            struct LookupResult {
-                enum LookupResultStatus {
-                    NotFound,
-                    Found,
-                    Failed
-                };
-
-                int value;
-                LookupResultStatus status;
-
-                bool operator==(LookupResult b) const {
-                    if ((this->status == NotFound) && (b.status == NotFound)) return true;
-                    if ((this->status == Failed) && (b.status == Failed)) return true;
-                    if ((this->status == Found) && (b.status == Found)) return this->value == b.value;
-                    return false;
-                }
-
-                bool operator!=(LookupResult b) const {
-                    return !(*this == b);
-                }
-            };
-
-            LookupResult createSuccessfulLookupResult(int value) {
-                return {value, LookupResult::Found};
-            }
-
-            const LookupResult LOOKUP_NOT_FOUND{0, LookupResult::NotFound};
-            const LookupResult LOOKUP_RESTART{0, LookupResult::Failed};
-
-            struct RemoveResult {
-                enum Status {
-                    Removed,
-                    Failed,
-                    NotFound,
-                };
-
-                int value;
-                Status status;
-
-                bool operator==(RemoveResult rightOperand) const {
-                    if ((status == NotFound) && (rightOperand.status == NotFound)) return true;
-                    if ((status == Failed) && (rightOperand.status == Failed)) return true;
-                    if ((status == Removed) && (rightOperand.status == Removed)) return value == rightOperand.value;
-                    return false;
-                }
-
-                bool operator!=(RemoveResult rightOperand) const {
-                    return !(*this == rightOperand);
-                }
-            };
-
-            const RemoveResult REMOVE_NOT_FOUND{0, RemoveResult::NotFound};
-            const RemoveResult REMOVE_RESTART{0, RemoveResult::Failed};
-
-            RemoveResult createSuccessfulRemoveResult(int value) {
-                return {value, RemoveResult::Removed};
-            }
-
             SNode *leftMerge(SNode *node1, SNode *node2) {
                 auto *merged = new SNode(*node1);
                 for (auto &p: node2->pair) {
@@ -348,38 +344,24 @@ namespace cds {
                 return true;
             }
 
-            Hamt() {
-                root = new INode(nullptr);
-            }
-
             Node *getRoot() {
                 return this->root;
             }
 
-            LookupResult lookup(key_type key) {
+            hamt::RemoveResult remove(key_type key) {
                 while (true) {
                     if (root->main.load() == nullptr) {
-                        return LOOKUP_NOT_FOUND;
-                    } else {
-                        LookupResult res = lookup(root, nullptr, key, generateSimpleHash(key), 0);
-                        if (res != LOOKUP_RESTART) {
-                            return res;
-                        }
+                        return hamt::REMOVE_NOT_FOUND;
                     }
-                }
-            }
-
-            RemoveResult remove(key_type key) {
-                while (true) {
-                    if (root->main.load() == nullptr) {
-                        return REMOVE_NOT_FOUND;
-                    }
-                    RemoveResult res = remove(root, nullptr, key, generateSimpleHash(key), 0);
-                    if (res != REMOVE_RESTART) {
+                    hamt::RemoveResult res = remove(root, nullptr, key, SNode::generateSimpleHash(key), 0);
+                    if (res != hamt::REMOVE_RESTART) {
                         return res;
                     }
                 }
             }
+
+
+        public:
 
 
             bool insert(key_type key, value_type value) {
@@ -401,10 +383,27 @@ namespace cds {
                 }
             }
 
+            Hamt() {
+                root = new INode(nullptr);
+            }
+
+            hamt::LookupResult lookup(key_type key) {
+                while (true) {
+                    if (root->main.load() == nullptr) {
+                        return hamt::LOOKUP_NOT_FOUND;
+                    } else {
+                        hamt::LookupResult res = lookup(root, nullptr, key, SNode::generateSimpleHash(key), 0);
+                        if (res != hamt::LOOKUP_RESTART) {
+                            return res;
+                        }
+                    }
+                }
+            }
+
         private:
             INode *root;
 
-            LookupResult
+            hamt::LookupResult
             lookup(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
 
@@ -412,39 +411,39 @@ namespace cds {
                 CNode *m = currentNode->main.load();
 
                 if (contractParent(parent, currentNode, pm, m, level, hash)) {
-                    return LOOKUP_RESTART;
+                    return hamt::LOOKUP_RESTART;
                 }
 
                 Node *nextNode = m->getSubNode(extractHashPartByLevel(hash, level));
                 if (nextNode == nullptr) {
-                    return LOOKUP_NOT_FOUND;
+                    return hamt::LOOKUP_NOT_FOUND;
                 } else if (nextNode->type == SNODE) {
                     if (static_cast<SNode *>(nextNode)->contains(key)) {
-                        return createSuccessfulLookupResult(static_cast<SNode *>(nextNode)->getValue(key));
+                        return hamt::createSuccessfulLookupResult(static_cast<SNode *>(nextNode)->getValue(key));
                     }
-                    return LOOKUP_NOT_FOUND;
+                    return hamt::LOOKUP_NOT_FOUND;
                 } else if (nextNode->type == INODE) {
                     return lookup(static_cast<INode *>(nextNode), currentNode, key, hash, level + 1);
                 }
             }
 
-            RemoveResult
+            hamt::RemoveResult
             remove(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
                 CNode *m = currentNode->main.load();
 
                 if (contractParent(parent, currentNode, pm, m, level, hash)) {
-                    return REMOVE_RESTART;
+                    return hamt::REMOVE_RESTART;
                 }
 
                 CNode *updated = getCopy(m);
                 uint8_t path = extractHashPartByLevel(hash, level);
                 Node *subNode = updated->getSubNode(path);
 
-                RemoveResult res{};
+                hamt::RemoveResult res{};
 
                 if (subNode == nullptr) {
-                    res = REMOVE_NOT_FOUND;
+                    res = hamt::REMOVE_NOT_FOUND;
                 } else if (subNode->type == SNODE) {
                     if (static_cast<SNode *>(subNode)->contains(key)) {
                         value_type delVal = static_cast<SNode *>(subNode)->getValue(key);
@@ -452,15 +451,15 @@ namespace cds {
                                                   extractHashPartByLevel(hash, level));
                         updated->isTomb = isTombed(updated, root, currentNode);
                         res = (currentNode->main.compare_exchange_strong(m, updated))
-                              ? createSuccessfulRemoveResult(delVal) : REMOVE_RESTART;
+                              ? createSuccessfulRemoveResult(delVal) : hamt::REMOVE_RESTART;
                     } else {
-                        res = REMOVE_NOT_FOUND;
+                        res = hamt::REMOVE_NOT_FOUND;
                     }
                 } else if (subNode->type == INODE) {
                     res = remove(static_cast<INode *>(subNode), currentNode, key, hash, level + 1);
                 }
 
-                if (res == REMOVE_NOT_FOUND || res == REMOVE_RESTART) {
+                if (res == hamt::REMOVE_NOT_FOUND || res == hamt::REMOVE_RESTART) {
                     return res;
                 }
 
@@ -497,7 +496,7 @@ namespace cds {
                         updated->isTomb = isTombed(updated, root, currentNode);
                         return currentNode->main.compare_exchange_strong(m, updated);
                     } else {
-                        transformToWithDownChil(updated, newNode, s, level, path);
+                        transformToWithDownChild(updated, newNode, s, level, path);
                         updated->isTomb = isTombed(updated, root, currentNode);
                         return currentNode->main.compare_exchange_strong(m, updated);
                     }
@@ -510,6 +509,7 @@ namespace cds {
             }
 
         };
+
 
     }
 

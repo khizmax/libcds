@@ -11,9 +11,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-map)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/striped-set)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/stack)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tree)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/trie)
 
 add_custom_target(unit-all
-    DEPENDS 
+    DEPENDS
         unit-deque
         unit-ilist
         unit-list
@@ -26,4 +27,5 @@ add_custom_target(unit-all
         unit-striped-set
         unit-stack
         unit-tree
+        unit-trie
 )
