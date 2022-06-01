@@ -1,0 +1,112 @@
+[
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/init.cpp.o -c /home/damire/space/libcds/src/init.cpp",
+  "file": "/home/damire/space/libcds/src/init.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/hp.cpp.o -c /home/damire/space/libcds/src/hp.cpp",
+  "file": "/home/damire/space/libcds/src/hp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/hp_thread_local.cpp.o -c /home/damire/space/libcds/src/hp_thread_local.cpp",
+  "file": "/home/damire/space/libcds/src/hp_thread_local.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/dhp.cpp.o -c /home/damire/space/libcds/src/dhp.cpp",
+  "file": "/home/damire/space/libcds/src/dhp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/urcu_gp.cpp.o -c /home/damire/space/libcds/src/urcu_gp.cpp",
+  "file": "/home/damire/space/libcds/src/urcu_gp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/urcu_sh.cpp.o -c /home/damire/space/libcds/src/urcu_sh.cpp",
+  "file": "/home/damire/space/libcds/src/urcu_sh.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/thread_data.cpp.o -c /home/damire/space/libcds/src/thread_data.cpp",
+  "file": "/home/damire/space/libcds/src/thread_data.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/topology_hpux.cpp.o -c /home/damire/space/libcds/src/topology_hpux.cpp",
+  "file": "/home/damire/space/libcds/src/topology_hpux.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/topology_linux.cpp.o -c /home/damire/space/libcds/src/topology_linux.cpp",
+  "file": "/home/damire/space/libcds/src/topology_linux.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/topology_osx.cpp.o -c /home/damire/space/libcds/src/topology_osx.cpp",
+  "file": "/home/damire/space/libcds/src/topology_osx.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++   -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds-s.dir/src/dllmain.cpp.o -c /home/damire/space/libcds/src/dllmain.cpp",
+  "file": "/home/damire/space/libcds/src/dllmain.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/init.cpp.o -c /home/damire/space/libcds/src/init.cpp",
+  "file": "/home/damire/space/libcds/src/init.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/hp.cpp.o -c /home/damire/space/libcds/src/hp.cpp",
+  "file": "/home/damire/space/libcds/src/hp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/hp_thread_local.cpp.o -c /home/damire/space/libcds/src/hp_thread_local.cpp",
+  "file": "/home/damire/space/libcds/src/hp_thread_local.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/dhp.cpp.o -c /home/damire/space/libcds/src/dhp.cpp",
+  "file": "/home/damire/space/libcds/src/dhp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/urcu_gp.cpp.o -c /home/damire/space/libcds/src/urcu_gp.cpp",
+  "file": "/home/damire/space/libcds/src/urcu_gp.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/urcu_sh.cpp.o -c /home/damire/space/libcds/src/urcu_sh.cpp",
+  "file": "/home/damire/space/libcds/src/urcu_sh.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/thread_data.cpp.o -c /home/damire/space/libcds/src/thread_data.cpp",
+  "file": "/home/damire/space/libcds/src/thread_data.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/topology_hpux.cpp.o -c /home/damire/space/libcds/src/topology_hpux.cpp",
+  "file": "/home/damire/space/libcds/src/topology_hpux.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/topology_linux.cpp.o -c /home/damire/space/libcds/src/topology_linux.cpp",
+  "file": "/home/damire/space/libcds/src/topology_linux.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/topology_osx.cpp.o -c /home/damire/space/libcds/src/topology_osx.cpp",
+  "file": "/home/damire/space/libcds/src/topology_osx.cpp"
+},
+{
+  "directory": "/home/damire/space/libcds/libcds-debug",
+  "command": "/usr/bin/c++  -Dcds_EXPORTS -I/home/damire/space/libcds/libcds-debug -I/home/damire/space/libcds  -O3 -DNDEBUG -fPIC   -mcx16 -Wall -Wextra -pedantic -std=gnu++11 -o CMakeFiles/cds.dir/src/dllmain.cpp.o -c /home/damire/space/libcds/src/dllmain.cpp",
+  "file": "/home/damire/space/libcds/src/dllmain.cpp"
+}
+]

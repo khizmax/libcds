@@ -1,0 +1,2 @@
+/usr/bin/ar qc bin/libcds-s.a  CMakeFiles/cds-s.dir/src/init.cpp.o CMakeFiles/cds-s.dir/src/hp.cpp.o CMakeFiles/cds-s.dir/src/hp_thread_local.cpp.o CMakeFiles/cds-s.dir/src/dhp.cpp.o CMakeFiles/cds-s.dir/src/urcu_gp.cpp.o CMakeFiles/cds-s.dir/src/urcu_sh.cpp.o CMakeFiles/cds-s.dir/src/thread_data.cpp.o CMakeFiles/cds-s.dir/src/topology_hpux.cpp.o CMakeFiles/cds-s.dir/src/topology_linux.cpp.o CMakeFiles/cds-s.dir/src/topology_osx.cpp.o CMakeFiles/cds-s.dir/src/dllmain.cpp.o
+/usr/bin/ranlib bin/libcds-s.a
