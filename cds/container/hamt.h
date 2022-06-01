@@ -9,14 +9,13 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <cds/container/details/base.h>
 #include <bitset>
 #include <set>
-#include <mutex>
 #include "atomic"
 
 
 #define HASH_PIECE_LEN 5
-#define BRANCH_FACTOR 32
 #define MAX_LEVEL_COUNT (int (64 / 5))
 
 using namespace std;
@@ -24,6 +23,35 @@ using namespace std;
 namespace cds {
     namespace container {
         namespace hamt {
+
+            struct traits {
+                /// Node allocator
+                typedef CDS_DEFAULT_ALLOCATOR allocator;
+
+                /// Back-off strategy
+                typedef cds::backoff::empty back_off;
+
+                /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
+                typedef atomicity::empty_item_counter item_counter;
+
+                /// Internal statistics (by default, disabled)
+                /**
+                    Possible option value are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat (the default),
+                    user-provided class that supports \p %optimistic_queue::stat interface.
+                */
+
+                /// C++ memory ordering model
+                /**
+                    Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
+                    or \p opt::v::sequential_consistent (sequentially consisnent memory model).
+                */
+                typedef opt::v::relaxed_ordering memory_model;
+
+                /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
+                enum {
+                    padding = opt::cache_line_padding
+                };
+            };
 
             struct LookupResult {
                 enum LookupResultStatus {
@@ -85,13 +113,76 @@ namespace cds {
 
         } // namespace hamt
 
+        namespace details {
+            template<class GC, typename K, typename V, typename Traits>
+            struct make_hamt {
+                typedef GC gc;
+                typedef K key_type;
+                typedef V value_type;
+                typedef Traits traits;  ///< Hamt traits
+
+                struct node_type {
+
+                };
+
+                typedef typename std::allocator_traits<
+                        typename traits::allocator
+                >::template rebind_alloc<node_type> allocator_type;
+                typedef cds::details::Allocator<node_type, allocator_type> cxx_allocator;
+
+                struct node_deallocator {
+                    void operator()(node_type *pNode) {
+                        cxx_allocator().Delete(pNode);
+                    }
+                };
 
 
-        template<class GC, typename K, typename V>
+            };
+
+
+        }
+
+        template<class GC, typename K, typename V, typename Traits = hamt::traits>
         class Hamt {
             typedef GC gc;
             typedef K key_type;
             typedef V value_type;
+            typedef Traits traits;  ///< Hamt traits
+
+            typedef details::make_hamt<GC, K, V, Traits> maker;
+            typedef typename maker::allocator_type allocator_type; ///< Allocator type used for allocate/deallocate the nodes
+//            typedef typename maker::type base_class;
+
+        protected:
+            typedef typename maker::node_type           node_type;   ///< queue node type (derived from intrusive::optimistic_queue::node)
+            typedef typename maker::cxx_allocator       cxx_allocator;
+            typedef typename maker::node_deallocator    node_deallocator; // deallocate node
+//            typedef typename base_class::node_traits    node_traits;
+
+
+        protected:
+            ///@cond
+            static node_type *alloc_node() {
+                return cxx_allocator().New();
+            }
+
+            static node_type *alloc_node(const value_type &val) {
+                return cxx_allocator().New(val);
+            }
+
+            static void free_node(node_type *p) {
+                node_deallocator()(p);
+            }
+
+            struct node_disposer {
+                void operator()(node_type *pNode) {
+                    free_node(pNode);
+                }
+            };
+
+            typedef std::unique_ptr<node_type, node_disposer> scoped_node_ptr;
+            //@endcond
+
 
             struct Bitmap {
                 uint32_t data;
@@ -138,6 +229,10 @@ namespace cds {
                         hash += key[i] * i;
                     }
                     return hash;
+                }
+
+                static uint64_t generateSimpleHash(int key) {
+                    return key;
                 }
 
                 SNode(key_type k, value_type v) : Node(SNODE) {
@@ -188,7 +283,7 @@ namespace cds {
 
             public:
                 uint64_t hash{};
-                set<Pair> pair;
+                set <Pair> pair;
             };
 
             class CNode : public Node {

@@ -11,6 +11,7 @@ include(CheckIncludeFileCXX)
 
 project(cds)
 
+
 set(PROJECT_VERSION 2.3.3)
 
 # Options
@@ -168,9 +169,9 @@ set(SOURCES src/init.cpp
             src/topology_hpux.cpp
             src/topology_linux.cpp
             src/topology_osx.cpp
-            src/dllmain.cpp cds/container/hamt.h)
+            src/dllmain.cpp)
 
-add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES} cds/container/hamt.h)
+add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES}  )
 set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
         DEBUG_POSTFIX "_d")
 set_property(TARGET ${CDS_SHARED_LIBRARY} PROPERTY CXX_STANDARD ${LIBCDS_CXX_STANDARD})
@@ -179,7 +180,7 @@ if(MINGW)
     set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES DEFINE_SYMBOL CDS_BUILD_LIB)
 endif()
 
-add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES} cds/container/hamt.h)
+add_library(${CDS_STATIC_LIBRARY} STATIC ${SOURCES})
 set_target_properties(${CDS_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "_d")
 set_property(TARGET ${CDS_STATIC_LIBRARY} PROPERTY CXX_STANDARD ${LIBCDS_CXX_STANDARD})
 if(MINGW)

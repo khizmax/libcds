@@ -260,7 +260,7 @@ namespace cds { namespace container {
             return false;
         }
 
-        /// Enqueues \p val value into the queue, move semntics
+        /// Enqueues \p val value into the queue, move semantics
         bool enqueue( value_type&& val )
         {
             scoped_node_ptr p( alloc_node_move( std::move( val )));
