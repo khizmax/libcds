@@ -12,6 +12,13 @@ include(CheckIncludeFileCXX)
 project(cds)
 
 
+include_directories(./)
+link_directories(bin)
+add_executable(libcds-debug main.cpp)
+
+target_link_libraries(libcds-debug cds pthread)
+
+
 set(PROJECT_VERSION 2.3.3)
 
 # Options

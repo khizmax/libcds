@@ -22,35 +22,35 @@ using namespace std;
 
 namespace cds {
     namespace container {
-        namespace hamt {
-
-            struct traits {
-                /// Node allocator
-                typedef CDS_DEFAULT_ALLOCATOR allocator;
-
-                /// Back-off strategy
-                typedef cds::backoff::empty back_off;
-
-                /// Item counting feature; by default, disabled. Use \p cds::atomicity::item_counter to enable item counting
-                typedef atomicity::empty_item_counter item_counter;
-
-                /// Internal statistics (by default, disabled)
-                /**
-                    Possible option value are: \p optimistic_queue::stat, \p optimistic_queue::empty_stat (the default),
-                    user-provided class that supports \p %optimistic_queue::stat interface.
-                */
-
-                /// C++ memory ordering model
-                /**
-                    Can be \p opt::v::relaxed_ordering (relaxed memory model, the default)
-                    or \p opt::v::sequential_consistent (sequentially consisnent memory model).
-                */
-                typedef opt::v::relaxed_ordering memory_model;
-
-                /// Padding for internal critical atomic data. Default is \p opt::cache_line_padding
-                enum {
-                    padding = opt::cache_line_padding
+        template<typename GC, typename K, typename V>
+        class Hamt {
+            typedef GC gc;
+            typedef K key_type;
+            typedef V value_type;
+        protected:
+            struct InsertResult {
+                enum class Status {
+                    Inserted,
+                    Failed
                 };
+
+                V value;
+                Status status;
+
+                bool operator==(InsertResult b) const {
+                    if ((status == Status::Failed) && (b.status == Status::Failed)) return true;
+                    if ((status == Status::Inserted) && (b.status == Status::Inserted)) return true;
+                    return false;
+                }
+
+                void operator=(InsertResult b) {
+                    this->status = b.status;
+                    this->value = value;
+                }
+
+                bool operator!=(InsertResult b) const {
+                    return !(*this == b);
+                }
             };
 
             struct LookupResult {
@@ -60,7 +60,7 @@ namespace cds {
                     Failed
                 };
 
-                int value;
+                V value;
                 LookupResultStatus status;
 
                 bool operator==(LookupResult b) const {
@@ -75,11 +75,6 @@ namespace cds {
                 }
             };
 
-            LookupResult createSuccessfulLookupResult(int value) {
-                return {value, LookupResult::Found};
-            }
-
-            static const LookupResult LOOKUP_RESTART{0, LookupResult::Failed};
 
             struct RemoveResult {
                 enum Status {
@@ -88,7 +83,7 @@ namespace cds {
                     NotFound,
                 };
 
-                int value;
+                V value;
                 Status status;
 
                 bool operator==(RemoveResult rightOperand) const {
@@ -103,85 +98,20 @@ namespace cds {
                 }
             };
 
+            const LookupResult LOOKUP_RESTART{0, LookupResult::Failed};
             const LookupResult LOOKUP_NOT_FOUND{0, LookupResult::NotFound};
             const RemoveResult REMOVE_NOT_FOUND{0, RemoveResult::NotFound};
             const RemoveResult REMOVE_RESTART{0, RemoveResult::Failed};
+            const InsertResult INSERT_RESTART{.status = InsertResult::Status::Failed};
+            const InsertResult INSERT_SUCCESSFUL{.status = InsertResult::Status::Inserted};
 
             RemoveResult createSuccessfulRemoveResult(int value) {
                 return {value, RemoveResult::Removed};
             }
 
-        } // namespace hamt
-
-        namespace details {
-            template<class GC, typename K, typename V, typename Traits>
-            struct make_hamt {
-                typedef GC gc;
-                typedef K key_type;
-                typedef V value_type;
-                typedef Traits traits;  ///< Hamt traits
-
-                struct node_type {
-
-                };
-
-                typedef typename std::allocator_traits<
-                        typename traits::allocator
-                >::template rebind_alloc<node_type> allocator_type;
-                typedef cds::details::Allocator<node_type, allocator_type> cxx_allocator;
-
-                struct node_deallocator {
-                    void operator()(node_type *pNode) {
-                        cxx_allocator().Delete(pNode);
-                    }
-                };
-
-
-            };
-
-
-        }
-
-        template<class GC, typename K, typename V, typename Traits = hamt::traits>
-        class Hamt {
-            typedef GC gc;
-            typedef K key_type;
-            typedef V value_type;
-            typedef Traits traits;  ///< Hamt traits
-
-            typedef details::make_hamt<GC, K, V, Traits> maker;
-            typedef typename maker::allocator_type allocator_type; ///< Allocator type used for allocate/deallocate the nodes
-//            typedef typename maker::type base_class;
-
-        protected:
-            typedef typename maker::node_type           node_type;   ///< queue node type (derived from intrusive::optimistic_queue::node)
-            typedef typename maker::cxx_allocator       cxx_allocator;
-            typedef typename maker::node_deallocator    node_deallocator; // deallocate node
-//            typedef typename base_class::node_traits    node_traits;
-
-
-        protected:
-            ///@cond
-            static node_type *alloc_node() {
-                return cxx_allocator().New();
+            LookupResult createSuccessfulLookupResult(int value) {
+                return {value, LookupResult::Found};
             }
-
-            static node_type *alloc_node(const value_type &val) {
-                return cxx_allocator().New(val);
-            }
-
-            static void free_node(node_type *p) {
-                node_deallocator()(p);
-            }
-
-            struct node_disposer {
-                void operator()(node_type *pNode) {
-                    free_node(pNode);
-                }
-            };
-
-            typedef std::unique_ptr<node_type, node_disposer> scoped_node_ptr;
-            //@endcond
 
 
             struct Bitmap {
@@ -223,16 +153,8 @@ namespace cds {
 
             class SNode : public Node {
             public:
-                static uint64_t generateSimpleHash(string key) {
-                    uint64_t hash = 0;
-                    for (size_t i = 0; i < key.size(); i++) {
-                        hash += key[i] * i;
-                    }
-                    return hash;
-                }
-
-                static uint64_t generateSimpleHash(int key) {
-                    return key;
+                static uint64_t generateSimpleHash(K key) {
+                    return std::hash<K>{}(key);
                 }
 
                 SNode(key_type k, value_type v) : Node(SNODE) {
@@ -268,7 +190,6 @@ namespace cds {
                             return p.value;
                         }
                     }
-                    // TODO ???
                     return 0;
                 }
 
@@ -346,17 +267,12 @@ namespace cds {
             };
 
             SNode *leftMerge(SNode *node1, SNode *node2) {
-                auto *merged = new SNode(*node1);
                 for (auto &p: node2->pair) {
-                    if (!merged->contains(p.key)) {
-                        merged->pair.insert(p);
+                    if (!node1->contains(p.key)) {
+                        node1->pair.insert(p);
                     }
                 }
-                return merged;
-            }
-
-            CNode *getCopy(CNode *node) {
-                return new CNode(*node);
+                return node1;
             }
 
             void transformToContractedParent(CNode *updated, CNode *m, uint8_t path) {
@@ -377,7 +293,6 @@ namespace cds {
 
             void
             transformToWithDownChild(CNode *updated, SNode *newChild, SNode *oldChild, uint8_t level, uint8_t path) {
-
                 if (newChild->getHash() == oldChild->getHash()) {
                     newChild = leftMerge(newChild, oldChild);
                     updated->replaceChild(newChild, path);
@@ -408,11 +323,10 @@ namespace cds {
 
             }
 
-            void transformToWithDeletedKey(CNode *updated, SNode *subNode, key_type key, uint8_t path) {
-                auto *newSubNode = new SNode(*subNode);
-                if (newSubNode->pair.size() > 1) {
-                    newSubNode->pair.erase({key, subNode->getValue(key)});
-                    updated->replaceChild(newSubNode, path);
+            void transformToWithDeletedKey(CNode *updated, SNode *updatedSubNode, key_type key, uint8_t path) {
+                if (updatedSubNode->pair.size() > 1) {
+                    updatedSubNode->pair.erase({key, updatedSubNode->getValue(key)});
+                    updated->replaceChild(updatedSubNode, path);
                 } else {
                     updated->deleteChild(path);
                 }
@@ -433,62 +347,82 @@ namespace cds {
                     return true;
                 }
 
-                CNode *updated = getCopy(pm);
+                auto *updated = new CNode(*pm);
                 transformToContractedParent(updated, m, extractHashPartByLevel(hash, level - 1));
-                parent->main.compare_exchange_strong(pm, updated);
+                if (parent->main.compare_exchange_strong(pm, updated)) {
+                    gc::template retire<Node>(pm, &dispose);
+                } else {
+                    delete updated;
+                }
                 return true;
             }
 
-            Node *getRoot() {
-                return this->root;
-            }
-
-            hamt::RemoveResult remove(key_type key) {
-                while (true) {
-                    if (root->main.load() == nullptr) {
-                        return hamt::REMOVE_NOT_FOUND;
+            static void dispose(void *v) {
+                switch (((Node *) v)->type) {
+                    case (SNODE): {
+                        delete ((SNode *) v);
+                        break;
                     }
-                    hamt::RemoveResult res = remove(root, nullptr, key, SNode::generateSimpleHash(key), 0);
-                    if (res != hamt::REMOVE_RESTART) {
-                        return res;
+                    case (CNODE): {
+                        delete ((CNode *) v);
+                        break;
                     }
                 }
             }
-
 
         public:
-
-
-            bool insert(key_type key, value_type value) {
-                while (true) {
-                    CNode *old = root->main.load();
-                    if (old == nullptr) {
-                        // root -> c -> s
-                        auto *c = new CNode();
-                        auto *s = new SNode(key, value);
-                        c->insertChild(s, extractHashPartByLevel(s->getHash(), 0));
-                        if (root->main.compare_exchange_strong(old, c)) {
-                            return true;
-                        }
-                    } else {
-                        if (insert(root, nullptr, new SNode(key, value), 0)) {
-                            return true;
-                        }
-                    }
-                }
-            }
 
             Hamt() {
                 root = new INode(nullptr);
             }
 
-            hamt::LookupResult lookup(key_type key) {
+            ~Hamt() {
+                dealloc(root);
+            }
+
+            RemoveResult remove(key_type key) {
+                typename gc::template GuardArray<2> guards;
                 while (true) {
                     if (root->main.load() == nullptr) {
-                        return hamt::LOOKUP_NOT_FOUND;
+                        return REMOVE_NOT_FOUND;
+                    }
+                    RemoveResult res = remove(root, nullptr, key, SNode::generateSimpleHash(key), 0, &guards);
+                    if (res != REMOVE_RESTART) {
+                        return res;
+                    }
+                }
+            }
+
+            InsertResult insert(key_type key, value_type value) {
+                typename gc::template GuardArray<2> guards;
+                auto *s = new SNode(key, value);
+                while (true) {
+                    CNode *r = root->main.load();
+                    if (r == nullptr) {
+                        auto *updated = new CNode();
+                        updated->insertChild(s, extractHashPartByLevel(s->getHash(), 0));
+                        if (root->main.compare_exchange_strong(r, updated)) {
+                            return INSERT_SUCCESSFUL;
+                        } else {
+                            delete updated;
+                        }
                     } else {
-                        hamt::LookupResult res = lookup(root, nullptr, key, SNode::generateSimpleHash(key), 0);
-                        if (res != hamt::LOOKUP_RESTART) {
+                        InsertResult res = insert(root, nullptr, s, 0, &guards);
+                        if (res != INSERT_RESTART) {
+                            return res;
+                        }
+                    }
+                }
+            }
+
+            LookupResult lookup(key_type key) {
+                typename gc::template GuardArray<2> guards;
+                while (true) {
+                    if (root->main.load() == nullptr) {
+                        return LOOKUP_NOT_FOUND;
+                    } else {
+                        LookupResult res = lookup(root, nullptr, key, SNode::generateSimpleHash(key), 0, &guards);
+                        if (res != LOOKUP_RESTART) {
                             return res;
                         }
                     }
@@ -498,111 +432,227 @@ namespace cds {
         private:
             INode *root;
 
-            hamt::LookupResult
-            lookup(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level) {
+            void dealloc(Node *n) {
+                switch (n->type) {
+                    case CNODE: {
+                        auto *c = static_cast<CNode *>(n);
+                        for (int i = 0; i < 32; i++) {
+                            if (c->getSubNode(i) != NULL) {
+                                dealloc(c->getSubNode(i));
+                            }
+                        }
+                        delete c;
+                        break;
+                    }
+                    case INODE: {
+                        auto *i = static_cast<INode *>(n);
+                        if (i->main != nullptr) {
+                            dealloc(i->main.load());
+                        }
+                        delete i;
+                        break;
+                    }
+                    case SNODE: {
+                        auto *s = static_cast<SNode *>(n);
+                        delete s;
+                        break;
+                    }
+                }
+            }
+
+            void dealloc(Node *n, uint64_t hash, uint8_t level) {
+
+                switch (n->type) {
+                    case CNODE: {
+                        uint8_t path = extractHashPartByLevel(hash, level);
+                        auto *c = static_cast<CNode *>(n);
+                        dealloc(c->getSubNode(path), hash, level + 1);
+                        delete c;
+                        break;
+                    }
+                    case INODE: {
+                        auto *i = static_cast<INode *>(n);
+                        dealloc(i->main, hash, level);
+                        delete i;
+                        break;
+                    }
+                    case SNODE: {
+                        auto *s = static_cast<SNode *>(n);
+                        delete s;
+                        break;
+                    }
+                }
+            }
+
+            LookupResult
+            lookup(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level,
+                   typename gc::template GuardArray<2> *guard) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
-
-
                 CNode *m = currentNode->main.load();
 
+                guard->assign(0, pm);
+                guard->assign(1, m);
+
                 if (contractParent(parent, currentNode, pm, m, level, hash)) {
-                    return hamt::LOOKUP_RESTART;
+                    return LOOKUP_RESTART;
                 }
 
                 Node *nextNode = m->getSubNode(extractHashPartByLevel(hash, level));
                 if (nextNode == nullptr) {
-                    return hamt::LOOKUP_NOT_FOUND;
+                    return LOOKUP_NOT_FOUND;
                 } else if (nextNode->type == SNODE) {
                     if (static_cast<SNode *>(nextNode)->contains(key)) {
-                        return hamt::createSuccessfulLookupResult(static_cast<SNode *>(nextNode)->getValue(key));
+                        return createSuccessfulLookupResult(static_cast<SNode *>(nextNode)->getValue(key));
                     }
-                    return hamt::LOOKUP_NOT_FOUND;
+                    return LOOKUP_NOT_FOUND;
                 } else if (nextNode->type == INODE) {
-                    return lookup(static_cast<INode *>(nextNode), currentNode, key, hash, level + 1);
+                    return lookup(static_cast<INode *>(nextNode), currentNode, key, hash, level + 1, guard);
                 }
             }
 
-            hamt::RemoveResult
-            remove(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level) {
+            RemoveResult
+            remove(INode *currentNode, INode *parent, key_type key, uint64_t hash, uint8_t level,
+                   typename gc::template GuardArray<2> *guard) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
                 CNode *m = currentNode->main.load();
 
+                guard->assign(0, pm);
+                guard->assign(1, m);
+
                 if (contractParent(parent, currentNode, pm, m, level, hash)) {
-                    return hamt::REMOVE_RESTART;
+                    return REMOVE_RESTART;
                 }
 
-                CNode *updated = getCopy(m);
+                auto *updated = new CNode(*m);
                 uint8_t path = extractHashPartByLevel(hash, level);
                 Node *subNode = updated->getSubNode(path);
 
-                hamt::RemoveResult res{};
+                RemoveResult res{};
 
                 if (subNode == nullptr) {
-                    res = hamt::REMOVE_NOT_FOUND;
+                    delete updated;
+                    return REMOVE_NOT_FOUND;
                 } else if (subNode->type == SNODE) {
-                    if (static_cast<SNode *>(subNode)->contains(key)) {
-                        value_type delVal = static_cast<SNode *>(subNode)->getValue(key);
-                        transformToWithDeletedKey(updated, static_cast<SNode *>(subNode), key,
-                                                  extractHashPartByLevel(hash, level));
+                    auto *updatedSubNode = new SNode(*static_cast<SNode *>(subNode));
+                    if (updatedSubNode->contains(key)) {
+                        V delVal = updatedSubNode->getValue(key);
+                        transformToWithDeletedKey(updated, updatedSubNode, key, path);
                         updated->isTomb = isTombed(updated, root, currentNode);
                         res = (currentNode->main.compare_exchange_strong(m, updated))
-                              ? createSuccessfulRemoveResult(delVal) : hamt::REMOVE_RESTART;
+                              ? createSuccessfulRemoveResult(delVal) : REMOVE_RESTART;
+                        if (res == REMOVE_RESTART) {
+                            if (updated->getSubNode(path) != nullptr) {
+                                delete subNode;
+                            }
+                            delete updated;
+                        } else {
+                            gc::template retire<Node>(m, &dispose);
+                            gc::template retire<Node>(subNode, &dispose);
+                            if (updated->getSubNode(path) == nullptr) {
+                                delete updatedSubNode;
+                            }
+
+                            contractParent(parent, currentNode, pm, updated, level, hash);
+                        }
+                        return res;
                     } else {
-                        res = hamt::REMOVE_NOT_FOUND;
+                        delete updated;
+                        delete updatedSubNode;
+                        return REMOVE_NOT_FOUND;
                     }
                 } else if (subNode->type == INODE) {
-                    res = remove(static_cast<INode *>(subNode), currentNode, key, hash, level + 1);
-                }
+                    res = remove(static_cast<INode *>(subNode), currentNode, key, hash, level + 1, guard);
+                    if (res == REMOVE_RESTART || res == REMOVE_NOT_FOUND) {
+                        delete updated;
+                        return res;
+                    }
+                    contractParent(parent, currentNode, pm, updated, level, hash);
+                    delete updated;
 
-                if (res == hamt::REMOVE_NOT_FOUND || res == hamt::REMOVE_RESTART) {
                     return res;
                 }
-
-                contractParent(parent, currentNode, pm, updated, level, hash);
-
-                return res;
             }
 
-            bool insert(INode *currentNode, INode *parent, SNode *newNode, uint8_t level) {
+            InsertResult insert(INode *currentNode, INode *parent, SNode *newNode, uint8_t level,
+                                typename gc::template GuardArray<2> *guard
+            ) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
                 CNode *m = currentNode->main.load();
 
+                guard->assign(0, pm);
+                guard->assign(1, m);
+
                 if (contractParent(parent, currentNode, pm, m, level, newNode->getHash())) {
-                    return false;
+                    return INSERT_RESTART;
                 }
 
+                guard->clear(0);
 
-                CNode *updated = getCopy(m);
+                auto *updated = new CNode(*m);
                 uint8_t path = extractHashPartByLevel(newNode->getHash(), level);
+                InsertResult res{};
 
                 Node *subNode = updated->getSubNode(path);
                 if (subNode == nullptr) {
                     transformToWithInsertedChild(updated, newNode, path);
                     updated->isTomb = isTombed(updated, root, currentNode);
-                    return currentNode->main.compare_exchange_strong(m, updated);
-                } else if (subNode->type == SNODE) {
-                    auto *s = static_cast<SNode *>(subNode);
-                    if (s->contains(newNode)) {
-                        transformToWithReplacedPair(updated, s, newNode, path);
-                        updated->isTomb = isTombed(updated, root, currentNode);
-                        return currentNode->main.compare_exchange_strong(m, updated);
-                    } else if (level == MAX_LEVEL_COUNT) {
-                        transformToWithMergedChild(updated, s, newNode, path);
-                        updated->isTomb = isTombed(updated, root, currentNode);
-                        return currentNode->main.compare_exchange_strong(m, updated);
+                    res = currentNode->main.compare_exchange_strong(m, updated) ? INSERT_SUCCESSFUL
+                                                                                : INSERT_RESTART;
+                    if (res == INSERT_SUCCESSFUL) {
+                        gc::template retire<Node>(m, &dispose);
                     } else {
-                        transformToWithDownChild(updated, newNode, s, level, path);
+                        delete updated;
+                    }
+                    return res;
+                } else if (subNode->type == SNODE) {
+                    auto *updatedSubNode = new SNode(*static_cast<SNode *>(subNode));
+                    if (updatedSubNode->contains(newNode)) {
+                        transformToWithReplacedPair(updated, updatedSubNode, newNode, path);
                         updated->isTomb = isTombed(updated, root, currentNode);
-                        return currentNode->main.compare_exchange_strong(m, updated);
+                        res = currentNode->main.compare_exchange_strong(m, updated) ? INSERT_SUCCESSFUL
+                                                                                    : INSERT_RESTART;
+                        if (res == INSERT_SUCCESSFUL) {
+                            gc::template retire<Node>(m, &dispose);
+                            gc::template retire<Node>(subNode, &dispose);
+                            guard->clear(1);
+                        } else {
+                            delete updated;
+                        }
+                        delete updatedSubNode;
+                        return res;
+                    } else if (level == MAX_LEVEL_COUNT) {
+                        transformToWithMergedChild(updated, updatedSubNode, newNode, path);
+                        updated->isTomb = isTombed(updated, root, currentNode);
+                        res = currentNode->main.compare_exchange_strong(m, updated) ? INSERT_SUCCESSFUL
+                                                                                    : INSERT_RESTART;
+                        if (res == INSERT_SUCCESSFUL) {
+                            gc::template retire<Node>(m, &dispose);
+                            gc::template retire<Node>(subNode, &dispose);
+                            guard->clear(1);
+                        } else {
+                            delete updated;
+                        }
+                        delete updatedSubNode;
+                        return res;
+                    } else {
+                        transformToWithDownChild(updated, newNode, updatedSubNode, level, path);
+                        updated->isTomb = isTombed(updated, root, currentNode);
+                        res = currentNode->main.compare_exchange_strong(m, updated) ? INSERT_SUCCESSFUL
+                                                                                    : INSERT_RESTART;
+                        if (res != INSERT_SUCCESSFUL) {
+                            gc::template retire<Node>(m, &dispose);
+                            gc::template retire<Node>(subNode, &dispose);
+                            guard->clear(1);
+                        } else {
+                            dealloc(updated, newNode->getHash(), level);
+                        }
+                        return res;
                     }
                 } else if (subNode->type == INODE) {
-                    return insert(static_cast<INode *>(subNode), currentNode, newNode, level + 1);
-                } else {
-                    fprintf(stderr, "Node with unknown type\n");
-                    return false;
+                    delete updated;
+                    return insert(static_cast<INode *>(subNode), currentNode, newNode, level + 1, guard);
                 }
             }
-
         };
 
 

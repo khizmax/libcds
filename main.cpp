@@ -1,32 +1,61 @@
 #include <cds/init.h>  //cds::Initialize и cds::Terminate
 #include <cds/gc/hp.h> //cds::gc::HP (Hazard Pointer)
 #include <iostream> //cds::gc::HP (Hazard Pointer)
+#include <cds/container/optimistic_queue.h> // cds::gc::HP (Hazard Pointer)
+#include <cds/container/hamt.h> // cds::gc::HP (Hazard Pointer)
 
 using namespace std;
+
 int main() {
-//
-    // Инициализируем libcds
-    cds::Initialize() ;
+    cds::Initialize();
     {
-        // Инициализируем Hazard Pointer синглтон
-        cds::gc::HP hpGC ;
+        cds::gc::HP hpGC;
+        cds::threading::Manager::attachThread();
 
-        // Если main thread использует lock-free контейнеры
-        // main thread должен быть подключен
-        // к инфраструктуре libcds
-        cds::threading::Manager::attachThread() ;
+        for (int j = 0; j < 1; j++) {
+            cds::container::Hamt<cds::gc::HP, int, int> hamt;
+            int count = 100'000;
+            for (int i = 0; i < count; i++) hamt.insert(i, i);
+            cout << "start\n";
+            int thread_count = 10;
+            cout << "start\n";
+            vector<pthread_t> thread(thread_count);
+            vector<vector<void *>> attr(thread_count);
 
-        // Всё, libcds готова к использованию
-        // Далее располагается ваш код
+            for (int i = 0; i < attr.size(); i++) {
+                attr[i] = {&hamt, new int(i), new int(count / thread_count)};
+            }
+            for (int i = 0; i < thread.size(); i++) {
+                pthread_create(&thread[i], nullptr, [](void *args) -> void * {
+                    cds::threading::Manager::attachThread();
+                    auto *hamt = (cds::container::Hamt<cds::gc::HP, int, int> *) (*static_cast<vector<void *> *>(args))[0];
+                    int *id = (int *) (*static_cast<vector<void *> *>(args))[1];
+                    int *averageIterationCount = (int *) (*static_cast<vector<void *> *>(args))[2];
+                    for (int i = *id * (*averageIterationCount); i < (*id + 1) * (*averageIterationCount); i++) {
+                        assert(hamt->remove(i).value == i);
+                    }
+                    cds::threading::Manager::detachThread();
+                    pthread_exit(nullptr);
+                }, &attr[i]);
+
+            }
+
+            for (unsigned long i: thread) {
+                pthread_join(i, nullptr);
+            }
+
+            for (int i = 0; i < thread_count; i++) {
+                delete (int *) attr[i][1];
+                delete (int *) attr[i][2];
+            }
+            cout << "finished\n";
+//            for (int i = 0; i < count; i++) {
+//                assert(hamt.lookup(i).value == 0);
+//            }
+        }
     }
 
-//    OptimisticQueue< cds::gc::HP, int > queue;
-//    cout << queue.push(1) << endl;
-//    cout << queue.push(2) << endl;
-//    cout << queue.push(3) << endl;
-//
-//
-//    // Завершаем libcds
-//    cds::Terminate() ;
+
+//    cds::Terminate();
 
 }
