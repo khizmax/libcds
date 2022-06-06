@@ -652,7 +652,7 @@ namespace cds {
                             gc::template retire<Node>(subNode, &dispose);
                             guard->clear(1);
                         } else {
-                            dealloc(updated, newNode->getHash(), level);
+                            dealloc(updated, updatedSubNode->getHash(), level);
                         }
                         return res;
                     }

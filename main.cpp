@@ -12,15 +12,12 @@ int main() {
         cds::gc::HP hpGC;
         cds::threading::Manager::attachThread();
 
-        for (int j = 0; j < 100; j++) {
+        for (int j = 0; j < 10000000; j++) {
             cds::container::Hamt<cds::gc::HP, int, int> hamt;
-            int count = 100'000;
-            for (int i = 0; i < count; i++) {
-                hamt.insert(i, i);
-            }
+            int count = 10000;
+
             cout << "start\n";
             int thread_count = 10;
-            cout << "start\n";
             vector<pthread_t> thread(thread_count);
             vector<vector<void *>> attr(thread_count);
 
@@ -34,7 +31,7 @@ int main() {
                     int *id = (int *) (*static_cast<vector<void *> *>(args))[1];
                     int *averageIterationCount = (int *) (*static_cast<vector<void *> *>(args))[2];
                     for (int i = *id * (*averageIterationCount); i < (*id + 1) * (*averageIterationCount); i++) {
-                        assert(hamt->remove(i).value == i);
+                        hamt->insert(i,i);
                     }
                     cds::threading::Manager::detachThread();
                     pthread_exit(nullptr);
