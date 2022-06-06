@@ -217,7 +217,8 @@ namespace cds {
 
                 Node *getSubNode(uint8_t path) const {
                     if (!bmp.isSet(path)) return nullptr;
-                    int index = getArrayIndexByBmp(path);
+                    uint8_t index = getArrayIndexByBmp(path);
+                    assert(index < array.size());
                     return array[index];
                 }
 
@@ -226,6 +227,7 @@ namespace cds {
                 }
 
                 Node *getFirstChild() const {
+                    assert(array.size() > 0);
                     return array.front();
                 }
 
@@ -235,11 +237,15 @@ namespace cds {
                 }
 
                 void replaceChild(Node *const newChild, uint8_t path) {
-                    array[getArrayIndexByBmp(path)] = newChild;
+                    uint8_t index = getArrayIndexByBmp(path);
+                    assert(index < array.size());
+                    array[index] = newChild;
                 }
 
                 void deleteChild(uint8_t path) {
-                    array.erase(array.begin() + getArrayIndexByBmp(path));
+                    uint8_t index = getArrayIndexByBmp(path);
+                    assert(index < array.size());
+                    array.erase(array.begin() + index);
                     bmp.unset(path);
                 }
 
