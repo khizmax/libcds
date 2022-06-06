@@ -12,10 +12,12 @@ int main() {
         cds::gc::HP hpGC;
         cds::threading::Manager::attachThread();
 
-        for (int j = 0; j < 1; j++) {
+        for (int j = 0; j < 100; j++) {
             cds::container::Hamt<cds::gc::HP, int, int> hamt;
             int count = 100'000;
-            for (int i = 0; i < count; i++) hamt.insert(i, i);
+            for (int i = 0; i < count; i++) {
+                hamt.insert(i, i);
+            }
             cout << "start\n";
             int thread_count = 10;
             cout << "start\n";

@@ -43,9 +43,10 @@ namespace cds {
                     return false;
                 }
 
-                void operator=(InsertResult b) {
+                InsertResult& operator=(InsertResult b) {
                     this->status = b.status;
                     this->value = value;
+                    return *this;
                 }
 
                 bool operator!=(InsertResult b) const {
@@ -145,7 +146,7 @@ namespace cds {
                 NodeType type;
             protected:
 
-                Node(NodeType type) {
+                explicit Node(NodeType type) {
                     this->type = type;
                 }
             };
@@ -250,6 +251,7 @@ namespace cds {
                 }
 
                 uint8_t getArrayIndexByBmp(uint8_t pos) const {
+                    assert(pos < 32);
                     return __builtin_popcount(
                             ((1 << pos) - 1) & bmp.data
                     );
@@ -645,7 +647,7 @@ namespace cds {
                         updated->isTomb = isTombed(updated, root, currentNode);
                         res = currentNode->main.compare_exchange_strong(m, updated) ? INSERT_SUCCESSFUL
                                                                                     : INSERT_RESTART;
-                        if (res != INSERT_SUCCESSFUL) {
+                        if (res == INSERT_SUCCESSFUL) {
                             gc::template retire<Node>(m, &dispose);
                             gc::template retire<Node>(subNode, &dispose);
                             guard->clear(1);
