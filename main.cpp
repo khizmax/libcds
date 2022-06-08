@@ -3,19 +3,25 @@
 #include <iostream> //cds::gc::HP (Hazard Pointer)
 #include <cds/container/optimistic_queue.h> // cds::gc::HP (Hazard Pointer)
 #include <cds/container/hamt.h> // cds::gc::HP (Hazard Pointer)
+#include <fstream>
+#include "visualize.h"
 
 using namespace std;
 
 int main() {
     cds::Initialize();
+
     {
         cds::gc::HP hpGC;
+
         cds::threading::Manager::attachThread();
+        cds::container::Hamt<cds::gc::HP, int, int> hamt;
 
-        for (int j = 0; j < 10000000; j++) {
-            cds::container::Hamt<cds::gc::HP, int, int> hamt;
-            int count = 10000;
 
+        for (int j = 0; j < 1; j++) {
+            int count = 1000000;
+
+            for (int i = 0; i < count; i++) hamt.insert(i,i);
             cout << "start\n";
             int thread_count = 10;
             vector<pthread_t> thread(thread_count);
@@ -30,8 +36,8 @@ int main() {
                     auto *hamt = (cds::container::Hamt<cds::gc::HP, int, int> *) (*static_cast<vector<void *> *>(args))[0];
                     int *id = (int *) (*static_cast<vector<void *> *>(args))[1];
                     int *averageIterationCount = (int *) (*static_cast<vector<void *> *>(args))[2];
-                    for (int i = *id * (*averageIterationCount); i < (*id + 1) * (*averageIterationCount); i++) {
-                        hamt->insert(i,i);
+                    for (int i = *id * (*averageIterationCount); i < (*id + 1) * (*averageIterationCount) - 2; i++) {
+                        hamt->remove(i);
                     }
                     cds::threading::Manager::detachThread();
                     pthread_exit(nullptr);
@@ -47,14 +53,15 @@ int main() {
                 delete (int *) attr[i][1];
                 delete (int *) attr[i][2];
             }
-            cout << "finished\n";
-//            for (int i = 0; i < count; i++) {
-//                assert(hamt.lookup(i).value == 0);
-//            }
+
         }
+        ofstream f = ofstream("graph.txt");
+        visualize(f, &hamt);
+        system("dot -Tpng ./graph.txt -o ../graph.png");
+
     }
 
 
-//    cds::Terminate();
+    cds::Terminate();
 
 }

@@ -27,7 +27,7 @@ namespace cds {
             typedef GC gc;
             typedef K key_type;
             typedef V value_type;
-        protected:
+        public:
             struct InsertResult {
                 enum class Status {
                     Inserted,
@@ -146,7 +146,7 @@ namespace cds {
                 NodeType type;
             protected:
 
-                explicit Node(NodeType type) {
+                Node(NodeType type) {
                     this->type = type;
                 }
             };
@@ -437,6 +437,11 @@ namespace cds {
                 }
             }
 
+        public:
+            Node* getRoot(){
+                return root;
+            }
+
         private:
             INode *root;
 
@@ -534,7 +539,7 @@ namespace cds {
                 auto *updated = new CNode(*m);
                 uint8_t path = extractHashPartByLevel(hash, level);
                 Node *subNode = updated->getSubNode(path);
-
+                guard->assign(0, subNode);
                 RemoveResult res{};
 
                 if (subNode == nullptr) {
@@ -582,8 +587,7 @@ namespace cds {
             }
 
             InsertResult insert(INode *currentNode, INode *parent, SNode *newNode, uint8_t level,
-                                typename gc::template GuardArray<2> *guard
-            ) {
+                                typename gc::template GuardArray<2> *guard) {
                 CNode *pm = parent ? parent->main.load() : nullptr;
                 CNode *m = currentNode->main.load();
 
@@ -601,6 +605,8 @@ namespace cds {
                 InsertResult res{};
 
                 Node *subNode = updated->getSubNode(path);
+                guard->assign(0, subNode);
+
                 if (subNode == nullptr) {
                     transformToWithInsertedChild(updated, newNode, path);
                     updated->isTomb = isTombed(updated, root, currentNode);

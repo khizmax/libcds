@@ -14,7 +14,7 @@ project(cds)
 
 include_directories(./)
 link_directories(bin)
-add_executable(libcds-debug main.cpp)
+add_executable(libcds-debug main.cpp visualize.h)
 
 target_link_libraries(libcds-debug cds pthread)
 
