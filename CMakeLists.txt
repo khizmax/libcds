@@ -11,6 +11,14 @@ include(CheckIncludeFileCXX)
 
 project(cds)
 
+
+include_directories(./)
+link_directories(bin)
+add_executable(libcds-debug main.cpp visualize.h)
+
+target_link_libraries(libcds-debug cds pthread)
+
+
 set(PROJECT_VERSION 2.3.3)
 
 # Options
@@ -170,7 +178,7 @@ set(SOURCES src/init.cpp
             src/topology_osx.cpp
             src/dllmain.cpp)
 
-add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES})
+add_library(${CDS_SHARED_LIBRARY} SHARED ${SOURCES}  )
 set_target_properties(${CDS_SHARED_LIBRARY} PROPERTIES VERSION ${PROJECT_VERSION}
         DEBUG_POSTFIX "_d")
 set_property(TARGET ${CDS_SHARED_LIBRARY} PROPERTY CXX_STANDARD ${LIBCDS_CXX_STANDARD})

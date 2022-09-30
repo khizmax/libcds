@@ -1,0 +1,10 @@
+/home/damire/space/libcds/CMakeFiles/install/strip.dir
+/home/damire/space/libcds/CMakeFiles/install/local.dir
+/home/damire/space/libcds/CMakeFiles/edit_cache.dir
+/home/damire/space/libcds/CMakeFiles/package_source.dir
+/home/damire/space/libcds/CMakeFiles/install.dir
+/home/damire/space/libcds/CMakeFiles/list_install_components.dir
+/home/damire/space/libcds/CMakeFiles/rebuild_cache.dir
+/home/damire/space/libcds/CMakeFiles/package.dir
+/home/damire/space/libcds/CMakeFiles/cds-s.dir
+/home/damire/space/libcds/CMakeFiles/cds.dir
