@@ -103,6 +103,11 @@
 #    define CDS_BUILD_BITS        64
 #    define CDS_PROCESSOR__NAME   "IBM PowerPC64"
 #    define CDS_PROCESSOR__NICK   "ppc64"
+#elif defined(__s390x__)
+#    define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_S390X
+#    define CDS_BUILD_BITS        64
+#    define CDS_PROCESSOR__NAME   "IBM Z"
+#    define CDS_PROCESSOR__NICK   "s390x"
 #elif defined(__arm__) && __SIZEOF_POINTER__ == 4 && __ARM_ARCH >= 7 && __ARM_ARCH < 8
 #    define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_ARM7
 #    define CDS_BUILD_BITS        32
