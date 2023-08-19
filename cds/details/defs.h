@@ -222,6 +222,7 @@ namespace cds {}
                     - CDS_PROCESSOR_PPC64   PowerPC64
                     - CDS_PROCESSOR_ARM7    ARM v7
                     - CDS_PROCESSOR_ARM8    ARM v8
+                    - CDS_PROCESSOR_LOONGARCH    LoongArch
                     - CDS_PROCESSOR_UNKNOWN undefined processor architecture
 
     CDS_PROCESSOR__NAME    The name (string) of processor architecture
@@ -278,6 +279,7 @@ namespace cds {}
 #define CDS_PROCESSOR_PPC64     5   // PowerPC 64bit
 #define CDS_PROCESSOR_ARM7      7
 #define CDS_PROCESSOR_ARM8      8
+#define CDS_PROCESSOR_LOONGARCH 9
 #define CDS_PROCESSOR_UNKNOWN   -1
 
 // Supported OS interfaces

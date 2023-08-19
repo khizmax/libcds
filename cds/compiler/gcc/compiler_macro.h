@@ -122,6 +122,11 @@
 #   else
 #       define CDS_BUILD_BITS        32
 #   endif
+#elif defined(__loongarch__)
+#   define CDS_PROCESSOR_ARCH    CDS_PROCESSOR_LOONGARCH
+#   define CDS_PROCESSOR__NAME   "LOONGARCH"
+#   define CDS_PROCESSOR__NICK   "loongarch"
+#   define CDS_BUILD_BITS        64
 #else
 #   if defined(CDS_USE_LIBCDS_ATOMIC)
 #       error "Libcds does not support atomic implementation for the processor architecture. Try to use C++11-compatible compiler and remove CDS_USE_LIBCDS_ATOMIC flag from compiler command line"
