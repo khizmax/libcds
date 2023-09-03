@@ -411,7 +411,7 @@ namespace cds { namespace gc { namespace hp { namespace details {
             auto itEnd = plist.end();
             retired_ptr* insert_pos = first_retired;
             for ( retired_ptr* it = first_retired; it != last_retired; ++it ) {
-                if ( std::binary_search( itBegin, itEnd, first_retired->m_p )) {
+                if ( std::binary_search( itBegin, itEnd, it->m_p )) {
                     if ( insert_pos != it )
                         *insert_pos = *it;
                     ++insert_pos;
