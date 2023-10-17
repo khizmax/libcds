@@ -39,6 +39,8 @@ set(archdetect_c_code "
     #error cmake_ARCH i386
 #elif defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(_M_X64)
     #error cmake_ARCH x86_64
+#elif defined(__loongarch__)
+    #error cmake_ARCH LoongArch
 #elif defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
     #error cmake_ARCH ia64
 #elif defined(__ppc__) || defined(__ppc) || defined(__powerpc__) \\
