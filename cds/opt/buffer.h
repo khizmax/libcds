@@ -338,7 +338,7 @@ namespace cds { namespace opt {
             uninitialized_dynamic_buffer( size_t nCapacity )
                 : m_nCapacity( c_bExp2 ? beans::ceil2(nCapacity) : nCapacity )
             {
-                assert( m_nCapacity >= 2 );
+                assert( m_nCapacity >= 1 );
                 // Capacity must be power of 2
                 assert( !c_bExp2 || (m_nCapacity & (m_nCapacity - 1)) == 0 );
 
@@ -464,7 +464,7 @@ namespace cds { namespace opt {
             initialized_dynamic_buffer( size_t nCapacity )
                 : m_nCapacity( c_bExp2 ? beans::ceil2(nCapacity) : nCapacity )
             {
-                assert( m_nCapacity >= 2 );
+                assert( m_nCapacity >= 1 );
                 // Capacity must be power of 2
                 assert( !c_bExp2 || (m_nCapacity & (m_nCapacity - 1)) == 0 );
 

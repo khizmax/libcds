@@ -213,6 +213,26 @@ namespace {
         }
     };
 
+    TEST_F( WeakRingBuffer, one_sized )
+    {
+        typedef cds::container::WeakRingBuffer< int > test_queue;
+
+        test_queue q( 1 );
+        test( q );
+    }
+
+    TEST_F( WeakRingBuffer, one_sized_static )
+    {
+        struct traits: public cds::container::weak_ringbuffer::traits
+        {
+            typedef cds::opt::v::uninitialized_static_buffer<void*, 1> buffer;
+        };
+        typedef cds::container::WeakRingBuffer< int, traits > test_queue;
+
+        test_queue q;
+        test( q );
+    }
+
     TEST_F( WeakRingBuffer, defaulted )
     {
         typedef cds::container::WeakRingBuffer< int > test_queue;
@@ -220,6 +240,62 @@ namespace {
         test_queue q( 128 );
         test( q );
         test_array( q );
+    }
+
+    struct MoveCopyNode {
+        MoveCopyNode() = default;
+        MoveCopyNode(const MoveCopyNode&) {
+            copy_count++;
+        }
+        MoveCopyNode& operator=(const MoveCopyNode&) {
+            copy_count++;
+            return *this;
+        }
+        MoveCopyNode(MoveCopyNode&&) {
+            move_count++;
+        }
+        MoveCopyNode& operator=(MoveCopyNode&&) {
+            move_count++;
+            return *this;
+        }
+
+        static size_t copy_count;
+        static size_t move_count;
+    };
+
+    size_t MoveCopyNode::copy_count = 0;
+    size_t MoveCopyNode::move_count = 0;
+
+    TEST_F( WeakRingBuffer, move_only )
+    {
+        MoveCopyNode::copy_count = 0;
+        MoveCopyNode::move_count = 0;
+        typedef cds::container::WeakRingBuffer< MoveCopyNode > test_queue;
+
+        test_queue q( 128 );
+        q.enqueue(MoveCopyNode{});
+        ASSERT_EQ(MoveCopyNode::move_count, 1);
+        ASSERT_EQ(MoveCopyNode::copy_count, 0);
+        q.push(MoveCopyNode{});
+        ASSERT_EQ(MoveCopyNode::move_count, 2);
+        ASSERT_EQ(MoveCopyNode::copy_count, 0);
+        MoveCopyNode arr[12]{};
+        q.push(arr, 12);
+        ASSERT_EQ(MoveCopyNode::move_count, 2);
+        ASSERT_EQ(MoveCopyNode::copy_count, 12);
+
+        MoveCopyNode::copy_count = 0;
+        MoveCopyNode::move_count = 0;
+
+        MoveCopyNode node;
+        q.dequeue(node);
+        ASSERT_EQ(MoveCopyNode::move_count, 1);
+        ASSERT_EQ(MoveCopyNode::copy_count, 0);
+        q.pop(node);
+        ASSERT_EQ(MoveCopyNode::move_count, 2);
+        ASSERT_EQ(MoveCopyNode::copy_count, 0);
+
+        q.pop_front(); // does not trigger move or copy
     }
 
     TEST_F( WeakRingBuffer, stat )

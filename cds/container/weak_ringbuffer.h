@@ -196,7 +196,7 @@ namespace cds { namespace container {
         template <typename Q, typename CopyFunc>
         bool push( Q* arr, size_t count, CopyFunc copy )
         {
-            assert( count < capacity());
+            assert( count <= capacity());
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
             assert( static_cast<size_t>( back - pfront_ ) <= capacity());
@@ -352,10 +352,10 @@ namespace cds { namespace container {
         template <typename Q, typename CopyFunc>
         bool pop( Q* arr, size_t count, CopyFunc copy )
         {
-            assert( count < capacity());
+            assert( count <= capacity());
 
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity());
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
             if ( static_cast<size_t>( cback_ - front ) < count ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -388,10 +388,10 @@ namespace cds { namespace container {
             Returns \p true if success or \p false if not enough space in the ring
         */
         template <typename Q>
-        typename std::enable_if< std::is_assignable<Q&, value_type const&>::value, bool>::type
+        typename std::enable_if< std::is_move_assignable<Q&>::value, bool>::type
         pop( Q* arr, size_t count )
         {
-            return pop( arr, count, []( Q& dest, value_type& src ) { dest = src; } );
+            return pop( arr, count, []( Q& dest, value_type& src ) { dest = std::move(src); } );
         }
 
         /// Dequeues an element from the ring to \p val
@@ -402,7 +402,7 @@ namespace cds { namespace container {
             Returns \p false if the ring is full or \p true otherwise.
         */
         template <typename Q>
-        typename std::enable_if< std::is_assignable<Q&, value_type const&>::value, bool>::type
+        typename std::enable_if< std::is_move_assignable<Q&>::value, bool>::type
         dequeue( Q& val )
         {
             return pop( &val, 1 );
@@ -410,7 +410,7 @@ namespace cds { namespace container {
 
         /// Synonym for \p dequeue( Q& )
         template <typename Q>
-        typename std::enable_if< std::is_assignable<Q&, value_type const&>::value, bool>::type
+        typename std::enable_if< std::is_move_assignable<Q&>::value, bool>::type
         pop( Q& val )
         {
             return dequeue( val );
@@ -433,7 +433,7 @@ namespace cds { namespace container {
         bool dequeue_with( Func f )
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity());
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -466,7 +466,7 @@ namespace cds { namespace container {
         value_type* front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity());
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
             if ( cback_ - front < 1 ) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
@@ -687,7 +687,7 @@ namespace cds { namespace container {
             size_t real_size = calc_real_size( size );
 
             // check if we can reserve real_size bytes
-            assert( real_size < capacity());
+            assert( real_size <= capacity());
             counter_type back = back_.load( memory_model::memory_order_relaxed );
 
             assert( static_cast<size_t>( back - pfront_ ) <= capacity());
@@ -777,7 +777,7 @@ namespace cds { namespace container {
             uint8_t* reserved = buffer_.buffer() + buffer_.mod( back );
 
             size_t real_size = calc_real_size( *reinterpret_cast<size_t*>( reserved ));
-            assert( real_size < capacity());
+            assert( real_size <= capacity());
 
             back_.store( back + real_size, memory_model::memory_order_release );
         }
@@ -805,7 +805,7 @@ namespace cds { namespace container {
         std::pair<void*, size_t> front()
         {
             counter_type front = front_.load( memory_model::memory_order_relaxed );
-            assert( static_cast<size_t>( cback_ - front ) < capacity());
+            assert( static_cast<size_t>( cback_ - front ) <= capacity());
 
             if ( cback_ - front < sizeof( size_t )) {
                 cback_ = back_.load( memory_model::memory_order_acquire );
