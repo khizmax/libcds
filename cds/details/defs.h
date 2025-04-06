@@ -278,6 +278,7 @@ namespace cds {}
 #define CDS_PROCESSOR_PPC64     5   // PowerPC 64bit
 #define CDS_PROCESSOR_ARM7      7
 #define CDS_PROCESSOR_ARM8      8
+#define CDS_PROCESSOR_RISCV64   9
 #define CDS_PROCESSOR_UNKNOWN   -1
 
 // Supported OS interfaces
